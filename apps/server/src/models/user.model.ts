@@ -1,9 +1,27 @@
-import mongoose, { Schema } from "mongoose";
-const bcrypt = require("bcrypt");
-import { IUser } from "../types/user.types";
+import mongoose, { Schema, Document } from "mongoose";
+import { UserStatus } from "../types/user.types";
 
-const userSchema = new Schema(
+export interface IUser {
+  username: string;
+  email: string;
+  password: string;
+  status: UserStatus;
+  lastSeen: Date;
+  profilePicture?: string;
+}
+
+export interface IUserDocument extends IUser, Document {}
+
+const userSchema = new Schema<IUserDocument>(
   {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 30,
+    },
     email: {
       type: String,
       required: true,
@@ -15,32 +33,21 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    name: {
+    status: {
       type: String,
-      required: true,
+      enum: Object.values(UserStatus),
+      default: UserStatus.OFFLINE,
     },
+    lastSeen: {
+      type: Date,
+      default: Date.now,
+    },
+    profilePicture: String,
   },
   {
     timestamps: true,
   }
 );
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
-});
-
-userSchema.methods.comparePassword = async function (
-  password: string
-): Promise<boolean> {
-  return bcrypt.compare(password, this.password);
-};
-
-export const User = mongoose.model<IUser>("User", userSchema);
+// Create and export the model
+export const UserModel = mongoose.model<IUserDocument>("User", userSchema);

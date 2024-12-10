@@ -1,20 +1,43 @@
-import { Document } from "mongoose";
-
-export interface IUser extends Document {
-  _id: string;
+export interface User {
+  id: string;
+  username: string;
   email: string;
   password: string;
-  name: string;
-  comparePassword(password: string): Promise<boolean>;
+  status: UserStatus;
+  lastSeen: Date;
+  profilePicture?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface IUpdateUserData {
-  name?: string;
+export interface UserProfile {
+  id: string;
+  username: string;
+  status: UserStatus;
+  lastSeen: Date;
+  profilePicture?: string;
+}
+
+export enum UserStatus {
+  ONLINE = "online",
+  OFFLINE = "offline",
+  AWAY = "away",
+  DO_NOT_DISTURB = "do_not_disturb",
+}
+
+export interface CreateUserDTO {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface UpdateUserDTO {
+  username?: string;
   email?: string;
+  password?: string;
+  status?: UserStatus;
 }
 
-export interface ISearchQuery {
-  search?: string;
-  page?: number;
-  limit?: number;
+export interface UserDocument extends User, Document {
+  id: string;
 }

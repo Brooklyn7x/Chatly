@@ -1,65 +1,69 @@
-// import { UserService } from "../services/userService";
-// import { Response } from "express";
+import { Request, Response } from "express";
+import { UserService } from "../services/user.service";
+import { BaseController } from "./base.controller";
+import { UpdateUserDTO } from "../types/user.types";
 
-// export class UserController {
-//   private userService: UserService;
+export class UserController extends BaseController {
+  private userService: UserService;
 
-//   constructor() {
-//     this.userService = new UserService();
-//   }
+  constructor() {
+    super("UserController");
+    this.userService = new UserService();
+  }
 
-//   getProfile = async (req: Request, res: Response) => {
-//     try {
-//       const user = await this.userService.getUserById(req.user._id);
-//       res.status(200).json({
-//         success: true,
-//         data: user,
-//       });
-//     } catch (error) {
-//       return res.status(401).json({ message: (error as Error).message });
-//     }
-//   };
-//   updateProfile = async (req: Request, res: Response) => {
-//     try {
-//       const updatedUser = await this.userService.updateUser(
-//         req.user._id,
-//         req.body
-//       );
+  public getUserProfile = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const userId = req.params.userId || req.user!.id;
 
-//       res.status(200).json({
-//         success: true,
-//         data: updatedUser,
-//       });
-//     } catch (error) {
-//       return res.status(401).json({ message: (error as Error).message });
-//     }
-//   };
-//   searchUsers = async (req: Request, res: Response) => {
-//     try {
-//       const result = await this.userService.searchUser({
-//         search: req.query.search as string,
-//         page: Number(req.query.page),
-//         limit: Number(req.query.limit),
-//       });
+    await this.handleRequest(req, res, async () => {
+      const result = await this.userService.getUserById(userId);
 
-//       res.status(200).json({
-//         success: true,
-//         data: result,
-//       });
-//     } catch (error) {
-//       return res.status(401).json({ message: (error as Error).message });
-//     }
-//   };
-//   deleteAccount = async (req: Request, res: Response) => {
-//     try {
-//       await this.userService.deleteUser(req.user._id);
+      if (result.success) {
+        res.json(result.data);
+      } else {
+        this.sendError(res, 404, result.error!);
+      }
+    });
+  };
 
-//       res.status(200).json({
-//         success: true,
-//         message: "Account deleted successfully",
-//       });
-//     } catch (error) {
-//       return res.status(401).json({ message: (error as Error).message });
-//     }
-//   };
-// }
+  // public updateProfile = async (req: Request, res: Response): Promise<void> => {
+  //   const userId = req.params!.id;
+  //   const updateData: UpdateUserDTO = req.body;
+
+  //   await this.handleRequest(req, res, async () => {
+  //     const result = await this.userService.updateUser(userId, updateData);
+
+  //     if (result.success) {
+  //       res.json(result.data);
+  //     } else {
+  //       this.sendError(res, 400, result.error);
+  //     }
+  //   });
+  // };
+
+  // public updateStatus = async (req: Request, res: Response): Promise<void> => {
+  //   const userId = req.params.userId;
+  //   const { status } = req.body;
+
+  //   await this.handleRequest(req, res, async () => {
+  //     const result = await this.userService.updateUserStatus(userId, status);
+
+  //     if (result.success) {
+  //       res.json(result.data);
+  //     } else {
+  //       this.sendError(res, 400, result.error!);
+  //     }
+  //   });
+  // };
+
+  public searchUsers = async (req: Request, res: Response): Promise<void> => {
+    const { query } = req.query;
+
+    await this.handleRequest(req, res, async () => {
+      const result = await this.userService.searchUsers(query as any);
+      res.json(result.data);
+    });
+  };
+}

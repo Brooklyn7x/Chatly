@@ -1,22 +1,30 @@
-export interface ILoginDto {
+export interface LoginDTO {
   email: string;
   password: string;
 }
 
-export interface IRegisterDto {
-  name: string;
+export interface RegisterDTO {
+  username: string;
   email: string;
   password: string;
 }
 
-export interface IAuthResponse {
-  user: {
-    id: any;
-    name: string;
-    email: string;
-  };
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
 }
+
+export interface TokenPayload {
+  userId: string;
+  type: "access" | "refresh";
+}
+
+export interface AuthSession {
+  userId: string;
+  deviceId: string;
+  lastActive: Date;
+  ipAddress: string;
+  userAgent: string;
+}
+

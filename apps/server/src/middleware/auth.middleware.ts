@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
-import { User } from "../models/user.model";
+import { UserModel } from "../models/user.model";
 import { AppError } from "../utils/error";
 
 export const authenticate = async (
@@ -15,11 +15,11 @@ export const authenticate = async (
       throw new AppError(401, "No token provided");
     }
 
-    const decoded = jwt.verify(token, config.jwt.accessSecret!) as {
+    const decoded = jwt.verify(token, config.jwt.secret!) as {
       userId: string;
     };
 
-    const user = await User.findById(decoded.userId).select("-password");
+    const user = await UserModel.findById(decoded.userId).select("-password");
     if (!user) {
       throw new AppError(401, "Invalid token - user not found");
     }

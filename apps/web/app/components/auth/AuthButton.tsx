@@ -15,7 +15,7 @@ export default function AuthButton({
     <button
       onClick={onClick}
       className={cn(
-        "py-3 px-4 border rounded-md hover:bg-slate-50 shadow-sm hover:shadow-md transition-all hover:scale-105 ease-in-out duration-300 delay-150",
+        "py-3 px-4 border rounded-md hover:bg-slate-100/10 shadow-sm hover:shadow-md transition-all hover:scale-105 ease-in-out duration-300 delay-150",
         className
       )}
     >

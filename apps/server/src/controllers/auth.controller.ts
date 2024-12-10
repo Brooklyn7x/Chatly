@@ -1,81 +1,134 @@
-import { AuthService } from "../services/authService";
-import { NextFunction, Request, Response } from "express";
-import { ApiResponse } from "../utils/apiResponse";
+import { Request, Response } from "express";
+import { BaseController } from "./base.controller";
+import { AuthService } from "../services/auth.service";
+import { UserService } from "../services/user.service";
+import { LoginDTO } from "../types/auth.types";
+import { z } from "zod";
 
-export class AuthController {
+const registerSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export class AuthController extends BaseController {
   private authService: AuthService;
+  private userService: UserService;
 
   constructor() {
+    super("AuthController");
     this.authService = new AuthService();
+    this.userService = new UserService();
   }
 
-  register = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  register = async (req: Request, res: Response): Promise<void> => {
     try {
-      const result = await this.authService.register(req.body);
-      res.status(201).json({
-        success: true,
-        data: result,
-      });
+      this.logger.info('Registration request received:', { body: req.body });
+      const parseResult = registerSchema.safeParse(req.body);
+
+      if (!parseResult.success) {
+        res.status(400).json({
+          success: false,
+          error: "Validation failed",
+          details: parseResult.error.format(),
+        });
+        return;
+      }
+
+      const result = await this.authService.register(parseResult.data);
+      if (!result.success) {
+        res.status(400).json({ success: false, error: result.error });
+        return;
+      }
+
+      if (result.success) {
+        res.cookie("refreshToken", result.data.refreshToken, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(201).json({
+          accessToken: result.data!.accessToken,
+          user: result.data!.user,
+        });
+      } else {
+        res.status(400).json({ error: result.error });
+      }
     } catch (error) {
-      next(error);
+      this.logger.error("Registration error:", error);
+      res.status(500).json({ error: "Registration failed" });
     }
   };
 
-  login = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  login = async (req: Request, res: Response): Promise<void> => {
     try {
-      const result = await this.authService.login(req.body);
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
-  };
+      const loginData: LoginDTO = req.body;
 
-  logout = async (req: Request, res: Response, next: NextFunction) => {
-    const { user } = req.body;
-    await this.authService.logout(user._id);
+      //validate Request
+      // const validateResult = validateLoginData(loginData)
+      // if(!validateResult.success){
+      //     res.status(400).json({
+      //         error: validateResult.error
+      //     })
+      // }
 
-    res.status(200).json({
-      success: true,
-      message: "Logged out successfully",
-    });
+      const result = await this.authService.login(loginData);
+      if (result.success) {
+        res.cookie("refreshToken", result.data!.refreshToken, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.status(201).json({
+          accessToken: result.data!.accessToken,
+          user: result.data!.user,
+        });
+      } else {
+        res.status(400).json({ error: result.error });
+      }
+    } catch (error) {}
   };
 
   refreshToken = async (req: Request, res: Response): Promise<void> => {
-    const { refreshToken } = req.body;
-    const result = await this.authService.refreshToken(refreshToken);
-
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
-  };
-
-  async verifyToken(req: Request, res: Response) {
     try {
-      const token = req.headers.authorization?.split(" ")[1];
+      const refreshToken = req.cookies.refreshToken;
 
-      if (!token) {
-        return res
-          .status(401)
-          .json({ message: "Authorization token required" });
+      if (!refreshToken) {
+        res.status(401).json({ error: "Refresh token required" });
       }
 
-      const user = await this.authService.verifyToken(token);
+      const result = await this.authService.refreshToken(refreshToken);
 
-      return ApiResponse.success(res, {
-        message: "Token is valid",
-        data: user,
-      });
+      if (result.success) {
+        res.cookie("refreshToken", result.data!.refreshToken, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.json({ accessToken: result.data!.accessToken });
+      } else {
+        res.status(401).json({ error: result.error });
+      }
     } catch (error) {
-      return res.status(401).json({ message: (error as Error).message });
+      this.logger.error("Token refresh error:", error);
+      res.status(500).json({ error: "Token refresh failed" });
     }
-  }
+  };
+
+  logout = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      const userId = req.user!.id;
+
+      await this.authService.logout(userId, refreshToken);
+      res.clearCookie("refreshToken");
+      res.json({ message: "Logged out successfully" });
+    } catch (error) {
+      this.logger.error("Logout error:", error);
+      res.status(500).json({ error: "Logout failed" });
+    }
+  };
 }
