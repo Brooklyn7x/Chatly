@@ -23,9 +23,7 @@ export class UserService {
     this.logger = new Logger("UserService");
   }
 
-  async createUser(
-    data: CreateUserDTO
-  ): Promise<ServiceResponse<UserDocument>> {
+  async createUser(data: CreateUserDTO): Promise<ServiceResponse<any>> {
     try {
       const existingUser = await this.findByEmail(data.email);
       if (existingUser.success) {
@@ -41,8 +39,7 @@ export class UserService {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      const user = await this.db.create<any>("User", userData);
-
+      const user = await this.db.create<any>("user", userData);
       await this.cacheUserProfile(user);
 
       return {
@@ -68,7 +65,7 @@ export class UserService {
         };
       }
 
-      const user = await this.db.findById("User", id);
+      const user = await this.db.findById("user", id);
       if (!user) {
         return {
           success: false,
@@ -93,7 +90,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<ServiceResponse<any>> {
     try {
-      const user = await this.db.findOne<any>("User", { email });
+      const user = await this.db.findOne<any>("user", { email });
       if (!user) {
         return {
           success: false,
@@ -133,7 +130,7 @@ export class UserService {
         }
       }
 
-      const updateUser = await this.db.findByIdAndUpdate<any>("User", id, {
+      const updateUser = await this.db.findByIdAndUpdate<any>("user", id, {
         ...data,
         updatedAt: new Date(),
       });
@@ -163,7 +160,7 @@ export class UserService {
   async updateUserStatus(id: string, status: UserStatus) {
     try {
       await Promise.all([
-        this.db.findByIdAndUpdate<any>("User", id, {
+        this.db.findByIdAndUpdate<any>("user", id, {
           status,
           lastSeen: new Date(),
           updatedAt: new Date(),
@@ -194,7 +191,7 @@ export class UserService {
       const { query, filter = {}, limit = 20, offset = 0 } = options;
 
       const users = await this.db.find(
-        "Users",
+        "user",
         {
           $or: [
             { username: { $regex: query, $options: "i" } },
@@ -207,7 +204,6 @@ export class UserService {
           limit,
         }
       );
-      
 
       return {
         success: true,
@@ -222,7 +218,7 @@ export class UserService {
     }
   }
 
-  private async cacheUserData(user: User): Promise<any> {
+  private async cacheUserData(user: any): Promise<any> {
     await this.redis.hset(`user:${user.id}`, {
       id: user.id,
       username: user.username,

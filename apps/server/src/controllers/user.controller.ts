@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { BaseController } from "./base.controller";
-import { UpdateUserDTO } from "../types/user.types";
 
 export class UserController extends BaseController {
   private userService: UserService;

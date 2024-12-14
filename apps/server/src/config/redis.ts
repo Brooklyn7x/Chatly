@@ -1,20 +1,29 @@
-import Redis from "ioredis";
-import dotenv from "dotenv";
+import { Redis, RedisOptions } from "ioredis";
+import { config } from "./config";
+import Logger from "../utils/logger";
 
-dotenv.config();
+export class RedisService {
+  private static instance: Redis;
+  private static logger: Logger = new Logger("RedisService");
 
-const redisClient = new Redis({
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number(process.env.REDIS_PORT) || 6379,
-  password: process.env.REDIS_PASSWORD || undefined,
-});
+  static getInstance(): Redis {
+    if (!RedisService.instance) {
+      const options: RedisOptions = {
+        host: config.redis.host,
+        port: config.redis.port,
+        retryStrategy(times) {
+          const delay = Math.min(times * 50, 2000);
+          return delay;
+        },
+      };
 
-redisClient.on("connect", () => {
-  console.log("Connected to Redis");
-});
+      RedisService.instance = new Redis(options);
 
-redisClient.on("error", (error) => {
-  console.error("Redis connection error:", error);
-});
+      RedisService.instance.on("error", (error) => {
+        RedisService.logger.error("Redis connection error:", error);
+      });
+    }
 
-export { redisClient };
+    return RedisService.instance;
+  }
+}

@@ -2,7 +2,7 @@ import { Redis } from "ioredis";
 import { DatabaseService } from "./database.service";
 import { LoginDTO, RegisterDTO, TokenPayload } from "../types/auth.types";
 import { ServiceResponse } from "../types/common/service-respone";
-import { config } from "../config/config";
+
 import Logger from "../utils/logger";
 import jwt from "jsonwebtoken";
 import { UserService } from "./user.service";
@@ -21,7 +21,7 @@ export class AuthService {
   private readonly LOGIN_BLOCK_DURATION = 15 * 60;
 
   constructor() {
-    this.redis = new Redis(config.redis);
+    this.redis = new Redis(process.env.REDIS_URL as string);
     this.db = new DatabaseService();
     this.user = new UserService();
     this.logger = new Logger("AuthService");
@@ -174,6 +174,44 @@ export class AuthService {
       return {
         success: false,
         error: "Token refresh failed",
+      };
+    }
+  }
+
+  async validateToken(token: string) {
+    try {
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_ACCESS_SECRET!
+      ) as TokenPayload;
+
+      if (!decoded.userId) {
+        return {
+          success: false,
+          error: "Invalid token payload",
+        };
+      }
+
+      return { success: true, data: decoded };
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        return {
+          success: false,
+          error: "Token has expired",
+        };
+      }
+
+      if (error instanceof jwt.JsonWebTokenError) {
+        return {
+          success: false,
+          error: "Invalid token signature",
+        };
+      }
+
+      this.logger.error("Token validation error:", error);
+      return {
+        success: false,
+        error: "Token validation failed",
       };
     }
   }

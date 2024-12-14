@@ -23,7 +23,7 @@ export class AuthController extends BaseController {
 
   register = async (req: Request, res: Response): Promise<void> => {
     try {
-      this.logger.info('Registration request received:', { body: req.body });
+      this.logger.info("Registration request received:", { body: req.body });
       const parseResult = registerSchema.safeParse(req.body);
 
       if (!parseResult.success) {
