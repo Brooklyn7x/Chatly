@@ -1,30 +1,39 @@
-import ChatHeader from "./ChatHeader";
-import ChatList from "./ChatList";
-import ChatInput from "./ChatInput";
+import ChatHeader from "../sidebar/SidebarHeader";
+import ChatList from "../message/MessageList";
+import ChatInput from "../message/MessageInput";
 import { useState } from "react";
-import {
-  ArrowLeft,
-  Bell,
-  Pencil,
-  Phone,
-  Trash,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Bell, Pencil, Phone, Trash, X } from "lucide-react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import MessageList from "../message/MessageList";
+import MessageInput from "../message/MessageInput";
+import { useChatStore } from "@/store/useChatStore";
 
-export default function ChatMainArea() {
+export default function ChatArea() {
+  const { selectedChatId, chats, sendMessage } = useChatStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  console.log(selectedChatId)
+  const currentChat = chats.find((chat) => chat.id === selectedChatId);
+  const handleSendMessage = async (content: string, attachments?: File[]) => {
+    if (!selectedChatId || !content.trim()) return;
+    try {
+      await sendMessage(selectedChatId, content);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
   return (
-    <div className="flex-1 md:flex flex-col relative">
-      <div className="top-0 relative">
-        <ChatHeader onProfileClick={() => setIsProfileOpen(!isProfileOpen)} />
-      </div>
-      <div>
-        <ChatList />
-      </div>
-      <ChatInput />
+    <div className="flex-1 flex flex-col relative">
+      <ChatHeader
+        onProfileClick={() => setIsProfileOpen(!isProfileOpen)}
+        user={currentChat?.participants[0]}
+      />
+      <MessageList
+        messages={currentChat?.messages}
+        currentUserId={useChatStore.getState().currentUser?.id || ""}
+      />
+      <MessageInput onSendMessage={handleSendMessage} />
 
       <UserProfilePanel
         isOpen={isProfileOpen}

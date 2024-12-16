@@ -1,28 +1,30 @@
 "use client";
-import { useEffect, useState } from "react";
-import ChatSideBar from "../components/layout/ChatSidebar";
-import ChatMainArea from "../components/layout/ChatMainArea";
-import AuthContainer from "../components/auth/AuthContainer";
+import { useCallback, useEffect } from "react";
+import { useChatStore } from "@/store/useChatStore";
+import SideBar from "../../components/sidebar/Sidebar";
+import ChatArea from "../../components/chat/ChatArea";
 
-export default function ChatLayout() {
-  const [isAuth, setIsAuth] = useState(true);
-
+export default function MainLayout() {
+  const { sidebarOpen, toggleSidebar } = useChatStore();
+  const handleSize = useCallback(() => {
+    const isMobile = window.innerWidth <= 786;
+    if (!isMobile && !sidebarOpen) {
+      toggleSidebar();
+    } else if (isMobile && sidebarOpen) {
+      toggleSidebar();
+    }
+  }, [sidebarOpen, toggleSidebar]);
+  useEffect(() => {
+    handleSize();
+    window.addEventListener("resize", handleSize);
+    return () => {
+      window.removeEventListener("resize", handleSize);
+    };
+  }, [handleSize]);
   return (
-    <div className="relative">
-      {isAuth ? (
-        <AuthContainer />
-      ) : (
-        <div className="h-dvh flex overflow-hidden">
-          <ChatSideBar />
-          <ChatMainArea />
-        </div>
-      )}
-      <button
-        onClick={() => setIsAuth(!isAuth)}
-        className="absolute top-5 right-5 p-2 border"
-      >
-        AuthButton
-      </button>
+    <div className="flex h-screen">
+      {sidebarOpen && <SideBar />}
+      <ChatArea />
     </div>
   );
 }
