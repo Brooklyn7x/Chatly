@@ -1,30 +1,27 @@
 "use client";
-import { useCallback, useEffect } from "react";
-import { useChatStore } from "@/store/useChatStore";
+import { useCallback, useEffect, useState } from "react";
+import { useUIStore } from "@/store/ui-store";
 import SideBar from "../../components/sidebar/Sidebar";
 import ChatArea from "../../components/chat/ChatArea";
+import { useChatStore } from "@/store/chat-store";
 
 export default function MainLayout() {
-  const { sidebarOpen, toggleSidebar } = useChatStore();
-  const handleSize = useCallback(() => {
-    const isMobile = window.innerWidth <= 786;
-    if (!isMobile && !sidebarOpen) {
-      toggleSidebar();
-    } else if (isMobile && sidebarOpen) {
-      toggleSidebar();
-    }
-  }, [sidebarOpen, toggleSidebar]);
+  const { isMobile, setIsMobile } = useUIStore();
+  const { selectedChatId } = useChatStore();
+
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, [setIsMobile]);
+
   useEffect(() => {
-    handleSize();
-    window.addEventListener("resize", handleSize);
-    return () => {
-      window.removeEventListener("resize", handleSize);
-    };
-  }, [handleSize]);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
   return (
-    <div className="flex h-screen">
-      {sidebarOpen && <SideBar />}
-      <ChatArea />
+    <div className="flex h-dvh overflow-hidden">
+      <SideBar />
+      {(!isMobile || selectedChatId) && <ChatArea />}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import conversationRoutes from "./routes/conversation.route";
@@ -10,6 +11,7 @@ import "./services/socket.service";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });

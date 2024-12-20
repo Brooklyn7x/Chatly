@@ -1,18 +1,17 @@
 "use client";
 import { useState } from "react";
 import LoginForm from "./LoginForm";
-import QrForm from "./QrForm";
+import SignUpForm from "./SignUpForm";
 
 export default function AuthContainer() {
-  const [step, setStep] = useState(0);
-  const [showQr, setShowQr] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
 
   return (
     <div className="min-h-dvh flex items-center justify-center ">
-      {showQr ? (
-        <QrForm showLogin={() => setShowQr(false)} />
+      {showSignUp ? (
+        <SignUpForm showLogin={() => setShowSignUp(false)} />
       ) : (
-        <LoginForm showQr={() => setShowQr(true)} />
+        <LoginForm showSignUp={() => setShowSignUp(true)} />
       )}
     </div>
   );

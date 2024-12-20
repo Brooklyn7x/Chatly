@@ -1,70 +1,77 @@
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import useAuthStore from "@/store/auth-store";
+import AuthButton from "./AuthButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import AuthButton from "./AuthButton";
-import Image from "next/image";
-import { Edit2 } from "lucide-react";
 
 interface LoginFormProps {
-  showQr: () => void;
+  showSignUp: () => void;
 }
 
-export default function LoginForm({ showQr }: LoginFormProps) {
-  const [step, setStep] = useState<"step1" | "step2">("step1");
-  const handleNext = () => {
-    setStep("step2");
-  };
-
-  const handlePrev = () => {
-    setStep("step1");
+export default function LoginForm({ showSignUp }: LoginFormProps) {
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const router = useRouter();
+  const { login } = useAuthStore();
+  const handleSubmit = async () => {
+    try {
+      await login(data.email, data.password);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="w-full sm:max-w-sm mx-auto p-4">
-      {step === "step1" && (
-        <div className="flex flex-col p-2">
-          <h1 className="text-center text-2xl font-bold">
-            Sign in to Chat-app
-          </h1>
-          <span className="max-w-[300px] mx-auto text-center text-sm">
-            Please confirm to your country code and enter your phone number
-          </span>
+      <div className="flex flex-col gap-2 p-2">
+        <h1 className="text-center text-2xl font-bold">Sign in to Chat-app</h1>
+        <span className="max-w-[300px] mx-auto text-center text-sm">
+          Please confirm to your country code and enter your phone number
+        </span>
 
-          <div className="mt-10">
-            <Select>
-              <SelectTrigger className="h-12">
-                <SelectValue placeholder="Theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="mt-4">
-            <Input type="email" placeholder="Phone" className="h-12" />
-          </div>
-
-          <Button className="mt-5 h-12" onClick={handleNext}>
-            Next
-          </Button>
-          <AuthButton
-            onClick={() => showQr()}
-            label="LOGIN BY QR CODE"
-            className="mt-2"
+        <div className="space-y-2 mt-10">
+          <Input
+            type="email"
+            placeholder="Email"
+            className="h-12"
+            value={data.email}
+            onChange={(e) =>
+              setData((prev) => ({
+                ...prev,
+                email: e.target.value,
+              }))
+            }
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            className="h-12"
+            value={data.password}
+            onChange={(e) =>
+              setData((prev) => ({
+                ...prev,
+                password: e.target.value,
+              }))
+            }
           />
         </div>
-      )}
-      {step === "step2" && (
+
+        <Button className="mt-5 h-12" onClick={handleSubmit}>
+          LOGIN
+        </Button>
+        <AuthButton
+          onClick={() => showSignUp()}
+          label="SIGN UP"
+          className="mt-2"
+        />
+      </div>
+
+      {/* {step === "step2" && (
         <div className="flex flex-col items-center">
           <div className="relative h-32 w-32 overflow-hidden rounded-full">
             <Image
@@ -96,7 +103,7 @@ export default function LoginForm({ showQr }: LoginFormProps) {
             Back
           </Button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

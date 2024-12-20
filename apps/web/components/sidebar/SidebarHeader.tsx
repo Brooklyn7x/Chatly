@@ -1,62 +1,55 @@
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { User } from "@/store/useChatStore";
-import { Avatar } from "@radix-ui/react-avatar";
-import { EllipsisVertical, Phone, Search, UserCircle2 } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { useState } from "react";
+import { MenuItem } from "../interface/MenuItem";
 
-interface ChatHeaderProps {
-  onProfileClick: () => void;
-  user: User | undefined;
+interface SidebarHeaderProps {
+  onSetSearchQuery: (query: string) => void;
+  onSearchQuery: string;
 }
 
-export default function ChatHeader({ onProfileClick, user }: ChatHeaderProps) {
+export function SidebarHeader({
+  onSearchQuery,
+  onSetSearchQuery,
+}: SidebarHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <div className="h-16 border-b flex items-center justify-between px-6 relative">
-      <button onClick={onProfileClick} className="flex items-center gap-4">
-        <Avatar className="h-10 w-10">
-          <AvatarImage />
-          <AvatarFallback>Cn</AvatarFallback>
-        </Avatar>
-
-        <div className="flex flex-col">
-          <h2 className="text-sm font-semibold">{user?.name || "Shubham"}</h2>
-          <span className="text-xs text-start text-muted-foreground font-semibold">
-            {user?.status === "offline" ? "online" : "offline"}
-          </span>
-        </div>
+    <div className="h-16 px-4 border-b flex items-center gap-2">
+      <button
+        onClick={() => setShowMenu(!showMenu)}
+        className={cn(
+          "text-muted-foreground",
+          "hover:bg-muted/60 hover:rounded-full p-2",
+          "transition-all duration-300 ease-in-out",
+          showMenu && "bg-muted/80 rounded-full rotate-180",
+          "relative"
+        )}
+      >
+        <Menu className="h-6 w-6" />
       </button>
-
-      <div className="flex items-center gap-2">
-        <button className="p-2 rounded-full hover:bg-muted/80  transition-colors hidden sm:flex">
-          <Phone className="h-5 w-5" />
-        </button>
-        <button className="p-2 rounded-full  hover:bg-muted/80 transition-colors hidden sm:flex">
-          <Search className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => setShowMenu(!showMenu)}
-          className={cn(
-            "p-2 rounded-full transition-colors hover:bg-muted/80",
-            showMenu && "bg-muted/90 "
-          )}
-        >
-          <EllipsisVertical className="h-5 w-5" />
-        </button>
+      <div className="relative w-full">
+        <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+        <input
+          value={onSearchQuery}
+          onChange={(e) => onSetSearchQuery(e.target.value)}
+          className="w-full pl-12 pr-4 py-2 bg-muted/50 rounded-lg border text-md outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Search"
+        />
       </div>
 
       {showMenu && (
         <div
           className={cn(
-            "absolute top-full right-2 bg-background/80 backdrop-blur-md border rounded-md shadow-md w-[200px] py-2 px-4",
-            "transition-all duration-300 ease-in-out transform",
+            "absolute top-14 left-0 w-[250px] p-1 rounded-md z-20 shadow-md bg-background/80 border backdrop-blur-sm",
+            "transition-all ease-out",
             showMenu
-              ? "opacity-100 scale-100 translate-y-1"
-              : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+              ? "animate-[slideIn_0.3s_ease-out_forwards]"
+              : "animate-[slideOut_0.3s_ease-in_forwards]"
           )}
         >
-          <div>Menu</div>
+          {Array.from({ length: 4 }).map((item, index) => (
+            <MenuItem label="Saved Message" />
+          ))}
         </div>
       )}
     </div>
