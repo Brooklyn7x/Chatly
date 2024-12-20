@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useChatStore } from "@/store/chat-store";
+import { useChatStore } from "@/store/useChatStore";
 import { UserProfilePanel } from "../interface/UserProfilePanel";
 import ChatHeader from "./ChatHeader";
 import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
 import { cn } from "@/lib/utils";
-import { useUIStore } from "@/store/ui-store";
+import { useUIStore } from "@/store/useUiStore";
 
 export default function ChatArea() {
   const { isMobile } = useUIStore();

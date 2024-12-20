@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Chat } from "@/store/chat-store";
+import { Chat } from "@/store/useChatStore";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface ChatItemProps {

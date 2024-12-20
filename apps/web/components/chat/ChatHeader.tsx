@@ -1,7 +1,7 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useChatStore, User } from "@/store/chat-store";
-import { useUIStore } from "@/store/ui-store";
+import { useChatStore, User } from "@/store/useChatStore";
+import { useUIStore } from "@/store/useUiStore";
 import { Avatar } from "@radix-ui/react-avatar";
 import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
 import { useState } from "react";

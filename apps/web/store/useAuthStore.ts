@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { User } from "@/types/types";
 import axios from "axios";
 
@@ -10,11 +10,13 @@ interface AuthStore {
   isLoading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  isInitialized: boolean;
 
   login: (email: string, password: string) => void;
   register: (email: string, password: string, username: string) => void;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  initialize: () => Promise<void>;
 }
 
 const useAuthStore = create<AuthStore>()(
@@ -26,6 +28,7 @@ const useAuthStore = create<AuthStore>()(
       isLoading: false,
       error: null,
       isAuthenticated: false,
+      isInitialized: false,
 
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
@@ -96,10 +99,9 @@ const useAuthStore = create<AuthStore>()(
       },
       logout: async () => {
         try {
-          await axios.post("http://localhost:8000/auth/logout");
+          // await axios.post("http://localhost:8000/auth/logout");
         } finally {
           delete axios.defaults.headers.common["Authorization"];
-
           set({
             user: null,
             accessToken: null,
@@ -131,12 +133,100 @@ const useAuthStore = create<AuthStore>()(
           get().logout();
         }
       },
+
+      initialize: async () => {
+        // set({ isLoading: true });
+        // const { accessToken, refreshToken } = get();
+        // if (!accessToken) {
+        //   set({ isLoading: false });
+        //   return;
+        // }
+
+        // try {
+        //   // const { accessToken, refreshToken } = JSON.parse(tokens);
+        //   // console.log(accessToken);
+        //   const response = await axios.get(
+        //     "http://localhost:8000/auth/verify",
+        //     {
+        //       headers: {
+        //         Authorization: `Bearer ${accessToken}`,
+        //         "Content-Type": "application/json",
+        //       },
+        //     }
+        //   );
+
+        //   set({
+        //     accessToken,
+        //     refreshToken,
+        //     user: response.data.user,
+        //     isAuthenticated: true,
+        //     error: null,
+        //   });
+
+        //   axios.defaults.headers.common["Authorization"] =
+        //     `Bearer ${accessToken}`;
+        // } catch (error) {
+        //   localStorage.removeItem("auth-storage");
+        //   set({
+        //     accessToken: null,
+        //     refreshToken: null,
+        //     user: null,
+        //     isAuthenticated: false,
+        //     error: "",
+        //   });
+        // }
+
+        try {
+          const { accessToken, refreshToken } = get();
+          if (!accessToken) {
+            set({ isLoading: false });
+          }
+
+          const response = await axios.get(
+            "http://localhost:8000/auth/verify",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.data) {
+            set({
+              accessToken,
+              refreshToken,
+              user: response.data.user,
+              isAuthenticated: true,
+              error: null,
+              isLoading: false,
+            });
+          } else {
+            set({
+              user: null,
+              accessToken: null,
+              refreshToken: null,
+              isLoading: false,
+              isAuthenticated: false,
+            });
+          }
+        } catch (error) {
+          set({
+            user: null,
+            accessToken: null,
+            refreshToken: null,
+            isLoading: false,
+          });
+        }
+      },
     }),
     {
       name: "auth-storage",
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
       }),
     }
   )

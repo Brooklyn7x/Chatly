@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useUIStore } from "@/store/ui-store";
+import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
 import { Edit2, User } from "lucide-react";
 import { ChatList } from "../chat/ChatList";
 import { SidebarHeader } from "./SidebarHeader";
-import { useChatStore } from "@/store/chat-store";
+import { useChatStore } from "@/store/useChatStore";
 export default function SideBar() {
   const { isMobile } = useUIStore();
   const { selectedChatId } = useChatStore();

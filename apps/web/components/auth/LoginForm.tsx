@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import useAuthStore from "@/store/auth-store";
+import useAuthStore from "@/store/useAuthStore";
 import AuthButton from "./AuthButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,18 +12,20 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ showSignUp }: LoginFormProps) {
+  const router = useRouter();
+
   const [data, setData] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const router = useRouter();
-  const { login } = useAuthStore();
+
+  const { login, isLoading, error } = useAuthStore();
   const handleSubmit = async () => {
     try {
       await login(data.email, data.password);
       router.push("/");
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
     }
   };
@@ -59,10 +63,14 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
               }))
             }
           />
+
+          {error ? (
+            <p className="text-sm text-red-500 text-center">{error}</p>
+          ) : null}
         </div>
 
         <Button className="mt-5 h-12" onClick={handleSubmit}>
-          LOGIN
+          {isLoading ? "Signing in..." : "Sign in"}
         </Button>
         <AuthButton
           onClick={() => showSignUp()}

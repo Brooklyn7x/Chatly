@@ -4,6 +4,7 @@ import { AuthService } from "../services/auth.service";
 import { UserService } from "../services/user.service";
 import { LoginDTO } from "../types/auth.types";
 import { z } from "zod";
+import { error } from "console";
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -122,13 +123,45 @@ export class AuthController extends BaseController {
     try {
       const refreshToken = req.cookies.refreshToken;
       const userId = req.user!.id;
-
       await this.authService.logout(userId, refreshToken);
       res.clearCookie("refreshToken");
       res.json({ message: "Logged out successfully" });
     } catch (error) {
       this.logger.error("Logout error:", error);
       res.status(500).json({ error: "Logout failed" });
+    }
+  };
+
+  verify = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        res.status(401).json({
+          success: false,
+          error: "Token not provided",
+        });
+        return;
+      }
+
+      const result = await this.authService.verify(token);
+      if (!result.success) {
+        res.status(401).json({
+          success: false,
+          error: result.error,
+        });
+        return;
+      }
+
+      res.json({
+        success: true,
+        data: result.data,
+      });
+    } catch (error) {
+      this.logger.error("Verifying  error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Token not found",
+      });
     }
   };
 }

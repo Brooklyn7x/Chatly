@@ -1,0 +1,17 @@
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"error":"Cannot read properties of undefined (reading 'refreshToken')","level":"error","message":"Logout error:","service":"UserController","stack":"TypeError: Cannot read properties of undefined (reading 'refreshToken')\n    at AuthController.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:116:50)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:4:12)\n    at AuthController.logout (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:114:37)\n    at Layer.handle [as handle_request] (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/layer.js:95:5)","timestamp":"2024-12-21 00:48:09"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}

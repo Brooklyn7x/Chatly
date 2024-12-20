@@ -1,6 +1,6 @@
-import { useChatStore } from "@/store/chat-store";
+import { useChatStore } from "@/store/useChatStore";
 import { ChatItem } from "./ChatItem";
-import { Chat } from "@/store/chat-store";
+import { Chat } from "@/store/useChatStore";
 interface ChatListProps {
   chats: Chat[];
 }

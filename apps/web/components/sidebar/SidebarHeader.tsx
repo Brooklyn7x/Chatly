@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
-import { Menu, Search } from "lucide-react";
+import { LogOut, Menu, Search } from "lucide-react";
 import { useState } from "react";
 import { MenuItem } from "../interface/MenuItem";
+import useAuthStore from "@/store/useAuthStore";
+import useAuth from "@/hooks/useAuth";
 
 interface SidebarHeaderProps {
   onSetSearchQuery: (query: string) => void;
@@ -13,6 +15,10 @@ export function SidebarHeader({
   onSetSearchQuery,
 }: SidebarHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <div className="h-16 px-4 border-b flex items-center gap-2">
       <button
@@ -47,9 +53,7 @@ export function SidebarHeader({
               : "animate-[slideOut_0.3s_ease-in_forwards]"
           )}
         >
-          {Array.from({ length: 4 }).map((item, index) => (
-            <MenuItem label="Saved Message" />
-          ))}
+          <MenuItem icon={<LogOut />} onClick={handleLogout} label="Logout" />
         </div>
       )}
     </div>

@@ -1,25 +1,23 @@
-import useAuthStore from "@/store/auth-store";
+import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const useAuth = () => {
   const router = useRouter();
-  const { isAuthenticated, user, login, logout, error, isLoading } =
-    useAuthStore();
+  const { isAuthenticated, user, login, logout, isLoading } = useAuthStore();
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoading) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, isLoading, error]);
+  }, [isAuthenticated, isLoading]);
 
   return {
-    isAuthenticated,
     user,
     login,
     logout,
-    error,
     isLoading,
+    isAuthenticated,
   };
 };
 

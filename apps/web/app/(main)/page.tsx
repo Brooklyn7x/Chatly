@@ -1,9 +1,9 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { useUIStore } from "@/store/ui-store";
+import { useUIStore } from "@/store/useUiStore";
 import SideBar from "../../components/sidebar/Sidebar";
 import ChatArea from "../../components/chat/ChatArea";
-import { useChatStore } from "@/store/chat-store";
+import { useChatStore } from "@/store/useChatStore";
 
 export default function MainLayout() {
   const { isMobile, setIsMobile } = useUIStore();
