@@ -1,8 +1,7 @@
-import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useChatStore, User } from "@/store/useChatStore";
-import { useUIStore } from "@/store/useUiStore";
-import { Avatar } from "@radix-ui/react-avatar";
+import { useChatStore } from "@/store/useChatStore";
+import { User } from "@/types";
 import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
 import { useState } from "react";
 
@@ -12,7 +11,7 @@ interface ChatHeaderProps {
 }
 
 export default function ChatHeader({ onProfileClick, user }: ChatHeaderProps) {
-  const { selectChat, selectedChatId } = useChatStore();
+  const { setSelectChat, selectedChatId } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -20,7 +19,7 @@ export default function ChatHeader({ onProfileClick, user }: ChatHeaderProps) {
       <div className="flex  items-center gap-4">
         {selectedChatId && (
           <button
-            onClick={() => useChatStore.getState().selectChat(null)}
+            onClick={() => useChatStore.getState().setSelectChat(null)}
             className="md:hidden p-2 rounded-full border bg-muted/30"
           >
             <ArrowLeft className="h-5 w-5" />

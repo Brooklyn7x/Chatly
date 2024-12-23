@@ -1,5 +1,5 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Message } from "@/store/useChatStore";
+import { Message } from "@/types";
 import { Avatar } from "@radix-ui/react-avatar";
 import { CheckCheck } from "lucide-react";
 interface MessageListProps {

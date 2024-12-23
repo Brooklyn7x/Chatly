@@ -7,7 +7,7 @@ const MessageSchema = new Schema(
   {
     conversationId: {
       type: Schema.Types.ObjectId,
-      ref: "conversations",
+      ref: "Conversation",
       required: true,
       index: true,
     },
@@ -101,6 +101,6 @@ MessageSchema.index({ mentions: 1 });
 MessageSchema.index({ createdAt: -1 });
 
 export const MessageModel = mongoose.model<MessageDocument>(
-  "message",
+  "Message",
   MessageSchema
 );

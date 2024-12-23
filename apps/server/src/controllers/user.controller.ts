@@ -14,7 +14,7 @@ export class UserController extends BaseController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const userId = req.params.userId || req.user!.id;
+    const userId = req.params.userId || req.user!._id;
 
     await this.handleRequest(req, res, async () => {
       const result = await this.userService.getUserById(userId);

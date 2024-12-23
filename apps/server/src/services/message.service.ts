@@ -1,7 +1,4 @@
 import Redis from "ioredis";
-import { SocketService } from "./socket.service";
-import Logger from "../utils/logger";
-import { config } from "../config/config";
 import { DatabaseService } from "./database.service";
 import {
   CreateMessageDTO,
@@ -9,7 +6,7 @@ import {
   MessageStatus,
   MessageType,
 } from "../types/message";
-import { ServiceResponse } from "../types/common/service-respone";
+import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./base.service";
 
 export class MessageService extends BaseService {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/useUserStore";
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);

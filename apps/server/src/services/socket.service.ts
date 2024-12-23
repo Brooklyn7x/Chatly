@@ -3,7 +3,6 @@ import { AuthService } from "./auth.service";
 import { UserService } from "./user.service";
 import { MessageService } from "./message.service";
 import { UserStatus } from "../types/user.types";
-import Logger from "../utils/logger";
 import { io } from "../utils/socket";
 import { BaseService } from "./base.service";
 
@@ -57,35 +56,12 @@ export class SocketService extends BaseService {
     }
   }
 
-  private async handleConnection(socket: Socket): Promise<void> {
-    const userId = socket.data.userId;
-
-    try {
-      socket.join(`user:${userId}`);
-
-      await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
-
-      this.setupChatHandlers(socket);
-      this.setupTypingHandlers(socket);
-
-      socket.on("disconnect", async () => {
-        await this.handleDisconnect(socket);
-      });
-
-      this.logger.info(`User ${userId} connected`);
-    } catch (error) {
-      this.logger.error(`Connection error for user ${userId}:`, error);
-    }
-  }
-
   private async handleSocketConnection(socket: Socket) {
     const userId = socket.data.userId;
 
-    // Implement connection tracking
     this.logger.info(`Socket Connection Attempt: ${userId}`);
 
     try {
-      // Consolidated connection logic
       await this.initializeUserConnection(socket);
     } catch (error) {
       this.logger.error(
@@ -99,7 +75,6 @@ export class SocketService extends BaseService {
   private async initializeUserConnection(socket: Socket) {
     const userId = socket.data.userId;
 
-    // Atomic connection setup
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
     socket.join(`user:${userId}`);
 
@@ -135,33 +110,17 @@ export class SocketService extends BaseService {
         });
       }
     });
-
-    // socket.on("message:status", async (data) => {
-    //   try {
-    //     await this.messageService.updateMessgeStatus(
-    //       data.messageId,
-    //       data.status
-    //     );
-
-    //     io.to(`user:${data.senderId}`).emit("message:status_update", {
-    //       messageId: data.messageId,
-    //       status: data.status,
-    //     });
-    //   } catch (error) {
-    //     this.logger.error("Status update error:", error);
-    //   }
-    // });
   }
 
   private setupTypingHandlers(socket: Socket): void {
-    socket.on("typing:start", async (data) => {
+    socket.on("typing:start", (data) => {
       io.to(`user:${data.receiverId}`).emit("typing:update", {
         userId: socket.data.userId,
         isTyping: true,
       });
     });
 
-    socket.on("typing:stop", async (data) => {
+    socket.on("typing:stop", (data) => {
       io.to(`user:${data.receiverId}`).emit("typing:update", {
         userId: socket.data.userId,
         isTyping: false,

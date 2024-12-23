@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Chat } from "@/store/useChatStore";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Chat } from "@/types";
 
 interface ChatItemProps {
   isActive: boolean;

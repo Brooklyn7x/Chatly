@@ -1,78 +1,68 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { Chat, Message, User } from "@/types/types";
+import { User } from "@/types";
+
+interface Chat {
+  id: string;
+  participants: User[];
+  isGroup: boolean;
+  groupName: string | null;
+  lastMessage: any;
+  unreadCount: number;
+}
 
 interface ChatStore {
-  currentUser: User | null;
   chats: Chat[];
   selectedChatId: string | null;
-
-  setCurrentUser: (user: User) => void;
-  selectChat: (chatId: string) => void;
-  sendMessage: (chatId: string, content: string) => void;
-  updateMessageStatus: (
-    chatId: string,
-    messageId: string,
-    status: Message["status"]
-  ) => void;
+  isLoading: boolean;
+  error: string | null;
+  getChat: (chatId: string) => Chat | undefined;
+  createChat: (participants: User[]) => void;
+  deleteChat: (chatId: string) => void;
+  setSelectChat: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatStore>()(
   devtools(
     persist(
       (set, get) => ({
-        currentUser: null,
         chats: [],
         selectedChatId: null,
-        sidebarOpen: false,
+        isLoading: false,
+        error: null,
 
-        setCurrentUser: (user) => set({ currentUser: user }),
+        getChat: (chatId) => {
+          return get().chats.find((chat) => chat.id === chatId);
+        },
 
-        selectChat: (chatId) => {
+        createChat: (participants) => {
+          set((state) => ({
+            chats: [
+              ...state.chats,
+              {
+                id: Math.random().toString(36).substring(2, 9),
+                participants,
+                isGroup: participants.length > 1,
+                groupName: participants.length > 1 ? "Group" : null,
+                lastMessage: null,
+                unreadCount: 0,
+              },
+            ],
+          }));
+        },
+
+        deleteChat: (chatId) => {
+          set((state) => ({
+            chats: state.chats.filter((chat) => chat.id !== chatId),
+          }));
+        },
+
+        setSelectChat: (chatId) => {
           set({ selectedChatId: chatId });
 
           set((state) => ({
             chats: state.chats.map((chat) =>
               chat.id === chatId ? { ...chat, unreadCount: 0 } : chat
-            ),
-          }));
-        },
-
-        sendMessage: (chatId, content) => {
-          const newMessage = {
-            id: Date.now().toString(),
-            content,
-            senderId: get().currentUser?.id || "",
-            timestamp: new Date().toISOString(),
-            status: "sent" as const,
-          };
-
-          set((state) => ({
-            chats: state.chats.map((chat) =>
-              chat.id === chatId
-                ? {
-                    ...chat,
-                    messages: [...chat.messages, newMessage],
-                    lastMessage: newMessage,
-                  }
-                : chat
-            ),
-          }));
-        },
-
-        updateMessageStatus: (chatId, messageId, status) => {
-          set((state) => ({
-            chats: state.chats.map((chat) =>
-              chat.id === chatId
-                ? {
-                    ...chat,
-                    message: chat.messages.map((message) =>
-                      message.id === messageId
-                        ? { ...message, status }
-                        : message
-                    ),
-                  }
-                : chat
             ),
           }));
         },

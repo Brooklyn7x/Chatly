@@ -1,4 +1,4 @@
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

@@ -1,7 +1,6 @@
 import { Message } from "./message";
 
 export interface Conversation {
-  id: string;
   type: ConversationType;
   participants: Participant[];
   lastMessage?: Message;
@@ -34,7 +33,7 @@ export enum ParticipantRole {
 export interface ConversationMetadata {
   title?: string;
   description?: string;
-  // avatar?: string;
+  avatar?: string;
   isArchived?: boolean;
   isPinned?: boolean;
 }

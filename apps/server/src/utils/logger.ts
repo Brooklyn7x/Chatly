@@ -2,7 +2,7 @@ import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
 
-class Logger {
+export class Logger {
   private logger: winston.Logger;
 
   constructor(service?: string) {
@@ -79,4 +79,4 @@ class Logger {
   }
 }
 
-export default Logger;
+

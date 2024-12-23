@@ -8,8 +8,8 @@ import {
   UserProfile,
   UserStatus,
 } from "../types/user.types";
-import Logger from "../utils/logger";
-import { ServiceResponse } from "../types/common/service-respone";
+import { Logger } from "../utils/logger";
+import { ServiceResponse } from "../types/service-respone";
 const bcrypt = require("bcrypt");
 
 export class UserService {

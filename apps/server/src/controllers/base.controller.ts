@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Logger from "../utils/logger";
+import { Logger } from "../utils/logger";
 
 export abstract class BaseController {
   protected logger: Logger;

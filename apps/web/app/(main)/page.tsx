@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import SideBar from "../../components/sidebar/Sidebar";
 import ChatArea from "../../components/chat/ChatArea";

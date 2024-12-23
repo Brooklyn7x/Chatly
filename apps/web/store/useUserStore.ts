@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User } from "@/types/types";
+import { User } from "@/types";
 import axios from "axios";
 
 interface AuthStore {
@@ -11,7 +11,6 @@ interface AuthStore {
   error: string | null;
   isAuthenticated: boolean;
   isInitialized: boolean;
-
   login: (email: string, password: string) => void;
   register: (email: string, password: string, username: string) => void;
   logout: () => Promise<void>;
@@ -41,12 +40,15 @@ const useAuthStore = create<AuthStore>()(
             }
           );
           const { user, accessToken, refreshToken } = response.data;
+          console.log(user.data, "user");
+
+          console.log(response.data);
 
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${accessToken}`;
 
           set({
-            user,
+            user: user.data,
             accessToken,
             refreshToken,
             isAuthenticated: true,
@@ -81,7 +83,7 @@ const useAuthStore = create<AuthStore>()(
             `Bearer ${accessToken}`;
 
           set({
-            user,
+            user: user.data,
             accessToken,
             refreshToken,
             isAuthenticated: true,
@@ -128,54 +130,17 @@ const useAuthStore = create<AuthStore>()(
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${newAccessToken}`;
 
-          set({ accessToken: newAccessToken });
+          set({
+            accessToken: newAccessToken,
+            user: response.data.user.data,
+            isAuthenticated: true,
+          });
         } catch (error) {
           get().logout();
         }
       },
 
       initialize: async () => {
-        // set({ isLoading: true });
-        // const { accessToken, refreshToken } = get();
-        // if (!accessToken) {
-        //   set({ isLoading: false });
-        //   return;
-        // }
-
-        // try {
-        //   // const { accessToken, refreshToken } = JSON.parse(tokens);
-        //   // console.log(accessToken);
-        //   const response = await axios.get(
-        //     "http://localhost:8000/auth/verify",
-        //     {
-        //       headers: {
-        //         Authorization: `Bearer ${accessToken}`,
-        //         "Content-Type": "application/json",
-        //       },
-        //     }
-        //   );
-
-        //   set({
-        //     accessToken,
-        //     refreshToken,
-        //     user: response.data.user,
-        //     isAuthenticated: true,
-        //     error: null,
-        //   });
-
-        //   axios.defaults.headers.common["Authorization"] =
-        //     `Bearer ${accessToken}`;
-        // } catch (error) {
-        //   localStorage.removeItem("auth-storage");
-        //   set({
-        //     accessToken: null,
-        //     refreshToken: null,
-        //     user: null,
-        //     isAuthenticated: false,
-        //     error: "",
-        //   });
-        // }
-
         try {
           const { accessToken, refreshToken } = get();
           if (!accessToken) {
@@ -196,7 +161,7 @@ const useAuthStore = create<AuthStore>()(
             set({
               accessToken,
               refreshToken,
-              user: response.data.user,
+              user: response.data.user.data,
               isAuthenticated: true,
               error: null,
               isLoading: false,

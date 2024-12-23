@@ -32,7 +32,7 @@ export class MessageController extends BaseController {
       // }
 
       const result = await this.messageService.createMessage(
-        req.user!.id,
+        req.user!._id,
         req.body as CreateMessageDTO
       );
       if (!result.success) {

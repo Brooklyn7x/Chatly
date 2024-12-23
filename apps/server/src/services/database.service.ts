@@ -5,7 +5,7 @@ import mongoose, {
   Model,
   FilterQuery,
 } from "mongoose";
-import Logger from "../utils/logger";
+import { Logger } from "../utils/logger";
 import { config } from "../config/config";
 
 export class DatabaseService {
@@ -19,6 +19,7 @@ export class DatabaseService {
     this.logger = new Logger("DatabaseService");
     this.initializeConnection();
     this.models = new Map();
+    // mongoose.set('maxListeners', 20); // Increase max listeners
   }
 
   private async initializeConnection(): Promise<void> {

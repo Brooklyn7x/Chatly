@@ -1,26 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
+import { useUIStore } from "@/store/useUiStore";
+import { useMessageStore } from "@/store/useMessageStore";
 import { UserProfilePanel } from "../interface/UserProfilePanel";
 import ChatHeader from "./ChatHeader";
 import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
-import { cn } from "@/lib/utils";
-import { useUIStore } from "@/store/useUiStore";
+import useAuth from "@/hooks/useAuth";
+import socketService from "@/services/socket";
+import useAuthStore from "@/store/useUserStore";
 
 export default function ChatArea() {
-  const { isMobile } = useUIStore();
-  const { selectedChatId, chats, sendMessage } = useChatStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { user } = useAuth();
+  const { isMobile } = useUIStore();
+  const { selectedChatId, chats } = useChatStore();
+  const { sendMessage, getMessages } = useMessageStore();
+  console.log(user?._id, "user?.id");
   const currentChat = chats.find((chat) => chat.id === selectedChatId);
+  const chatMessages = selectedChatId ? getMessages(selectedChatId) : [];
+  const token = useAuthStore((state) => state.accessToken) || ``;
+  useEffect(() => {
+    socketService.connect(token);
+    socketService.onMessageReceived((message) => {
+      console.log("Message received:", message);
+    });
+    socketService.onTypingUpdate((data) => {
+      console.log("Typing update:", data);
+    });
+
+    return () => {
+      socketService.disconnect();
+    };
+  }, [token, user?._id]);
 
   const handleSendMessage = async (content: string, attachments?: File[]) => {
     if (!selectedChatId || !content.trim()) return;
     try {
-      await sendMessage(selectedChatId, content);
+      await sendMessage(selectedChatId, content, "text");
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
+
   return (
     <div
       className={cn(
@@ -35,10 +58,7 @@ export default function ChatArea() {
         user={currentChat?.participants[0]}
       />
 
-      <MessageList
-        messages={currentChat?.messages}
-        currentUserId={useChatStore.getState().currentUser?.id || ""}
-      />
+      <MessageList messages={chatMessages} currentUserId={user?.id || ""} />
 
       <MessageInput onSendMessage={handleSendMessage} />
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AuthButton from "./AuthButton";
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 
 interface SignUpFormProps {

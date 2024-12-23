@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { LogOut, Menu, Search } from "lucide-react";
 import { useState } from "react";
 import { MenuItem } from "../interface/MenuItem";
-import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/useUserStore";
 import useAuth from "@/hooks/useAuth";
 
 interface SidebarHeaderProps {
