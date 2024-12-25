@@ -2,11 +2,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface Message {
-  id: string;
-  chatId: string;
+  _id: string;
+  conversationId: string;
   content: string;
   type: "text" | "image" | "video" | "audio";
   senderId: string;
+  receiverId: string;
   timestamp: string;
   status: "sent" | "delivered" | "read";
 }
@@ -16,14 +17,10 @@ interface MessageStore {
   isLoading: boolean;
   error: string | null;
   getMessages: (chatId: string) => Message[];
-  sendMessage: (
-    chatId: string,
-    content: string,
-    type?: Message["type"]
-  ) => void;
   deleteMessage: (messageId: string) => void;
   updateMessageStatus: (messageId: string, status: Message["status"]) => void;
   markMessagesAsRead: (chatId: string) => void;
+  addMessage: (message: Message) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
@@ -34,37 +31,47 @@ export const useMessageStore = create<MessageStore>()(
       error: null,
 
       getMessages: (chatId) => {
-        return get().messages.filter((message) => message.chatId === chatId);
+        return get().messages.filter(
+          (message) => message.conversationId === chatId
+        );
       },
 
-      sendMessage: async (chatId, content, type = "text") => {
-        try {
-          set({ isLoading: true, error: null });
+      addMessage: (message) => {
+        set((state) => {
+          const messageExists = state.messages.some(
+            (m) => m._id === message._id
+          );
 
-          const newMessage: Message = {
-            id: Date.now().toString(),
-            chatId,
-            content,
-            type,
-            senderId: "user-id",
-            timestamp: new Date().toISOString(),
-            status: "sent",
+          if (messageExists) {
+            return state;
+          }
+
+          const conversationMessages = state.messages.filter(
+            (m) => m.conversationId === message.conversationId
+          );
+
+          const updatedConversationMessages = [
+            ...conversationMessages,
+            message,
+          ].sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+
+          const otherMessages = state.messages.filter(
+            (m) => m.conversationId !== message.conversationId
+          );
+
+          return {
+            messages: [...otherMessages, ...updatedConversationMessages],
           };
-
-          set((state) => ({
-            messages: [...state.messages, newMessage],
-            isLoading: false,
-          }));
-          
-        } catch (error) {
-          set({ error: "Failed to send message", isLoading: false });
-        }
+        });
       },
 
       deleteMessage: (messageId) => {
         set((state) => ({
           messages: state.messages.filter(
-            (message) => message.id !== messageId
+            (message) => message._id !== messageId
           ),
         }));
       },
@@ -72,7 +79,7 @@ export const useMessageStore = create<MessageStore>()(
       updateMessageStatus: (messageId, status) => {
         set((state) => ({
           messages: state.messages.map((message) =>
-            message.id === messageId ? { ...message, status } : message
+            message._id === messageId ? { ...message, status } : message
           ),
         }));
       },
@@ -80,7 +87,9 @@ export const useMessageStore = create<MessageStore>()(
       markMessagesAsRead: (chatId) => {
         set((state) => ({
           messages: state.messages.map((message) =>
-            message.chatId === chatId ? { ...message, status: "read" } : message
+            message.conversationId === chatId
+              ? { ...message, status: "read" }
+              : message
           ),
         }));
       },

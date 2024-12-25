@@ -1,17 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
-import { User } from "@/types";
+import { Chat, User } from "@/types";
 import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
 import { useState } from "react";
 
 interface ChatHeaderProps {
   onProfileClick: () => void;
-  user: User | undefined;
+  chat: any;
 }
 
-export default function ChatHeader({ onProfileClick, user }: ChatHeaderProps) {
-  const { setSelectChat, selectedChatId } = useChatStore();
+export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
+  const { selectedChatId } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -33,9 +33,16 @@ export default function ChatHeader({ onProfileClick, user }: ChatHeaderProps) {
           </Avatar>
 
           <div className="flex flex-col">
-            <h2 className="text-sm font-semibold">{user?.name || "Shubham"}</h2>
+            <h2 className="text-sm font-semibold">
+              {/* {chat?.type === "group"
+                ? chat.metadata.title
+                : chat.participants[0]?.username} */}
+              header
+            </h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {user?.status === "offline" ? "online" : "offline"}
+              {/* {chat?.type === "group"
+                ? chat.participants.length
+                : chat.participants[0]?.username} */}
             </span>
           </div>
         </button>

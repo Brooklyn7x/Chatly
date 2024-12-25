@@ -45,7 +45,9 @@ class SocketService {
 
   onMessageReceived(callback: (message: Message) => void): void {
     if (this.socket) {
-      this.socket.on("message:new", callback);
+      this.socket.on("message:new", (message: Message) => {
+        callback(message);
+      });
     }
   }
 
@@ -53,12 +55,14 @@ class SocketService {
     if (this.socket) {
       this.socket.emit("typing:start", { receiverId });
     }
+    console.log(receiverId, "start typing...");
   }
 
   stopTyping(receiverId: string): void {
     if (this.socket) {
       this.socket.emit("typing:stop", { receiverId });
     }
+    console.log(receiverId, "stop typing...");
   }
 
   onTypingUpdate(

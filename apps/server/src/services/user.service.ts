@@ -3,8 +3,6 @@ import { DatabaseService } from "./database.service";
 import {
   CreateUserDTO,
   UpdateUserDTO,
-  User,
-  UserDocument,
   UserProfile,
   UserStatus,
 } from "../types/user.types";

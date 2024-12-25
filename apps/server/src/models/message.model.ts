@@ -17,6 +17,12 @@ const MessageSchema = new Schema(
       required: true,
       index: true,
     },
+    receiverId: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+      index: true,
+    },
     content: {
       type: String,
       required: true,
@@ -31,7 +37,7 @@ const MessageSchema = new Schema(
     },
     replyTo: {
       type: Schema.Types.ObjectId,
-      ref: "message",
+      ref: "Message",
     },
     mentions: [
       {
@@ -39,22 +45,11 @@ const MessageSchema = new Schema(
         ref: "user",
       },
     ],
-    attachments: [
-      {
-        type: {
-          type: String,
-          required: true,
-        },
-        url: {
-          type: String,
-          required: true,
-        },
-        name: String,
-        size: Number,
-        metadata: Schema.Types.Mixed,
-      },
-    ],
-    readBy: [
+    timestamp: {
+      type: Date,
+      default: Date.now,
+    },
+    readReceipts: [
       {
         userId: {
           type: Schema.Types.ObjectId,
@@ -78,20 +73,20 @@ const MessageSchema = new Schema(
         },
       },
     ],
-    isEdited: {
-      type: Boolean,
-      default: false,
-    },
-    editHistory: [
+    attachments: [
       {
-        content: String,
-        editedAt: Date,
+        url: {
+          type: String,
+          required: true,
+        },
+        name: String,
+        size: Number,
+        metadata: Schema.Types.Mixed,
       },
     ],
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
   }
 );
 

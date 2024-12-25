@@ -6,12 +6,14 @@ import SignUpForm from "./SignUpForm";
 export default function AuthContainer() {
   const [showSignUp, setShowSignUp] = useState(false);
 
+  const toggleForm = () => setShowSignUp((prev) => !prev);
+
   return (
-    <div className="min-h-dvh flex items-center justify-center ">
+    <div className="min-h-dvh flex items-center justify-center">
       {showSignUp ? (
-        <SignUpForm showLogin={() => setShowSignUp(false)} />
+        <SignUpForm showLogin={toggleForm} />
       ) : (
-        <LoginForm showSignUp={() => setShowSignUp(true)} />
+        <LoginForm showSignUp={toggleForm} />
       )}
     </div>
   );

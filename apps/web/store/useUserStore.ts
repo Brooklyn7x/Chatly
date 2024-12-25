@@ -40,9 +40,6 @@ const useAuthStore = create<AuthStore>()(
             }
           );
           const { user, accessToken, refreshToken } = response.data;
-          console.log(user.data, "user");
-
-          console.log(response.data);
 
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${accessToken}`;
@@ -56,7 +53,7 @@ const useAuthStore = create<AuthStore>()(
           });
         } catch (error: any) {
           set({
-            error: error.response?.data?.message || "Login failed",
+            error: error.response?.data?.error || "Login failed",
             isAuthenticated: false,
           });
           throw error;
@@ -124,8 +121,9 @@ const useAuthStore = create<AuthStore>()(
               refreshToken,
             }
           );
-
           const { accessToken: newAccessToken } = response.data;
+
+          console.log(response.data, "refresh");
 
           axios.defaults.headers.common["Authorization"] =
             `Bearer ${newAccessToken}`;

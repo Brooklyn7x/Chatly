@@ -8,6 +8,13 @@ interface ChatItemProps {
   chat: Chat;
 }
 
+const formattedDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
 export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
   return (
     <div
@@ -24,21 +31,25 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
             <AvatarImage />
             <AvatarFallback>Cn</AvatarFallback>
           </Avatar>
-          {chat.participants[0]?.status === "online" && (
+          {/* {chat.participants[0]?.status === "online" && (
             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2" />
-          )}
+          )} */}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-baseline">
             <h3 className="font-medium truncate text-md">
-              {chat.participants[0]?.name}
+              {chat.type === "private"
+                ? chat.participants[0]?.username
+                : chat.metadata.title}
             </h3>
-            <span className="text-xs text-muted-foreground">{"10 Dec"}</span>
+            <span className="text-xs text-muted-foreground">
+              {formattedDate(chat.createdAt)}
+            </span>
           </div>
 
           <div className="flex justify-between items-baseline mt-1">
             <p className="text-sm text-muted-foreground truncate">
-              {chat.lastMessage?.content}
+              {chat.lastMessage?.content || "No messages"}
             </p>
             <span className="ml-2 bg-primary text-primary-foreground rounded-full text-xs h-5 w-5 flex items-center justify-center ">
               {chat.unreadCount}

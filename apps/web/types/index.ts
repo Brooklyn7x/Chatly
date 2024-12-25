@@ -20,7 +20,17 @@ export interface Chat {
   participants: User[];
   messages: Message[];
   unreadCount: number;
-  isGroup?: boolean;
+  type: "private" | "group";
   groupName?: string;
   lastMessage?: Message;
+  metadata: ConversationMetadata;
+  createdAt: string;
+}
+
+interface ConversationMetadata {
+  avatar?: string;
+  title?: string;
+  description?: string;
+  isArchived?: boolean;
+  isPinned?: boolean;
 }

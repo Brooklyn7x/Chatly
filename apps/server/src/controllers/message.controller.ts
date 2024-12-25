@@ -15,6 +15,8 @@ export class MessageController extends BaseController {
     this.conversationService = new ConversationService();
     this.socket = new SocketService();
     this.messageService = new MessageService();
+    this.sendMessage = this.sendMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   async sendMessage(req: Request, res: Response): Promise<void> {
@@ -30,11 +32,12 @@ export class MessageController extends BaseController {
       //     });
       //     return;
       // }
-
-      const result = await this.messageService.createMessage(
+      console.log("Creating message:", req.body);
+      const result = await this.messageService.sendMessage(
         req.user!._id,
         req.body as CreateMessageDTO
       );
+
       if (!result.success) {
         res.status(400).json(result);
         return;
@@ -43,6 +46,7 @@ export class MessageController extends BaseController {
       await this.socket.broadcastMessage("newMessage", result.data);
       res.status(201).json(result);
     } catch (error) {
+      console.log("Error creating message:", error);
       res.status(500).json({
         success: false,
         error: "Failed to send message",
@@ -50,20 +54,18 @@ export class MessageController extends BaseController {
     }
   }
 
-  async getMessage(req: Request, res: Response): Promise<void> {
+  async getMessages(req: Request, res: Response): Promise<void> {
     try {
       const conversationId = req.params.conversationId;
       const limit = parseInt(req.query.limit as string) || 20;
       const before = req.query.before as string;
-
-      //conversationAccess
 
       const result = await this.messageService.getMessages(
         conversationId,
         limit,
         before ? new Date(before) : undefined
       );
-      res.json(result);
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -73,22 +75,24 @@ export class MessageController extends BaseController {
   }
 
   async deleteMessage(req: Request, res: Response): Promise<void> {
-    // try {
-    //   const result = await this.messageService.deleteMessage(
-    //     req.params.messageId,
-    //     req.user!.id
-    //   );
-    //   if (!result.success) {
-    //     res.status(404).json(result);
-    //     return;
-    //   }
-    //   res.json(result);
-    // } catch (error) {
-    //   res.status(500).json({
-    //     success: false,
-    //     error: "Failed to delete message",
-    //   });
-    // }
+    try {
+      const result = await this.messageService.deleteMessage(
+        req.params.messageId,
+        req.user!._id
+      );
+
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error) {
+      this.logger.error("Error deleting message:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to delete message",
+      });
+    }
   }
 
   async updateMessage(req: Request, res: Response): Promise<void> {}

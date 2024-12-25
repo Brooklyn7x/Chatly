@@ -12,36 +12,47 @@ import socketService from "@/services/socket";
 import useAuthStore from "@/store/useUserStore";
 
 export default function ChatArea() {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user } = useAuth();
   const { isMobile } = useUIStore();
   const { selectedChatId, chats } = useChatStore();
-  const { sendMessage, getMessages } = useMessageStore();
-  console.log(user?._id, "user?.id");
+  const { getMessages, addMessage } = useMessageStore();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   const currentChat = chats.find((chat) => chat.id === selectedChatId);
   const chatMessages = selectedChatId ? getMessages(selectedChatId) : [];
   const token = useAuthStore((state) => state.accessToken) || ``;
+
   useEffect(() => {
     socketService.connect(token);
     socketService.onMessageReceived((message) => {
-      console.log("Message received:", message);
+      console.log(message);
+      addMessage(message._doc);
     });
     socketService.onTypingUpdate((data) => {
       console.log("Typing update:", data);
     });
-
     return () => {
       socketService.disconnect();
     };
   }, [token, user?._id]);
 
-  const handleSendMessage = async (content: string, attachments?: File[]) => {
-    if (!selectedChatId || !content.trim()) return;
-    try {
-      await sendMessage(selectedChatId, content, "text");
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    }
+  const handleMessage = (content: string) => {
+    const newMessage = {
+      id: Date.now().toString(),
+      senderId: user?._id,
+      receiverId: currentChat?.participants[0]?.userId || "",
+      conversationId: selectedChatId || "",
+      content,
+      type: "text",
+      timestamp: new Date().toISOString(),
+      status: "sent",
+    };
+    socketService.sendMessage(newMessage);
+    addMessage(newMessage);
+  };
+
+  const handleTyping = () => {
+    socketService.startTyping(currentChat?.participants[0]?.userId);
   };
 
   return (
@@ -55,12 +66,12 @@ export default function ChatArea() {
     >
       <ChatHeader
         onProfileClick={() => setIsProfileOpen(!isProfileOpen)}
-        user={currentChat?.participants[0]}
+        chat={currentChat}
       />
 
       <MessageList messages={chatMessages} currentUserId={user?.id || ""} />
 
-      <MessageInput onSendMessage={handleSendMessage} />
+      <MessageInput onSendMessage={handleMessage} onTyping={handleTyping} />
 
       {isProfileOpen && (
         <UserProfilePanel

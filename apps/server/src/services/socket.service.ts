@@ -49,6 +49,7 @@ export class SocketService extends BaseService {
       }
 
       socket.data.userId = validation.data!.userId;
+      console.log("Authenticated user:", socket.data.userId);
       next();
     } catch (error) {
       this.logger.error("Socket Authentication Error", error);
@@ -58,7 +59,6 @@ export class SocketService extends BaseService {
 
   private async handleSocketConnection(socket: Socket) {
     const userId = socket.data.userId;
-
     this.logger.info(`Socket Connection Attempt: ${userId}`);
 
     try {
@@ -74,30 +74,33 @@ export class SocketService extends BaseService {
 
   private async initializeUserConnection(socket: Socket) {
     const userId = socket.data.userId;
-
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
     socket.join(`user:${userId}`);
-
     this.setupChatHandlers(socket);
     this.setupTypingHandlers(socket);
-
     socket.on("disconnect", () => this.handleDisconnect(socket));
   }
 
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
       try {
-        const result = await this.messageService.createMessage(
+        const result = await this.messageService.sendMessage(
           socket.data.userId,
           data
         );
+
+        console.log("Message sent:", result);
+
         if (result.success) {
           socket.emit("message:sent", {
-            messageId: result.data.id,
+            messageId: result.data._id,
             status: "sent",
           });
 
-          io.to(`user:${data.receiverId}`).emit("message:new", result.data);
+          io.to(`user:${data.receiverId}`).emit("message:new", {
+            ...result.data,
+            id: result.data._id,
+          });
         } else {
           socket.emit("message:error", {
             error: result.error,

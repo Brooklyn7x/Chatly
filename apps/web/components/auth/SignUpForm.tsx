@@ -1,23 +1,39 @@
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import AuthButton from "./AuthButton";
-import useAuthStore from "@/store/useUserStore";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/store/useUserStore";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import AuthButton from "./AuthButton";
+import { Eye, EyeClosed } from "lucide-react";
+import { PasswordToggle } from "./LoginForm";
 
 interface SignUpFormProps {
   showLogin: () => void;
 }
 
-export default function SignUpForm({ showLogin }: SignUpFormProps) {
-  const [data, setData] = useState({
+interface FormData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+const SignUpForm = ({ showLogin }: SignUpFormProps) => {
+  const [data, setData] = useState<FormData>({
     username: "",
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { register } = useAuthStore();
-  const handleSubmit = async () => {
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     try {
       await register(data.email, data.password, data.username);
       router.push("/");
@@ -28,58 +44,47 @@ export default function SignUpForm({ showLogin }: SignUpFormProps) {
 
   return (
     <div className="w-full sm:max-w-sm mx-auto p-4 overflow-hidden">
-      <div className="flex flex-col p-2">
+      <form onSubmit={handleSubmit} className="flex flex-col p-2">
         <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
-
         <div className="space-y-2 mt-10">
           <Input
             type="text"
+            name="username"
             placeholder="Username"
             className="h-12"
             value={data.username}
-            onChange={(e) =>
-              setData((prev) => ({
-                ...prev,
-                username: e.target.value,
-              }))
-            }
+            onChange={handleChange}
           />
           <Input
             type="email"
+            name="email"
             placeholder="Email"
             className="h-12"
             value={data.email}
-            onChange={(e) =>
-              setData((prev) => ({
-                ...prev,
-                email: e.target.value,
-              }))
-            }
+            onChange={handleChange}
           />
-          <Input
-            type="password"
-            placeholder="Password"
-            className="h-12"
-            value={data.password}
-            onChange={(e) =>
-              setData((prev) => ({
-                ...prev,
-                password: e.target.value,
-              }))
-            }
-          />
+          <div className="relative">
+            <Input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              className="h-12"
+              value={data.password}
+              onChange={handleChange}
+            />
+            <PasswordToggle
+              showPassword={showPassword}
+              togglePassword={() => setShowPassword(!showPassword)}
+            />
+          </div>
         </div>
-
-        <Button className="mt-5 h-12" onClick={handleSubmit}>
-          SIGN UP
+        <Button type="submit" className="mt-5 h-12">
+          Sign up
         </Button>
-
-        <AuthButton
-          onClick={() => showLogin()}
-          label="LOGIN"
-          className="mt-2"
-        />
-      </div>
+        <AuthButton onClick={showLogin} label="Sign in" className="mt-2" />
+      </form>
     </div>
   );
-}
+};
+
+export default SignUpForm;

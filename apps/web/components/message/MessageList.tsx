@@ -44,7 +44,7 @@ export default function MessageList({
                   <p className="text-sm">{message.content}</p>
                   <div className="flex items-center justify-end gap-1 mt-1">
                     <span className="text-xs text-muted-foreground">
-                      12:30{" "}
+                      {new Date(message.timestamp).toLocaleTimeString()}
                     </span>
                     <CheckCheck className="h-4 w-4 text-blue-400" />
                   </div>

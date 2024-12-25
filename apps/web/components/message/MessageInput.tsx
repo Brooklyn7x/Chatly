@@ -5,9 +5,13 @@ import { useState } from "react";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
+  onTyping: () => void;
 }
 
-export default function MessageInput({ onSendMessage }: MessageInputProps) {
+export default function MessageInput({
+  onSendMessage,
+  onTyping,
+}: MessageInputProps) {
   const [input, setInput] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachments, setShowAttachment] = useState(false);
@@ -30,7 +34,12 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
           <input
             className="w-full pl-10 pr-10 py-2 rounded-lg border"
             placeholder="Type a message..."
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              if (onTyping) {
+                onTyping();
+              }
+            }}
             value={input}
           />
 

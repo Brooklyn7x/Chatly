@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { User } from "@/types";
+import axios from "axios";
 
 interface Chat {
   id: string;
@@ -16,10 +17,12 @@ interface ChatStore {
   selectedChatId: string | null;
   isLoading: boolean;
   error: string | null;
+  fetchChats: () => void;
   getChat: (chatId: string) => Chat | undefined;
   createChat: (participants: User[]) => void;
   deleteChat: (chatId: string) => void;
   setSelectChat: (chatId: string) => void;
+
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -30,6 +33,30 @@ export const useChatStore = create<ChatStore>()(
         selectedChatId: null,
         isLoading: false,
         error: null,
+
+        fetchChats: async () => {
+          set({ isLoading: true });
+          try {
+            const response = await axios.get(
+              "http://localhost:8000/conversations/user-conversations"
+            );
+            const { data } = response.data;
+
+            const chats = data.map((chat: any) => ({
+              ...chat,
+              unreadCount:
+                typeof chat.unreadCount === "number" ? chat.unreadCount : 0,
+            }));
+            set({ chats: chats, isLoading: false });
+          } catch (error: any) {
+            set({
+              error: error?.response?.data?.error || "Failed to fetch chats",
+              isLoading: false,
+            });
+          } finally {
+            set({ isLoading: false });
+          }
+        },
 
         getChat: (chatId) => {
           return get().chats.find((chat) => chat.id === chatId);
@@ -66,6 +93,8 @@ export const useChatStore = create<ChatStore>()(
             ),
           }));
         },
+
+
       }),
       {
         name: "chat-storage",
