@@ -16,7 +16,6 @@ app.use(
     credentials: true,
   })
 );
-
 const socketService = SocketService.getInstance();
 
 app.get("/health", (req, res) => {
@@ -29,7 +28,6 @@ app.use("/conversations", authenticate, conversationRoutes);
 app.use("/messages", authenticate, messageRoutes);
 
 httpServer.setMaxListeners(20);
-
 httpServer.listen(config.port, () => {
   console.log(`Socket server running on port ${config.port}`);
 });

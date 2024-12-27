@@ -3,8 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Chat } from "@/types";
 
 interface ChatItemProps {
-  isActive: boolean;
-  onClick: () => void;
+  isActive?: boolean;
+  onClick?: () => void;
   chat: Chat;
 }
 
@@ -38,9 +38,9 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-baseline">
             <h3 className="font-medium truncate text-md">
-              {chat.type === "private"
+              {chat?.type === "private"
                 ? chat.participants[0]?.username
-                : chat.metadata.title}
+                : chat?.metadata.title}
             </h3>
             <span className="text-xs text-muted-foreground">
               {formattedDate(chat.createdAt)}
@@ -49,7 +49,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
 
           <div className="flex justify-between items-baseline mt-1">
             <p className="text-sm text-muted-foreground truncate">
-              {chat.lastMessage?.content || "No messages"}
+              {chat?.lastMessage?.content || "No messages"}
             </p>
             <span className="ml-2 bg-primary text-primary-foreground rounded-full text-xs h-5 w-5 flex items-center justify-center ">
               {chat.unreadCount}

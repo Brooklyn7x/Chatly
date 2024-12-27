@@ -6,8 +6,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthGuard>
-      <main className="min-h-dvh bg-background">{children}</main>
-    </AuthGuard>
+    // <AuthGuard>
+    //   <main className="min-h-dvh bg-background">{children}</main>
+    // </AuthGuard>
+    <main className="min-h-dvh bg-background">{children}</main>
   );
 }

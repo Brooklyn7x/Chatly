@@ -1,15 +1,28 @@
-import {  useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
 import { ChatList } from "../chat/ChatList";
 import { SidebarHeader } from "./SidebarHeader";
 import { useChatStore } from "@/store/useChatStore";
 import { SidebarMenu } from "./SidebarMenu";
+import { ContactModal } from "./ContactModal";
+import { GroupModal } from "./GroupModal";
+
+
 export default function SideBar() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+
   const { isMobile } = useUIStore();
   const { selectedChatId, createChat, fetchChats } = useChatStore();
-  const [searchQuery, setSearchQuery] = useState("");
   const chats = useChatStore((state) => state.chats);
+
+  useEffect(() => {
+    fetchChats();
+  }, [fetchChats]);
+
   const filteredChats = useMemo(() => {
     if (!searchQuery.trim()) return chats;
 
@@ -17,7 +30,7 @@ export default function SideBar() {
       const searchTerm = searchQuery.toLowerCase();
       const chatName = chat.isGroup
         ? chat.groupName?.toLowerCase()
-        : chat.participants[0]?.name.toLowerCase();
+        : chat.participants[0]?.username.toLowerCase();
 
       const lastMessage = chat.lastMessage?.content.toLowerCase();
       return (
@@ -25,10 +38,6 @@ export default function SideBar() {
       );
     });
   }, [chats, searchQuery]);
-
-  useEffect(() => {
-    fetchChats();
-  }, [fetchChats]);
 
   return (
     <div
@@ -42,12 +51,21 @@ export default function SideBar() {
       )}
     >
       <SidebarHeader
+        onSearchActive={showSearch}
         onSearchQuery={searchQuery}
+        onSearchClick={() => setShowSearch(true)}
         onSetSearchQuery={setSearchQuery}
+        onBackClick={() => setShowSearch(false)}
       />
-      <ChatList chats={filteredChats} />
+      {showSearch ? (
+        <h1>Search Related things</h1>
+      ) : (
+        <ChatList chats={filteredChats} />
+      )}
 
       <SidebarMenu
+        onShowContactModal={() => setShowContactModal(true)}
+        onCreateGroup={() => setShowGroupModal(true)}
         onCreateChat={() => {
           createChat([
             {
@@ -58,6 +76,16 @@ export default function SideBar() {
             },
           ]);
         }}
+      />
+
+      <ContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+      />
+
+      <GroupModal
+        isOpen={showGroupModal}
+        onClose={() => setShowGroupModal(false)}
       />
     </div>
   );

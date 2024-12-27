@@ -18,6 +18,8 @@ export default function MainLayout() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
+
+  
   return (
     <div className="flex h-dvh overflow-hidden">
       <SideBar />

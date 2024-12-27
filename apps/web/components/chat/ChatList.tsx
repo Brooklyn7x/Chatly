@@ -11,9 +11,9 @@ export function ChatList({ chats }: ChatListProps) {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="divide-y">
-        {chats.map((chat) => (
+        {chats.map((chat, index) => (
           <ChatItem
-            key={chat.id}
+            key={index}
             isActive={selectedChatId === chat.id}
             onClick={() => setSelectChat(chat.id)}
             chat={chat}
