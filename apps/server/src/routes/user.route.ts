@@ -6,6 +6,6 @@ const userController = new UserController();
 
 router.get("/profile", userController.getUserProfile);
 router.get("/profile/:userId", userController.getUserProfile);
-router.post("/search", userController.searchUsers);
+router.get("/search", userController.searchUsers);
 
-export default router; 
+export default router;

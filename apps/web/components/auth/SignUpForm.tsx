@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import useAuthStore from "@/store/useUserStore";
+import useAuthStore from "@/store/useAuthStore";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import AuthButton from "./AuthButton";

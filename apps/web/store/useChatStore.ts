@@ -17,12 +17,16 @@ interface ChatStore {
   selectedChatId: string | null;
   isLoading: boolean;
   error: string | null;
+  searchResults: User[];
+  searchLoading: boolean;
+  searchError: string | null;
+
   fetchChats: () => void;
+  searchUsers: (query: string) => void;
   getChat: (chatId: string) => Chat | undefined;
-  createChat: (participants: User[]) => void;
+  createChat: (participants: User[], title?: string) => void;
   deleteChat: (chatId: string) => void;
   setSelectChat: (chatId: string) => void;
-
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -33,6 +37,9 @@ export const useChatStore = create<ChatStore>()(
         selectedChatId: null,
         isLoading: false,
         error: null,
+        searchError: null,
+        searchResults: [],
+        searchLoading: false,
 
         fetchChats: async () => {
           set({ isLoading: true });
@@ -62,26 +69,88 @@ export const useChatStore = create<ChatStore>()(
           return get().chats.find((chat) => chat.id === chatId);
         },
 
-        createChat: (participants) => {
-          set((state) => ({
-            chats: [
-              ...state.chats,
-              {
-                id: Math.random().toString(36).substring(2, 9),
-                participants,
-                isGroup: participants.length > 1,
-                groupName: participants.length > 1 ? "Group" : null,
-                lastMessage: null,
-                unreadCount: 0,
+        createChat: async (participants) => {
+          set({ isLoading: true });
+          try {
+            const payload = {
+              type: participants.length > 1 ? "group" : "direct",
+              participantIds: participants.map((user) => user._id),
+              metadata: {
+                title: participants[0]?.username || "Chat",
+                description: "One-on-one conversation",
               },
-            ],
-          }));
+            };
+
+            const response = await axios.post(
+              "http://localhost:8000/conversations/create",
+              payload
+            );
+
+            const newChat = {
+              id: response.data.id,
+              participants,
+              isGroup: false,
+              groupName: null,
+              lastMessage: null,
+              unreadCount: 0,
+            };
+
+            set((state) => ({
+              chats: [...state.chats, newChat],
+              selectedChatId: response.data.id,
+              isLoading: false,
+            }));
+
+            get().fetchChats();
+          } catch (error: any) {
+            console.error("Failed to create chat:", error);
+            set({
+              error: error?.response?.data?.error || "Failed to create chat",
+              isLoading: false,
+            });
+          }
         },
 
-        deleteChat: (chatId) => {
-          set((state) => ({
-            chats: state.chats.filter((chat) => chat.id !== chatId),
-          }));
+        deleteChat: async (chatId) => {
+          try {
+            const response = await axios.delete(
+              "http://localhost:8000/conversations/delete",
+              {
+                data: { conversationId: chatId },
+              }
+            );
+            if (response.status === 200) {
+              set((state) => ({
+                chats: state.chats.filter((chat) => chat.id !== chatId),
+              }));
+            }
+          } catch (error) {
+            console.error("Failed to delete chat:", error);
+          }
+        },
+
+        searchUsers: async (query) => {
+          set({ searchLoading: true, searchError: null });
+          try {
+            const response = await axios.get(
+              `http://localhost:8000/users/search?query=${encodeURIComponent(query)}`
+            );
+
+            if (response.data.success) {
+              set({
+                searchResults: response.data.data.users,
+                searchLoading: false,
+              });
+            } else {
+              throw new Error(response.data.error);
+            }
+          } catch (error: any) {
+            set({
+              searchError:
+                error?.response?.data?.error || "Failed to search users",
+              searchLoading: false,
+            });
+          }
         },
 
         setSelectChat: (chatId) => {
@@ -93,8 +162,6 @@ export const useChatStore = create<ChatStore>()(
             ),
           }));
         },
-
-
       }),
       {
         name: "chat-storage",

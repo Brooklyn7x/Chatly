@@ -9,7 +9,7 @@ import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
 import useAuth from "@/hooks/useAuth";
 import socketService from "@/services/socket";
-import useAuthStore from "@/store/useUserStore";
+import useAuthStore from "@/store/useAuthStore";
 
 export default function ChatArea() {
   const { user } = useAuth();

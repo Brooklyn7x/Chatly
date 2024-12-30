@@ -97,7 +97,6 @@ export class ConversationService {
     userId: string
   ): Promise<ServiceResponse<any>> {
     try {
-      
       const cacheConversation = await this.getCacheConversation(conversationId);
 
       if (cacheConversation) {
@@ -130,6 +129,47 @@ export class ConversationService {
       return {
         success: false,
         error: "Failed to fetch conversation",
+      };
+    }
+  }
+
+  async deleteConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const conversation = await this.db.findOne("Conversation", {
+        id: conversationId,
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found or user not authorized",
+        };
+      }
+
+      const result = await ConversationModel.deleteOne({
+        id: conversationId,
+      });
+
+      if (result) {
+        const cacheKey = `conversation:${conversationId}`;
+        await this.redis.del(cacheKey);
+
+        return {
+          success: true,
+        };
+      }
+      return {
+        success: false,
+        error: "Failed to delete conversation",
+      };
+    } catch (error) {
+      this.logger.error("Error deleting conversation:", error);
+      return {
+        success: false,
+        error: "Failed to delete conversation",
       };
     }
   }

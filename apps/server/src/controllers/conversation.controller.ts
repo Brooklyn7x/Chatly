@@ -12,6 +12,7 @@ export class ConversationController extends BaseController {
     this.createConversation = this.createConversation.bind(this);
     this.getConversations = this.getConversations.bind(this);
     this.getUserConversations = this.getUserConversations.bind(this);
+    this.deleteConversation = this.deleteConversation.bind(this);
   }
 
   async createConversation(req: Request, res: Response): Promise<void> {
@@ -81,7 +82,7 @@ export class ConversationController extends BaseController {
 
       if (!result.success) {
         res.status(404).json(result);
-        return
+        return;
       }
 
       res.json(result);
@@ -89,6 +90,27 @@ export class ConversationController extends BaseController {
       res.status(500).json({
         success: false,
         error: "Failed to fetch conversation",
+      });
+    }
+  }
+
+  async deleteConversation(req: Request, res: Response): Promise<void> {
+    try {
+      const result = await this.conversationService.deleteConversation(
+        req.params.conversationId,
+        req.user!._id
+      );
+
+      if (!result.success) {
+        res.status(404).json(result);
+        return;
+      }
+
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to delete conversation",
       });
     }
   }

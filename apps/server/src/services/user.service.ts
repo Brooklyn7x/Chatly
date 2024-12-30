@@ -179,33 +179,49 @@ export class UserService {
       };
     }
   }
-  async searchUsers(options: {
-    query: string;
-    filter?: Record<string, any>;
-    limit?: number;
-    offset?: number;
-  }): Promise<ServiceResponse<UserProfile[]>> {
+  async searchUsers(
+    query: string,
+    currentUserId: string,
+    options: {
+      limit?: number;
+      offset?: number;
+    }
+  ): Promise<ServiceResponse<any>> {
     try {
-      const { query, filter = {}, limit = 20, offset = 0 } = options;
+      const { limit = 10, offset = 0 } = options;
 
-      const users = await this.db.find(
-        "user",
-        {
-          $or: [
-            { username: { $regex: query, $options: "i" } },
-            { email: { $regex: query, $options: "i" } },
-          ],
+      const searchQuery = {
+        $or: [
+          { username: { $regex: query, $options: "i" } },
+          { email: { $regex: query, $options: "i" } },
+        ],
+      };
+
+      const users = await this.db.find("user", searchQuery, {
+        limit,
+        skip: offset,
+        projection: {
+          id: 1,
+          username: 1,
+          email: 1,
+          name: 1,
+          avatar: 1,
+          status: 1,
+          lastSeen: 1,
         },
-
-        {
-          skip: offset,
-          limit,
-        }
-      );
+        sort: { username: 1 },
+      });
 
       return {
         success: true,
-        data: users.map((user: any) => this.formatUserProfile(user)),
+        data: {
+          users,
+          pagination: {
+            limit,
+            offset,
+            total: users.length,
+          },
+        },
       };
     } catch (error) {
       this.logger.error("Error searching users:", error);

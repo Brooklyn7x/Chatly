@@ -14,6 +14,7 @@ export function SidebarMenu({
   onCreateGroup,
 }: SidebarMenuProps) {
   const [showMenu, setShowMenu] = useState(false);
+  
   const handleCreateChat = () => {
     onCreateChat();
     setShowMenu(false);

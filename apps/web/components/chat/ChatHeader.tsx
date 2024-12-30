@@ -11,7 +11,7 @@ interface ChatHeaderProps {
 }
 
 export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
-  const { selectedChatId } = useChatStore();
+  const { selectedChatId, deleteChat } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -76,7 +76,9 @@ export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
               : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
           )}
         >
-          <div>Menu</div>
+          <button onClick={() => deleteChat(chat.id)}>
+            <span className="text-sm">Delete Chat</span>
+          </button>
         </div>
       )}
     </div>

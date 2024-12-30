@@ -58,11 +58,29 @@ export class UserController extends BaseController {
   // };
 
   public searchUsers = async (req: Request, res: Response): Promise<void> => {
-    const { query } = req.query;
+    try {
+      const currentUserId = req.user!._id;
+      const { query = "", limit, offset } = req.query;
+      const result = await this.userService.searchUsers(
+        query as string,
+        currentUserId,
+        {
+          limit: limit ? parseInt(limit as string) : undefined,
+          offset: offset ? parseInt(offset as string) : undefined,
+        }
+      );
 
-    await this.handleRequest(req, res, async () => {
-      const result = await this.userService.searchUsers(query as any);
-      res.json(result.data);
-    });
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
+      res.json(result);
+    } catch (error) {
+      this.logger.error(error as any);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error",
+      });
+    }
   };
 }

@@ -38,9 +38,10 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-baseline">
             <h3 className="font-medium truncate text-md">
-              {chat?.type === "private"
+              {/* {chat?.type === "direct"
                 ? chat.participants[0]?.username
-                : chat?.metadata.title}
+                : chat?.metadata.title} */}
+              {chat.metadata?.title}
             </h3>
             <span className="text-xs text-muted-foreground">
               {formattedDate(chat.createdAt)}

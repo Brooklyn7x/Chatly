@@ -8,7 +8,6 @@ import { SidebarMenu } from "./SidebarMenu";
 import { ContactModal } from "./ContactModal";
 import { GroupModal } from "./GroupModal";
 
-
 export default function SideBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -66,16 +65,7 @@ export default function SideBar() {
       <SidebarMenu
         onShowContactModal={() => setShowContactModal(true)}
         onCreateGroup={() => setShowGroupModal(true)}
-        onCreateChat={() => {
-          createChat([
-            {
-              id: "1",
-              name: "John Doe",
-              avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-              status: "offline",
-            },
-          ]);
-        }}
+        onCreateChat={() => {}}
       />
 
       <ContactModal
