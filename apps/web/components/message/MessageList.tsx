@@ -1,4 +1,5 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import { Message } from "@/types";
 import { Avatar } from "@radix-ui/react-avatar";
 import { CheckCheck } from "lucide-react";
@@ -11,6 +12,7 @@ export default function MessageList({
   messages,
   currentUserId,
 }: MessageListProps) {
+  console.log(messages, "MessageList");
   return (
     <div className="flex-1 p-4 overflow-y-scroll">
       <div className="space-y-4">
@@ -40,10 +42,15 @@ export default function MessageList({
                     {message.senderId}
                   </span>
                 )}
-                <div className="max-w-md border rounded-lg p-2">
+                <div
+                  className={cn(
+                    "max-w-md border rounded-lg p-2",
+                    isCurrentUser && "bg-blue-500"
+                  )}
+                >
                   <p className="text-sm">{message.content}</p>
                   <div className="flex items-center justify-end gap-1 mt-1">
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs">
                       {new Date(message.timestamp).toLocaleTimeString()}
                     </span>
                     <CheckCheck className="h-4 w-4 text-blue-400" />

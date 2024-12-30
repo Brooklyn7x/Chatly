@@ -1,3 +1,4 @@
+import { Chat, Conversation } from "@/types";
 import { io, Socket } from "socket.io-client";
 
 interface Message {
@@ -38,6 +39,11 @@ class SocketService {
   }
 
   sendMessage(message: Message): void {
+    // const payload = {
+    //   ...message,
+    //   isGroup: conversation.type === "group",
+    //   participants: conversation.participants.map((p) => p._id),
+    // };
     if (this.socket) {
       this.socket.emit("message:send", message);
     }

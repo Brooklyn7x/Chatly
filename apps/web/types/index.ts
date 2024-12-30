@@ -34,3 +34,12 @@ interface ConversationMetadata {
   isArchived?: boolean;
   isPinned?: boolean;
 }
+
+export interface Conversation {
+  id: string;
+  participants: User[];
+  isGroup: boolean;
+  groupName: string | null;
+  lastMessage: any;
+  unreadCount: number;
+}

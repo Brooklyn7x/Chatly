@@ -17,11 +17,12 @@ export default function ChatArea() {
   const { selectedChatId, chats } = useChatStore();
   const { getMessages, addMessage } = useMessageStore();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
   const currentChat = chats.find((chat) => chat.id === selectedChatId);
   const chatMessages = selectedChatId ? getMessages(selectedChatId) : [];
+  console.log(user?._id, "current user");
+  console.log(currentChat?.participants, "participants");
   const token = useAuthStore((state) => state.accessToken) || ``;
-
+  console.log("currentChat");
   useEffect(() => {
     socketService.connect(token);
     socketService.onMessageReceived((message) => {
@@ -36,11 +37,17 @@ export default function ChatArea() {
     };
   }, [token, user?._id]);
 
+  const recipient = currentChat?.participants.find(
+    (participant) => participant?.userId !== user?._id
+  );
+
+  console.log(recipient, "recpeient");
+
   const handleMessage = (content: string) => {
     const newMessage = {
       id: Date.now().toString(),
       senderId: user?._id,
-      receiverId: currentChat?.participants[0]?.userId || "",
+      receiverId: recipient.userId,
       conversationId: selectedChatId || "",
       content,
       type: "text",
@@ -51,8 +58,12 @@ export default function ChatArea() {
     addMessage(newMessage);
   };
 
-  const handleTyping = () => {
-    socketService.startTyping(currentChat?.participants[0]?.userId);
+  const handleTypingStart = () => {
+    socketService.startTyping(recipient);
+  };
+
+  const handleTypingStop = () => {
+    socketService.stopTyping(recipient);
   };
 
   return (
@@ -69,9 +80,13 @@ export default function ChatArea() {
         chat={currentChat}
       />
 
-      <MessageList messages={chatMessages} currentUserId={user?.id || ""} />
+      <MessageList messages={chatMessages} currentUserId={user?._id} />
 
-      <MessageInput onSendMessage={handleMessage} onTyping={handleTyping} />
+      <MessageInput
+        onSendMessage={handleMessage}
+        onTypingStart={handleTypingStart}
+        onTypingStop={handleTypingStop}
+      />
 
       {isProfileOpen && (
         <UserProfilePanel

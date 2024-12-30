@@ -1,49 +1,90 @@
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Paperclip, Send, Smile } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
-  onTyping: () => void;
+  onTypingStart: () => void;
+  onTypingStop: () => void;
 }
 
 export default function MessageInput({
   onSendMessage,
-  onTyping,
+  onTypingStart,
+  onTypingStop,
 }: MessageInputProps) {
-  const [input, setInput] = useState("");
+  const [message, setMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachments, setShowAttachment] = useState(false);
-  const handleSend = () => {
-    onSendMessage(input);
-    setInput("");
+
+  const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const content = event.target.value;
+    setMessage(content);
+
+    if (!isTyping) {
+      setIsTyping(true);
+      onTypingStart();
+    }
+
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    const newTimeout = setTimeout(() => {
+      setIsTyping(false);
+      onTypingStop();
+    }, 2000);
+
+    setTypingTimeout(newTimeout);
   };
 
+  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (message.trim()) {
+      onSendMessage(message);
+      setMessage("");
+      setIsTyping(false);
+      onTypingStop();
+
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+    };
+  }, [typingTimeout]);
   return (
     <div className="p-4 bg-background">
-      <div className="flex items-center gap-2">
+      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
         <div className="relative w-full">
           <button
+            type="button"
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             className="absolute left-3 top-1/2 -translate-y-1/2 hover:scale-125 transition-transform"
           >
             <Smile className="h-6 w-6" />
           </button>
 
-          <input
+          <textarea
             className="w-full pl-10 pr-10 py-2 rounded-lg border"
             placeholder="Type a message..."
-            onChange={(e) => {
-              setInput(e.target.value);
-              if (onTyping) {
-                onTyping();
-              }
-            }}
-            value={input}
+            onChange={handleTyping}
+            value={message}
           />
 
           <button
+            type="button"
             onClick={() => setShowAttachment(!showAttachments)}
             className="absolute right-3 top-1/2 -translate-y-1/2 hover:scale-125 transition-transform"
           >
@@ -52,12 +93,12 @@ export default function MessageInput({
         </div>
 
         <button
-          onClick={handleSend}
+          type="submit"
           className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center"
         >
           <Send className="h-6 w-6" />
         </button>
-      </div>
+      </form>
 
       {showEmojiPicker && (
         <div

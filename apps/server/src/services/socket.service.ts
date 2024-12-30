@@ -50,6 +50,7 @@ export class SocketService extends BaseService {
 
       socket.data.userId = validation.data!.userId;
       console.log("Authenticated user:", socket.data.userId);
+      
       next();
     } catch (error) {
       this.logger.error("Socket Authentication Error", error);
@@ -84,6 +85,8 @@ export class SocketService extends BaseService {
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
       try {
+
+        console.log(data ,"data")
         const result = await this.messageService.sendMessage(
           socket.data.userId,
           data
@@ -99,7 +102,7 @@ export class SocketService extends BaseService {
 
           io.to(`user:${data.receiverId}`).emit("message:new", {
             ...result.data,
-            id: result.data._id,
+            userId: result.data.userId,
           });
         } else {
           socket.emit("message:error", {

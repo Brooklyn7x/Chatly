@@ -10,7 +10,6 @@ import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./base.service";
 import mongoose from "mongoose";
 import { MessageModel } from "../models/message.model";
-import { send } from "process";
 
 export class MessageService extends BaseService {
   private redis: Redis;
