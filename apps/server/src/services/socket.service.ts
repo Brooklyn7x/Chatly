@@ -3,7 +3,6 @@ import { AuthService } from "./auth.service";
 import { UserService } from "./user.service";
 import { MessageService } from "./message.service";
 import { UserStatus } from "../types/user.types";
-import Logger from "../utils/logger";
 import { io } from "../utils/socket";
 import { BaseService } from "./base.service";
 
@@ -50,6 +49,7 @@ export class SocketService extends BaseService {
       }
 
       socket.data.userId = validation.data!.userId;
+      console.log("Authenticated user:", socket.data.userId);
       next();
     } catch (error) {
       this.logger.error("Socket Authentication Error", error);
@@ -57,35 +57,11 @@ export class SocketService extends BaseService {
     }
   }
 
-  private async handleConnection(socket: Socket): Promise<void> {
-    const userId = socket.data.userId;
-
-    try {
-      socket.join(`user:${userId}`);
-
-      await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
-
-      this.setupChatHandlers(socket);
-      this.setupTypingHandlers(socket);
-
-      socket.on("disconnect", async () => {
-        await this.handleDisconnect(socket);
-      });
-
-      this.logger.info(`User ${userId} connected`);
-    } catch (error) {
-      this.logger.error(`Connection error for user ${userId}:`, error);
-    }
-  }
-
   private async handleSocketConnection(socket: Socket) {
     const userId = socket.data.userId;
-
-    // Implement connection tracking
     this.logger.info(`Socket Connection Attempt: ${userId}`);
 
     try {
-      // Consolidated connection logic
       await this.initializeUserConnection(socket);
     } catch (error) {
       this.logger.error(
@@ -98,31 +74,33 @@ export class SocketService extends BaseService {
 
   private async initializeUserConnection(socket: Socket) {
     const userId = socket.data.userId;
-
-    // Atomic connection setup
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
     socket.join(`user:${userId}`);
-
     this.setupChatHandlers(socket);
     this.setupTypingHandlers(socket);
-
     socket.on("disconnect", () => this.handleDisconnect(socket));
   }
 
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
       try {
-        const result = await this.messageService.createMessage(
+        const result = await this.messageService.sendMessage(
           socket.data.userId,
           data
         );
+
+        console.log("Message sent:", result);
+
         if (result.success) {
           socket.emit("message:sent", {
-            messageId: result.data.id,
+            messageId: result.data._id,
             status: "sent",
           });
 
-          io.to(`user:${data.receiverId}`).emit("message:new", result.data);
+          io.to(`user:${data.receiverId}`).emit("message:new", {
+            ...result.data,
+            id: result.data._id,
+          });
         } else {
           socket.emit("message:error", {
             error: result.error,
@@ -135,33 +113,17 @@ export class SocketService extends BaseService {
         });
       }
     });
-
-    // socket.on("message:status", async (data) => {
-    //   try {
-    //     await this.messageService.updateMessgeStatus(
-    //       data.messageId,
-    //       data.status
-    //     );
-
-    //     io.to(`user:${data.senderId}`).emit("message:status_update", {
-    //       messageId: data.messageId,
-    //       status: data.status,
-    //     });
-    //   } catch (error) {
-    //     this.logger.error("Status update error:", error);
-    //   }
-    // });
   }
 
   private setupTypingHandlers(socket: Socket): void {
-    socket.on("typing:start", async (data) => {
+    socket.on("typing:start", (data) => {
       io.to(`user:${data.receiverId}`).emit("typing:update", {
         userId: socket.data.userId,
         isTyping: true,
       });
     });
 
-    socket.on("typing:stop", async (data) => {
+    socket.on("typing:stop", (data) => {
       io.to(`user:${data.receiverId}`).emit("typing:update", {
         userId: socket.data.userId,
         isTyping: false,

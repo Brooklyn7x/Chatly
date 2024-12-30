@@ -6,7 +6,7 @@ export interface Message {
   content: string;
   type: MessageType;
   status: MessageStatus;
-  timestamp: Date;
+  timestamp?: Date;
   metadata?: MessageMetaData;
 }
 

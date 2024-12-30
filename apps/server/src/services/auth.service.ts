@@ -1,11 +1,10 @@
 import { Redis } from "ioredis";
 import { DatabaseService } from "./database.service";
 import { LoginDTO, RegisterDTO, TokenPayload } from "../types/auth.types";
-import { ServiceResponse } from "../types/common/service-respone";
-
-import Logger from "../utils/logger";
-import jwt from "jsonwebtoken";
+import { ServiceResponse } from "../types/service-respone";
+import { Logger } from "../utils/logger";
 import { UserService } from "./user.service";
+import jwt from "jsonwebtoken";
 
 const bcrypt = require("bcrypt");
 
@@ -212,6 +211,61 @@ export class AuthService {
       return {
         success: false,
         error: "Token validation failed",
+      };
+    }
+  }
+
+  async verify(token: string): Promise<ServiceResponse<any>> {
+    try {
+      const validationResult = await this.validateToken(token);
+      if (!validationResult.success) {
+        return {
+          success: false,
+          error: validationResult.error,
+        };
+      }
+
+      const userId = validationResult.data?.userId;
+      if (!userId) {
+        return {
+          success: false,
+          error: "UserID not found",
+        };
+      }
+      const userResult = await this.user.getUserById(userId);
+
+      if (!userResult.success || !userResult.data) {
+        return {
+          success: false,
+          error: "User not found",
+        };
+      }
+
+      const sessionExists = await this.redis.exists(`session:${userId}`);
+      if (!sessionExists) {
+        return {
+          success: false,
+          error: "Session expired",
+        };
+      }
+
+      await this.redis.hset(
+        `session:${userId}`,
+        "lastActive",
+        new Date().toISOString()
+      );
+
+      return {
+        success: true,
+        data: {
+          user: userResult.data,
+        },
+      };
+    } catch (error) {
+      this.logger.error("Verification error:", error);
+      return {
+        success: false,
+        error: "Verification failed",
       };
     }
   }

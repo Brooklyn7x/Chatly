@@ -1,34 +1,47 @@
 import { Request, Response } from "express";
 import { ConversationService } from "../services/conversation.service";
 import { BaseController } from "./base.controller";
+import { CreateConversationDTO } from "../types/conversation";
 
 export class ConversationController extends BaseController {
-  private conversationService: ConversationService;
+  private readonly conversationService: ConversationService;
 
   constructor() {
     super("ConversationController");
     this.conversationService = new ConversationService();
+    this.createConversation = this.createConversation.bind(this);
+    this.getConversations = this.getConversations.bind(this);
+    this.getUserConversations = this.getUserConversations.bind(this);
+    this.deleteConversation = this.deleteConversation.bind(this);
   }
 
   async createConversation(req: Request, res: Response): Promise<void> {
     try {
-      //   const validateResult = validateRequest(req.body, "createConversation");
+      const createDTO = req.body as CreateConversationDTO;
 
-      //   if (!validationResult.success) {
-      //     res.status(400).json({
-      //       success: false,
-      //       error: validationResult.error,
-      //     });
-      //     return;
-      //   }
+      if (
+        !createDTO.type ||
+        !createDTO.participantIds ||
+        !Array.isArray(createDTO.participantIds)
+      ) {
+        res.status(400).json({
+          success: false,
+          error:
+            "Invalid request format. Required: type and participantIds array",
+        });
+        return;
+      }
 
       const result = await this.conversationService.createConversation(
-        req.user!.id,
-        req.body
+        req.user._id,
+        createDTO
       );
 
       if (!result.success) {
-        res.status(400).json(result);
+        res.status(400).json({
+          success: false,
+          error: result.error,
+        });
         return;
       }
 
@@ -41,19 +54,18 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async getConversations(req: Request, res: Response): Promise<void> {
+  async getUserConversations(req: Request, res: Response): Promise<void> {
     try {
       const limit = parseInt(req.query.limit as string) || 10;
       const offset = parseInt(req.query.offset as string) || 0;
-
       const result = await this.conversationService.getUserConversations(
-        req.user!.id,
+        req.user!._id,
         limit,
         offset
       );
-
       res.json(result);
     } catch (error) {
+      this.logger.error("Error fetching conversations:", error);
       res.status(500).json({
         success: false,
         error: "Failed to fetch conversations",
@@ -61,15 +73,16 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async getConversation(req: Request, res: Response): Promise<void> {
+  async getConversations(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.conversationService.getConversation(
+      const result = await this.conversationService.getConversations(
         req.params.conversationId,
-        req.user!.id
+        req.user!._id
       );
 
       if (!result.success) {
         res.status(404).json(result);
+        return;
       }
 
       res.json(result);
@@ -77,6 +90,27 @@ export class ConversationController extends BaseController {
       res.status(500).json({
         success: false,
         error: "Failed to fetch conversation",
+      });
+    }
+  }
+
+  async deleteConversation(req: Request, res: Response): Promise<void> {
+    try {
+      const result = await this.conversationService.deleteConversation(
+        req.params.conversationId,
+        req.user!._id
+      );
+
+      if (!result.success) {
+        res.status(404).json(result);
+        return;
+      }
+
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to delete conversation",
       });
     }
   }

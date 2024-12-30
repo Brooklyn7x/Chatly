@@ -1,7 +1,4 @@
 import Redis from "ioredis";
-import { SocketService } from "./socket.service";
-import Logger from "../utils/logger";
-import { config } from "../config/config";
 import { DatabaseService } from "./database.service";
 import {
   CreateMessageDTO,
@@ -9,8 +6,11 @@ import {
   MessageStatus,
   MessageType,
 } from "../types/message";
-import { ServiceResponse } from "../types/common/service-respone";
+import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./base.service";
+import mongoose from "mongoose";
+import { MessageModel } from "../models/message.model";
+import { send } from "process";
 
 export class MessageService extends BaseService {
   private redis: Redis;
@@ -22,26 +22,27 @@ export class MessageService extends BaseService {
     this.db = new DatabaseService();
   }
 
-  async createMessage(
+  async sendMessage(
     senderId: string,
     messageData: CreateMessageDTO
   ): Promise<ServiceResponse<any>> {
     try {
       const message: Message = {
         id: crypto.randomUUID(),
-        senderId,
+        senderId: new mongoose.Types.ObjectId(senderId).toString(),
         receiverId: messageData.receiverId,
         conversationId: messageData.conversationId,
         content: messageData.content,
         type: messageData.type,
         status: MessageStatus.SENDING,
         timestamp: new Date(),
-        metadata: messageData.metadata,
       };
 
+      console.log("sending message:", message);
+
       await this.cacheMessage(message);
-      const storedMessage = await this.db.create("message", message);
-      message.status = MessageStatus.SENT;
+      const storedMessage = await MessageModel.create(message);
+      // message.status = MessageStatus.SENT;
       // await this.updateMessageStatus(message.id, MessageStatus.SENT);
       // await this.sendRealTimeUpdate(message);
       // await this.updateConversation(message);
@@ -66,7 +67,7 @@ export class MessageService extends BaseService {
   ): Promise<ServiceResponse<any[]>> {
     try {
       const cacheKey = `messages:${conversationId}`;
-      const cacheMessage = await this.getCacheMessage(conversationId, limit);
+      const cacheMessage = await this.getCacheMessage(cacheKey, limit);
       if (cacheMessage.length === limit) {
         return {
           success: true,
@@ -78,12 +79,14 @@ export class MessageService extends BaseService {
         ? { conversationId, timestamp: { $lt: before } }
         : { conversationId };
 
-      const message = await this.db.find("messages", query, {
+      const message = await this.db.find("Message", query, {
         sort: { timestamp: -1 },
         limit,
       });
 
-      await this.cacheMessage(message);
+      console.log("fetched messages:", message);
+
+      // await this.cacheMessage(message);
 
       return {
         success: true,
@@ -98,21 +101,52 @@ export class MessageService extends BaseService {
     }
   }
 
-  async deleteMessage(messageId: string, userId: string) {}
+  async deleteMessage(messageId: string, userId: string) {
+    try {
+      const message = await MessageModel.findOne({
+        _id: new mongoose.Types.ObjectId(messageId).toString(),
+        senderId: new mongoose.Types.ObjectId(userId).toString(),
+      });
+
+      if (!message) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      const deleteMessage = await MessageModel.deleteOne({
+        _id: new mongoose.Types.ObjectId(messageId).toString(),
+      });
+      if (!deleteMessage.deletedCount) {
+        return {
+          success: false,
+          error: "Failed to delete message",
+        };
+      }
+      // await this.redis.del(`message:${messageId}`);
+      return {
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error("Error deleting message:", error);
+      return {
+        success: false,
+        error: "Failed to delete message",
+      };
+    }
+  }
 
   private async cacheMessage(message: any): Promise<void> {
     const pipeline = this.redis.pipeline();
-
     pipeline.hset(`message:${message.id}`, this.serializeMessage(message));
     pipeline.zadd(
       `message:${message.conversationId}`,
       message.timestamp.getTime(),
       message.id
     );
-
     pipeline.expire(`message:${message.id}`, 86400);
     pipeline.expire(`message:${message.conversationId}`, 86400);
-
     await pipeline.exec();
   }
 
@@ -144,7 +178,7 @@ export class MessageService extends BaseService {
       content: message.content,
       type: message.type,
       status: message.status,
-      timestamp: message.timestamp.toISOString(),
+      timestamp: message.timestamp ? message.timestamp.toISOString() : "",
       metadata: message.metadata ? JSON.stringify(message.metadata) : "",
     };
   }
@@ -158,7 +192,7 @@ export class MessageService extends BaseService {
       content: data.content,
       type: data.type as MessageType,
       status: data.status as MessageStatus,
-      timestamp: new Date(data.timestamp),
+      timestamp: data.timestamp ? new Date(data.timestamp) : undefined,
       metadata: data.metadata ? JSON.parse(data.metadata) : undefined,
     };
   }

@@ -1,15 +1,22 @@
 import express from "express";
+import cors from "cors";
 import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import conversationRoutes from "./routes/conversation.route";
 import messageRoutes from "./routes/message.route";
 import { authenticate } from "./middleware/auth.middleware";
-import { httpServer } from "./utils/socket";
 import { config } from "./config/config";
-import "./services/socket.service";
+import { SocketService } from "./services/socket.service";
+import { app, httpServer } from "./utils/socket";
 
-const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+const socketService = SocketService.getInstance();
 
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });
@@ -17,9 +24,10 @@ app.get("/health", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/users", authenticate, userRoutes);
-// app.use("/conversation", authenticate, conversationRoutes);
-// app.use("/message", authenticate, messageRoutes);
+app.use("/conversations", authenticate, conversationRoutes);
+app.use("/messages", authenticate, messageRoutes);
 
-app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+httpServer.setMaxListeners(20);
+httpServer.listen(config.port, () => {
+  console.log(`Socket server running on port ${config.port}`);
 });

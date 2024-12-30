@@ -1,0 +1,177 @@
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:44:19"}
+{"error":"Cannot read properties of undefined (reading 'refreshToken')","level":"error","message":"Logout error:","service":"UserController","stack":"TypeError: Cannot read properties of undefined (reading 'refreshToken')\n    at AuthController.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:116:50)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:4:12)\n    at AuthController.logout (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/controllers/auth.controller.js:114:37)\n    at Layer.handle [as handle_request] (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/express/lib/router/layer.js:95:5)","timestamp":"2024-12-21 00:48:09"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 00:51:02"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:19:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 07:50:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:05:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:05:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 08:36:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:07:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:23:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:38:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 10:56:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 10:56:51"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 11:01:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2024-12-21 20:28:50"}

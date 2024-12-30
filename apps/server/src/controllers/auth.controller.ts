@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { BaseController } from "./base.controller";
 import { AuthService } from "../services/auth.service";
-import { UserService } from "../services/user.service";
 import { LoginDTO } from "../types/auth.types";
 import { z } from "zod";
 
@@ -13,12 +12,10 @@ const registerSchema = z.object({
 
 export class AuthController extends BaseController {
   private authService: AuthService;
-  private userService: UserService;
 
   constructor() {
     super("AuthController");
     this.authService = new AuthService();
-    this.userService = new UserService();
   }
 
   register = async (req: Request, res: Response): Promise<void> => {
@@ -57,7 +54,7 @@ export class AuthController extends BaseController {
       }
     } catch (error) {
       this.logger.error("Registration error:", error);
-      res.status(500).json({ error: "Registration failed" });
+      res.status(500).json({ success: false, error: "Registration failed" });
     }
   };
 
@@ -88,7 +85,10 @@ export class AuthController extends BaseController {
       } else {
         res.status(400).json({ error: result.error });
       }
-    } catch (error) {}
+    } catch (error) {
+      this.logger.error("Login error:", error);
+      res.status(500).json({ success: false, error: "Login failed" });
+    }
   };
 
   refreshToken = async (req: Request, res: Response): Promise<void> => {
@@ -121,14 +121,46 @@ export class AuthController extends BaseController {
   logout = async (req: Request, res: Response): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken;
-      const userId = req.user!.id;
-
+      const userId = req.user!._id;
       await this.authService.logout(userId, refreshToken);
       res.clearCookie("refreshToken");
       res.json({ message: "Logged out successfully" });
     } catch (error) {
       this.logger.error("Logout error:", error);
       res.status(500).json({ error: "Logout failed" });
+    }
+  };
+
+  verify = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        res.status(401).json({
+          success: false,
+          error: "Token not provided",
+        });
+        return;
+      }
+
+      const result = await this.authService.verify(token);
+      if (!result.success) {
+        res.status(401).json({
+          success: false,
+          error: result.error,
+        });
+        return;
+      }
+
+      res.json({
+        success: true,
+        data: result.data,
+      });
+    } catch (error) {
+      this.logger.error("Verifying  error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Token not found",
+      });
     }
   };
 }

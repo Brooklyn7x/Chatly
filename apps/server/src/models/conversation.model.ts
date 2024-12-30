@@ -1,18 +1,18 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import {
   Conversation,
   ConversationType,
   ParticipantRole,
 } from "../types/conversation";
 
-export interface ConversationDocument extends Conversation, Document {}
+export interface IConversationDocument extends Conversation, Document {}
 
 const ParticipantSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
       ref: "user",
-      require: true,
+      required: true,
     },
     role: {
       type: String,
@@ -54,11 +54,11 @@ const ConversationSchema = new Schema(
         type: Boolean,
         default: false,
       },
-      unreadCount: {
-        type: Map,
-        of: Number,
-        default: {},
-      },
+    },
+    unreadCount: {
+      type: Map,
+      of: Number,
+      default: () => new Map(),
     },
   },
   {
@@ -69,7 +69,7 @@ const ConversationSchema = new Schema(
 );
 
 ConversationSchema.virtual("recentMessages", {
-  ref: "message",
+  ref: "Message",
   localField: "_id",
   foreignField: "conversationId",
   options: {
@@ -86,7 +86,7 @@ ConversationSchema.index({
   updatedAt: -1,
 });
 
-export const ConversationModel = mongoose.model<ConversationDocument>(
-  "conversation",
+export const ConversationModel = mongoose.model<IConversationDocument>(
+  "Conversation",
   ConversationSchema
 );

@@ -5,9 +5,11 @@ const router = Router();
 const controller = new ConversationController();
 
 //validateRequest
+
 router.post("/create", controller.createConversation);
-router.get("/user-conversation", controller.getConversations);
-router.get("/:conversationId", controller.getConversation);
+router.get("/user-conversations", controller.getUserConversations);
+router.get("/", controller.getConversations);
+router.delete("/delete", controller.deleteConversation);
 // router.post("/:conversationId/read", controller.markAsRead);
 
 export default router;

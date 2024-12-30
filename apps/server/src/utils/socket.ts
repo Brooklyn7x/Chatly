@@ -1,9 +1,11 @@
 import { Server } from "socket.io";
 import { createServer } from "http";
+import express from "express";
 
-const httpServer = createServer();
+const app = express();
+const httpServer = createServer(app);
 
-export const io = new Server(httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
     credentials: true,
@@ -12,4 +14,4 @@ export const io = new Server(httpServer, {
   pingInterval: 25000,
 });
 
-export { httpServer };
+export { io, httpServer, app };

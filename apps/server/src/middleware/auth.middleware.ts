@@ -12,7 +12,7 @@ export const authenticate = async (
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
-      throw new AppError(401, "No token provided");
+      throw new AppError(401, "No auth token provided");
     }
 
     const decoded = jwt.verify(token, config.jwt.secret!) as {

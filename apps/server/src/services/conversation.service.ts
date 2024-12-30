@@ -1,9 +1,7 @@
 import Redis from "ioredis";
 import { DatabaseService } from "./database.service";
-import { MessageService } from "./message.service";
 import { UserService } from "./user.service";
-import Logger from "../utils/logger";
-import { config } from "../config/config";
+import { Logger } from "../utils/logger";
 import {
   Conversation,
   ConversationType,
@@ -11,19 +9,19 @@ import {
   Participant,
   ParticipantRole,
 } from "../types/conversation";
-import { ServiceResponse } from "../types/common/service-respone";
+import { ServiceResponse } from "../types/service-respone";
+import mongoose from "mongoose";
+import { ConversationModel } from "../models/conversation.model";
 
 export class ConversationService {
   private redis: Redis;
   private db: DatabaseService;
-  private messageService: MessageService;
   private userService: UserService;
   private logger: Logger;
 
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL as string);
     this.db = new DatabaseService();
-    this.messageService = new MessageService();
     this.userService = new UserService();
     this.logger = new Logger("ConversationService");
   }
@@ -38,6 +36,7 @@ export class ConversationService {
       );
 
       if (!validParticipants.success) {
+        this.logger.error("Invalid participants:", validParticipants.error);
         return validParticipants;
       }
 
@@ -52,31 +51,37 @@ export class ConversationService {
         }
       }
 
-      const conversation: Conversation = {
-        id: crypto.randomUUID(),
+      const allParticipantIds = data.participantIds.includes(creatorId)
+        ? data.participantIds
+        : [creatorId, ...data.participantIds];
+
+      const conversationData = {
         type: data.type,
-        participants: this.createParticipantsList(
-          creatorId,
-          data.participantIds
-        ),
+        participants: this.createParticipantsList(creatorId, allParticipantIds),
+        metadata: {
+          title: data.metadata?.title || "",
+          description: data.metadata?.description || "",
+          avatar: data.metadata?.avatar || "",
+          isArchived: data.metadata?.isArchived || false,
+          isPinned: data.metadata?.isPinned || false,
+        },
+        lastMessage: null,
         unreadCount: {},
-        metadata: data.metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
 
-      const storedConversation = await this.db.create(
-        "conversation",
-        conversation
-      );
+      console.log(conversationData, "conversationData");
+      const result = await ConversationModel.create(conversationData);
 
-      await this.cacheConversation(storedConversation);
-
-      // await this.notifyParticipants(storedConversation)
-
+      if (result) {
+        await this.cacheConversation(result);
+        return {
+          success: true,
+          data: result,
+        };
+      }
       return {
-        success: true,
-        data: storedConversation,
+        success: false,
+        error: "Failed to create conversation",
       };
     } catch (error) {
       this.logger.error("Error creating conversation:", error);
@@ -87,7 +92,7 @@ export class ConversationService {
     }
   }
 
-  async getConversation(
+  async getConversations(
     conversationId: string,
     userId: string
   ): Promise<ServiceResponse<any>> {
@@ -101,7 +106,7 @@ export class ConversationService {
         };
       }
 
-      const conversation = await this.db.findOne("conversations", {
+      const conversation = await this.db.findOne("Conversation", {
         id: conversationId,
         "participants.userId": userId,
       });
@@ -128,6 +133,47 @@ export class ConversationService {
     }
   }
 
+  async deleteConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const conversation = await this.db.findOne("Conversation", {
+        id: conversationId,
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found or user not authorized",
+        };
+      }
+
+      const result = await ConversationModel.deleteOne({
+        id: conversationId,
+      });
+
+      if (result) {
+        const cacheKey = `conversation:${conversationId}`;
+        await this.redis.del(cacheKey);
+
+        return {
+          success: true,
+        };
+      }
+      return {
+        success: false,
+        error: "Failed to delete conversation",
+      };
+    } catch (error) {
+      this.logger.error("Error deleting conversation:", error);
+      return {
+        success: false,
+        error: "Failed to delete conversation",
+      };
+    }
+  }
+
   async getUserConversations(
     userId: string,
     limit: number = 10,
@@ -135,9 +181,9 @@ export class ConversationService {
   ): Promise<ServiceResponse<any[]>> {
     try {
       const conversations = await this.db.find(
-        "conversation",
+        "Conversation",
         {
-          "participant.userId": userId,
+          "participants.userId": userId,
         },
         { sort: { updatedAt: -1 }, skip: offset, limit }
       );
@@ -158,58 +204,13 @@ export class ConversationService {
       };
     }
   }
-  // async markConversationAsRead(
-  //   conversationId: string,
-  //   userId: string
-  // ): Promise<ServiceResponse<void>> {
-  //   try {
-  //     const pipeline = this.redis.pipeline();
-  //     const now = new Date();
-
-  //     await this.db.findOneAndUpdate(
-  //       "conversations",
-  //       {
-  //         id: conversationId,
-  //         "participant.userId": userId,
-  //       },
-  //       {
-  //         $set: {
-  //           "participants.$.lastReadAt": now,
-  //           "unreadCount.$": 0,
-  //         },
-  //       }
-  //     );
-
-  //     pipeline.hset(
-  //       `conversation:${conversationId}:participant:${userId}`,
-  //       "lastReadAt",
-  //       now.toISOString()
-  //     );
-
-  //     pipeline.hset(
-  //       `conversation:${conversationId}`,
-  //       `unreadCount:${userId}`,
-  //       "0"
-  //     );
-
-  //     await pipeline.exec();
-  //     return { success: true };
-  //   } catch (error) {
-  //     this.logger.error("Error marking conversation as read:", error);
-  //     return {
-  //       success: false,
-  //       error: "Failed to mark conversation as read",
-  //     };
-  //   }
-  // }
 
   private async findDirectConversation(
     creatorId: string,
     otherParticipantId: string
   ): Promise<ServiceResponse<any | null>> {
     try {
-      // Find a direct conversation where both participants exist
-      const existingConversation = await this.db.findOne("conversations", {
+      const existingConversation = await this.db.findOne("Conversation", {
         type: ConversationType.DIRECT,
         participants: {
           $all: [
@@ -243,14 +244,12 @@ export class ConversationService {
     creatorId: string,
     participantIds: string[]
   ): Participant[] {
-    const now = new Date();
-    const participants = participantIds.map((userId) => ({
-      userId,
+    return participantIds.map((userId) => ({
+      userId: new mongoose.Types.ObjectId(userId).toString(),
       role:
         userId === creatorId ? ParticipantRole.OWNER : ParticipantRole.MEMBER,
-      joinedAt: now,
+      joinedAt: new Date(),
     }));
-    return participants;
   }
 
   private async cacheConversation(conversation: any): Promise<void> {
@@ -301,7 +300,7 @@ export class ConversationService {
     );
 
     return {
-      id: conversationData.id,
+      // _id: conversationData.id,
       type: conversationData.type as ConversationType,
       participants,
       metadata: JSON.parse(conversationData.metadata || "{}"),
