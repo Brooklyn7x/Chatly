@@ -10,7 +10,7 @@ export function ChatList({ chats }: ChatListProps) {
   const { selectedChatId, setSelectChat } = useChatStore();
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="divide-y">
+      <div className="p-2 space-y-1">
         {chats.map((chat, index) => (
           <ChatItem
             key={index}

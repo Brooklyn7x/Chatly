@@ -13,9 +13,8 @@ export default function SideBar() {
   const [showSearch, setShowSearch] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showGroupModal, setShowGroupModal] = useState(false);
-
   const { isMobile } = useUIStore();
-  const { selectedChatId, createChat, fetchChats } = useChatStore();
+  const { selectedChatId, fetchChats } = useChatStore();
   const chats = useChatStore((state) => state.chats);
 
   useEffect(() => {

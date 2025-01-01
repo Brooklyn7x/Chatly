@@ -2,7 +2,7 @@
 import { useCallback, useEffect } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import SideBar from "../../components/sidebar/Sidebar";
-import ChatArea from "../../components/chat/ChatArea";
+import ChatArea from "../../components/chat/ChatWindow";
 import { useChatStore } from "@/store/useChatStore";
 
 export default function MainLayout() {

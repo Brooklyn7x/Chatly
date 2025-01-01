@@ -12,7 +12,6 @@ export default function MessageList({
   messages,
   currentUserId,
 }: MessageListProps) {
-  console.log(messages, "MessageList");
   return (
     <div className="flex-1 p-4 overflow-y-scroll">
       <div className="space-y-4">

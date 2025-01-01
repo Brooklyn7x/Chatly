@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import { useChatStore } from "@/store/useChatStore";
 import useUserStore from "@/store/useUserStore";
 import { User } from "@/types";
+import socketService from "@/services/socket";
 
 interface GroupModalProps {
   isOpen: boolean;
@@ -19,15 +20,12 @@ interface GroupFormData {
 }
 
 export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
-  const { user } = useAuth();
-  const { createChat } = useChatStore();
-  const { searchUsers, searchResults, error, loading } = useUserStore();
-
+  const { searchUsers, searchResults, loading } = useUserStore();
+  const { createGroup } = socketService;
   const [shouldRender, setShouldRender] = useState(false);
   const [step, setStep] = useState<"members" | "details">("members");
   const [searchQuery, setSearchQuery] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<GroupFormData>({
     name: "",
     image: null,
@@ -89,15 +87,49 @@ export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
   };
 
   const handleSubmit = async () => {
-    const selectedUsers = searchResults.filter((user) =>
-      formData.selectedUserIds.has(user._id)
-    );
+    try {
+      if (formData.selectedUserIds.size === 0) {
+        console.error("No users selected");
+        return;
+      }
+  
+      const selectedUserIds = Array.from(formData.selectedUserIds);
+      
+      // Create group with enhanced error handling
+      const groupResponse = await socketService.createGroup({
+        name: formData.name,
+        participantIds: selectedUserIds,
+      });
 
-    if (selectedUsers.length > 0 && formData.name) {
-      await createChat(selectedUsers, formData.name);
+      
+      // Update local state or trigger refresh
+      if (groupResponse.conversationId) {
+        const selectedUsers = searchResults.filter(user => formData.selectedUserIds.has(user._id));
+        useChatStore.getState().createChat(selectedUsers, formData.name);
+        
+      }
+      console.log(groupResponse)
+  
       onClose();
+    } catch (error) {
+      console.error("Failed to create group:", error);
+      // Handle error (show notification, etc.)
     }
   };
+  
+  // Add cleanup for socket listeners
+  useEffect(() => {
+    if (isOpen) {
+      const unsubscribeGroupCreated = socketService.onGroupCreated((data) => {
+        console.log("Group created:", data);
+        // Handle successful group creation
+      });
+  
+      return () => {
+        unsubscribeGroupCreated();
+      };
+    }
+  }, [isOpen]);
 
   const handleNext = () => {
     if (step === "members" && formData.selectedUserIds.size > 0) {
@@ -177,7 +209,7 @@ export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
                             className="h-8 w-8 rounded-full object-cover"
                             alt={user.name}
                           />
-                          <span className="text-sm ml-2">{user.name}</span>
+                          <span className="text-sm ml-2">{user.username}</span>
                         </div>
                       ))}
                     </div>

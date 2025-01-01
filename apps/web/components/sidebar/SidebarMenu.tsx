@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Edit2, User, Users, Volume, X } from "lucide-react";
 import React from "react";
+import useAuth from "@/hooks/useAuth";
 
 interface SidebarMenuProps {
   onCreateChat: () => void;
@@ -14,7 +15,8 @@ export function SidebarMenu({
   onCreateGroup,
 }: SidebarMenuProps) {
   const [showMenu, setShowMenu] = useState(false);
-  
+  const { user } = useAuth();
+
   const handleCreateChat = () => {
     onCreateChat();
     setShowMenu(false);

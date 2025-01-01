@@ -1,17 +1,25 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Phone, Bell } from "lucide-react";
+import { X, Pencil, Phone, Bell, User, Link } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { EditProfileForm } from "./ProfileForm";
+import { Chat } from "@/types";
+import { UserItem } from "../sidebar/UserItem";
 
 interface UserProfilePanelProps {
   isOpen: boolean;
   onClose: () => void;
+  currentChat: Chat | undefined;
 }
 
-export function UserProfilePanel({ isOpen, onClose }: UserProfilePanelProps) {
+export function UserProfilePanel({
+  isOpen,
+  onClose,
+  currentChat,
+}: UserProfilePanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   if (!isOpen) return null;
+
   return (
     <div
       className={cn(
@@ -52,27 +60,52 @@ export function UserProfilePanel({ isOpen, onClose }: UserProfilePanelProps) {
           </div>
 
           <div className="mt-2">
-            <h1 className="text-xl font-semibold">Shubh Babu</h1>
-            <p className="text-center mt-2 text-sm text-muted-foreground">
-              last seen recently when?
+            <h1 className="text-xl font-semibold">
+              {currentChat?.type === "direct"
+                ? "User"
+                : currentChat?.metadata.title}
+            </h1>
+            <p className="text-center text-sm text-muted-foreground">
+              {currentChat?.type === "group"
+                ? currentChat.participants.length + " " + "members"
+                : "last seen when ?"}
             </p>
           </div>
         </div>
 
         <div>
-          <div className="flex items-center gap-6 p-4">
-            <Phone className="text-muted-foreground" />
-            <p className="flex flex-col mt-0">
-              +9012344354{" "}
-              <span className="text-muted-foreground text-sm">Phone</span>{" "}
-            </p>
-          </div>
+          {currentChat?.type === "direct" ? (
+            <div className="flex items-center gap-6 p-4">
+              <Phone className="text-muted-foreground" />
+              <p className="flex flex-col mt-0">
+                +9012344354{" "}
+                <span className="text-muted-foreground text-sm">Phone</span>{" "}
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 flex items-center gap-6">
+              <Link className="text-muted-foreground" />
+              <p className="flex flex-col mt-0">
+                {currentChat?.metadata.title || "No link attached"}{" "}
+                <span className="text-muted-foreground text-sm">Link</span>{" "}
+              </p>
+            </div>
+          )}
           <p className="flex items-center gap-6 p-4">
             <Bell className="text-muted-foreground" />
             <span>Notifications</span>
           </p>
         </div>
       </div>
+
+      {currentChat?.type === "group" && (
+        <div className="p-2 flex-1 overflow-y-auto">
+          <h1 className="pl-2 mb-2 text-lg font-semibold">Members</h1>
+          {currentChat.participants.map((participant) => (
+            <UserItem key={participant._id} user={participant} />
+          ))}
+        </div>
+      )}
 
       {isEditing && (
         <EditProfileForm

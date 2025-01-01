@@ -1,13 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import useAuth from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
-import { Chat, User } from "@/types";
+import { Chat } from "@/types";
 import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
 import { useState } from "react";
 
 interface ChatHeaderProps {
   onProfileClick: () => void;
-  chat: any;
+  chat: Chat;
 }
 
 export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
@@ -15,7 +16,7 @@ export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative">
+    <div className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
       <div className="flex  items-center gap-4">
         {selectedChatId && (
           <button
@@ -34,15 +35,14 @@ export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
 
           <div className="flex flex-col">
             <h2 className="text-sm font-semibold">
-              {/* {chat?.type === "group"
-                ? chat.metadata.title
-                : chat.participants[0]?.username} */}
-              header
+              {chat?.type === "direct"
+                ? "Direct"
+                : chat?.metadata?.title || "Group"}
             </h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {/* {chat?.type === "group"
-                ? chat.participants.length
-                : chat.participants[0]?.username} */}
+              {chat?.type === "group"
+                ? chat.participants.length + " " + "Subscriber"
+                : "Online"}
             </span>
           </div>
         </button>

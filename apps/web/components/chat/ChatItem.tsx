@@ -20,9 +20,9 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
     <div
       onClick={onClick}
       className={cn(
-        "px-4 py-4 cursor-pointer transition-colors",
-        isActive && "bg-muted/60",
-        "hover:bg-muted/30"
+        "px-4 py-4 cursor-pointer transition-colors rounded-md",
+        isActive && "bg-blue-400/50",
+        "hover:bg-muted/80"
       )}
     >
       <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
             </span>
           </div>
 
-          <div className="flex justify-between items-baseline mt-1">
+          <div className="flex justify-between items-baseline">
             <p className="text-sm text-muted-foreground truncate">
               {chat?.lastMessage?.content || "No messages"}
             </p>

@@ -1,22 +1,26 @@
 import { Socket } from "socket.io";
+import { io } from "../utils/socket";
 import { AuthService } from "./auth.service";
 import { UserService } from "./user.service";
 import { MessageService } from "./message.service";
 import { UserStatus } from "../types/user.types";
-import { io } from "../utils/socket";
 import { BaseService } from "./base.service";
+import { ConversationService } from "./conversation.service";
+import { ConversationType } from "../types/conversation";
 
 export class SocketService extends BaseService {
   private static instance: SocketService;
   private authService: AuthService;
   private messageService: MessageService;
   private userService: UserService;
+  private conversationService: ConversationService;
 
   constructor() {
     super("SocketService");
     this.messageService = new MessageService();
     this.authService = new AuthService();
     this.userService = new UserService();
+    this.conversationService = new ConversationService();
     BaseService.setSocketService(this);
     this.setUpSocketHandler();
   }
@@ -50,7 +54,7 @@ export class SocketService extends BaseService {
 
       socket.data.userId = validation.data!.userId;
       console.log("Authenticated user:", socket.data.userId);
-      
+
       next();
     } catch (error) {
       this.logger.error("Socket Authentication Error", error);
@@ -75,38 +79,70 @@ export class SocketService extends BaseService {
 
   private async initializeUserConnection(socket: Socket) {
     const userId = socket.data.userId;
-    await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
-    socket.join(`user:${userId}`);
-    this.setupChatHandlers(socket);
-    this.setupTypingHandlers(socket);
-    socket.on("disconnect", () => this.handleDisconnect(socket));
+    try {
+      socket.join(`user:${userId}`);
+      // await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
+
+      const conversations =
+        await this.conversationService.getUserConversations(userId);
+      for (const conversation of conversations?.data || []) {
+        if (conversation.type === "group") {
+          socket.join(`group:${conversation._id}`);
+        }
+      }
+      this.setUpGroupHandlers(socket);
+      this.setupChatHandlers(socket);
+      this.setupTypingHandlers(socket);
+
+      socket.on("disconnect", () => this.handleDisconnect(socket));
+    } catch (error) {
+      this.logger.error(`Connection initialization error for user ${userId}`);
+      socket.disconnect(true);
+    }
   }
 
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
       try {
+        //validate message data
 
-        console.log(data ,"data")
         const result = await this.messageService.sendMessage(
           socket.data.userId,
           data
         );
-
-        console.log("Message sent:", result);
-
+        console.log("Message send result", result);
         if (result.success) {
           socket.emit("message:sent", {
             messageId: result.data._id,
             status: "sent",
+            timestamp: new Date(),
           });
+          console.log(result.data.conversationId.toString());
 
-          io.to(`user:${data.receiverId}`).emit("message:new", {
-            ...result.data,
-            userId: result.data.userId,
-          });
+          const conversation =
+            await this.conversationService.getUserConversation(
+              data.conversationId.toString(),
+              socket.data.userId
+            );
+
+          console.log("Conversation data", conversation);
+          if (conversation.success && conversation.data) {
+            if (conversation.data.type === "direct") {
+              await this.handleDirectMessage(socket, data, result);
+            } else {
+              await this.handleGroupMessage(socket, data, result);
+            }
+          }
+
+          // if (data.groupId) {
+          //   await this.handleGroupMessage(socket, data, result);
+          // } else {
+          //   await this.handleDirectMessage(socket, data, result);
+          // }
         } else {
           socket.emit("message:error", {
             error: result.error,
+            messageId: data.messageId,
           });
         }
       } catch (error) {
@@ -131,6 +167,84 @@ export class SocketService extends BaseService {
         userId: socket.data.userId,
         isTyping: false,
       });
+    });
+  }
+
+  private setUpGroupHandlers(socket: Socket): void {
+    socket.on("group:create", async (data) => {
+      console.log("Group create request", data);
+      try {
+        const createGroupData = {
+          type: ConversationType.GROUP,
+          participantIds: data.participantIds || [],
+          metadata: {
+            title: data.name || `New Group`,
+            description: data.description || "",
+            avatar: data.avatar || "",
+            isArchived: false,
+            isPinned: false,
+          },
+        };
+
+        const result = await this.conversationService.createGroupConversation(
+          socket.data.userId,
+          createGroupData
+        );
+
+        if (result.success) {
+          await socket.join(`group:${result.data._id}`);
+          result.data.participants.forEach((participant: any) => {
+            this.sendToUser(participant.userId, "group:created", {
+              type: "group",
+              conversationId: result.data._id,
+              title: result.data.metadata?.title,
+              createdBy: socket.data.userId,
+            });
+          });
+          socket.emit("group:created:success", {
+            groupId: result.data._id,
+            message: "Group created successfully",
+          });
+        } else {
+          socket.emit("group:created:error", {
+            error: result.error,
+          });
+        }
+      } catch (error) {
+        this.logger.error("Group creation error", error);
+        socket.emit("group:created:error", {
+          error: "Failed to create group",
+        });
+      }
+    });
+
+    socket.on("group:join", (data) => {});
+
+    socket.on("group:leave", (data) => {});
+
+    socket.on("group:invite", (data) => {});
+  }
+
+  private async handleGroupMessage(socket: Socket, data: any, result: any) {
+    io.to(`group:${data.groupId}`).emit("message:new", {
+      ...result.data,
+      type: "group",
+      userId: result.data.userId,
+      sender: {
+        userId: result.data.userId,
+        time: new Date(),
+      },
+    });
+  }
+
+  private async handleDirectMessage(socket: Socket, data: any, result: any) {
+    io.to(`user:${data.receiverId}`).emit("message:new", {
+      ...result.data,
+      userId: result.data.userId,
+      sender: {
+        userId: result.data.userId,
+        time: new Date(),
+      },
     });
   }
 

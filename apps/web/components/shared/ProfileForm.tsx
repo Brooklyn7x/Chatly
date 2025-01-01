@@ -18,7 +18,7 @@ export function EditProfileForm({ isOpen, onClose }: EditProfileFormProps) {
         isOpen ? "translate-x-0" : "translate-x-full"
       )}
     >
-      <div className="flex-none border-b px-4 py-2">
+      <div className="flex-none border-b h-16 p-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => onClose()}

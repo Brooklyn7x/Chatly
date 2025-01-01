@@ -69,14 +69,14 @@ export const useChatStore = create<ChatStore>()(
           return get().chats.find((chat) => chat.id === chatId);
         },
 
-        createChat: async (participants) => {
+        createChat: async (participants,title) => {
           set({ isLoading: true });
           try {
             const payload = {
               type: participants.length > 1 ? "group" : "direct",
               participantIds: participants.map((user) => user._id),
               metadata: {
-                title: participants[0]?.username || "Chat",
+                title: participants.length > 1 ? title : null,
                 description: "One-on-one conversation",
               },
             };
@@ -88,9 +88,9 @@ export const useChatStore = create<ChatStore>()(
 
             const newChat = {
               id: response.data.id,
-              participants,
-              isGroup: false,
-              groupName: null,
+              participants: participants,
+              isGroup: participants.length > 1,
+              groupName: title || null,
               lastMessage: null,
               unreadCount: 0,
             };

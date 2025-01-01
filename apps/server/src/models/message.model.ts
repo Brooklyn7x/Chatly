@@ -22,6 +22,7 @@ const MessageSchema = new Schema(
       ref: "user",
       required: true,
       index: true,
+      sparse: true,
     },
     content: {
       type: String,
@@ -30,10 +31,12 @@ const MessageSchema = new Schema(
     type: {
       type: String,
       enum: Object.values(MessageType),
+      default: MessageStatus.SENDING,
     },
     status: {
       type: String,
       enum: Object.values(MessageStatus),
+      default: MessageStatus.SENDING,
     },
     replyTo: {
       type: Schema.Types.ObjectId,
@@ -49,7 +52,8 @@ const MessageSchema = new Schema(
       type: Date,
       default: Date.now,
     },
-    readReceipts: [
+
+    readBy: [
       {
         userId: {
           type: Schema.Types.ObjectId,
@@ -80,6 +84,10 @@ const MessageSchema = new Schema(
           required: true,
         },
         name: String,
+        type: {
+          type: String,
+          enum: ["image", "video", "audio", "document", "other"],
+        },
         size: Number,
         metadata: Schema.Types.Mixed,
       },

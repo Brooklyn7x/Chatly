@@ -12,7 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import { MenuItem } from "../interface/MenuItem";
+import { MenuItem } from "../shared/MenuItem";
 
 import useAuth from "@/hooks/useAuth";
 
@@ -32,7 +32,7 @@ export function SidebarHeader({
   onBackClick,
 }: SidebarHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const handleLogout = () => {
     logout();
   };
@@ -71,6 +71,10 @@ export function SidebarHeader({
         )}
       >
         <div className="p-1 space-y-1">
+          <div className="flex items-center gap-4 px-4 py-2 border-b">
+            <User className="h-6 w-6" />
+            {user?.username || "User"}
+          </div>
           <MenuItem
             icon={<Bookmark />}
             onClick={() => {}}
