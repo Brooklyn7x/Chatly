@@ -92,39 +92,34 @@ export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
         console.error("No users selected");
         return;
       }
-  
+
       const selectedUserIds = Array.from(formData.selectedUserIds);
-      
-      // Create group with enhanced error handling
+
       const groupResponse = await socketService.createGroup({
         name: formData.name,
         participantIds: selectedUserIds,
       });
 
-      
-      // Update local state or trigger refresh
       if (groupResponse.conversationId) {
-        const selectedUsers = searchResults.filter(user => formData.selectedUserIds.has(user._id));
+        const selectedUsers = searchResults.filter((user) =>
+          formData.selectedUserIds.has(user._id)
+        );
         useChatStore.getState().createChat(selectedUsers, formData.name);
-        
       }
-      console.log(groupResponse)
-  
+      console.log(groupResponse);
+
       onClose();
     } catch (error) {
       console.error("Failed to create group:", error);
-      // Handle error (show notification, etc.)
     }
   };
-  
-  // Add cleanup for socket listeners
+
   useEffect(() => {
     if (isOpen) {
       const unsubscribeGroupCreated = socketService.onGroupCreated((data) => {
         console.log("Group created:", data);
-        // Handle successful group creation
       });
-  
+
       return () => {
         unsubscribeGroupCreated();
       };
@@ -202,11 +197,11 @@ export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
                       {selectedUsers.map((user) => (
                         <div
                           key={user._id}
-                          className="flex items-center flex-shrink-0 bg-muted/50 rounded-full pr-3"
+                          className="flex items-center h-8 w-8 flex-shrink-0 bg-muted/50 rounded-full pr-3"
                         >
                           <img
                             src={user.avatar || "/user.jpeg"}
-                            className="h-8 w-8 rounded-full object-cover"
+                            className="h-full w-full object-cover"
                             alt={user.name}
                           />
                           <span className="text-sm ml-2">{user.username}</span>

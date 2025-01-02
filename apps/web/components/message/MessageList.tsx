@@ -1,10 +1,9 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Message } from "@/types";
 import { Avatar } from "@radix-ui/react-avatar";
 import { CheckCheck } from "lucide-react";
 interface MessageListProps {
-  messages: Message[] | undefined;
+  messages: any;
   currentUserId: string | undefined;
 }
 

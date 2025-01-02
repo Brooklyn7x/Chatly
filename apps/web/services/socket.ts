@@ -59,7 +59,6 @@ class SocketService {
       console.error("Connection error:", err);
     });
 
-    // Message listeners
     this.socket.on("message:new", (message: Message) => {
       this.messageCallbacks.forEach((callback) => callback(message));
     });
@@ -72,7 +71,6 @@ class SocketService {
       console.error("Message error:", error);
     });
 
-    // Group listeners
     this.socket.on("group:created", (data: GroupResponse) => {
       this.groupCallbacks.forEach((callback) => callback(data));
     });
@@ -89,8 +87,8 @@ class SocketService {
     }
   }
 
-  // Message handling
   sendMessage(message: Message): void {
+    console.log("Sending message:", message);
     if (!this.socket?.connected) {
       console.error("Socket not connected");
       return;
@@ -108,7 +106,6 @@ class SocketService {
     };
   }
 
-  // Typing indicators
   startTyping(receiverId: string): void {
     if (!this.socket?.connected) return;
     this.socket.emit("typing:start", { receiverId });
@@ -169,7 +166,6 @@ class SocketService {
     };
   }
 
-  // Add methods for joining and leaving groups if needed
   joinGroup(conversationId: string): void {
     if (!this.socket?.connected) return;
     this.socket.emit("group:join", { conversationId });

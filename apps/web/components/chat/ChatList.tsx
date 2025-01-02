@@ -1,6 +1,5 @@
-import { useChatStore } from "@/store/useChatStore";
+import { Chat, useChatStore } from "@/store/useChatStore";
 import { ChatItem } from "./ChatItem";
-import { Chat } from "@/types";
 
 interface ChatListProps {
   chats: Chat[];
@@ -14,8 +13,8 @@ export function ChatList({ chats }: ChatListProps) {
         {chats.map((chat, index) => (
           <ChatItem
             key={index}
-            isActive={selectedChatId === chat.id}
-            onClick={() => setSelectChat(chat.id)}
+            isActive={selectedChatId === chat._id}
+            onClick={() => setSelectChat(chat._id)}
             chat={chat}
           />
         ))}

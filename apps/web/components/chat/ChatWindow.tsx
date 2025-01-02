@@ -15,22 +15,41 @@ export default function ChatWindow() {
   const { user } = useAuth();
   const { isMobile } = useUIStore();
   const { selectedChatId, chats } = useChatStore();
-  const { getMessages } = useMessageStore();
+  const { getMessages, addMessage } = useMessageStore();
   const chatMessages = selectedChatId ? getMessages(selectedChatId) : [];
-  const [messages, setMessages] = useState(chatMessages);
+  const [messages, setMessages] = useState([]);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const currentChat = chats.find((chat) => chat.id === selectedChatId);
+  const currentChat = chats.find((chat) => chat._id === selectedChatId);
   const token = useAuthStore((state) => state.accessToken) || ``;
 
   useEffect(() => {
+    if (!token || !selectedChatId) return;
+
     socketService.connect(token);
-    socketService.onMessageReceived((message) => {
-      setMessages((prevMessages) => [...prevMessages, message._doc]);
+    const unsubscribeMessage = socketService.onMessageReceived((message) => {
+      console.log("Message received:", message);
+
+      const formattedMessage = {
+        ...message._doc,
+        timestamp: new Date(message._doc.timestamp),
+        sender: {
+          userId: message._doc.senderId,
+          timestamp: new Date(),
+        },
+      };
+      setMessages((prev) => [...prev, message._doc]);
+      addMessage(formattedMessage);
     });
-    socketService.onTypingUpdate((data) => {
-      console.log("Typing update:", data);
+
+    const unsubscribeTyping = socketService.onTypingUpdate((data) => {
+      if (currentChat?.participants.some((p) => p.userId === data.userId)) {
+        console.log("Typing update:", data);
+      }
     });
+
     return () => {
+      unsubscribeMessage();
+      unsubscribeTyping();
       socketService.disconnect();
     };
   }, [token, user?._id]);
@@ -40,18 +59,21 @@ export default function ChatWindow() {
   );
 
   const handleMessage = (content: string) => {
-    const newMessage = {
-      id: Date.now().toString(),
+    if (!content.trim()) return;
+    const messageData = {
       senderId: user?._id,
-      receiverId: recipient.userId,
       conversationId: selectedChatId,
       content,
       type: "text",
       timestamp: new Date().toISOString(),
-      status: "sent",
+      ...(currentChat?.type === "direct" && {
+        receiverId: currentChat.participants.find((p) => p.userId !== user?._id)
+          ?.userId,
+      }),
     };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    socketService.sendMessage(newMessage);
+    addMessage(messageData);
+    setMessages((prev) => [...prev, messageData]);
+    socketService.sendMessage(messageData);
   };
 
   const handleTypingStart = () => {

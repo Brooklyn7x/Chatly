@@ -1,39 +1,47 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+interface MessageSender {
+  userId: string;
+  timestamp: string;
+}
+
 interface Message {
   _id: string;
   conversationId: string;
+  conversationType: "private" | "group";
   content: string;
   type: "text" | "image" | "video" | "audio";
   senderId: string;
   receiverId: string;
   timestamp: string;
   status: "sent" | "delivered" | "read";
+  sender?: MessageSender;
 }
 
 interface MessageStore {
   messages: Message[];
-  isLoading: boolean;
+  loading: boolean;
   error: string | null;
-  getMessages: (chatId: string) => Message[];
-  deleteMessage: (messageId: string) => void;
-  updateMessageStatus: (messageId: string, status: Message["status"]) => void;
-  markMessagesAsRead: (chatId: string) => void;
+  getMessages: (coversationId: string) => Message[];
   addMessage: (message: Message) => void;
+  deleteMessage: (messageId: string) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
   persist(
     (set, get) => ({
       messages: [],
-      isLoading: false,
+      loading: false,
       error: null,
 
       getMessages: (chatId) => {
-        return get().messages.filter(
-          (message) => message.conversationId === chatId
-        );
+        return get()
+          .messages.filter((message) => message.conversationId === chatId)
+          .sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
       },
 
       addMessage: (message) => {
@@ -46,25 +54,18 @@ export const useMessageStore = create<MessageStore>()(
             return state;
           }
 
-          const conversationMessages = state.messages.filter(
-            (m) => m.conversationId === message.conversationId
-          );
+          const newMessage: Message = {
+            ...message,
+            status: message.status || "sending",
+            timestamp: message.timestamp || new Date().toISOString(),
+          };
 
-          const updatedConversationMessages = [
-            ...conversationMessages,
-            message,
-          ].sort(
+          const updatedMessages = [...state.messages, newMessage].sort(
             (a, b) =>
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
           );
 
-          const otherMessages = state.messages.filter(
-            (m) => m.conversationId !== message.conversationId
-          );
-
-          return {
-            messages: [...otherMessages, ...updatedConversationMessages],
-          };
+          return { messages: updatedMessages };
         });
       },
 

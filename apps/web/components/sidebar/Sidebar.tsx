@@ -58,7 +58,7 @@ export default function SideBar() {
       {showSearch ? (
         <h1>Search Related things</h1>
       ) : (
-        <ChatList chats={filteredChats} />
+        <ChatList chats={chats} />
       )}
 
       <SidebarMenu

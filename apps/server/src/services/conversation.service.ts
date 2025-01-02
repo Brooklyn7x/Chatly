@@ -150,6 +150,7 @@ export class ConversationService {
     conversationId: string
   ): Promise<ServiceResponse<any>> {
     try {
+      console.log(conversationId, "conversationId");
       const cacheConversation = await this.getCacheConversation(conversationId);
 
       if (cacheConversation) {
@@ -160,7 +161,7 @@ export class ConversationService {
       }
 
       const conversation = await this.db.findOne("Conversation", {
-        id: conversationId,
+        _id: conversationId,
       });
 
       if (!conversation) {
@@ -230,7 +231,6 @@ export class ConversationService {
     userId: string
   ): Promise<ServiceResponse<any>> {
     try {
-      console.log(conversationId, userId, "getUserConversation");
       const cacheConversation = await this.getCacheConversation(conversationId);
 
       if (cacheConversation) {
@@ -326,6 +326,24 @@ export class ConversationService {
         conversations.map((con) => this.cacheConversation(con))
       );
 
+      return {
+        success: true,
+        data: conversations,
+      };
+    } catch (error) {
+      this.logger.error("Error to fetch conversations :", error);
+      return {
+        success: false,
+        error: "Error to fetch user conversations",
+      };
+    }
+  }
+
+  async getConversationsByUser(userId: string) {
+    try {
+      const conversations = await this.db.find("Conversation", {
+        "participants.userId": userId,
+      });
       return {
         success: true,
         data: conversations,

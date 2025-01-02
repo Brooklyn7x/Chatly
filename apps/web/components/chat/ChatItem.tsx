@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Chat } from "@/types";
+import { Chat } from "@/store/useChatStore";
 
 interface ChatItemProps {
   isActive?: boolean;
@@ -44,7 +44,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
               {chat.metadata?.title}
             </h3>
             <span className="text-xs text-muted-foreground">
-              {formattedDate(chat.createdAt)}
+              {/* {formattedDate(chat.createdAt.toLocaleTimeString.toString())} */}
             </span>
           </div>
 
@@ -53,7 +53,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
               {chat?.lastMessage?.content || "No messages"}
             </p>
             <span className="ml-2 bg-primary text-primary-foreground rounded-full text-xs h-5 w-5 flex items-center justify-center ">
-              {chat.unreadCount}
+              0
             </span>
           </div>
         </div>
