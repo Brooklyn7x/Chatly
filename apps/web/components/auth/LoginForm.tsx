@@ -56,7 +56,7 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      await login(data.email, data.password);
+      login(data.email, data.password);
       router.push("/");
     } catch (error: any) {
       toast.error("Login failed", error);

@@ -87,32 +87,42 @@ export default function ChatWindow() {
   return (
     <div
       className={cn(
-        "bg-neutral-800/40",
         "flex-1 flex flex-col",
+        "bg-neutral-800/40",
         "transition-[transform,width] duration-300 ease-in-out",
         isMobile && !selectedChatId ? "translate-x-full" : "translate-x-0",
         isMobile ? "absolute inset-y-0 right-0 w-full z-10" : "relative"
       )}
     >
-      <ChatHeader
-        onProfileClick={() => setIsProfileOpen(!isProfileOpen)}
-        chat={currentChat}
-      />
+      {currentChat ? (
+        <>
+          <ChatHeader
+            onProfileClick={() => setIsProfileOpen(!isProfileOpen)}
+            chat={currentChat}
+          />
 
-      <MessageList messages={messages} currentUserId={user?._id} />
+          <MessageList messages={messages} currentUserId={user?._id} />
 
-      <MessageInput
-        onSendMessage={handleMessage}
-        onTypingStart={handleTypingStart}
-        onTypingStop={handleTypingStop}
-      />
+          <MessageInput
+            onSendMessage={handleMessage}
+            onTypingStart={handleTypingStart}
+            onTypingStop={handleTypingStop}
+          />
 
-      {isProfileOpen && (
-        <UserProfilePanel
-          isOpen={isProfileOpen}
-          onClose={() => setIsProfileOpen(false)}
-          currentChat={currentChat}
-        />
+          {isProfileOpen && (
+            <UserProfilePanel
+              isOpen={isProfileOpen}
+              onClose={() => setIsProfileOpen(false)}
+              currentChat={currentChat}
+            />
+          )}
+        </>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">
+            Select a chat to start messaging
+          </p>
+        </div>
       )}
     </div>
   );
