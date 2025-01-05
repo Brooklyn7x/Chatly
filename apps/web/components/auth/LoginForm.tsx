@@ -28,7 +28,7 @@ export const PasswordToggle = ({
     onClick={togglePassword}
     className="absolute top-1/2 right-2 transform -translate-y-1/2 transition-all"
   >
-    <span className="text-muted-foreground">
+    <span className="text-muted-foreground pl-6">
       {showPassword ? (
         <EyeClosed className="h-4 w-4" />
       ) : (
@@ -63,7 +63,7 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
   };
 
   return (
-    <div className="w-full sm:max-w-sm mx-auto p-4">
+    <div className="w-full sm:max-w-sm mx-auto p-4 sm:border rounded-sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-2">
         <h1 className="text-center text-2xl font-bold">Sign in to Chat-app</h1>
         <span className="max-w-[300px] mx-auto text-center text-sm">
