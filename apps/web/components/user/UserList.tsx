@@ -22,8 +22,8 @@ export const UserList = ({
     );
   }
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="border-t pt-2 space-y-1">
+    <div className="h-full w-full">
+      <div className="border-t p-2 space-y-1">
         {users
           .filter((user) => user._id)
           .map((user) => (

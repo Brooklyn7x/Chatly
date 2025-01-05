@@ -1,39 +1,56 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import useAuthStore from "@/store/useAuthStore";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import AuthButton from "./AuthButton";
-import { Eye, EyeClosed } from "lucide-react";
-import { PasswordToggle } from "./LoginForm";
+import { PasswordToggle } from "./TogglePassword";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { toast } from "sonner";
+
+const signUpSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid address"),
+  password: z
+    .string()
+    .min(1, "Password is require")
+    .min(8, "Password must be at least 8 characters"),
+});
 
 interface SignUpFormProps {
   showLogin: () => void;
 }
 
-interface FormData {
-  username: string;
-  email: string;
-  password: string;
-}
+type signUpFormValues = z.infer<typeof signUpSchema>;
 
 const SignUpForm = ({ showLogin }: SignUpFormProps) => {
-  const [data, setData] = useState<FormData>({
-    username: "",
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const { register } = useAuthStore();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setData((prev) => ({ ...prev, [name]: value }));
-  };
+  const form = useForm<signUpFormValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: signUpFormValues) => {
     try {
       await register(data.email, data.password, data.username);
       router.push("/");
@@ -44,45 +61,84 @@ const SignUpForm = ({ showLogin }: SignUpFormProps) => {
 
   return (
     <div className="w-full sm:max-w-sm mx-auto p-4 overflow-hidden">
-      <form onSubmit={handleSubmit} className="flex flex-col p-2">
-        <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
-        <div className="space-y-2 mt-10">
-          <Input
-            type="text"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col p-2"
+        >
+          <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
+
+          <FormField
+            control={form.control}
             name="username"
-            placeholder="Username"
-            className="h-12"
-            value={data.username}
-            onChange={handleChange}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">Username</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Username"
+                    type="text"
+                    className="h-12"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <Input
-            type="email"
+
+          <FormField
+            control={form.control}
             name="email"
-            placeholder="Email"
-            className="h-12"
-            value={data.email}
-            onChange={handleChange}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Email"
+                    type="email"
+                    autoComplete="email"
+                    className="h-12"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="Password"
-              className="h-12"
-              value={data.password}
-              onChange={handleChange}
-            />
-            <PasswordToggle
-              showPassword={showPassword}
-              togglePassword={() => setShowPassword(!showPassword)}
-            />
-          </div>
-        </div>
-        <Button type="submit" className="mt-5 h-12">
-          Sign up
-        </Button>
-        <AuthButton onClick={showLogin} label="Sign in" className="mt-2" />
-      </form>
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="sr-only">Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      placeholder="Password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      className="h-12"
+                      {...field}
+                    />
+                    <PasswordToggle
+                      showPassword={showPassword}
+                      togglePassword={() => setShowPassword(!showPassword)}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className="mt-5 h-12">
+            Sign up
+          </Button>
+          <AuthButton onClick={showLogin} label="Sign in" className="mt-2" />
+        </form>
+      </Form>
     </div>
   );
 };

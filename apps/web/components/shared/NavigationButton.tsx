@@ -4,8 +4,7 @@ interface NavigationButtonProps {
   onClick: () => void;
   icon: LucideIcon;
 }
-
-export default function NavigationButton({
+export function NavigationButton({
   onClick,
   icon: Icon,
 }: NavigationButtonProps) {

@@ -15,6 +15,7 @@ import { useState } from "react";
 import { MenuItem } from "../shared/MenuItem";
 
 import useAuth from "@/hooks/useAuth";
+import { SearchInput } from "../shared/SearchInput";
 
 interface SidebarHeaderProps {
   onSearchClick: () => void;
@@ -51,15 +52,11 @@ export function SidebarHeader({
         )}
       </button>
 
-      <div onClick={onSearchClick} className="relative w-full">
-        <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-        <input
-          value={onSearchQuery}
-          onChange={(e) => onSetSearchQuery(e.target.value)}
-          className="w-full h-10 pl-12 pr-4 bg-muted/50 rounded-full border text-md outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Search"
-        />
-      </div>
+      <SearchInput
+        value={onSearchQuery}
+        onChange={onSetSearchQuery}
+        placeholder="Search"
+      />
 
       <div
         className={cn(
@@ -75,6 +72,7 @@ export function SidebarHeader({
             <User className="h-6 w-6" />
             {user?.username || "User"}
           </div>
+
           <MenuItem
             icon={<Bookmark />}
             onClick={() => {}}

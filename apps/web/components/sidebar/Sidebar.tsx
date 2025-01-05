@@ -5,7 +5,7 @@ import { ChatList } from "../chat/ChatList";
 import { SidebarHeader } from "./SidebarHeader";
 import { useChatStore } from "@/store/useChatStore";
 import { SidebarMenu } from "./SidebarMenu";
-import { ContactModal } from "./ContactModal";
+import { DirectModal } from "./DirectModal";
 import { GroupModal } from "./GroupModal";
 
 export default function SideBar() {
@@ -55,11 +55,8 @@ export default function SideBar() {
         onSetSearchQuery={setSearchQuery}
         onBackClick={() => setShowSearch(false)}
       />
-      {showSearch ? (
-        <h1>Search Related things</h1>
-      ) : (
-        <ChatList chats={chats} />
-      )}
+
+      {showSearch ? <h1>Search Related things</h1> : <ChatList chats={chats} />}
 
       <SidebarMenu
         onShowContactModal={() => setShowContactModal(true)}
@@ -67,7 +64,7 @@ export default function SideBar() {
         onCreateChat={() => {}}
       />
 
-      <ContactModal
+      <DirectModal
         isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}
       />
