@@ -75,6 +75,13 @@ class SocketService {
       this.groupCallbacks.forEach((callback) => callback(data));
     });
 
+    this.socket.on(
+      "typing:update",
+      (data: { userId: string; isTyping: boolean }) => {
+        this.typingCallbacks.forEach((callback) => callback(data));
+      }
+    );
+
     this.socket.on("group:create:error", (error) => {
       console.error("Group creation error:", error);
     });
@@ -88,12 +95,10 @@ class SocketService {
   }
 
   sendMessage(message: Message): void {
-    console.log("Sending message:", message);
     if (!this.socket?.connected) {
       console.error("Socket not connected");
       return;
     }
-
     this.socket.emit("message:send", message);
   }
 

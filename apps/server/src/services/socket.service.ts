@@ -82,6 +82,7 @@ export class SocketService extends BaseService {
     try {
       socket.join(`user:${userId}`);
       console.log("User joined", userId);
+
       const conversation =
         await this.conversationService.getConversationsByUser(userId);
 
@@ -103,31 +104,28 @@ export class SocketService extends BaseService {
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
       try {
-        console.log("Message send request", data);
         const result = await this.messageService.sendMessage(
           socket.data.userId,
           data
         );
 
         if (result.success) {
-          console.log("Message sent successfully", result.data);
           socket.emit("message:sent", {
             messageId: result.data._id,
             status: "sent",
             timestamp: new Date(),
           });
+
           const conversation =
             await this.conversationService.getConversationById(
               data.conversationId
             );
-          console.log("Conversation data", conversation);
 
           if (conversation.success) {
-            console.log("Conversation data", conversation.data);
             if (conversation.data.type === "direct") {
               await this.handleDirectMessage(socket, data, result);
             } else {
-              await this.handleGroupMessage(socket, data, result);
+              // await this.handleGroupMessage(socket, data, result);
             }
           }
         } else {
@@ -250,8 +248,6 @@ export class SocketService extends BaseService {
   }
 
   private async handleDirectMessage(socket: Socket, data: any, result: any) {
-    console.log("Direct message handling", data, result);
-    console.log("Receiver ID", data.receiverId.toString());
     io.to(`user:${data.receiverId}`).emit("message:new", {
       ...result.data,
       _id: result.data._id,

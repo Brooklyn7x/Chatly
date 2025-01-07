@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Phone, Bell, User, Link } from "lucide-react";
+import { X, Pencil, Phone, Bell, Link } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { EditProfileForm } from "./ProfileForm";
@@ -98,14 +98,21 @@ export function UserProfilePanel({
         </div>
       </div>
 
-      {currentChat?.type === "group" && (
+      {/* {currentChat?.type === "group" && (
         <div className="p-2 flex-1 overflow-y-auto">
           <h1 className="pl-2 mb-2 text-lg font-semibold">Members</h1>
           {currentChat.participants.map((participant) => (
             <UserItem key={participant._id} user={participant} />
           ))}
         </div>
-      )}
+      )} */}
+
+      <div className="p-2 flex-1 overflow-y-auto">
+        <h1 className="pl-2 mb-2 text-lg font-semibold">Members</h1>
+        {currentChat?.participants.map((participant) => (
+          <UserItem key={participant._id} user={participant} />
+        ))}
+      </div>
 
       {isEditing && (
         <EditProfileForm

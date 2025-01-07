@@ -29,8 +29,11 @@ export const UserItem = ({ user, selected }: UserItemProps) => {
 
       <div className="min-w-0 flex-1">
         <div className="font-semibold truncate">{user.username || "User"}</div>
-        <div className="text-muted-foreground text-sm truncate">
+        {/* <div className="text-muted-foreground text-sm truncate">
           Last message
+        </div> */}
+         <div className="text-muted-foreground text-sm truncate">
+          {user.email}
         </div>
       </div>
     </div>

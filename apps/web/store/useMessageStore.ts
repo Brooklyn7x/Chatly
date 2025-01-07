@@ -9,13 +9,12 @@ interface MessageSender {
 interface Message {
   _id: string;
   conversationId: string;
-  conversationType: "private" | "group";
+  conversationType: "direct" | "group";
   content: string;
   type: "text" | "image" | "video" | "audio";
   senderId: string;
   receiverId: string;
   timestamp: string;
-  status: "sent" | "delivered" | "read";
   sender?: MessageSender;
 }
 
@@ -35,9 +34,11 @@ export const useMessageStore = create<MessageStore>()(
       loading: false,
       error: null,
 
-      getMessages: (chatId) => {
+      getMessages: (conversationId) => {
         return get()
-          .messages.filter((message) => message.conversationId === chatId)
+          .messages.filter(
+            (message) => message.conversationId === conversationId
+          )
           .sort(
             (a, b) =>
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
@@ -46,26 +47,33 @@ export const useMessageStore = create<MessageStore>()(
 
       addMessage: (message) => {
         set((state) => {
-          const messageExists = state.messages.some(
-            (m) => m._id === message._id
+          const messageMap = new Map(
+            state.messages.map((msg) => [msg._id, msg])
           );
 
-          if (messageExists) {
-            return state;
-          }
-
-          const newMessage: Message = {
-            ...message,
-            status: message.status || "sending",
+          const formattedMessage = {
+            _id: message._id,
+            conversationId: message.conversationId,
+            conversationType: message.conversationType,
+            content: message.content,
+            type: message.type || "text",
+            senderId: message.senderId,
+            receiverId: message.receiverId,
             timestamp: message.timestamp || new Date().toISOString(),
+            sender: message.sender || {
+              userId: message.senderId,
+              timestamp: message.timestamp || new Date().toISOString(),
+            },
           };
 
-          const updatedMessages = [...state.messages, newMessage].sort(
+          messageMap.set(formattedMessage._id, formattedMessage);
+
+          const sortedMessages = Array.from(messageMap.values()).sort(
             (a, b) =>
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
           );
 
-          return { messages: updatedMessages };
+          return { messages: sortedMessages };
         });
       },
 
@@ -77,23 +85,23 @@ export const useMessageStore = create<MessageStore>()(
         }));
       },
 
-      updateMessageStatus: (messageId, status) => {
-        set((state) => ({
-          messages: state.messages.map((message) =>
-            message._id === messageId ? { ...message, status } : message
-          ),
-        }));
-      },
+      // updateMessageStatus: (messageId, status) => {
+      //   set((state) => ({
+      //     messages: state.messages.map((message) =>
+      //       message._id === messageId ? { ...message, status } : message
+      //     ),
+      //   }));
+      // },
 
-      markMessagesAsRead: (chatId) => {
-        set((state) => ({
-          messages: state.messages.map((message) =>
-            message.conversationId === chatId
-              ? { ...message, status: "read" }
-              : message
-          ),
-        }));
-      },
+      // markMessagesAsRead: (conversationId) => {
+      //   set((state) => ({
+      //     messages: state.messages.map((message) =>
+      //       message.conversationId === conversationId
+      //         ? { ...message, status: "read" }
+      //         : message
+      //     ),
+      //   }));
+      // },
     }),
     {
       name: "message-store",

@@ -6,41 +6,20 @@ import { useEffect, useState } from "react";
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
   onTypingStart: () => void;
-  onTypingStop: () => void;
 }
 
 export default function MessageInput({
   onSendMessage,
   onTypingStart,
-  onTypingStop,
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
-    null
-  );
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachments, setShowAttachment] = useState(false);
 
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = event.target.value;
     setMessage(content);
-
-    if (!isTyping) {
-      setIsTyping(true);
-      onTypingStart();
-    }
-
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    const newTimeout = setTimeout(() => {
-      setIsTyping(false);
-      onTypingStop();
-    }, 2000);
-
-    setTypingTimeout(newTimeout);
+    onTypingStart();
   };
 
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,25 +27,12 @@ export default function MessageInput({
     if (message.trim()) {
       onSendMessage(message);
       setMessage("");
-      setIsTyping(false);
-      onTypingStop();
-
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-    };
-  }, [typingTimeout]);
   return (
     <div className="p-4">
-      <div className="md:max-w-[700px] mx-auto">
+      <div className="md:max-w-[700px] mx-auto relative">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <div className="relative w-full">
             <button
