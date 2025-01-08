@@ -19,7 +19,7 @@ export default function MessageList({
 
           return (
             <div
-              key={message.id}
+              key={message._id}
               className={`flex items-center gap-2 ${
                 isCurrentUser ? "justify-end" : "justify-start"
               }`}
@@ -59,7 +59,6 @@ export default function MessageList({
           );
         })}
       </div>
-      
     </div>
   );
 }

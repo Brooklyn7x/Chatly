@@ -1,21 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
 import { ChatList } from "../chat/ChatList";
 import { SidebarHeader } from "./SidebarHeader";
 import { useChatStore } from "@/store/useChatStore";
 import { SidebarMenu } from "./SidebarMenu";
-import { DirectModal } from "./DirectModal";
-import { GroupModal } from "./GroupModal";
+import { DirectModal } from "../modal/DirectModal";
+import { GroupModal } from "../modal/GroupModal";
+import SearchContent from "./SearchContent";
 
 export default function SideBar() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [showGroupModal, setShowGroupModal] = useState(false);
   const { isMobile } = useUIStore();
   const { selectedChatId, fetchChats } = useChatStore();
   const chats = useChatStore((state) => state.chats);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [showDirectModal, setShowDirectModal] = useState(false);
+  const [showGroupModal, setShowGroupModal] = useState(false);
 
   useEffect(() => {
     fetchChats();
@@ -23,7 +25,6 @@ export default function SideBar() {
 
   const filteredChats = useMemo(() => {
     if (!searchQuery.trim()) return chats;
-
     return chats.filter((chat) => {
       const searchTerm = searchQuery.toLowerCase();
       const chatName = chat.isGroup
@@ -37,8 +38,30 @@ export default function SideBar() {
     });
   }, [chats, searchQuery]);
 
+  const handleSearchClick = useCallback(() => {
+    setShowSearch(true);
+  }, [setShowSearch]);
+
+  const handleBackClick = useCallback(() => {
+    setShowSearch(false);
+    setSearchQuery("");
+  }, [setShowSearch, setSearchQuery]);
+
+  const handleShowGroupModal = useCallback(() => {
+    setShowGroupModal(true);
+  }, []);
+  const handleShowDirectModal = useCallback(() => {
+    setShowDirectModal(true);
+  }, []);
+  const handleCloseDirectModal = useCallback(() => {
+    setShowGroupModal(false);
+  }, []);
+  const handleCloseGroupModal = useCallback(() => {
+    setShowGroupModal(false);
+  }, []);
+
   return (
-    <div
+    <aside
       className={cn(
         "w-full md:w-[420px] md:border-r",
         "flex flex-col relative",
@@ -51,28 +74,23 @@ export default function SideBar() {
       <SidebarHeader
         onSearchActive={showSearch}
         onSearchQuery={searchQuery}
-        onSearchClick={() => setShowSearch(true)}
         onSetSearchQuery={setSearchQuery}
-        onBackClick={() => setShowSearch(false)}
+        onSearchClick={handleSearchClick}
+        onBackClick={handleBackClick}
       />
-
-      {showSearch ? <h1>Search Related things</h1> : <ChatList chats={chats} />}
+      <main className="flex-1 overflow-y-auto">
+        {showSearch ? <SearchContent /> : <ChatList chats={chats} />}
+      </main>
 
       <SidebarMenu
-        onShowContactModal={() => setShowContactModal(true)}
-        onCreateGroup={() => setShowGroupModal(true)}
+        onShowContactModal={handleShowDirectModal}
+        onCreateGroup={handleShowGroupModal}
         onCreateChat={() => {}}
       />
 
-      <DirectModal
-        isOpen={showContactModal}
-        onClose={() => setShowContactModal(false)}
-      />
+      <DirectModal isOpen={showDirectModal} onClose={handleCloseDirectModal} />
 
-      <GroupModal
-        isOpen={showGroupModal}
-        onClose={() => setShowGroupModal(false)}
-      />
-    </div>
+      <GroupModal isOpen={showGroupModal} onClose={handleCloseGroupModal} />
+    </aside>
   );
 }

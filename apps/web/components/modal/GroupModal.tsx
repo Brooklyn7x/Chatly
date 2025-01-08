@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ActionButton } from "../shared/ActionButton";
 import { GroupDetailsForm } from "../form/GroupDetailsForm";
-import { StepContainer } from "../modal/StepContainer";
+import { StepContainer } from "./StepContainer";
 import { UserList } from "../user/UserList";
 import { SelectUserList } from "../user/SelectedUserList";
 import { SearchInput } from "../shared/SearchInput";

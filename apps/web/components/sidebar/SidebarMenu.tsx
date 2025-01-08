@@ -15,7 +15,6 @@ export function SidebarMenu({
   onCreateGroup,
 }: SidebarMenuProps) {
   const [showMenu, setShowMenu] = useState(false);
-  const { user } = useAuth();
 
   const handleCreateChat = () => {
     onCreateChat();
