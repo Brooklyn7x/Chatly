@@ -1,118 +1,108 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Phone, Bell, Link } from "lucide-react";
-import Image from "next/image";
+import { X, Pencil, Phone, Bell, Link, LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { EditProfileForm } from "./ProfileForm";
 import { Chat } from "@/types";
 import { UserItem } from "../sidebar/UserItem";
+import { UserAvatar } from "../user/UserAvatar";
 
 interface UserProfilePanelProps {
   isOpen: boolean;
   onClose: () => void;
-  currentChat: Chat | undefined;
+  chat: Chat | undefined;
 }
 
 export function UserProfilePanel({
   isOpen,
   onClose,
-  currentChat,
+  chat,
 }: UserProfilePanelProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const onEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
+  const isGroupChat = chat?.type === "group";
+  const displayName = isGroupChat
+    ? chat?.metadata.title
+    : chat?.participants[0]?.username || "User";
+  const memberCount = chat?.participants.length || 0;
+  const statusText = isGroupChat
+    ? `${memberCount} members`
+    : "last seen recently";
   if (!isOpen) return null;
 
   return (
-    <div
+    <aside
       className={cn(
         "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background sm:border shadow-md",
-        "transition-transform duration-300 ease-in-out",
         "flex flex-col",
+        "transition-transform transform duration-300 ease-out",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}
     >
-      <div className="h-16 px-4 flex-none border-b flex items-center justify-between">
+      <div className="h-16 px-4 flex-none border-b flex items-center justify-between text-muted-foreground">
         <div className="flex items-center gap-4">
           <button
             onClick={onClose}
-            className="rounded-full p-2 hover:bg-slate-100/10 transition-colors"
+            className={cn(
+              "h-10 w-10 p-2 flex items-center justify-center rounded-full",
+              "hover:bg-muted/50 transition-colors duration-200"
+            )}
           >
             <X className="h-5 w-5" />
           </button>
-
-          <h1 className="text-lg">User Info</h1>
+          <h1 className="text-lg">{chat?.metadata.title || "Direct"}</h1>
         </div>
 
-        <button onClick={() => setIsEditing(true)}>
+        <button
+          onClick={onEdit}
+          className={cn(
+            "h-10 w-10 p-2 flex items-center justify-center rounded-full",
+            "hover:bg-muted/50 transition-colors duration-200"
+          )}
+        >
           <Pencil className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="flex flex-col">
-        <div className="flex flex-col items-center justify-center gap-8">
-          <div className="h-32 w-32 rounded-full border relative translate-y-5 overflow-hidden">
-            <Image
-              src={"/user.png"}
-              alt="user"
-              fill
-              className="object-cover"
-              layout="lazy"
-              sizes="100px"
-            />
-          </div>
-
-          <div className="mt-2">
-            <h1 className="text-xl font-semibold">
-              {currentChat?.type === "direct"
-                ? "User"
-                : currentChat?.metadata.title}
-            </h1>
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <section className="flex flex-col items-center justify-center gap-4 p-4">
+          <UserAvatar size={"xl"} />
+          <div className="mt-2 text-center">
+            <h1 className="text-xl font-semibold">{displayName}</h1>
             <p className="text-center text-sm text-muted-foreground">
-              {currentChat?.type === "group"
-                ? currentChat.participants.length + " " + "members"
-                : "last seen when ?"}
+              {statusText}
             </p>
           </div>
-        </div>
+        </section>
 
-        <div>
-          {currentChat?.type === "direct" ? (
-            <div className="flex items-center gap-6 p-4">
-              <Phone className="text-muted-foreground" />
-              <p className="flex flex-col mt-0">
-                +9012344354{" "}
-                <span className="text-muted-foreground text-sm">Phone</span>{" "}
-              </p>
-            </div>
+        <section className="p-4">
+          {chat?.type === "direct" ? (
+            <ProfileInfo icon={Phone} label="Phone" value="+1234567889" />
           ) : (
-            <div className="p-4 flex items-center gap-6">
-              <Link className="text-muted-foreground" />
-              <p className="flex flex-col mt-0">
-                {currentChat?.metadata.title || "No link attached"}{" "}
-                <span className="text-muted-foreground text-sm">Link</span>{" "}
-              </p>
-            </div>
+            <ProfileInfo
+              icon={Link}
+              label="Link"
+              value={chat?.metadata.title || "No link attached"}
+            />
           )}
-          <p className="flex items-center gap-6 p-4">
-            <Bell className="text-muted-foreground" />
-            <span>Notifications</span>
-          </p>
-        </div>
+
+          <ProfileInfo icon={Bell} label="Notifications" value="Enabled" />
+        </section>
       </div>
 
-      {/* {currentChat?.type === "group" && (
-        <div className="p-2 flex-1 overflow-y-auto">
-          <h1 className="pl-2 mb-2 text-lg font-semibold">Members</h1>
-          {currentChat.participants.map((participant) => (
+      <section className="flex-1 overflow-y-auto border-t">
+        <h1 className="p-4 text-lg font-semibold">
+          {chat?.type === "direct" ? "Members" : "Shared Groups"}
+        </h1>
+
+        <div className="space-y-1">
+          {chat?.participants.map((participant) => (
             <UserItem key={participant._id} user={participant} />
           ))}
         </div>
-      )} */}
-
-      <div className="p-2 flex-1 overflow-y-auto">
-        <h1 className="pl-2 mb-2 text-lg font-semibold">Members</h1>
-        {currentChat?.participants.map((participant) => (
-          <UserItem key={participant._id} user={participant} />
-        ))}
-      </div>
+        
+      </section>
 
       {isEditing && (
         <EditProfileForm
@@ -120,6 +110,24 @@ export function UserProfilePanel({
           onClose={() => setIsEditing(false)}
         />
       )}
-    </div>
+    </aside>
   );
 }
+
+interface ProfileInfoProps {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+}
+
+const ProfileInfo = ({ icon: Icon, label, value }: ProfileInfoProps) => {
+  return (
+    <div className="flex items-center gap-6 p-4">
+      <Icon className="h-6 w-6 text-muted-foreground" />
+      <div className="flex flex-col">
+        <span>{value}</span>
+        <span className="text-muted-foreground text-sm">{label}</span>
+      </div>
+    </div>
+  );
+};

@@ -3,7 +3,7 @@ export interface User {
   username: string;
   email: string;
   avatar?: string;
-  status: "offline";
+  status: "offline" | "online";
   lastSeen?: string;
 }
 

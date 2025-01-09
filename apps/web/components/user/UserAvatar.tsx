@@ -11,6 +11,7 @@ const avatarVariants = cva(
         sm: "h-10 w-10",
         md: "h-12 w-12",
         lg: "h-14 w-14",
+        xl: "h-28 w-28",
       },
       status: {
         online: "ring-2 ring-green-500",
@@ -84,6 +85,7 @@ function getSizes(size?: "xs" | "sm" | "md" | "lg" | null) {
     sm: "(max-width: 640px) 40px, 10vw",
     md: "(max-width: 640px) 48px, 12vw",
     lg: "(max-width: 640px) 56px, 14vw",
+    xl: "(max-width: 768px) 128px, 128px",
   };
   return sizes[size || "md"];
 }

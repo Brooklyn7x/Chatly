@@ -13,7 +13,7 @@ export default function SideBar() {
   const { isMobile } = useUIStore();
   const { selectedChatId, fetchChats } = useChatStore();
   const chats = useChatStore((state) => state.chats);
-
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showDirectModal, setShowDirectModal] = useState(false);
@@ -54,7 +54,7 @@ export default function SideBar() {
     setShowDirectModal(true);
   }, []);
   const handleCloseDirectModal = useCallback(() => {
-    setShowGroupModal(false);
+    setShowDirectModal(false);
   }, []);
   const handleCloseGroupModal = useCallback(() => {
     setShowGroupModal(false);

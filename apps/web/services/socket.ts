@@ -21,15 +21,21 @@ interface GroupResponse {
   createdBy: string;
 }
 
+interface UserStatus {
+  userId: string;
+  status: "offline" | "online";
+}
+
 class SocketService {
   private socket: Socket | null = null;
   private messageCallbacks: ((message: Message) => void)[] = [];
+  // eslint-disable-next-line no-unused-vars
   private typingCallbacks: ((data: {
     userId: string;
     isTyping: boolean;
   }) => void)[] = [];
   private groupCallbacks: ((data: GroupResponse) => void)[] = [];
-
+  private statusCallbacks: ((data: UserStatus) => void)[] = [];
   connect(token: string): void {
     if (this.socket?.connected) return;
 
@@ -57,6 +63,10 @@ class SocketService {
 
     this.socket.on("connect_error", (err) => {
       console.error("Connection error:", err);
+    });
+
+    this.socket.on("user:status", (data: UserStatus) => {
+      this.statusCallbacks.forEach((callback) => callback(data));
     });
 
     this.socket.on("message:new", (message: Message) => {
@@ -100,6 +110,15 @@ class SocketService {
       return;
     }
     this.socket.emit("message:send", message);
+  }
+
+  onUserStatusChange(callback: (data: UserStatus) => void): () => void {
+    this.statusCallbacks.push(callback);
+    return () => {
+      this.statusCallbacks = this.statusCallbacks.filter(
+        (cb) => cb !== callback
+      );
+    };
   }
 
   onMessageReceived(callback: (message: Message) => void): () => void {

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useUIStore } from "@/store/useUiStore";
@@ -22,10 +22,28 @@ export default function ChatWindow() {
   const { getMessages, addMessage } = useMessageStore();
   const token = useAuthStore((state) => state.accessToken) || ``;
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userStatuses, setUserStatuses] = useState<Record<string, string>>({});
   const currentChat = chats.find((chat) => chat._id === selectedChatId);
   const messages = selectedChatId ? getMessages(selectedChatId) : [];
   const userId = user?._id;
   useSocketChat(token, selectedChatId, user);
+
+  useEffect(() => {
+    const unsubscribe = socketService.onUserStatusChange((data) => {
+      console.log(data, "userstatus");
+      setUserStatuses((prev) => ({
+        ...prev,
+        [data.userId]: data.status,
+      }));
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const otherUser = currentChat?.participants.find((p) => p.userId !== userId);
+  const isOnline = userStatuses[otherUser?.userId] === "online";
+  console.log(otherUser, userId, "com");
 
   const { isTyping, handleTypingStart } = useTypingIndicator(
     currentChat,
@@ -76,7 +94,11 @@ export default function ChatWindow() {
     >
       {currentChat ? (
         <>
-          <ChatHeader onProfileClick={toggleProfile} chat={currentChat} />
+          <ChatHeader
+            onProfileClick={toggleProfile}
+            chat={currentChat}
+            isOnline={isOnline}
+          />
 
           <MessageList messages={messages} currentUserId={userId} />
 

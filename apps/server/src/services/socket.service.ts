@@ -83,6 +83,13 @@ export class SocketService extends BaseService {
       socket.join(`user:${userId}`);
       console.log("User joined", userId);
 
+      await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
+
+      io.emit("user:status", {
+        userId,
+        status: "online",
+      });
+
       const conversation =
         await this.conversationService.getConversationsByUser(userId);
 
@@ -125,7 +132,7 @@ export class SocketService extends BaseService {
             if (conversation.data.type === "direct") {
               await this.handleDirectMessage(socket, data, result);
             } else {
-              // await this.handleGroupMessage(socket, data, result);
+              await this.handleGroupMessage(socket, data, result);
             }
           }
         } else {
@@ -270,13 +277,12 @@ export class SocketService extends BaseService {
       if (connection === 0) {
         await this.userService.updateUserStatus(userId, UserStatus.OFFLINE);
       }
-
       io.emit("user:status", {
         userId,
         status: "offline",
       });
 
-      this.logger.info(`User ${userId} disconnected`);
+      this.logger.info(`User${userId} disconnected`);
     } catch (error) {
       this.logger.error(`Disconnect error for user ${userId}:`, error);
     }

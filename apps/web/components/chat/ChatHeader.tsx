@@ -16,9 +16,14 @@ import {
 interface ChatHeaderProps {
   onProfileClick: () => void;
   chat: Chat;
+  isOnline: boolean;
 }
 
-export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
+export default function ChatHeader({
+  onProfileClick,
+  chat,
+  isOnline,
+}: ChatHeaderProps) {
   const { selectedChatId, deleteChat, setSelectChat } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -40,11 +45,12 @@ export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
         )}
 
         <button onClick={onProfileClick} className="flex items-center gap-4">
-          <UserAvatar status={"offline"} size={"sm"} />
+          <UserAvatar status={isOnline ? "online" : "offline"} size={"sm"} />
           <div className="flex flex-col text-left">
             <h2 className="text-sm font-semibold">{chatTitle}</h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {chatSubtitle}
+              {/* {chatSubtitle} */}
+              {isOnline ? "Online" : "Offline"}
             </span>
           </div>
         </button>

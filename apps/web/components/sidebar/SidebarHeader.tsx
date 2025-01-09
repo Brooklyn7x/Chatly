@@ -1,28 +1,24 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { MenuItem } from "../shared/MenuItem";
+import useAuth from "@/hooks/useAuth";
+import { SearchInput } from "../shared/SearchInput";
 import {
-  ArrowDown,
-  ArrowLeft,
   ArrowRight,
   Bookmark,
   LogOut,
   Menu,
   Moon,
-  Search,
   Settings,
   User,
 } from "lucide-react";
-import { useState } from "react";
-import { MenuItem } from "../shared/MenuItem";
-
-import useAuth from "@/hooks/useAuth";
-import { SearchInput } from "../shared/SearchInput";
 
 interface SidebarHeaderProps {
   onSearchClick: () => void;
   onSearchActive?: boolean;
   onSearchQuery: string;
   onSetSearchQuery: (query: string) => void;
-  onBackClick?: () => void;
+  onBackClick: () => void;
 }
 
 export function SidebarHeader({
@@ -37,12 +33,18 @@ export function SidebarHeader({
   const handleLogout = () => {
     logout();
   };
+  const handleSearchClick = () => {
+    onSearchClick();
+  };
+
+  console.log(user)
+
   return (
-    <div className="h-16 px-4 border-b flex items-center gap-4">
+    <header className="h-16 px-4 border-b flex items-center gap-4">
       <button
         onClick={onSearchActive ? onBackClick : () => setShowMenu(!showMenu)}
-        className={`p-2 text-muted-foreground rounded-full transition-all duration-300 ease-in-out 
-          ${onSearchActive || showMenu ? "bg-muted" : "hover:bg-muted/50"}
+        className={`h-10 px-2 flex items-center justify-center text-muted-foreground rounded-full transition-all duration-300 ease-in-out 
+          ${onSearchActive || showMenu ? "bg-neutral-500/20" : "hover:bg-neutral-500/20"}
           transform ${onSearchActive || showMenu ? "rotate-180" : "rotate-0"}`}
       >
         {onSearchActive ? (
@@ -51,17 +53,17 @@ export function SidebarHeader({
           <Menu className="h-6 w-6" />
         )}
       </button>
-
-      <SearchInput
-        value={onSearchQuery}
-        onChange={onSetSearchQuery}
-        placeholder="Search"
-      />
-
+      <button onClick={handleSearchClick} className="w-full">
+        <SearchInput
+          value={onSearchQuery}
+          onChange={onSetSearchQuery}
+          placeholder="Search"
+        />
+      </button>
       <div
         className={cn(
           "absolute top-14 left-2 w-56 rounded-md z-20 shadow-md bg-background/70 border backdrop-blur-sm",
-          " transform transition-all duration-200 ease-in-out origin-top-left",
+          "transform transition-all duration-200 ease-in-out origin-top-left",
           showMenu
             ? "scale-100 translate-y-0 opacity-100 pointer-events-auto"
             : "scale-75 -translate-y-2 opacity-0 pointer-events-none"
@@ -70,7 +72,8 @@ export function SidebarHeader({
         <div className="p-1 space-y-1">
           <div className="flex items-center gap-4 px-4 py-2 border-b">
             <User className="h-6 w-6" />
-            {user?.username || "User"}
+            <span className="font-medium">{user?.username || "User"}</span>
+            <span>{user?.status === "online" ? "online" : "offline"} </span>
           </div>
 
           <MenuItem
@@ -84,6 +87,6 @@ export function SidebarHeader({
           <MenuItem icon={<LogOut />} onClick={handleLogout} label="Logout" />
         </div>
       </div>
-    </div>
+    </header>
   );
 }
