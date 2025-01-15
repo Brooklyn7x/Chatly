@@ -4,7 +4,6 @@ import {
   CreateMessageDTO,
   Message,
   MessageStatus,
-  MessageType,
 } from "../types/message";
 import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./base.service";
@@ -72,8 +71,8 @@ export class MessageService extends BaseService {
 
       // await this.cacheMessage(storedMessage);
 
-      // message.status = MessageStatus.SENT;
-      // await this.updateMessageStatus(message.id, MessageStatus.SENT);
+      message.status = MessageStatus.SENT;
+      await this.updateMessageStatus(message.id, MessageStatus.SENT);
       // await this.sendRealTimeUpdate(message);
       // await this.updateConversation(message);
 
@@ -163,6 +162,129 @@ export class MessageService extends BaseService {
       return {
         success: false,
         error: "Failed to delete message",
+      };
+    }
+  }
+
+  // async updateMessageStatus(messageId: string, status: MessageStatus) {
+  //   try {
+  //     console.log(messageId, "message ids");
+  //     const updatedMessage = await MessageModel.findByIdAndUpdate(
+  //       messageId,
+  //       {
+  //         $set: {
+  //           status: status,
+  //           updatedAt: new Date(),
+  //         },
+  //       },
+  //       { new: true }
+  //     );
+  //     if (!updatedMessage) {
+  //       return {
+  //         success: false,
+  //         error: "Message not found",
+  //       };
+  //     }
+
+  //     return {
+  //       success: true,
+  //       data: updatedMessage,
+  //     };
+  //   } catch (error) {
+  //     this.logger.error("Error updating message status", error);
+  //     return {
+  //       success: false,
+  //       error: "Failed to update message status",
+  //     };
+  //   }
+  // }
+
+  async updateMessageStatus(messageId: string, status: MessageStatus) {
+    try {
+      if (!mongoose.isValidObjectId(messageId)) {
+        this.logger.error(`Invalid message ID format: ${messageId}`);
+        return {
+          success: false,
+          error: "Invalid message ID format",
+        };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(messageId),
+        {
+          $set: {
+            status: status,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      return {
+        success: true,
+        data: updatedMessage,
+      };
+    } catch (error) {
+      this.logger.error("Error updating message status:", error);
+      return {
+        success: false,
+        error: "Failed to update message status",
+      };
+    }
+  }
+
+  async markMessageAsRead(
+    messageId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const message = await MessageModel.findById(messageId);
+
+      if (!message) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      if (message.receiverId?.toString() !== userId) {
+        return {
+          success: false,
+          error: "Unauthorized to mark this message as read",
+        };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        messageId,
+        {
+          $set: {
+            status: MessageStatus.READ,
+            readAt: new Date(),
+            "deliveryStatus.read": new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Failed to update message status",
+        };
+      }
+      return { success: true, data: updatedMessage };
+    } catch (error) {
+      this.logger.error("Error marking message as read:", error);
+      return {
+        success: false,
+        error: "Failed to mark message as read",
       };
     }
   }

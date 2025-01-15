@@ -27,6 +27,7 @@ export const useSocketChat = (
       }
 
       messageSet.add(messageId);
+
       const formattedMessage = {
         _id: message._id,
         conversationId: message._doc.conversationId,

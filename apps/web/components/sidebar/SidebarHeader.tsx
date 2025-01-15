@@ -37,8 +37,6 @@ export function SidebarHeader({
     onSearchClick();
   };
 
-  console.log(user)
-
   return (
     <header className="h-16 px-4 border-b flex items-center gap-4">
       <button

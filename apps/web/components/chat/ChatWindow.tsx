@@ -29,21 +29,50 @@ export default function ChatWindow() {
   useSocketChat(token, selectedChatId, user);
 
   useEffect(() => {
-    const unsubscribe = socketService.onUserStatusChange((data) => {
-      console.log(data, "userstatus");
+    if (!selectedChatId || !currentChat || !messages.length || !userId) {
+      return;
+    }
+    const unreadMessages = messages.filter(
+      (message) => message.senderId !== userId && message.status !== "read"
+    );
+
+    if (unreadMessages.length > 0) {
+      socketService.markMessagesAsRead({
+        messageIds: unreadMessages.map((msg) => msg._id),
+        conversationId: selectedChatId,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const unsubscribeMessageStatus = socketService.onMessageStatus((status) => {
+      if (status.conversationId === selectedChatId) {
+        useMessageStore
+          .getState()
+          .updateMessageStatus(status.messageId, status.status);
+      }
+    });
+
+    return () => {
+      unsubscribeMessageStatus();
+    };
+  }, [selectedChatId]);
+
+  useEffect(() => {
+    const unsubscribeUserStatus = socketService.onUserStatusChange((data) => {
       setUserStatuses((prev) => ({
         ...prev,
         [data.userId]: data.status,
       }));
     });
+
     return () => {
-      unsubscribe();
+      unsubscribeUserStatus();
     };
   }, []);
 
   const otherUser = currentChat?.participants.find((p) => p.userId !== userId);
   const isOnline = userStatuses[otherUser?.userId] === "online";
-  console.log(otherUser, userId, "com");
 
   const { isTyping, handleTypingStart } = useTypingIndicator(
     currentChat,
@@ -53,13 +82,14 @@ export default function ChatWindow() {
   const handleMessage = useCallback(
     (content: string) => {
       if (!content.trim() || !selectedChatId || !currentChat) return;
-
+      const tempId = `temp-${Date.now()}`;
       const messageData = {
-        _id: `${Date.now()}`,
+        _id: tempId,
         senderId: userId,
         conversationId: selectedChatId,
         content,
         type: "text",
+        status: "sent",
         timestamp: new Date().toISOString(),
         conversationType: currentChat?.type as "direct" | "group",
         ...(currentChat?.type === "direct" && {
@@ -70,6 +100,15 @@ export default function ChatWindow() {
 
       addMessage(messageData);
       socketService.sendMessage(messageData);
+
+      // const unsubscribe = socketService.onMessageSent((response) => {
+      //   console.log(response);
+
+      //   // if (response.tempId === tempId) {
+      //   //     useMessageStore.getState().updateMessageId(tempId, response.messageId);
+      //   //     unsubscribe();
+      //   // }
+      // });
     },
     [selectedChatId, currentChat, userId]
   );

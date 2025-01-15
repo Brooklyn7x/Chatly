@@ -33,12 +33,11 @@ interface ChatStore {
   selectedChatId: string | null;
   isLoading: boolean;
   error: string | null;
-
+  setSelectChat: (chatId: string) => void;
   fetchChats: () => void;
   getChat: (chatId: string) => Chat | undefined;
   createChat: (participants: User[], title?: string) => void;
   deleteChat: (chatId: string) => void;
-  setSelectChat: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatStore>()(

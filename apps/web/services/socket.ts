@@ -1,3 +1,4 @@
+import { useMessageStore } from "@/store/useMessageStore";
 import { io, Socket } from "socket.io-client";
 
 interface Message {
@@ -25,17 +26,30 @@ interface UserStatus {
   userId: string;
   status: "offline" | "online";
 }
+interface MessageStatus {
+  messageId: string;
+  status: "sent" | "delivered" | "read";
+  conversationId: string;
+  timestamp: Date;
+  readBy?: string;
+}
+
+interface MarksAsRead {
+  messageIds: string[];
+  conversationId: string;
+}
 
 class SocketService {
   private socket: Socket | null = null;
   private messageCallbacks: ((message: Message) => void)[] = [];
-  // eslint-disable-next-line no-unused-vars
   private typingCallbacks: ((data: {
     userId: string;
     isTyping: boolean;
   }) => void)[] = [];
+  private messageStatusCallbacks: ((data: MessageStatus) => void)[] = [];
   private groupCallbacks: ((data: GroupResponse) => void)[] = [];
   private statusCallbacks: ((data: UserStatus) => void)[] = [];
+
   connect(token: string): void {
     if (this.socket?.connected) return;
 
@@ -73,8 +87,23 @@ class SocketService {
       this.messageCallbacks.forEach((callback) => callback(message));
     });
 
-    this.socket.on("message:sent", (response) => {
-      console.log("Message sent confirmation:", response);
+    this.socket.on(
+      "message:sent",
+      (response: {
+        messageId: string;
+        tempId: string;
+        status: "sent";
+        timestamp: Date;
+      }) => {
+        console.log("Message sent confirmation:", response);
+        useMessageStore
+          .getState()
+          .updateMessageId(response.tempId, response.messageId);
+      }
+    );
+
+    this.socket.on("message:status", (data: MessageStatus) => {
+      this.messageStatusCallbacks.forEach((callback) => callback(data));
     });
 
     this.socket.on("message:error", (error) => {
@@ -103,15 +132,6 @@ class SocketService {
       this.socket = null;
     }
   }
-
-  sendMessage(message: Message): void {
-    if (!this.socket?.connected) {
-      console.error("Socket not connected");
-      return;
-    }
-    this.socket.emit("message:send", message);
-  }
-
   onUserStatusChange(callback: (data: UserStatus) => void): () => void {
     this.statusCallbacks.push(callback);
     return () => {
@@ -121,12 +141,74 @@ class SocketService {
     };
   }
 
+  sendMessage(message: Message): void {
+    if (!this.socket?.connected) {
+      console.error("Socket not connected");
+      return;
+    }
+    this.socket.emit("message:send", message);
+  }
+  onMessageSent(
+    callback: (data: {
+      messageId: string;
+      tempId?: string;
+      status: "sent";
+      timestamp: Date;
+    }) => void
+  ): () => void {
+    if (!this.socket) return () => {};
+
+    const handler = (data: any) => callback(data);
+    this.socket.on("message:sent", handler);
+
+    return () => {
+      this.socket?.off("message:sent", handler);
+    };
+  }
+
   onMessageReceived(callback: (message: Message) => void): () => void {
     this.messageCallbacks.push(callback);
     return () => {
       this.messageCallbacks = this.messageCallbacks.filter(
         (cb) => cb !== callback
       );
+    };
+  }
+
+  onMessageStatus(callback: (message: MessageStatus) => void): () => void {
+    this.messageStatusCallbacks.push(callback);
+    return () => {
+      this.messageStatusCallbacks = this.messageStatusCallbacks.filter(
+        (cb) => cb !== callback
+      );
+    };
+  }
+
+  markMessagesAsRead(data: {
+    messageIds: string[];
+    conversationId: string;
+  }): void {
+    if (!this.socket?.connected) {
+      console.error("Socket not connected");
+      return;
+    }
+    this.socket.emit("message:read", data);
+  }
+
+  onMessagesReadAck(
+    callback: (data: {
+      messageIds: string[];
+      conversationId: string;
+      timestamp: Date;
+    }) => void
+  ): () => void {
+    if (!this.socket) return () => {};
+
+    const handler = (data: any) => callback(data);
+    this.socket.on("messages:read:ack", handler);
+
+    return () => {
+      this.socket?.off("messages:read:ack", handler);
     };
   }
 

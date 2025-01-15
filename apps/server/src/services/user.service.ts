@@ -158,9 +158,7 @@ export class UserService {
 
   async updateUserStatus(userId: string, status: UserStatus) {
     try {
-      console.log(userId, status, "User status");
       await Promise.all([
-    
         UserModel.findByIdAndUpdate({
           _id: userId,
           status,

@@ -6,12 +6,13 @@ interface MessageSender {
   timestamp: string;
 }
 
-interface Message {
+export interface Message {
   _id: string;
   conversationId: string;
   conversationType: "direct" | "group";
   content: string;
   type: "text" | "image" | "video" | "audio";
+  status: "sent" | "delivered" | "read";
   senderId: string;
   receiverId: string;
   timestamp: string;
@@ -25,6 +26,11 @@ interface MessageStore {
   getMessages: (coversationId: string) => Message[];
   addMessage: (message: Message) => void;
   deleteMessage: (messageId: string) => void;
+  updateMessageId: (tempId: string, messageId: string) => void;
+  updateMessageStatus: (
+    messageId: string,
+    status: "sent" | "delivered" | "read"
+  ) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
@@ -57,6 +63,7 @@ export const useMessageStore = create<MessageStore>()(
             conversationType: message.conversationType,
             content: message.content,
             type: message.type || "text",
+            status: message.status,
             senderId: message.senderId,
             receiverId: message.receiverId,
             timestamp: message.timestamp || new Date().toISOString(),
@@ -77,6 +84,14 @@ export const useMessageStore = create<MessageStore>()(
         });
       },
 
+      updateMessageId(tempId, messageId) {
+        set((state) => ({
+          messages: state.messages.map((message) =>
+            message._id === tempId ? { ...message, _id: messageId } : message
+          ),
+        }));
+      },
+
       deleteMessage: (messageId) => {
         set((state) => ({
           messages: state.messages.filter(
@@ -85,13 +100,16 @@ export const useMessageStore = create<MessageStore>()(
         }));
       },
 
-      // updateMessageStatus: (messageId, status) => {
-      //   set((state) => ({
-      //     messages: state.messages.map((message) =>
-      //       message._id === messageId ? { ...message, status } : message
-      //     ),
-      //   }));
-      // },
+      updateMessageStatus: (
+        messageId,
+        status: "sent" | "delivered" | "read"
+      ) => {
+        set((state) => ({
+          messages: state.messages.map((message) =>
+            message._id === messageId ? { ...message, status } : message
+          ),
+        }));
+      },
 
       // markMessagesAsRead: (conversationId) => {
       //   set((state) => ({

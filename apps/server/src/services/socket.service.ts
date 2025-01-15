@@ -7,6 +7,7 @@ import { UserStatus } from "../types/user.types";
 import { BaseService } from "./base.service";
 import { ConversationService } from "./conversation.service";
 import { ConversationType } from "../types/conversation";
+import { MessageStatus } from "../types/message";
 
 export class SocketService extends BaseService {
   private static instance: SocketService;
@@ -110,6 +111,7 @@ export class SocketService extends BaseService {
 
   private setupChatHandlers(socket: Socket): void {
     socket.on("message:send", async (data) => {
+      console.log(data, "message data");
       try {
         const result = await this.messageService.sendMessage(
           socket.data.userId,
@@ -118,6 +120,7 @@ export class SocketService extends BaseService {
 
         if (result.success) {
           socket.emit("message:sent", {
+            tempId: data._id,
             messageId: result.data._id,
             status: "sent",
             timestamp: new Date(),
@@ -148,6 +151,44 @@ export class SocketService extends BaseService {
         });
       }
     });
+
+    socket.on(
+      "message:read",
+      async (data: { messageIds: string[]; conversationId: string }) => {
+        try {
+          console.log(data.messageIds, "message");
+          const readerId = socket.data.userId;
+
+          for (const messageId of data.messageIds) {
+            const result = await this.messageService.updateMessageStatus(
+              messageId,
+              MessageStatus.READ
+            );
+
+            if (result.data && result.data.senderId !== readerId) {
+              await this.sendToUser(result.data.senderId, "message:status", {
+                messageId,
+                status: MessageStatus.READ,
+                conversationId: data.conversationId,
+                timestamp: new Date(),
+                readBy: readerId,
+              });
+            }
+          }
+
+          socket.emit("messages:read:ack", {
+            messageIds: data.messageIds,
+            conversationId: data.conversationId,
+            timestamp: new Date(),
+          });
+        } catch (error) {
+          this.logger.error("Error marking messages as read:", error);
+          socket.emit("message:error", {
+            error: "Failed to mark messages as read",
+          });
+        }
+      }
+    );
   }
 
   private setupTypingHandlers(socket: Socket): void {
@@ -262,6 +303,7 @@ export class SocketService extends BaseService {
       receiverId: data.receiverId,
       conversationType: "direct",
       timestamp: new Date(),
+      status: MessageStatus.DELIVERED,
       sender: {
         userId: result.data.senderId,
         timestamp: new Date(),
@@ -273,16 +315,20 @@ export class SocketService extends BaseService {
     const userId = socket.data.userId;
 
     try {
-      const connection = await this.getActiveConnections(userId);
-      if (connection === 0) {
+      const activeConnections = await this.getActiveConnections(userId);
+      if (activeConnections === 0) {
         await this.userService.updateUserStatus(userId, UserStatus.OFFLINE);
-      }
-      io.emit("user:status", {
-        userId,
-        status: "offline",
-      });
+        io.emit("user:status", {
+          userId,
+          status: "offline",
+        });
 
-      this.logger.info(`User${userId} disconnected`);
+        this.logger.info(`User ${userId} went offline (no active connections)`);
+      } else {
+        this.logger.info(
+          `User ${userId} still has ${activeConnections} active connections`
+        );
+      }
     } catch (error) {
       this.logger.error(`Disconnect error for user ${userId}:`, error);
     }

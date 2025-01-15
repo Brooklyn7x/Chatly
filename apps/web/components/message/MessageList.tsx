@@ -1,11 +1,27 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { Message } from "@/store/useMessageStore";
 import { Avatar } from "@radix-ui/react-avatar";
-import { CheckCheck } from "lucide-react";
+import { Check, CheckCheck, Clock } from "lucide-react";
 interface MessageListProps {
-  messages: any;
+  messages: Message[];
   currentUserId: string | undefined;
 }
+
+const MessageStatus = ({ status }: { status: string }) => {
+  switch (status) {
+    case "sending":
+      return <Clock className="h-4 w-4 text-gray-400" />;
+    case "sent":
+      return <Check className="h-4 w-4 text-gray-400" />;
+    case "delivered":
+      return <CheckCheck className="h-4 w-4 text-gray-400" />;
+    case "read":
+      return <CheckCheck className="h-4 w-4 text-blue-500" />;
+    default:
+      return null;
+  }
+};
 
 export default function MessageList({
   messages,
@@ -14,9 +30,8 @@ export default function MessageList({
   return (
     <div className="flex-1 p-4 overflow-y-scroll">
       <div className="space-y-4">
-        {messages?.map((message) => {
+        {messages.map((message) => {
           const isCurrentUser = currentUserId === message.senderId;
-
           return (
             <div
               key={message._id}
@@ -51,7 +66,7 @@ export default function MessageList({
                     <span className="text-xs">
                       {new Date(message.timestamp).toLocaleTimeString()}
                     </span>
-                    <CheckCheck className="h-4 w-4 text-blue-400" />
+                    {isCurrentUser && <MessageStatus status={message.status} />}
                   </div>
                 </div>
               </div>
