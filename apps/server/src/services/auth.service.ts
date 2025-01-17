@@ -226,10 +226,11 @@ export class AuthService {
       }
 
       const userId = validationResult.data?.userId;
+
       if (!userId) {
         return {
           success: false,
-          error: "UserID not found",
+          error: "UserId not found",
         };
       }
       const userResult = await this.user.getUserById(userId);

@@ -23,7 +23,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/users", authenticate, userRoutes);
+app.use("/users", userRoutes);
 app.use("/conversations", authenticate, conversationRoutes);
 app.use("/messages", authenticate, messageRoutes);
 

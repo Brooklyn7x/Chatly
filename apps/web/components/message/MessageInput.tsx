@@ -1,95 +1,146 @@
-import { Input } from "@/components/ui/input";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { Paperclip, Send, Smile } from "lucide-react";
-import { useState } from "react";
+import { Paperclip, SendHorizonal, Smile } from "lucide-react";
+import EmojiPicker from "./EmojiPicker";
+import AttachmentPicker from "./AttachmentPicker";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
-  onTyping: () => void;
+  onTypingStart: () => void;
 }
 
 export default function MessageInput({
   onSendMessage,
-  onTyping,
+  onTypingStart,
 }: MessageInputProps) {
-  const [input, setInput] = useState("");
+  const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showAttachments, setShowAttachment] = useState(false);
-  const handleSend = () => {
-    onSendMessage(input);
-    setInput("");
+  const [showAttachment, setShowAttachment] = useState(false);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const attachmentPickerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const content = event.target.value;
+    setMessage(content);
+    onTypingStart();
   };
 
+  const handleEmojiSelect = (emoji: string) => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const newMessage =
+        message.substring(0, start) + emoji + message.substring(end);
+      setMessage(newMessage);
+      setTimeout(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+        textarea.focus();
+      }, 0);
+    }
+  };
+
+  const handleAttach = (files: File[]) => {
+    console.log(files, "files Attachment");
+  };
+
+  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (message.trim()) {
+      onSendMessage(message);
+      setMessage("");
+      setShowEmojiPicker(false);
+      setShowAttachment(false);
+    }
+  };
+
+  const handleEmojiPicker = useCallback(() => {
+    setShowEmojiPicker((prev) => !prev);
+    setShowAttachment(false);
+  }, []);
+
+  const handleAttachmentPicker = useCallback(() => {
+    setShowAttachment((prev) => !prev);
+    setShowEmojiPicker(false);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showEmojiPicker &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+      if (
+        showAttachment &&
+        attachmentPickerRef.current &&
+        !attachmentPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowAttachment(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showEmojiPicker, showAttachment]);
+
   return (
-    <div className="p-4 bg-background">
-      <div className="flex items-center gap-2">
-        <div className="relative w-full">
+    <div className="bottom-0 left-0 right-0">
+      <div className="relative max-w-3xl mx-auto px-4 py-3">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <button
+              type="button"
+              onClick={handleEmojiPicker}
+              className="absolute left-3 bottom-5 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+            >
+              <Smile className="h-6 w-6" />
+            </button>
+
+            <textarea
+              ref={textareaRef}
+              className="w-full pl-12 pr-12 py-3 rounded-2xl resize-none min-h-[50px] max-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Type a message..."
+              onChange={handleTyping}
+              value={message}
+              rows={1}
+            />
+
+            <button
+              type="button"
+              onClick={handleAttachmentPicker}
+              className="absolute right-3 bottom-5 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+            >
+              <Paperclip className="h-6 w-6" />
+            </button>
+          </div>
+
           <button
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 hover:scale-125 transition-transform"
+            type="submit"
+            className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
+            aria-label="Send message"
           >
-            <Smile className="h-6 w-6" />
+            <SendHorizonal className="h-5 w-5" />
           </button>
+        </form>
 
-          <input
-            className="w-full pl-10 pr-10 py-2 rounded-lg border"
-            placeholder="Type a message..."
-            onChange={(e) => {
-              setInput(e.target.value);
-              if (onTyping) {
-                onTyping();
-              }
-            }}
-            value={input}
-          />
+        <EmojiPicker
+          show={showEmojiPicker}
+          onClose={() => setShowEmojiPicker(false)}
+          onEmojiSelect={handleEmojiSelect}
+          containerRef={emojiPickerRef}
+        />
 
-          <button
-            onClick={() => setShowAttachment(!showAttachments)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 hover:scale-125 transition-transform"
-          >
-            <Paperclip className="h-6 w-6" />
-          </button>
-        </div>
-
-        <button
-          onClick={handleSend}
-          className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center"
-        >
-          <Send className="h-6 w-6" />
-        </button>
+        <AttachmentPicker
+          show={showAttachment}
+          onClose={() => setShowAttachment(false)}
+          onAttach={handleAttach}
+          containerRef={attachmentPickerRef}
+        />
       </div>
-
-      {showEmojiPicker && (
-        <div
-          className={cn(
-            "absolute bottom-full mb-2 left-0",
-            "transition-all duration-300 ease-in-out transform origin-bottom-left",
-            showEmojiPicker
-              ? "opacity-100 scale-100 translate-y-0"
-              : "opacity-0 scale-50 translate-y-4 pointer-events-none"
-          )}
-        >
-          <div className="border bg-background rounded-md shadow-lg p-4">
-            Emoji Picker Content
-          </div>
-        </div>
-      )}
-
-      {showAttachments && (
-        <div
-          className={cn(
-            "absolute bottom-full mb-2 right-0",
-            "transition-all duration-300 ease-in-out transform origin-bottom-right",
-            showEmojiPicker
-              ? "opacity-100 scale-100 translate-y-0"
-              : "opacity-0 scale-50 translate-y-4 pointer-events-none"
-          )}
-        >
-          <div className="border bg-background rounded-md shadow-lg p-4">
-            Attachment Picker
-          </div>
-        </div>
-      )}
     </div>
   );
 }

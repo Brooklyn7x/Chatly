@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import mongoose from "mongoose";
 import { DatabaseService } from "./database.service";
 import { UserService } from "./user.service";
 import { Logger } from "../utils/logger";
@@ -10,7 +11,6 @@ import {
   ParticipantRole,
 } from "../types/conversation";
 import { ServiceResponse } from "../types/service-respone";
-import mongoose from "mongoose";
 import { ConversationModel } from "../models/conversation.model";
 
 export class ConversationService {
@@ -69,7 +69,6 @@ export class ConversationService {
         unreadCount: {},
       };
 
-      console.log(conversationData, "conversationData");
       const result = await ConversationModel.create(conversationData);
 
       if (result) {
@@ -92,6 +91,100 @@ export class ConversationService {
     }
   }
 
+  async createGroupConversation(
+    creatorId: string,
+    data: CreateConversationDTO
+  ): Promise<ServiceResponse<any>> {
+    try {
+      console.log(data.participantIds, "createGroupConversation");
+      const validParticipants = await this.validateParticipants(
+        data.participantIds
+      );
+
+      if (!validParticipants.success) {
+        this.logger.error("Invalid participants:", validParticipants.error);
+        return validParticipants;
+      }
+
+      const allParticipantIds = data?.participantIds.includes(creatorId)
+        ? data.participantIds
+        : [creatorId, ...data.participantIds];
+      console.log(allParticipantIds, "allParticipantIds");
+      const conversationData = {
+        type: ConversationType.GROUP,
+        participants: this.createParticipantsList(creatorId, allParticipantIds),
+        metadata: {
+          title: data.metadata?.title || "",
+          description: data.metadata?.description || "",
+          avatar: data.metadata?.avatar || "",
+          isArchived: data.metadata?.isArchived || false,
+          isPinned: data.metadata?.isPinned || false,
+        },
+        lastMessage: null,
+        unreadCount: {},
+      };
+
+      const result = await ConversationModel.create(conversationData);
+
+      if (result) {
+        await this.cacheConversation(result);
+        return {
+          success: true,
+          data: result,
+        };
+      }
+      return {
+        success: false,
+        error: "Failed to create conversation",
+      };
+    } catch (error) {
+      this.logger.error("Error creating conversation:", error);
+      return {
+        success: false,
+        error: "Failed to create conversation",
+      };
+    }
+  }
+
+  async getConversationById(
+    conversationId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      console.log(conversationId, "conversationId");
+      const cacheConversation = await this.getCacheConversation(conversationId);
+
+      if (cacheConversation) {
+        return {
+          success: true,
+          data: cacheConversation,
+        };
+      }
+
+      const conversation = await this.db.findOne("Conversation", {
+        _id: conversationId,
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found",
+        };
+      }
+
+      await this.cacheConversation(conversation);
+
+      return {
+        success: true,
+        data: conversation,
+      };
+    } catch (error) {
+      this.logger.error("Error fetching conversation:", error);
+      return {
+        success: false,
+        error: "Failed to fetch conversation",
+      };
+    }
+  }
   async getConversations(
     conversationId: string,
     userId: string
@@ -108,6 +201,47 @@ export class ConversationService {
 
       const conversation = await this.db.findOne("Conversation", {
         id: conversationId,
+        "participants.userId": userId,
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found",
+        };
+      }
+
+      await this.cacheConversation(conversation);
+
+      return {
+        success: true,
+        data: conversation,
+      };
+    } catch (error) {
+      this.logger.error("Error fetching conversation:", error);
+      return {
+        success: false,
+        error: "Failed to fetch conversation",
+      };
+    }
+  }
+
+  async getUserConversation(
+    conversationId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const cacheConversation = await this.getCacheConversation(conversationId);
+
+      if (cacheConversation) {
+        return {
+          success: true,
+          data: cacheConversation,
+        };
+      }
+
+      const conversation = await this.db.findOne("Conversation", {
+        _id: conversationId,
         "participants.userId": userId,
       });
 
@@ -192,6 +326,24 @@ export class ConversationService {
         conversations.map((con) => this.cacheConversation(con))
       );
 
+      return {
+        success: true,
+        data: conversations,
+      };
+    } catch (error) {
+      this.logger.error("Error to fetch conversations :", error);
+      return {
+        success: false,
+        error: "Error to fetch user conversations",
+      };
+    }
+  }
+
+  async getConversationsByUser(userId: string) {
+    try {
+      const conversations = await this.db.find("Conversation", {
+        "participants.userId": userId,
+      });
       return {
         success: true,
         data: conversations,

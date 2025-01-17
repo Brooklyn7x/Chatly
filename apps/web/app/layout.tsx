@@ -5,6 +5,7 @@ import { ThemeProvider } from "./theme-provider";
 import AuthProvider from "./AuthPovider";
 
 export const metadata: Metadata = {
+  icons: "/logo.svg",
   title: "Chat",
   description: "Just Chat",
 };

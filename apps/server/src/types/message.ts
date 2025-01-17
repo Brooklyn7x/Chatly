@@ -1,10 +1,11 @@
 export interface Message {
-  id: string;
+  id?: string;
   conversationId: string;
   senderId: string;
-  receiverId: string;
+  receiverId?: string;
   content: string;
   type: MessageType;
+  deliveredTo?: { userId: string; deliveredAt: Date }[];
   status: MessageStatus;
   timestamp?: Date;
   metadata?: MessageMetaData;

@@ -3,7 +3,7 @@ export interface User {
   username: string;
   email: string;
   avatar?: string;
-  status: "offline";
+  status: "offline" | "online";
   lastSeen?: string;
 }
 
@@ -33,4 +33,13 @@ interface ConversationMetadata {
   description?: string;
   isArchived?: boolean;
   isPinned?: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participants: User[];
+  isGroup: boolean;
+  groupName: string | null;
+  lastMessage: any;
+  unreadCount: number;
 }

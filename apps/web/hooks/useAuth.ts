@@ -7,7 +7,7 @@ const useAuth = () => {
   const { isAuthenticated, user, login, logout, isLoading } = useAuthStore();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isAuthenticated && !isLoading) {
       router.push("/login");
     }
   }, [isAuthenticated, isLoading]);
@@ -16,8 +16,8 @@ const useAuth = () => {
     user,
     login,
     logout,
-    isLoading,
     isAuthenticated,
+    isLoading,
   };
 };
 

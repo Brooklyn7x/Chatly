@@ -8,6 +8,7 @@ import {
 } from "../types/user.types";
 import { Logger } from "../utils/logger";
 import { ServiceResponse } from "../types/service-respone";
+import { UserModel } from "../models/user.model";
 const bcrypt = require("bcrypt");
 
 export class UserService {
@@ -155,16 +156,17 @@ export class UserService {
     }
   }
 
-  async updateUserStatus(id: string, status: UserStatus) {
+  async updateUserStatus(userId: string, status: UserStatus) {
     try {
       await Promise.all([
-        this.db.findByIdAndUpdate<any>("user", id, {
+        UserModel.findByIdAndUpdate({
+          _id: userId,
           status,
           lastSeen: new Date(),
           updatedAt: new Date(),
         }),
 
-        this.redis.hset(`user:${id}`, {
+        this.redis.hset(`user:${userId}`, {
           status,
           lastSeen: new Date().toISOString(),
         }),

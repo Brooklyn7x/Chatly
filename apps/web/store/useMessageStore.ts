@@ -1,71 +1,95 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface Message {
+interface MessageSender {
+  userId: string;
+  timestamp: string;
+}
+
+export interface Message {
   _id: string;
   conversationId: string;
+  conversationType: "direct" | "group";
   content: string;
   type: "text" | "image" | "video" | "audio";
+  status: "sent" | "delivered" | "read";
   senderId: string;
   receiverId: string;
   timestamp: string;
-  status: "sent" | "delivered" | "read";
+  sender?: MessageSender;
 }
 
 interface MessageStore {
   messages: Message[];
-  isLoading: boolean;
+  loading: boolean;
   error: string | null;
-  getMessages: (chatId: string) => Message[];
-  deleteMessage: (messageId: string) => void;
-  updateMessageStatus: (messageId: string, status: Message["status"]) => void;
-  markMessagesAsRead: (chatId: string) => void;
+  getMessages: (coversationId: string) => Message[];
   addMessage: (message: Message) => void;
+  deleteMessage: (messageId: string) => void;
+  updateMessageId: (tempId: string, messageId: string) => void;
+  updateMessageStatus: (
+    messageId: string,
+    status: "sent" | "delivered" | "read"
+  ) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
   persist(
     (set, get) => ({
       messages: [],
-      isLoading: false,
+      loading: false,
       error: null,
 
-      getMessages: (chatId) => {
-        return get().messages.filter(
-          (message) => message.conversationId === chatId
-        );
+      getMessages: (conversationId) => {
+        return get()
+          .messages.filter(
+            (message) => message.conversationId === conversationId
+          )
+          .sort(
+            (a, b) =>
+              new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
       },
 
       addMessage: (message) => {
         set((state) => {
-          const messageExists = state.messages.some(
-            (m) => m._id === message._id
+          const messageMap = new Map(
+            state.messages.map((msg) => [msg._id, msg])
           );
 
-          if (messageExists) {
-            return state;
-          }
+          const formattedMessage = {
+            _id: message._id,
+            conversationId: message.conversationId,
+            conversationType: message.conversationType,
+            content: message.content,
+            type: message.type || "text",
+            status: message.status,
+            senderId: message.senderId,
+            receiverId: message.receiverId,
+            timestamp: message.timestamp || new Date().toISOString(),
+            sender: message.sender || {
+              userId: message.senderId,
+              timestamp: message.timestamp || new Date().toISOString(),
+            },
+          };
 
-          const conversationMessages = state.messages.filter(
-            (m) => m.conversationId === message.conversationId
-          );
+          messageMap.set(formattedMessage._id, formattedMessage);
 
-          const updatedConversationMessages = [
-            ...conversationMessages,
-            message,
-          ].sort(
+          const sortedMessages = Array.from(messageMap.values()).sort(
             (a, b) =>
               new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
           );
 
-          const otherMessages = state.messages.filter(
-            (m) => m.conversationId !== message.conversationId
-          );
-
-          return {
-            messages: [...otherMessages, ...updatedConversationMessages],
-          };
+          return { messages: sortedMessages };
         });
+      },
+
+      updateMessageId(tempId, messageId) {
+        set((state) => ({
+          messages: state.messages.map((message) =>
+            message._id === tempId ? { ...message, _id: messageId } : message
+          ),
+        }));
       },
 
       deleteMessage: (messageId) => {
@@ -76,7 +100,10 @@ export const useMessageStore = create<MessageStore>()(
         }));
       },
 
-      updateMessageStatus: (messageId, status) => {
+      updateMessageStatus: (
+        messageId,
+        status: "sent" | "delivered" | "read"
+      ) => {
         set((state) => ({
           messages: state.messages.map((message) =>
             message._id === messageId ? { ...message, status } : message
@@ -84,15 +111,15 @@ export const useMessageStore = create<MessageStore>()(
         }));
       },
 
-      markMessagesAsRead: (chatId) => {
-        set((state) => ({
-          messages: state.messages.map((message) =>
-            message.conversationId === chatId
-              ? { ...message, status: "read" }
-              : message
-          ),
-        }));
-      },
+      // markMessagesAsRead: (conversationId) => {
+      //   set((state) => ({
+      //     messages: state.messages.map((message) =>
+      //       message.conversationId === conversationId
+      //         ? { ...message, status: "read" }
+      //         : message
+      //     ),
+      //   }));
+      // },
     }),
     {
       name: "message-store",

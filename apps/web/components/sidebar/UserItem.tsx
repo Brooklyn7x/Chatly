@@ -1,12 +1,21 @@
+import { cn } from "@/lib/utils";
 import { User } from "@/types";
 
 interface UserItemProps {
   user: User;
+  selected?: boolean;
 }
 
-export const UserItem = ({ user }: UserItemProps) => {
+export const UserItem = ({ user, selected }: UserItemProps) => {
   return (
-    <div className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors duration-200">
+    <div
+      className={cn(
+        "p-2 rounded-md cursor-pointer",
+        "flex items-center gap-4",
+        "hover:bg-muted/40 transition-colors duration-200",
+        selected && "bg-muted/80"
+      )}
+    >
       <div className="relative flex-shrink-0 h-12 w-12">
         <div className="h-full w-full rounded-full overflow-hidden">
           <img
@@ -19,9 +28,12 @@ export const UserItem = ({ user }: UserItemProps) => {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="font-semibold truncate">{user.username}</div>
-        <div className="text-muted-foreground text-sm truncate">
+        <div className="font-semibold truncate">{user.username || "User"}</div>
+        {/* <div className="text-muted-foreground text-sm truncate">
           Last message
+        </div> */}
+         <div className="text-muted-foreground text-sm truncate">
+          {user.email}
         </div>
       </div>
     </div>

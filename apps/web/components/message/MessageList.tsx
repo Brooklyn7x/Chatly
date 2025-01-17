@@ -1,9 +1,11 @@
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Message } from "@/types";
+import { cn } from "@/lib/utils";
+import { Message } from "@/store/useMessageStore";
 import { Avatar } from "@radix-ui/react-avatar";
-import { CheckCheck } from "lucide-react";
+import { MessageContent } from "./MessageContent";
+import { MessageStatus } from "./MessageStatus";
 interface MessageListProps {
-  messages: Message[] | undefined;
+  messages: Message[];
   currentUserId: string | undefined;
 }
 
@@ -14,12 +16,11 @@ export default function MessageList({
   return (
     <div className="flex-1 p-4 overflow-y-scroll">
       <div className="space-y-4">
-        {messages?.map((message) => {
+        {messages.map((message) => {
           const isCurrentUser = currentUserId === message.senderId;
-
           return (
             <div
-              key={message.id}
+              key={message._id}
               className={`flex items-center gap-2 ${
                 isCurrentUser ? "justify-end" : "justify-start"
               }`}
@@ -40,13 +41,25 @@ export default function MessageList({
                     {message.senderId}
                   </span>
                 )}
-                <div className="max-w-md border rounded-lg p-2">
-                  <p className="text-sm">{message.content}</p>
+                <div
+                  className={cn(
+                    "max-w-md border rounded-lg p-2",
+                    isCurrentUser && "bg-blue-500"
+                  )}
+                >
+                  <MessageContent
+                    content={message.content}
+                    type={message.type}
+                  />
+
                   <div className="flex items-center justify-end gap-1 mt-1">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(message.timestamp).toLocaleTimeString()}
+                    <span className="text-xs opacity-70">
+                      {new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
-                    <CheckCheck className="h-4 w-4 text-blue-400" />
+                    {isCurrentUser && <MessageStatus status={message.status} />}
                   </div>
                 </div>
               </div>

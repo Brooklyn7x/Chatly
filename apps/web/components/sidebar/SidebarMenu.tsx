@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Edit2, User, Users, Volume, X } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils";
 
 interface SidebarMenuProps {
   onCreateChat: () => void;
@@ -13,8 +13,10 @@ export function SidebarMenu({
   onShowContactModal,
   onCreateGroup,
 }: SidebarMenuProps) {
-  const [showMenu, setShowMenu] = useState(false);
-  
+  const [isOpen, setShowMenu] = useState(false);
+  const toggleMenu = () => {
+    setShowMenu((prev) => !prev);
+  };
   const handleCreateChat = () => {
     onCreateChat();
     setShowMenu(false);
@@ -23,22 +25,28 @@ export function SidebarMenu({
   return (
     <div className="fixed bottom-6 right-6">
       <button
-        onClick={() => setShowMenu(!showMenu)}
-        className={`h-14 w-14 text-center bg-muted rounded-full flex items-center justify-center 
-          hover:bg-muted/60 transition-all duration-300 ease-in-out transform
-          ${showMenu ? "rotate-180 shadow-lg" : "rotate-0"}`}
+        onClick={toggleMenu}
+        className={cn(
+          "h-14 w-14 rounded-full",
+          "flex items-center justify-center",
+          "bg-muted hover:bg-muted/60",
+          "transition-all duration-300 ease-in-out transform",
+          isOpen && "rotate-180 shadow-lg shadow-lime-200"
+        )}
       >
-        {showMenu ? <X className="h-6 w-6" /> : <Edit2 className="h-5 w-5" />}
+        {isOpen ? <X className="h-6 w-6" /> : <Edit2 className="h-5 w-5" />}
       </button>
 
       <div
-        className={`absolute bottom-16 right-0 w-48 border bg-background z-20 rounded-lg shadow-xl
-          transform transition-all duration-300 ease-in-out origin-bottom-right
-          ${
-            showMenu
-              ? "scale-100 translate-y-0 opacity-100 pointer-events-auto"
-              : "scale-75 translate-y-2 opacity-0 pointer-events-none"
-          }`}
+        className={cn(
+          "absolute bottom-16 right-0 w-48",
+          "border bg-background rounded-lg shadow-xl",
+          "z-20 overflow-hidden",
+          "transform transition-all duration-300 ease-in-out origin-bottom-right",
+          isOpen
+            ? "scale-100 translate-y-0 opacity-100 pointer-events-auto"
+            : "scale-75 translate-y-2 opacity-0 pointer-events-none"
+        )}
       >
         <div className="p-1 space-y-1">
           <MenuItem
@@ -76,12 +84,15 @@ const MenuItem = ({ icon, text, onClick, isFirst, isLast }: MenuItemProps) => {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3
-        hover:bg-muted transition-colors duration-200
-        ${isFirst ? "rounded-t-lg" : ""}
-        ${isLast ? "rounded-b-lg" : ""}`}
+      className={cn(
+        "w-full flex items-center gap-3 px-4 py-2",
+        "hover:bg-muted active:bg-muted/80",
+        "transition-colors duration-200",
+        isFirst && "rounded-t-xl",
+        isLast && "rounded-b-xl"
+      )}
     >
-      <div className="flex items-center justify-center w-5 h-5 ">{icon}</div>
+      <div className="flex items-center justify-center">{icon}</div>
       <span className="text-sm">{text}</span>
     </button>
   );

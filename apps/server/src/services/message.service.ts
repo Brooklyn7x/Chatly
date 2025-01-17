@@ -4,13 +4,11 @@ import {
   CreateMessageDTO,
   Message,
   MessageStatus,
-  MessageType,
 } from "../types/message";
 import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./base.service";
 import mongoose from "mongoose";
 import { MessageModel } from "../models/message.model";
-import { send } from "process";
 
 export class MessageService extends BaseService {
   private redis: Redis;
@@ -27,23 +25,54 @@ export class MessageService extends BaseService {
     messageData: CreateMessageDTO
   ): Promise<ServiceResponse<any>> {
     try {
-      const message: Message = {
-        id: crypto.randomUUID(),
+      const conversation = await this.db.findOne<any>("Conversation", {
+        _id: new mongoose.Types.ObjectId(messageData.conversationId),
+        "participants.userId": senderId,
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found or unauthorized",
+        };
+      }
+
+      const messageObj: Partial<Message> = {
+        conversationId: new mongoose.Types.ObjectId(
+          messageData.conversationId
+        ).toString(),
         senderId: new mongoose.Types.ObjectId(senderId).toString(),
-        receiverId: messageData.receiverId,
-        conversationId: messageData.conversationId,
         content: messageData.content,
         type: messageData.type,
         status: MessageStatus.SENDING,
         timestamp: new Date(),
       };
 
-      console.log("sending message:", message);
+      if (conversation.type === "direct") {
+        const receiver = conversation.participants.find(
+          (p: any) => p.userId.toString() !== senderId
+        );
 
-      await this.cacheMessage(message);
-      const storedMessage = await MessageModel.create(message);
-      // message.status = MessageStatus.SENT;
-      // await this.updateMessageStatus(message.id, MessageStatus.SENT);
+        messageObj.receiverId = receiver.userId;
+      } else if (conversation.type === "group") {
+        const receiver = conversation.participants.find(
+          (p: any) => p.userId.toString() !== senderId
+        );
+        messageObj.receiverId = receiver.userId;
+        messageObj.deliveredTo = [
+          {
+            userId: receiver.userId,
+            deliveredAt: new Date(),
+          },
+        ];
+      }
+      const message = new MessageModel(messageObj);
+      const storedMessage = await message.save();
+
+      // await this.cacheMessage(storedMessage);
+
+      message.status = MessageStatus.SENT;
+      await this.updateMessageStatus(message.id, MessageStatus.SENT);
       // await this.sendRealTimeUpdate(message);
       // await this.updateConversation(message);
 
@@ -66,14 +95,14 @@ export class MessageService extends BaseService {
     before?: Date
   ): Promise<ServiceResponse<any[]>> {
     try {
-      const cacheKey = `messages:${conversationId}`;
-      const cacheMessage = await this.getCacheMessage(cacheKey, limit);
-      if (cacheMessage.length === limit) {
-        return {
-          success: true,
-          data: cacheMessage,
-        };
-      }
+      // const cacheKey = `messages:${conversationId}`;
+      // const cacheMessage = await this.getCacheMessage(cacheKey, limit);
+      // if (cacheMessage.length === limit) {
+      //   return {
+      //     success: true,
+      //     data: cacheMessage,
+      //   };
+      // }
 
       const query = before
         ? { conversationId, timestamp: { $lt: before } }
@@ -137,63 +166,174 @@ export class MessageService extends BaseService {
     }
   }
 
-  private async cacheMessage(message: any): Promise<void> {
-    const pipeline = this.redis.pipeline();
-    pipeline.hset(`message:${message.id}`, this.serializeMessage(message));
-    pipeline.zadd(
-      `message:${message.conversationId}`,
-      message.timestamp.getTime(),
-      message.id
-    );
-    pipeline.expire(`message:${message.id}`, 86400);
-    pipeline.expire(`message:${message.conversationId}`, 86400);
-    await pipeline.exec();
+  // async updateMessageStatus(messageId: string, status: MessageStatus) {
+  //   try {
+  //     console.log(messageId, "message ids");
+  //     const updatedMessage = await MessageModel.findByIdAndUpdate(
+  //       messageId,
+  //       {
+  //         $set: {
+  //           status: status,
+  //           updatedAt: new Date(),
+  //         },
+  //       },
+  //       { new: true }
+  //     );
+  //     if (!updatedMessage) {
+  //       return {
+  //         success: false,
+  //         error: "Message not found",
+  //       };
+  //     }
+
+  //     return {
+  //       success: true,
+  //       data: updatedMessage,
+  //     };
+  //   } catch (error) {
+  //     this.logger.error("Error updating message status", error);
+  //     return {
+  //       success: false,
+  //       error: "Failed to update message status",
+  //     };
+  //   }
+  // }
+
+  async updateMessageStatus(messageId: string, status: MessageStatus) {
+    try {
+      if (!mongoose.isValidObjectId(messageId)) {
+        this.logger.error(`Invalid message ID format: ${messageId}`);
+        return {
+          success: false,
+          error: "Invalid message ID format",
+        };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(messageId),
+        {
+          $set: {
+            status: status,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      return {
+        success: true,
+        data: updatedMessage,
+      };
+    } catch (error) {
+      this.logger.error("Error updating message status:", error);
+      return {
+        success: false,
+        error: "Failed to update message status",
+      };
+    }
   }
 
-  private async getCacheMessage(
-    conversationId: string,
-    limit: number
-  ): Promise<Message[]> {
-    const messageIds = await this.redis.zrevrange(
-      `message:${conversationId}`,
-      0,
-      limit - 1
-    );
-    const message = await Promise.all(
-      messageIds.map(async (id) => {
-        const messageData = await this.redis.hgetall(`message:${id}`);
-        return this.deserializeMessage(messageData);
-      })
-    );
+  async markMessageAsRead(
+    messageId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const message = await MessageModel.findById(messageId);
 
-    return message.filter(Boolean);
+      if (!message) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      if (message.receiverId?.toString() !== userId) {
+        return {
+          success: false,
+          error: "Unauthorized to mark this message as read",
+        };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        messageId,
+        {
+          $set: {
+            status: MessageStatus.READ,
+            readAt: new Date(),
+            "deliveryStatus.read": new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Failed to update message status",
+        };
+      }
+      return { success: true, data: updatedMessage };
+    } catch (error) {
+      this.logger.error("Error marking message as read:", error);
+      return {
+        success: false,
+        error: "Failed to mark message as read",
+      };
+    }
   }
 
-  private serializeMessage(message: Message): Record<string, string> {
-    return {
-      id: message.id,
-      conversationId: message.conversationId,
-      senderId: message.senderId,
-      receiverId: message.receiverId,
-      content: message.content,
-      type: message.type,
-      status: message.status,
-      timestamp: message.timestamp ? message.timestamp.toISOString() : "",
-      metadata: message.metadata ? JSON.stringify(message.metadata) : "",
-    };
-  }
+  // private async cacheMessage(message: any): Promise<void> {
+  //   const pipeline = this.redis.pipeline();
+  //   pipeline.hset(`message:${message.id}`, this.serializeMessage(message));
+  //   pipeline.zadd(
+  //     `message:${message.conversationId}`,
+  //     message.timestamp.getTime(),
+  //     message.id
+  //   );
+  //   pipeline.expire(`message:${message.id}`, 86400);
+  //   pipeline.expire(`message:${message.conversationId}`, 86400);
+  //   await pipeline.exec();
+  // }
 
-  private deserializeMessage(data: Record<string, string>): Message {
-    return {
-      id: data.id,
-      conversationId: data.conversationId,
-      senderId: data.senderId,
-      receiverId: data.receiverId,
-      content: data.content,
-      type: data.type as MessageType,
-      status: data.status as MessageStatus,
-      timestamp: data.timestamp ? new Date(data.timestamp) : undefined,
-      metadata: data.metadata ? JSON.parse(data.metadata) : undefined,
-    };
-  }
+  // private async getCacheMessage(
+  //   conversationId: string,
+  //   limit: number
+  // ): Promise<Message[]> {
+  //   const messageIds = await this.redis.zrevrange(
+  //     `message:${conversationId}`,
+  //     0,
+  //     limit - 1
+  //   );
+  //   const message = await Promise.all(
+  //     messageIds.map(async (id) => {
+  //       const messageData = await this.redis.hgetall(`message:${id}`);
+  //       return this.deserializeMessage(messageData);
+  //     })
+  //   );
+
+  //   return message.filter(Boolean);
+  // }
+
+  // private serializeMessage(message: Message): Record<string, string> {
+  //   return {
+  //     id: message.id,
+  //     conversationId: message.conversationId,
+  //     senderId: message.senderId,
+  //     receiverId: message.receiverId,
+  //     content: message.content,
+  //     type: message.type,
+  //     status: message.status,
+  //     timestamp: message.timestamp ? message.timestamp.toISOString() : "",
+  //     metadata: message.metadata ? JSON.stringify(message.metadata) : "",
+  //   };
+  // }
+
+  //}
 }

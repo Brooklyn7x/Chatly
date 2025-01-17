@@ -35,7 +35,6 @@ const useUserStore = create<UserStore>()(
           );
 
           if (response.data.success) {
-            console.log(response.data.success)
             set({
               searchResults: response.data.data.users,
               loading: false,

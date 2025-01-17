@@ -3,13 +3,29 @@ import { devtools, persist } from "zustand/middleware";
 import { User } from "@/types";
 import axios from "axios";
 
-interface Chat {
-  id: string;
-  participants: User[];
-  isGroup: boolean;
+export interface Participant {
+  userId: string;
+  role: "owner" | "admin" | "member";
+  joinedAt: Date;
+}
+export interface ChatMetadata {
+  title: string | null;
+  description: string | null;
+  avatar: string | null;
+  isArchived: boolean;
+  isPinned: boolean;
+}
+
+export interface Chat {
+  _id: string;
+  type: "direct" | "group";
+  participants: Participant[];
+  metadata: ChatMetadata;
   groupName: string | null;
   lastMessage: any;
-  unreadCount: number;
+  // unreadCount: { [key: string]: number };
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 interface ChatStore {
@@ -17,16 +33,11 @@ interface ChatStore {
   selectedChatId: string | null;
   isLoading: boolean;
   error: string | null;
-  searchResults: User[];
-  searchLoading: boolean;
-  searchError: string | null;
-
+  setSelectChat: (chatId: string) => void;
   fetchChats: () => void;
-  searchUsers: (query: string) => void;
   getChat: (chatId: string) => Chat | undefined;
   createChat: (participants: User[], title?: string) => void;
   deleteChat: (chatId: string) => void;
-  setSelectChat: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -37,22 +48,18 @@ export const useChatStore = create<ChatStore>()(
         selectedChatId: null,
         isLoading: false,
         error: null,
-        searchError: null,
-        searchResults: [],
-        searchLoading: false,
 
         fetchChats: async () => {
-          set({ isLoading: true });
+          set({ isLoading: true, error: null });
           try {
             const response = await axios.get(
               "http://localhost:8000/conversations/user-conversations"
             );
-            const { data } = response.data;
 
-            const chats = data.map((chat: any) => ({
+            const chats = response.data.data.map((chat: any) => ({
               ...chat,
-              unreadCount:
-                typeof chat.unreadCount === "number" ? chat.unreadCount : 0,
+              createdAt: new Date(chat.createdAt),
+              updatedAt: new Date(chat.updatedAt),
             }));
             set({ chats: chats, isLoading: false });
           } catch (error: any) {
@@ -66,18 +73,24 @@ export const useChatStore = create<ChatStore>()(
         },
 
         getChat: (chatId) => {
-          return get().chats.find((chat) => chat.id === chatId);
+          return get().chats.find((chat) => chat._id === chatId);
         },
 
-        createChat: async (participants) => {
+        createChat: async (participants, title) => {
           set({ isLoading: true });
           try {
             const payload = {
               type: participants.length > 1 ? "group" : "direct",
               participantIds: participants.map((user) => user._id),
               metadata: {
-                title: participants[0]?.username || "Chat",
-                description: "One-on-one conversation",
+                title: participants.length > 1 ? title : null,
+                description:
+                  participants.length > 1
+                    ? "Group conversation"
+                    : "Direct conversation",
+                avatar: null,
+                isArchived: false,
+                isPinned: false,
               },
             };
 
@@ -86,22 +99,21 @@ export const useChatStore = create<ChatStore>()(
               payload
             );
 
-            const newChat = {
-              id: response.data.id,
-              participants,
-              isGroup: false,
-              groupName: null,
-              lastMessage: null,
-              unreadCount: 0,
-            };
+            const newChat = response.data.data;
 
             set((state) => ({
-              chats: [...state.chats, newChat],
+              chats: [
+                ...state.chats,
+                {
+                  ...newChat,
+                  createdAt: new Date(newChat.createdAt),
+                  updatedAt: new Date(newChat.updatedAt),
+                  unreadCount: {},
+                },
+              ],
               selectedChatId: response.data.id,
               isLoading: false,
             }));
-
-            get().fetchChats();
           } catch (error: any) {
             console.error("Failed to create chat:", error);
             set({
@@ -121,7 +133,7 @@ export const useChatStore = create<ChatStore>()(
             );
             if (response.status === 200) {
               set((state) => ({
-                chats: state.chats.filter((chat) => chat.id !== chatId),
+                chats: state.chats.filter((chat) => chat._id !== chatId),
               }));
             }
           } catch (error) {
@@ -129,38 +141,8 @@ export const useChatStore = create<ChatStore>()(
           }
         },
 
-        searchUsers: async (query) => {
-          set({ searchLoading: true, searchError: null });
-          try {
-            const response = await axios.get(
-              `http://localhost:8000/users/search?query=${encodeURIComponent(query)}`
-            );
-
-            if (response.data.success) {
-              set({
-                searchResults: response.data.data.users,
-                searchLoading: false,
-              });
-            } else {
-              throw new Error(response.data.error);
-            }
-          } catch (error: any) {
-            set({
-              searchError:
-                error?.response?.data?.error || "Failed to search users",
-              searchLoading: false,
-            });
-          }
-        },
-
         setSelectChat: (chatId) => {
           set({ selectedChatId: chatId });
-
-          set((state) => ({
-            chats: state.chats.map((chat) =>
-              chat.id === chatId ? { ...chat, unreadCount: 0 } : chat
-            ),
-          }));
         },
       }),
       {

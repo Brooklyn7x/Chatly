@@ -1,86 +1,108 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
-import { Chat, User } from "@/types";
-import { ArrowLeft, EllipsisVertical, Phone, Search } from "lucide-react";
-import { useState } from "react";
+import { Chat } from "@/types";
+import ChatMenu from "./ChatMenu";
+import { NavigationButton } from "../shared/NavigationButton";
+import { UserAvatar } from "../user/UserAvatar";
+import {
+  ArrowLeft,
+  EllipsisVertical,
+  LucideIcon,
+  Phone,
+  Search,
+} from "lucide-react";
 
 interface ChatHeaderProps {
   onProfileClick: () => void;
-  chat: any;
+  chat: Chat;
+  isOnline: boolean;
 }
 
-export default function ChatHeader({ onProfileClick, chat }: ChatHeaderProps) {
-  const { selectedChatId, deleteChat } = useChatStore();
+export default function ChatHeader({
+  onProfileClick,
+  chat,
+  isOnline,
+}: ChatHeaderProps) {
+  const { selectedChatId, deleteChat, setSelectChat } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
 
+  const handleBack = useCallback(() => {
+    setSelectChat(null);
+  }, [setSelectChat]);
+
+  const chatTitle =
+    chat?.type === "direct" ? "Direct" : chat?.metadata?.title || "Group";
+  const chatSubtitle =
+    chat?.type === "group"
+      ? `${chat.participants.length} Subscribers`
+      : "Online";
   return (
-    <div className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative">
+    <header className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
       <div className="flex  items-center gap-4">
         {selectedChatId && (
-          <button
-            onClick={() => useChatStore.getState().setSelectChat(null)}
-            className="md:hidden p-2 rounded-full border bg-muted/30"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
+          <NavigationButton onClick={handleBack} icon={ArrowLeft} />
         )}
 
         <button onClick={onProfileClick} className="flex items-center gap-4">
-          <Avatar className="h-10 w-10">
-            <AvatarImage />
-            <AvatarFallback>Cn</AvatarFallback>
-          </Avatar>
-
-          <div className="flex flex-col">
-            <h2 className="text-sm font-semibold">
-              {/* {chat?.type === "group"
-                ? chat.metadata.title
-                : chat.participants[0]?.username} */}
-              header
-            </h2>
+          <UserAvatar status={isOnline ? "online" : "offline"} size={"sm"} />
+          <div className="flex flex-col text-left">
+            <h2 className="text-sm font-semibold">{chatTitle}</h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {/* {chat?.type === "group"
-                ? chat.participants.length
-                : chat.participants[0]?.username} */}
+              {/* {chatSubtitle} */}
+              {isOnline ? "Online" : "Offline"}
             </span>
           </div>
         </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button className="p-2 rounded-full hover:bg-muted/80  transition-colors hidden sm:flex">
-          <Phone className="h-5 w-5" />
-        </button>
-        <button className="p-2 rounded-full  hover:bg-muted/80 transition-colors hidden sm:flex">
-          <Search className="h-5 w-5" />
-        </button>
-        <button
+      <div className="flex items-center gap-1">
+        <IconButton onClick={() => {}} icon={Phone} isActive={false} />
+        <IconButton onClick={() => {}} icon={Search} isActive={false} />
+        <IconButton
           onClick={() => setShowMenu(!showMenu)}
-          className={cn(
-            "p-2 rounded-full transition-colors hover:bg-muted/80",
-            showMenu && "bg-muted/90 "
-          )}
-        >
-          <EllipsisVertical className="h-5 w-5" />
-        </button>
+          icon={EllipsisVertical}
+          isActive={showMenu}
+        />
       </div>
 
-      {showMenu && (
-        <div
-          className={cn(
-            "absolute top-full right-2 bg-background/80 backdrop-blur-md border rounded-md shadow-md w-[200px] py-2 px-4",
-            "transition-all duration-300 ease-in-out transform",
-            showMenu
-              ? "opacity-100 scale-100 translate-y-1"
-              : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-          )}
-        >
-          <button onClick={() => deleteChat(chat.id)}>
-            <span className="text-sm">Delete Chat</span>
-          </button>
-        </div>
-      )}
-    </div>
+      <ChatMenu
+        isOpen={showMenu}
+        onClose={() => setShowMenu(false)}
+        onDelete={deleteChat}
+        chatId={chat?.id}
+      />
+    </header>
   );
 }
+interface ButtonProps {
+  onClick: () => void;
+  icon: LucideIcon;
+  isActive?: boolean;
+  className?: string;
+}
+const IconButton = ({
+  onClick,
+  icon: Icon,
+  isActive,
+  className,
+}: ButtonProps) => {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "h-10 w-10",
+        "flex items-center justify-center",
+        "rounded-full",
+        "transition-all duration-200",
+        "hover:bg-muted/70 active:scale-95",
+        isActive && "bg-muted/90",
+        className
+      )}
+    >
+      <Icon
+        className={cn("h-5 w-5 transition-transform", isActive && "scale-105")}
+      />
+    </button>
+  );
+};

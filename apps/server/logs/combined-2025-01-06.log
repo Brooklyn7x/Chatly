@@ -1,0 +1,1008 @@
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 00:04:17"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 00:04:17"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 00:04:17"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 00:04:17"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 00:06:17"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 00:06:17"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 00:06:21"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 00:06:21"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 00:06:21"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 00:06:21"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 01:28:27"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 06:01:36"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 09:55:22"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 10:08:33"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 11:41:34"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:29:43"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 12:58:52"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:14:17"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:14:18"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:45:08"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 13:53:35"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:30:54"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:32:19"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 14:33:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 14:33:26"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 16:35:01"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 16:35:02"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 17:05:53"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:07:37"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 18:26:48"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 19:43:42"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 20:18:52"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 20:21:48"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 20:21:48"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 20:28:13"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 20:28:13"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 20:28:13"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 20:28:13"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 20:28:15"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 20:28:15"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error finding document by ID in user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 20:50:51"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error fetching user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 20:50:51"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error finding document by ID in user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 20:50:56"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error fetching user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 20:50:56"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 20:50:56"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 20:50:56"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 20:50:56"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 20:50:56"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error finding document by ID in user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 21:05:56"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error fetching user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 21:05:56"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error finding document by ID in user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 21:06:01"}
+{"error":"getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net","level":"error","message":"Error fetching user:","service":"UserController","stack":"MongoServerSelectionError: getaddrinfo ENOTFOUND cluster0-shard-00-00.tgh3a.mongodb.net\n    at Topology.selectServer (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/sdam/topology.js:303:38)\n    at async tryOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:138:18)\n    at async executeOperation (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/operations/execute_operation.js:69:16)\n    at async FindCursor._initialize (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/find_cursor.js:51:26)\n    at async FindCursor.cursorInit (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:495:27)\n    at async FindCursor.fetchBatch (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:527:13)\n    at async FindCursor.next (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/cursor/abstract_cursor.js:239:13)\n    at async Collection.findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongodb/lib/collection.js:274:21)\n    at async model.Query._findOne (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:2639:15)\n    at async model.Query.exec (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/node_modules/mongoose/lib/query.js:4449:63)","timestamp":"2025-01-06 21:06:01"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:32:04"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:32:04"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:32:27"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:32:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:32:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:32:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:32:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:32:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:33:23"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:33:23"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:33:24"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:33:24"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:33:25"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:33:25"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:33:25"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:33:25"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 21:37:25"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:04"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:04"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:04"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:04"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:05"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:05"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:27"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:27"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:38:27"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:28"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:38:28"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:42:13"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:42:13"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:43:04"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:43:04"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:43:04"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:43:04"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:43:09"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:43:09"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:43:25"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:43:25"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:43:48"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:43:48"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:43:48"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:43:48"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:44:00"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:44:00"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:44:00"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:44:00"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:44:03"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:44:03"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:15"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:15"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:15"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:15"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:52:19"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:52:19"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:24"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:24"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:24"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:24"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:52:34"}
+{"level":"info","message":"Socket Connection Attempt: 676805bbd6c4a00ce92fe11f","service":"UserController","timestamp":"2025-01-06 21:52:34"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:38"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:52:38"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:38"}
+{"level":"info","message":"User 676805bbd6c4a00ce92fe11f disconnected","service":"UserController","timestamp":"2025-01-06 21:52:38"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:52:46"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:52:46"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:54:22"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:54:22"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:54:22"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:54:22"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:54:41"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:54:41"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:55:31"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 21:55:31"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:55:31"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 21:55:31"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:55:40"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 21:55:40"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:19:05"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:19:05"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:19:05"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:19:05"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 22:19:06"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 22:19:06"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:22:16"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:22:16"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:22:16"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:22:16"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 22:22:18"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 22:22:18"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB disconnected","service":"UserController","timestamp":"2025-01-06 22:27:38"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 22:27:49"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:33:54"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:33:54"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:33:54"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 22:33:54"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:34:02"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:34:02"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:40:44"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:40:44"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:40:44"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:40:44"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:40:44"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:40:44"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:41:37"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:41:37"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:41:37"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:41:37"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:41:37"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:41:37"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:41:55"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:41:55"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:41:55"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:41:55"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:41:55"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:41:55"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:52:07"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 22:52:07"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:52:07"}
+{"level":"info","message":"User 67652b3b8ba9502dcaa3875b disconnected","service":"UserController","timestamp":"2025-01-06 22:52:07"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:52:10"}
+{"level":"info","message":"Socket Connection Attempt: 67652b3b8ba9502dcaa3875b","service":"UserController","timestamp":"2025-01-06 22:52:10"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"MongoDB connected successfully","service":"UserController","timestamp":"2025-01-06 23:07:21"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:07:26"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:07:26"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:08:10"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:08:10"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:08:10"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:08:10"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:08:10"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:08:10"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:08:56"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:08:56"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:08:56"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:08:56"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:08:56"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:08:56"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:11:05"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:11:05"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:11:05"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:11:05"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:11:05"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:11:05"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:11:19"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:11:19"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:11:19"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:11:19"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:11:23"}
+{"level":"info","message":"Socket Connection Attempt: 675d9bbd81ab1b21cd71ab63","service":"UserController","timestamp":"2025-01-06 23:11:23"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:14:03"}
+{"error":"Model user not found","level":"error","message":"Error updating user status:","service":"UserController","stack":"Error: Model user not found\n    at DatabaseService.getModel (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:212:19)\n    at DatabaseService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:158:36)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:4:12)\n    at DatabaseService.findByIdAndUpdate (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/database.service.js:156:16)\n    at UserService.<anonymous> (/Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:152:29)\n    at Generator.next (<anonymous>)\n    at /Users/brooklyn/Desktop/my_project/chat-app/chat-app/apps/server/dist/services/user.service.js:8:71","timestamp":"2025-01-06 23:14:03"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:14:03"}
+{"level":"info","message":"User 675d9bbd81ab1b21cd71ab63 disconnected","service":"UserController","timestamp":"2025-01-06 23:14:03"}

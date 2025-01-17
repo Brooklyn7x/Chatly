@@ -15,8 +15,12 @@ interface AuthStore {
   register: (email: string, password: string, username: string) => void;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
-  initialize: () => Promise<void>;
 }
+
+const api = axios.create({
+  baseURL: "http://localhost:8000",
+  timeout: 5000,
+});
 
 const useAuthStore = create<AuthStore>()(
   persist(
@@ -32,13 +36,10 @@ const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.post(
-            "http://localhost:8000/auth/login",
-            {
-              email,
-              password,
-            }
-          );
+          const response = await api.post("/auth/login", {
+            email,
+            password,
+          });
           const { user, accessToken, refreshToken } = response.data;
 
           axios.defaults.headers.common["Authorization"] =
@@ -65,14 +66,11 @@ const useAuthStore = create<AuthStore>()(
       register: async (email: string, password: string, username: string) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await axios.post(
-            "http://localhost:8000/auth/register",
-            {
-              email,
-              password,
-              username,
-            }
-          );
+          const response = await api.post("/auth/register", {
+            email,
+            password,
+            username,
+          });
 
           const { user, accessToken, refreshToken } = response.data;
 
@@ -98,7 +96,7 @@ const useAuthStore = create<AuthStore>()(
       },
       logout: async () => {
         try {
-          // await axios.post("http://localhost:8000/auth/logout");
+          // await api.post('/auth/logout");
         } finally {
           delete axios.defaults.headers.common["Authorization"];
           set({
@@ -115,12 +113,9 @@ const useAuthStore = create<AuthStore>()(
         if (!refreshToken) return;
 
         try {
-          const response = await axios.post(
-            "http://localhost:8000/auth/refresh-token",
-            {
-              refreshToken,
-            }
-          );
+          const response = await api.post("/auth/refresh-token", {
+            refreshToken,
+          });
           const { accessToken: newAccessToken } = response.data;
 
           console.log(response.data, "refresh");
@@ -135,51 +130,6 @@ const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           get().logout();
-        }
-      },
-
-      initialize: async () => {
-        try {
-          const { accessToken, refreshToken } = get();
-          if (!accessToken) {
-            set({ isLoading: false });
-          }
-
-          const response = await axios.get(
-            "http://localhost:8000/auth/verify",
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          if (response.data) {
-            set({
-              accessToken,
-              refreshToken,
-              user: response.data.user.data,
-              isAuthenticated: true,
-              error: null,
-              isLoading: false,
-            });
-          } else {
-            set({
-              user: null,
-              accessToken: null,
-              refreshToken: null,
-              isLoading: false,
-              isAuthenticated: false,
-            });
-          }
-        } catch (error) {
-          set({
-            user: null,
-            accessToken: null,
-            refreshToken: null,
-            isLoading: false,
-          });
         }
       },
     }),
