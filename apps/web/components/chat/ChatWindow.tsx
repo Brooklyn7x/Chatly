@@ -152,7 +152,7 @@ export default function ChatWindow() {
             <UserProfilePanel
               isOpen={isProfileOpen}
               onClose={() => setIsProfileOpen(false)}
-              currentChat={currentChat}
+              chat={currentChat}
             />
           )}
         </>
