@@ -52,7 +52,7 @@ export enum MessageStatus {
 export interface CreateMessageDTO {
   conversationId: string;
   receiverId: string;
-  content: string;
+  content?: string;
   type: MessageType;
   metadata?: MessageMetaData;
 }

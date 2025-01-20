@@ -20,6 +20,7 @@ export const useSocketChat = (
     socketService.connect(token);
 
     const unsubscribeMessage = socketService.onMessageReceived((message) => {
+      console.log("Message Received", message);
       const messageId = message._id;
 
       if (messageSet.has(messageId)) {

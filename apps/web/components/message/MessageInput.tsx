@@ -3,15 +3,18 @@ import { cn } from "@/lib/utils";
 import { Paperclip, SendHorizonal, Smile } from "lucide-react";
 import EmojiPicker from "./EmojiPicker";
 import AttachmentPicker from "./AttachmentPicker";
+import socketService from "@/services/socket";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;
   onTypingStart: () => void;
+  onFileUpload: (file: File[]) => void;
 }
 
 export default function MessageInput({
   onSendMessage,
   onTypingStart,
+  onFileUpload,
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -41,8 +44,8 @@ export default function MessageInput({
     }
   };
 
-  const handleAttach = (files: File[]) => {
-    console.log(files, "files Attachment");
+  const handleAttach = (files: any) => {
+    onFileUpload(files);
   };
 
   const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {

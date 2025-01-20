@@ -25,6 +25,7 @@ export class MessageService extends BaseService {
     messageData: CreateMessageDTO
   ): Promise<ServiceResponse<any>> {
     try {
+      console.log("sending message Received", messageData)
       const conversation = await this.db.findOne<any>("Conversation", {
         _id: new mongoose.Types.ObjectId(messageData.conversationId),
         "participants.userId": senderId,

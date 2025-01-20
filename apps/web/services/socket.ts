@@ -1,3 +1,4 @@
+import { FilePreview } from "@/components/message/AttachmentPicker";
 import { useMessageStore } from "@/store/useMessageStore";
 import { io, Socket } from "socket.io-client";
 
@@ -37,6 +38,26 @@ interface MessageStatus {
 interface MarksAsRead {
   messageIds: string[];
   conversationId: string;
+}
+
+interface FileUploadData {
+  file: File;
+  conversationId: string;
+  receiverId?: string;
+  caption?: string;
+  type: "image" | "video" | "document";
+}
+
+interface FileUploadResponse {
+  fileId: string;
+  messageId: string;
+  attachment: {
+    url: string;
+    name: string;
+    type: string;
+    size: number;
+    metadata: any;
+  };
 }
 
 class SocketService {
@@ -110,6 +131,10 @@ class SocketService {
       console.error("Message error:", error);
     });
 
+    this.socket.on("file:error", (error) => {
+      console.error("File error", error);
+    });
+
     this.socket.on("group:created", (data: GroupResponse) => {
       this.groupCallbacks.forEach((callback) => callback(data));
     });
@@ -166,7 +191,7 @@ class SocketService {
     };
   }
 
-  onMessageReceived(callback: (message: Message) => void): () => void {
+  onMessageReceived(callback: (message: any) => void): () => void {
     this.messageCallbacks.push(callback);
     return () => {
       this.messageCallbacks = this.messageCallbacks.filter(
@@ -182,6 +207,60 @@ class SocketService {
         (cb) => cb !== callback
       );
     };
+  }
+
+  uploadFile(data: FileUploadData): Promise<FileUploadResponse> {
+    console.log(data, "file uploading....");
+    return new Promise((resolve, reject) => {
+      if (!this.socket?.connected) {
+        reject(new Error("Socket not connected"));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+
+        if (!base64String) {
+          reject(new Error("Failed to read file data"));
+          return;
+        }
+
+        const fileData = {
+          file: base64String,
+          originalname: data.file.name,
+          mimetype: data.file.type,
+          size: data.file.size,
+          conversationId: data.conversationId,
+          receiverId: data.receiverId,
+          type: data.type,
+        };
+
+        console.log("Sending file data", {
+          filename: fileData.originalname,
+          type: fileData.type,
+          size: fileData.size,
+        });
+
+        this.socket?.emit("file:upload", fileData);
+
+        this.socket?.once("file:uploaded", (response: FileUploadResponse) => {
+          resolve(response);
+        });
+
+        this.socket?.once("file:error", (error) => {
+          reject(error);
+          console.log(error, "file error");
+        });
+      };
+
+      reader.onerror = () => {
+        const error = new Error("Failed to read file");
+        console.error(error);
+        reject(error);
+      };
+      reader.readAsArrayBuffer(data.file);
+    });
   }
 
   markMessagesAsRead(data: {

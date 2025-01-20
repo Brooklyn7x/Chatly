@@ -4,6 +4,7 @@ import { Message } from "@/store/useMessageStore";
 import { Avatar } from "@radix-ui/react-avatar";
 import { MessageContent } from "./MessageContent";
 import { MessageStatus } from "./MessageStatus";
+import { useEffect, useRef } from "react";
 interface MessageListProps {
   messages: Message[];
   currentUserId: string | undefined;
@@ -13,8 +14,36 @@ export default function MessageList({
   messages,
   currentUserId,
 }: MessageListProps) {
+  const messageEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleNewMessage = () => {
+    if (scrollContainerRef.current) {
+      const { scrollHeight, scrollTop, clientHeight } =
+        scrollContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+
+      if (isNearBottom) {
+        scrollToBottom();
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleNewMessage();
+  }, [messages]);
+
   return (
-    <div className="flex-1 p-4 overflow-y-scroll">
+    <div ref={scrollContainerRef} className="flex-1 p-4 overflow-y-scroll">
       <div className="space-y-4">
         {messages.map((message) => {
           const isCurrentUser = currentUserId === message.senderId;
@@ -54,7 +83,9 @@ export default function MessageList({
 
                   <div className="flex items-center justify-end gap-1 mt-1">
                     <span className="text-xs opacity-70">
-                      {new Date().toLocaleTimeString([], {
+                      {new Date(
+                        message.timestamp || new Date()
+                      ).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -67,6 +98,7 @@ export default function MessageList({
           );
         })}
       </div>
+      <div ref={messageEndRef} />
     </div>
   );
 }

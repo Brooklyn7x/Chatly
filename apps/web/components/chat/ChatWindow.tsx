@@ -113,6 +113,28 @@ export default function ChatWindow() {
     [selectedChatId, currentChat, userId]
   );
 
+  const handleAttachmentUpload = async (files: any) => {
+    if (!selectedChatId || !currentChat || !userId) return;
+    console.log(files, "file attachment");
+    try {
+      for (const fileData of files) {
+        const receiverId =
+          currentChat.type === "direct"
+            ? currentChat.participants.find((p) => p.userId !== userId)?.userId
+            : undefined;
+
+        await socketService.uploadFile({
+          file: fileData.file,
+          conversationId: selectedChatId,
+          receiverId,
+          type: fileData.type,
+        });
+      }
+    } catch (error) {
+      console.error("File upload failed:", error);
+    }
+  };
+
   const toggleProfile = useCallback(() => {
     setIsProfileOpen((prev) => !prev);
   }, []);
@@ -146,6 +168,7 @@ export default function ChatWindow() {
           <MessageInput
             onSendMessage={handleMessage}
             onTypingStart={handleTypingStart}
+            onFileUpload={handleAttachmentUpload}
           />
 
           {isProfileOpen && (

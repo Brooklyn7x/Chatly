@@ -7,7 +7,14 @@ import { UserStatus } from "../types/user.types";
 import { BaseService } from "./base.service";
 import { ConversationService } from "./conversation.service";
 import { ConversationType } from "../types/conversation";
-import { MessageStatus } from "../types/message";
+import {
+  Attachment,
+  AttachmentType,
+  Message,
+  MessageStatus,
+  MessageType,
+} from "../types/message";
+import { FileService } from "./file.service";
 
 export class SocketService extends BaseService {
   private static instance: SocketService;
@@ -15,6 +22,7 @@ export class SocketService extends BaseService {
   private messageService: MessageService;
   private userService: UserService;
   private conversationService: ConversationService;
+  private fileService: FileService;
 
   constructor() {
     super("SocketService");
@@ -22,6 +30,7 @@ export class SocketService extends BaseService {
     this.authService = new AuthService();
     this.userService = new UserService();
     this.conversationService = new ConversationService();
+    this.fileService = new FileService();
     BaseService.setSocketService(this);
     this.setUpSocketHandler();
   }
@@ -189,6 +198,82 @@ export class SocketService extends BaseService {
         }
       }
     );
+
+    socket.on("file:upload", async (data) => {
+      try {
+        const fileBuffer = Buffer.from(data.file, "base64");
+        const fileData = {
+          buffer: fileBuffer,
+          originalname: data.originalname,
+          mimetype: data.mimetype,
+          size: data.size,
+          mimeType: data.mimetype,
+        };
+
+        const uploadResult = await this.fileService.uploadFile(
+          fileData,
+          socket.data.userId,
+          data.conversationId
+        );
+
+        if (uploadResult.success) {
+          console.log(uploadResult.data, "File upload successful");
+          const messageData = {
+            _id: uploadResult.data._id,
+            conversationId: data.conversationId,
+            senderId: socket.data.userId,
+            receiverId: data.receiverId,
+            content: "content",
+            // metadata: {
+            //   attachments: {
+            //     id: uploadResult.data._id,
+            //     type: AttachmentType.IMAGE,
+            //     url: uploadResult.data.url,
+            //     size: uploadResult.data.size,
+            //     name: uploadResult.data.originalName,
+            //   },
+            // },
+            type: MessageType.IMAGE,
+            status: MessageStatus.SENDING,
+            timestamp: new Date().toISOString(),
+          };
+
+          const messageResult = await this.messageService.sendMessage(
+            socket.data.userId,
+            messageData
+          );
+
+          if (messageResult.success) {
+            socket.emit("file:uploaded", {
+              fileId: uploadResult.data.file.fileId,
+              messageId: messageResult.data._id,
+            });
+          }
+
+          const conversation =
+            await this.conversationService.getConversationById(
+              data.conversationId
+            );
+
+          if (conversation.success) {
+            if (conversation.data.type === "direct") {
+              await this.handleDirectMessage(
+                socket,
+                messageData,
+                messageResult
+              );
+            } else {
+              await this.handleGroupMessage(socket, messageData, messageResult);
+            }
+          }
+        } else {
+          socket.emit("file:error", { error: uploadResult.error });
+        }
+      } catch (error) {
+        this.logger.error("File upload error:", error);
+        socket.emit("file:error", { error: "File upload failed" });
+      }
+    });
   }
 
   private setupTypingHandlers(socket: Socket): void {
@@ -309,6 +394,18 @@ export class SocketService extends BaseService {
         timestamp: new Date(),
       },
     });
+  }
+
+  private getAttachmentType(mimetype: string): AttachmentType {
+    if (mimetype.startsWith("image/")) return AttachmentType.IMAGE;
+    if (mimetype.startsWith("video/")) return AttachmentType.VIDEO;
+    if (mimetype.startsWith("audio/")) return AttachmentType.AUDIO;
+    return AttachmentType.DOCUMENT;
+  }
+
+  private getMessageType(mimetype: string): MessageType {
+    if (mimetype.startsWith("image/")) return MessageType.IMAGE;
+    return MessageType.FILE;
   }
 
   private async handleDisconnect(socket: Socket) {
