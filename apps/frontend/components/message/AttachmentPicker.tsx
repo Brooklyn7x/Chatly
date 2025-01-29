@@ -93,12 +93,12 @@ export default function AttachmentPicker({
         )}
         style={{
           bottom: "100%",
-          right: "80px",
+          right: "60px",
           minWidth: "200px",
         }}
       >
         <div className="p-1">
-          <label className="flex items-center gap-4 px-4 py-2 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
+          <label className="flex items-center gap-4 px-4 py-1.5 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
             <input
               type="file"
               multiple
@@ -110,7 +110,7 @@ export default function AttachmentPicker({
             <span className="text-sm">Photo or Video</span>
           </label>
 
-          <label className="flex items-center gap-4 px-4 py-2 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
+          <label className="flex items-center gap-4 px-4 py-1.5 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
             <input
               type="file"
               multiple

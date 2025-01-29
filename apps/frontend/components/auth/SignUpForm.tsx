@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { registerUser } from "@/lib/api";
 import { toast } from "sonner";
 
 const signUpSchema = z.object({
@@ -37,9 +38,8 @@ interface SignUpFormProps {
 type signUpFormValues = z.infer<typeof signUpSchema>;
 
 const SignUpForm = ({ showLogin }: SignUpFormProps) => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const { register } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm<signUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -52,22 +52,29 @@ const SignUpForm = ({ showLogin }: SignUpFormProps) => {
 
   const onSubmit = async (data: signUpFormValues) => {
     try {
-      await register(data.email, data.password, data.username);
-      router.push("/");
+      const response = await registerUser(data);
+      if (response.success) {
+        toast.success("Account created successfully");
+        router.push("/login");
+      } else {
+        toast.error(response.error);
+      }
     } catch (error) {
-      console.log(error);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="w-full sm:max-w-sm mx-auto p-4 overflow-hidden">
+    <div className="w-full sm:max-w-sm mx-auto p-4 border rounded-sm overflow-hidden">
+      <div className="p-4">
+        <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
+        <p className="text-center">select anything</p>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col p-2"
         >
-          <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
-
           <FormField
             control={form.control}
             name="username"

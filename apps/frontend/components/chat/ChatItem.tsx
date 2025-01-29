@@ -45,18 +45,18 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
         "w-full p-2 rounded-md border",
         "transition-colors duration-200",
         "hover:bg-muted/50",
-        isActive && "bg-muted/90"
+        isActive && "bg-muted/80"
       )}
     >
       <div className="flex items-center gap-3">
         <div className="relative flex-shrink-0">
-          <UserAvatar size={"lg"} />
+          <UserAvatar size={"md"} />
           {/* {chat.participants[0]?.status === "online" && (
             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2" />
           )} */}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-baseline">
+          <div className="mb-1 flex justify-between items-baseline">
             <h3 className="font-medium truncate text-md">{displayName}</h3>
             <span className="text-xs text-muted-foreground">
               {formattedDate}
@@ -68,7 +68,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
               {chat?.lastMessage?.content || "No messages yet"}
             </p>
             <span className="ml-2 bg-primary text-primary-foreground rounded-full text-xs h-5 w-5 flex items-center justify-center ">
-              0
+              10
             </span>
           </div>
         </div>

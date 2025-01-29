@@ -40,7 +40,7 @@ export default function ChatHeader({
 
   return (
     <header className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
-      <div className="flex  items-center gap-4">
+      <div className="flex items-center gap-4">
         {selectedChatId && (
           <NavigationButton onClick={handleBack} icon={ArrowLeft} />
         )}

@@ -1,3 +1,4 @@
+"use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,6 @@ export default function SideBar() {
   const { isMobile } = useUIStore();
   const { selectedChatId, fetchChats } = useChatStore();
   const chats = useChatStore((state) => state.chats);
-  
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showDirectModal, setShowDirectModal] = useState(false);
@@ -78,7 +78,7 @@ export default function SideBar() {
         onSearchClick={handleSearchClick}
         onBackClick={handleBackClick}
       />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto ">
         {showSearch ? <SearchContent /> : <ChatList chats={chats} />}
       </main>
 

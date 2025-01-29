@@ -50,7 +50,7 @@ export function SidebarHeader({
       <button
         onClick={onSearchActive ? onBackClick : () => setShowMenu(!showMenu)}
         className={`h-10 px-2 flex items-center justify-center text-muted-foreground rounded-full transition-all duration-300 ease-in-out 
-          ${onSearchActive || showMenu ? "bg-neutral-500/20" : "hover:bg-neutral-500/20"}
+          ${onSearchActive || showMenu ? "bg-muted/50" : "hover:bg-muted/90"}
           transform ${onSearchActive || showMenu ? "rotate-180" : "rotate-0"}`}
       >
         {onSearchActive ? (
@@ -76,12 +76,12 @@ export function SidebarHeader({
         )}
       >
         <div className="p-1 space-y-1">
-          <div className="flex items-center gap-4 px-4 py-2 border-b">
-            <User className="h-6 w-6" />
+          <div className="flex items-center gap-4 px-4 p-1.5 border-b">
+            <User className="h-5 w-5" />
             <span className="font-medium">{user?.username || "User"}</span>
             <span
               className={cn(
-                "absolute top-0 right-1 w-2.5 h-2.5 rounded-full border-2 border-background",
+                "absolute top-2 right-1 w-2.5 h-2.5 rounded-full border-2 border-background",
                 {
                   "bg-green-500": userStatus === "online",
                   "bg-gray-400": userStatus !== "online",
@@ -90,15 +90,11 @@ export function SidebarHeader({
             />
           </div>
 
-          <MenuItem
-            icon={<Bookmark />}
-            onClick={() => {}}
-            label="Saved Messages"
-          />
-          <MenuItem icon={<User />} onClick={() => {}} label="Contact" />
-          <MenuItem icon={<Settings />} onClick={() => {}} label="Settings" />
-          <MenuItem icon={<Moon />} onClick={() => {}} label="Dark Mode" />
-          <MenuItem icon={<LogOut />} onClick={handleLogout} label="Logout" />
+          <MenuItem icon={Bookmark} onClick={() => {}} label="Saved Messages" />
+          <MenuItem icon={User} onClick={() => {}} label="Contact" />
+          <MenuItem icon={Settings} onClick={() => {}} label="Settings" />
+          <MenuItem icon={Moon} onClick={() => {}} label="Dark Mode" />
+          <MenuItem icon={LogOut} onClick={handleLogout} label="Logout" />
         </div>
       </div>
     </header>

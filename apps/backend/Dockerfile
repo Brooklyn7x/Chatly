@@ -2,11 +2,9 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package.json .
 COPY tsconfig.json .
 
-# Install all dependencies for building
 RUN npm install
 
 # Copy source code

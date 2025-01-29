@@ -149,7 +149,7 @@ export default function ChatWindow() {
     <div
       className={cn(
         "flex-1 flex flex-col",
-        "bg-neutral-800/40",
+        "bg-neutral-800/20",
         "transition-[transform,width] duration-300 ease-in-out",
         {
           "translate-x-full": isMobile && !selectedChatId,

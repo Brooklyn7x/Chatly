@@ -34,38 +34,42 @@ export function UserProfilePanel({
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background sm:border shadow-md",
+        "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background/70 backdrop-blur-md  sm:border-l shadow-md",
         "flex flex-col",
         "transition-transform transform duration-300 ease-out",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}
     >
-      <div className="h-16 px-4 flex-none border-b flex items-center justify-between text-muted-foreground">
-        <div className="flex items-center gap-4">
+      <div className="border-b h-16 flex items-center px-4 ">
+        <div className="w-full flex items-center">
           <button
             onClick={onClose}
             className={cn(
-              "h-10 w-10 p-2 flex items-center justify-center rounded-full",
-              "hover:bg-muted/50 transition-colors duration-200"
+              "p-2 flex items-center justify-center rounded-full text-muted-foreground",
+              "hover:bg-muted/90 transition-colors duration-200"
             )}
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </button>
-          <h1 className="text-lg">{chat?.metadata.title || "Direct"}</h1>
-        </div>
+          <div className="flex-1 pl-4">
+            <h1 className="text-lg truncate">
+              {chat?.metadata.title || "Direct"}
+            </h1>
+          </div>
 
-        <button
-          onClick={onEdit}
-          className={cn(
-            "h-10 w-10 p-2 flex items-center justify-center rounded-full",
-            "hover:bg-muted/50 transition-colors duration-200"
-          )}
-        >
-          <Pencil className="h-5 w-5" />
-        </button>
+          <button
+            onClick={onEdit}
+            className={cn(
+              "p-2 flex items-center justify-center rounded-full text-muted-foreground",
+              "hover:bg-muted/90 transition-colors duration-200"
+            )}
+          >
+            <Pencil className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col overflow-hidden">
         <section className="flex flex-col items-center justify-center gap-4 p-4">
           <UserAvatar size={"xl"} />
           <div className="mt-2 text-center">
@@ -76,7 +80,7 @@ export function UserProfilePanel({
           </div>
         </section>
 
-        <section className="p-4">
+        <section className="p-2">
           {chat?.type === "direct" ? (
             <ProfileInfo icon={Phone} label="Phone" value="+1234567889" />
           ) : (
@@ -86,13 +90,12 @@ export function UserProfilePanel({
               value={chat?.metadata.title || "No link attached"}
             />
           )}
-
           <ProfileInfo icon={Bell} label="Notifications" value="Enabled" />
         </section>
       </div>
 
-      <section className="flex-1 overflow-y-auto border-t">
-        <h1 className="p-4 text-lg font-semibold">
+      <section className="flex-1 p-2 overflow-y-auto border-t">
+        <h1 className="p-2 text-lg text-center font-semibold">
           {chat?.type === "direct" ? "Members" : "Shared Groups"}
         </h1>
 
@@ -101,7 +104,6 @@ export function UserProfilePanel({
             <UserItem key={participant._id} user={participant} />
           ))}
         </div>
-        
       </section>
 
       {isEditing && (
@@ -122,11 +124,13 @@ interface ProfileInfoProps {
 
 const ProfileInfo = ({ icon: Icon, label, value }: ProfileInfoProps) => {
   return (
-    <div className="flex items-center gap-6 p-4">
-      <Icon className="h-6 w-6 text-muted-foreground" />
-      <div className="flex flex-col">
-        <span>{value}</span>
-        <span className="text-muted-foreground text-sm">{label}</span>
+    <div className="px-4 py-2 rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer">
+      <div className="flex items-center gap-6">
+        <Icon className="h-5 w-5 text-muted-foreground" />
+        <div className="flex-1">
+          <p className="text-sm">{value}</p>
+          <p className="text-muted-foreground text-sm">{label}</p>
+        </div>
       </div>
     </div>
   );

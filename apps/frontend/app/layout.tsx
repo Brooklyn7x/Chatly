@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "./theme-provider";
 import AuthProvider from "./AuthPovider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",
@@ -24,6 +25,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>

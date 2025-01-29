@@ -46,8 +46,9 @@ export class AuthController extends BaseController {
         });
 
         res.status(201).json({
+          success: true,
           accessToken: result.data!.accessToken,
-          user: result.data!.user,
+          // user: result.data!.user,
         });
       } else {
         res.status(400).json({ error: result.error });
@@ -79,6 +80,7 @@ export class AuthController extends BaseController {
         });
 
         res.status(201).json({
+          success: true,
           accessToken: result.data!.accessToken,
           user: result.data!.user,
         });

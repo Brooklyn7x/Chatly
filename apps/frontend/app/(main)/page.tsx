@@ -19,11 +19,5 @@ export default function MainLayout() {
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  
-  return (
-    <div className="flex h-dvh overflow-hidden">
-      <SideBar />
-      {(!isMobile || selectedChatId) && <ChatArea />}
-    </div>
-  );
+  return (!isMobile || selectedChatId) && <ChatArea />;
 }

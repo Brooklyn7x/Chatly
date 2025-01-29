@@ -8,8 +8,15 @@ export const config = {
   redis: {
     host: process.env.REDIS_HOST || "redis",
     port: parseInt(process.env.REDIS_PORT || "6379"),
-    retryStrategy: (times: number) => Math.min(times * 50, 2000),
-    maxRetriesPerRequest: 3,
+    retryStrategy: (times: number) => {
+      const maxDelay = 2000;
+      const delay = Math.min(times * 50, maxDelay);
+      console.log(`Retrying Redis connection in ${delay}ms...`);
+      return delay;
+    },
+    maxRetriesPerRequest: null,
+    connectTimeout: 10000,
+    enableAutoPipelining: true,
   },
   jwt: {
     secret: process.env.JWT_ACCESS_SECRET,

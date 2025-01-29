@@ -19,7 +19,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        const response = await axios.get("http://localhost:8000/auth/verify", {
+        const response = await axios.get("http://localhost:8000/api/auth/verify", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",

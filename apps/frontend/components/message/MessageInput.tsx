@@ -59,12 +59,12 @@ export default function MessageInput({
   };
 
   const handleEmojiPicker = useCallback(() => {
-    setShowEmojiPicker((prev) => !prev);
+    setShowEmojiPicker(!showEmojiPicker);
     setShowAttachment(false);
   }, []);
 
   const handleAttachmentPicker = useCallback(() => {
-    setShowAttachment((prev) => !prev);
+    setShowAttachment(!showAttachment);
     setShowEmojiPicker(false);
   }, []);
 
@@ -92,13 +92,13 @@ export default function MessageInput({
 
   return (
     <div className="bottom-0 left-0 right-0">
-      <div className="relative max-w-3xl mx-auto px-4 py-3">
+      <div className="relative max-w-2xl mx-auto px-4 pb-3">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-          <div className="relative flex-1">
+          <div className="relative flex-1 flex items-center">
             <button
               type="button"
               onClick={handleEmojiPicker}
-              className="absolute left-3 bottom-5 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+              className="absolute left-4 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
             >
               <Smile className="h-6 w-6" />
             </button>
@@ -115,7 +115,7 @@ export default function MessageInput({
             <button
               type="button"
               onClick={handleAttachmentPicker}
-              className="absolute right-3 bottom-5 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+              className="absolute right-4 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
             >
               <Paperclip className="h-6 w-6" />
             </button>
@@ -123,26 +123,30 @@ export default function MessageInput({
 
           <button
             type="submit"
-            className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
+            className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
             aria-label="Send message"
           >
             <SendHorizonal className="h-5 w-5" />
           </button>
         </form>
 
-        <EmojiPicker
-          show={showEmojiPicker}
-          onClose={() => setShowEmojiPicker(false)}
-          onEmojiSelect={handleEmojiSelect}
-          containerRef={emojiPickerRef}
-        />
+        {showEmojiPicker && (
+          <EmojiPicker
+            show={showEmojiPicker}
+            onClose={() => setShowEmojiPicker(false)}
+            onEmojiSelect={handleEmojiSelect}
+            containerRef={emojiPickerRef}
+          />
+        )}
 
-        <AttachmentPicker
-          show={showAttachment}
-          onClose={() => setShowAttachment(false)}
-          onAttach={handleAttach}
-          containerRef={attachmentPickerRef}
-        />
+        {setShowAttachment && (
+          <AttachmentPicker
+            show={showAttachment}
+            onClose={() => setShowAttachment(false)}
+            onAttach={handleAttach}
+            containerRef={attachmentPickerRef}
+          />
+        )}
       </div>
     </div>
   );

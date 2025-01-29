@@ -4,7 +4,8 @@ import { Message } from "@/store/useMessageStore";
 import { Avatar } from "@radix-ui/react-avatar";
 import { MessageContent } from "./MessageContent";
 import { MessageStatus } from "./MessageStatus";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDownIcon } from "lucide-react";
 interface MessageListProps {
   messages: Message[];
   currentUserId: string | undefined;
@@ -16,6 +17,8 @@ export default function MessageList({
 }: MessageListProps) {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isNearBottom, setIsNearBottom] = useState(true);
+
   const scrollToBottom = () => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -23,24 +26,27 @@ export default function MessageList({
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleNewMessage = () => {
-    if (scrollContainerRef.current) {
-      const { scrollHeight, scrollTop, clientHeight } =
-        scrollContainerRef.current;
-      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-
-      if (isNearBottom) {
-        scrollToBottom();
-      }
+    if (isNearBottom) {
+      scrollToBottom();
     }
-  };
+  }, [messages]);
 
   useEffect(() => {
-    handleNewMessage();
-  }, [messages]);
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const { scrollHeight, scrollTop, clientHeight } =
+          scrollContainerRef.current;
+        const nearBottom = scrollHeight - scrollTop - clientHeight < 100;
+        setIsNearBottom(nearBottom);
+      }
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
 
   return (
     <div ref={scrollContainerRef} className="flex-1 p-4 overflow-y-scroll">
@@ -98,6 +104,14 @@ export default function MessageList({
           );
         })}
       </div>
+      {!isNearBottom && (
+        <button
+          onClick={scrollToBottom}
+          className="fixed bottom-4 right-4 p-2 bg-black rounded-full border bg-primary"
+        >
+          <ArrowDownIcon className="h-6 w-6" />
+        </button>
+      )}
       <div ref={messageEndRef} />
     </div>
   );

@@ -1,14 +1,18 @@
-import AuthGuard from "@/components/shared/AuthGuard";
 
-export default function RootLayout({
+import AuthGuard from "@/components/shared/AuthGuard";
+import SideBar from "@/components/sidebar/Sidebar";
+
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <AuthGuard>
-      <main className="min-h-dvh bg-background">{children}</main>
+      <div className="flex h-dvh overflow-hidden">
+        <SideBar />
+        {children}
+      </div>
     </AuthGuard>
-    // <main className="min-h-dvh bg-background">{children}</main>
   );
 }
