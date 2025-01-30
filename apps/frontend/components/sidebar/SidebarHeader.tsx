@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "../shared/MenuItem";
-import useAuth from "@/hooks/useAuth";
+
 import { SearchInput } from "../shared/SearchInput";
 import {
   ArrowRight,
@@ -13,6 +13,8 @@ import {
   User,
 } from "lucide-react";
 import useUserStatusStore from "@/store/useStatusStore";
+import useAuthStore from "@/store/useAuthStore";
+import { useAuth } from "@/hooks/useAuth1";
 
 interface SidebarHeaderProps {
   onSearchClick: () => void;
@@ -30,7 +32,9 @@ export function SidebarHeader({
   onBackClick,
 }: SidebarHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
-  const { user, logout } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const { logout } = useAuth();
+
   const userStatus = useUserStatusStore(
     (state) => state.userStatus[user?._id || ""]
   );

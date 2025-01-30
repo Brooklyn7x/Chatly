@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-import useAuthStore from "@/store/useAuthStore";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import AuthButton from "./AuthButton";
@@ -16,49 +13,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { registerUser } from "@/lib/api";
-import { toast } from "sonner";
 
-const signUpSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Please enter a valid address"),
-  password: z
-    .string()
-    .min(1, "Password is require")
-    .min(8, "Password must be at least 8 characters"),
-});
+import { toast } from "sonner";
+import { RegisterInput, registerSchema } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth1";
 
 interface SignUpFormProps {
   showLogin: () => void;
 }
 
-type signUpFormValues = z.infer<typeof signUpSchema>;
-
-const SignUpForm = ({ showLogin }: SignUpFormProps) => {
+const RegisterForm = ({ showLogin }: SignUpFormProps) => {
+  const { register, error, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
-  const form = useForm<signUpFormValues>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (data: signUpFormValues) => {
+  const onSubmit = async (data: RegisterInput) => {
     try {
-      const response = await registerUser(data);
-      if (response.success) {
-        toast.success("Account created successfully");
-        router.push("/login");
-      } else {
-        toast.error(response.error);
-      }
+      await register(data);
     } catch (error) {
       toast.error("An error occurred. Please try again.");
     }
@@ -77,7 +56,7 @@ const SignUpForm = ({ showLogin }: SignUpFormProps) => {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="sr-only">Username</FormLabel>
@@ -150,4 +129,4 @@ const SignUpForm = ({ showLogin }: SignUpFormProps) => {
   );
 };
 
-export default SignUpForm;
+export default RegisterForm;

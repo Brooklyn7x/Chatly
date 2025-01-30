@@ -49,7 +49,7 @@ export class ConversationController extends BaseController {
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Failed to create conversation",
+        error: "Failed to create chats",
       });
     }
   }
@@ -68,14 +68,14 @@ export class ConversationController extends BaseController {
       this.logger.error("Error fetching conversations:", error);
       res.status(500).json({
         success: false,
-        error: "Failed to fetch conversations",
+        error: "Failed to fetch chats",
       });
     }
   }
 
   async getConversations(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.conversationService.getConversations(
+      const result = await this.conversationService.getAllConversations(
         req.params.conversationId,
         req.user!._id
       );
@@ -84,12 +84,11 @@ export class ConversationController extends BaseController {
         res.status(404).json(result);
         return;
       }
-
       res.json(result);
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: "Failed to fetch conversation",
+        error: "Failed to fetch chats",
       });
     }
   }

@@ -1,55 +1,28 @@
-import socketService from "@/services/socket";
+import { socketService } from "@/services/socket/socketService";
+import useAuthStore from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
-import { User } from "@/types";
 import { useEffect } from "react";
 
-export const useSocketChat = (
-  token: string,
-  selectChatId: string | null,
-  user: User | null
-) => {
-  const userId = user?._id;
-  const { addMessage } = useMessageStore();
-  const messageSet = new Set();
+export const useSocket = () => {
+  const { user } = useAuthStore();
+  const { updateChat } = useChatStore();
+  const { addMessage, updateMessage, deleteMessage } = useMessageStore();
+
+  const setupSocketListeners = () => {
+    socketService.on("message:new", addMessage);
+    socketService.on("message:update", updateMessage);
+    socketService.on("message:delete", deleteMessage);
+  };
 
   useEffect(() => {
-    if (!token || !selectChatId) {
-      return;
+    if (user) {
+      socketService.initialize();
+      setupSocketListeners();
     }
 
-    socketService.connect(token);
-
-    const unsubscribeMessage = socketService.onMessageReceived((message) => {
-      console.log("Message Received", message);
-      const messageId = message._id;
-
-      if (messageSet.has(messageId)) {
-        return;
-      }
-
-      messageSet.add(messageId);
-
-      const formattedMessage = {
-        _id: message._id,
-        conversationId: message._doc.conversationId,
-        conversationType: message.conversationType,
-        content: message._doc.content,
-        type: message._doc.type,
-        senderId: message._doc.senderId,
-        receiverId: message._doc.receiverId,
-        timestamp: new Date(message._doc.timestamp).toISOString(),
-        sender: {
-          userId: message._doc.senderId,
-          timestamp: new Date().toISOString(),
-        },
-      };
-
-      addMessage(formattedMessage);
-    });
-
     return () => {
-      unsubscribeMessage();
       socketService.disconnect();
     };
-  }, [token, selectChatId, userId]);
+  }, []);
 };

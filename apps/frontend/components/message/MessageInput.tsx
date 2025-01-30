@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import { Paperclip, SendHorizonal, Smile } from "lucide-react";
 import EmojiPicker from "./EmojiPicker";
 import AttachmentPicker from "./AttachmentPicker";
-import socketService from "@/services/socket";
 
 interface MessageInputProps {
   onSendMessage: (content: string) => void;

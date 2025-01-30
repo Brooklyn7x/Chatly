@@ -3,7 +3,7 @@ import useUserStore from "@/store/useUserStore";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export const useDirectModal = (isOpen: boolean, onClose: () => void) => {
+export const useDirect = (isOpen: boolean, onClose: () => void) => {
   const [shouldRender, setShouldRender] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -13,7 +13,7 @@ export const useDirectModal = (isOpen: boolean, onClose: () => void) => {
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      searchUsers();
+      // searchUsers();
       document.body.style.overflow = "hidden";
     } else {
       const timer = setTimeout(() => {

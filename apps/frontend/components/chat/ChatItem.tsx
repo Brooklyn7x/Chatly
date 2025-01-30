@@ -5,12 +5,12 @@ import { UserAvatar } from "../user/UserAvatar";
 import { useMemo } from "react";
 
 interface ChatItemProps {
+  chat: Chat;
   isActive: boolean;
   onClick: () => void;
-  chat: Chat;
 }
 
-export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
+export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
   const formattedDate = useMemo(() => {
     if (!chat.updatedAt) return "";
     const date = new Date(chat.updatedAt);
@@ -33,7 +33,7 @@ export function ChatItem({ isActive, onClick, chat }: ChatItemProps) {
 
   const displayName = useMemo(() => {
     if (chat.type === "direct") {
-      return chat.participants[0]?.username || "Direct Message";
+      return chat.participants[1]?.userId.username || "Direct Message";
     }
     return chat.metadata?.title || "Group Chat";
   }, [chat]);

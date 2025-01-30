@@ -1,64 +1,67 @@
-import { useCallback, useEffect, useState } from "react";
+"use client";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useUIStore } from "@/store/useUiStore";
 import { useMessageStore } from "@/store/useMessageStore";
-import { UserProfilePanel } from "../shared/UserProfilePanel";
+import { ChatInfo, UserProfilePanel } from "./ChatInfo";
 import ChatHeader from "./ChatHeader";
 import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
-import useAuth from "@/hooks/useAuth";
-import socketService from "@/services/socket";
+import socketService from "@/services/socket/socket";
 import useAuthStore from "@/store/useAuthStore";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { useSocketChat } from "@/hooks/useSocket";
+import { useSocketChat } from "@/hooks/useSocketChat";
 import { EmptyState } from "./EmptyChat";
 import useUserStatusStore from "@/store/useStatusStore";
+import { useMessage } from "@/hooks/useMessage";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ChatWindow() {
   const { user } = useAuth();
   const { isMobile } = useUIStore();
-  const { selectedChatId, chats } = useChatStore();
-  const { getMessages, addMessage } = useMessageStore();
-  const token = useAuthStore((state) => state.accessToken) || ``;
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { activeChatId, chats } = useChatStore();
+  const { addMessage } = useMessageStore();
+  const { messages } = useMessage(activeChatId || "");
+  const token = useAuthStore((state) => state.token) || ``;
+  const [showChatInfo, setShowChatInfo] = useState(false);
   // const [userStatuses, setUserStatuses] = useState<Record<string, string>>({});
-  const currentChat = chats.find((chat) => chat._id === selectedChatId);
-  const messages = selectedChatId ? getMessages(selectedChatId) : [];
+  const currentChat = chats.find((chat) => chat._id === activeChatId);
+  // const messages = activeChatId ? getMessages(activeChatId) : [];
   const userId = user?._id;
   const userStatuses = useUserStatusStore((state) => state.userStatus);
-  useSocketChat(token, selectedChatId, user);
+  useSocketChat(token, activeChatId);
 
-  useEffect(() => {
-    if (!selectedChatId || !currentChat || !messages.length || !userId) {
-      return;
-    }
-    const unreadMessages = messages.filter(
-      (message) => message.senderId !== userId && message.status !== "read"
-    );
+  // useEffect(() => {
+  //   if (!activeChatId || !currentChat || !messages.length || !userId) {
+  //     return;
+  //   }
+  //   const unreadMessages = messages.filter(
+  //     (message) => message.senderId !== userId && message.status !== "read"
+  //   );
 
-    if (unreadMessages.length > 0) {
-      socketService.markMessagesAsRead({
-        messageIds: unreadMessages.map((msg) => msg._id),
-        conversationId: selectedChatId,
-      });
-    }
-  }, []);
+  //   if (unreadMessages.length > 0) {
+  //     socketService.markMessagesAsRead({
+  //       messageIds: unreadMessages.map((msg) => msg._id),
+  //       conversationId: activeChatId,
+  //     });
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    const unsubscribeMessageStatus = socketService.onMessageStatus((status) => {
-      if (status.conversationId === selectedChatId) {
-        useMessageStore
-          .getState()
-          .updateMessageStatus(status.messageId, status.status);
-      }
-    });
+  // useEffect(() => {
+  //   const unsubscribeMessageStatus = socketService.onMessageStatus((status) => {
+  //     if (status.conversationId === activeChatId) {
+  //       useMessageStore
+  //         .getState()
+  //         .updateMessageStatus(status.messageId, status.status);
+  //     }
+  //   });
 
-    return () => {
-      unsubscribeMessageStatus();
-    };
-  }, [selectedChatId]);
+  //   return () => {
+  //     unsubscribeMessageStatus();
+  //   };
+  // }, [activeChatId]);
 
   // useEffect(() => {
   //   const handleStatusChange = (data: { userId: string; status: string }) => {
@@ -78,8 +81,6 @@ export default function ChatWindow() {
     ? userStatuses[otherUser.userId] === "online"
     : false;
 
-  console.log(isOnline);
-
   const { isTyping, handleTypingStart } = useTypingIndicator(
     currentChat,
     userId
@@ -87,12 +88,12 @@ export default function ChatWindow() {
 
   const handleMessage = useCallback(
     (content: string) => {
-      if (!content.trim() || !selectedChatId || !currentChat) return;
+      if (!content.trim() || !activeChatId || !currentChat) return;
       const tempId = `temp-${Date.now()}`;
       const messageData = {
         _id: tempId,
         senderId: userId,
-        conversationId: selectedChatId,
+        conversationId: activeChatId,
         content,
         type: "text",
         status: "sent",
@@ -116,11 +117,11 @@ export default function ChatWindow() {
       //   // }
       // });
     },
-    [selectedChatId, currentChat, userId]
+    [activeChatId, currentChat, userId]
   );
 
   const handleAttachmentUpload = async (files: any) => {
-    if (!selectedChatId || !currentChat || !userId) return;
+    if (!activeChatId || !currentChat || !userId) return;
     console.log(files, "file attachment");
     try {
       for (const fileData of files) {
@@ -131,7 +132,7 @@ export default function ChatWindow() {
 
         await socketService.uploadFile({
           file: fileData.file,
-          conversationId: selectedChatId,
+          conversationId: activeChatId,
           receiverId,
           type: fileData.type,
         });
@@ -142,7 +143,7 @@ export default function ChatWindow() {
   };
 
   const toggleProfile = useCallback(() => {
-    setIsProfileOpen((prev) => !prev);
+    setShowChatInfo((prev) => !prev);
   }, []);
 
   return (
@@ -152,8 +153,8 @@ export default function ChatWindow() {
         "bg-neutral-800/20",
         "transition-[transform,width] duration-300 ease-in-out",
         {
-          "translate-x-full": isMobile && !selectedChatId,
-          "translate-x-0": !isMobile || selectedChatId,
+          "translate-x-full": isMobile && !activeChatId,
+          "translate-x-0": !isMobile || activeChatId,
           "absolute inset-y-0 right-0 w-full z-10": isMobile,
           relative: !isMobile,
         }
@@ -162,12 +163,12 @@ export default function ChatWindow() {
       {currentChat ? (
         <>
           <ChatHeader
-            onProfileClick={toggleProfile}
+            onInfoClick={toggleProfile}
             chat={currentChat}
             isOnline={isOnline}
           />
 
-          <MessageList messages={messages} currentUserId={userId} />
+          <MessageList messages={messages} />
 
           {isTyping && <TypingIndicator />}
 
@@ -177,10 +178,10 @@ export default function ChatWindow() {
             onFileUpload={handleAttachmentUpload}
           />
 
-          {isProfileOpen && (
-            <UserProfilePanel
-              isOpen={isProfileOpen}
-              onClose={() => setIsProfileOpen(false)}
+          {showChatInfo && (
+            <ChatInfo
+              isOpen={showChatInfo}
+              onClose={() => setShowChatInfo(false)}
               chat={currentChat}
             />
           )}

@@ -1,7 +1,5 @@
-import { FilePreview } from "@/components/message/AttachmentPicker";
 import useAuthStore from "@/store/useAuthStore";
 import { useMessageStore } from "@/store/useMessageStore";
-import useUserStatusStore from "@/store/useStatusStore";
 import { io, Socket } from "socket.io-client";
 
 interface Message {
@@ -62,7 +60,7 @@ interface FileUploadResponse {
   };
 }
 
-class SocketService {
+export class SocketService {
   private socket: Socket | null = null;
   private messageCallbacks: ((message: Message) => void)[] = [];
   private typingCallbacks: ((data: {
@@ -73,15 +71,19 @@ class SocketService {
   private groupCallbacks: ((data: GroupResponse) => void)[] = [];
   private statusCallbacks: ((data: UserStatus) => void)[] = [];
 
-  connect(token: string): void {
+  connect(): void {
     if (this.socket?.connected) return;
-
-    this.socket = io("http://localhost:8000", {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
       auth: { token },
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionDelay: 3000,
+      timeout: 10000,
     });
 
     this.setupSocketListeners();
@@ -119,9 +121,9 @@ class SocketService {
         timestamp: Date;
       }) => {
         console.log("Message sent confirmation:", response);
-        useMessageStore
-          .getState()
-          .updateMessageId(response.tempId, response.messageId);
+        // useMessageStore
+        //   .getState()
+        //   .updateMessageId(response.tempId, response.messageId);
       }
     );
 

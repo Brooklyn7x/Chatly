@@ -1,7 +1,17 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Phone, Bell, Link, LucideIcon } from "lucide-react";
+import {
+  X,
+  Pencil,
+  Phone,
+  Bell,
+  Link,
+  LucideIcon,
+  BlocksIcon,
+  DeleteIcon,
+  Trash,
+} from "lucide-react";
 import { useState } from "react";
-import { EditProfileForm } from "./ProfileForm";
+import { EditProfileForm } from "../shared/ProfileForm";
 import { Chat } from "@/types";
 import { UserItem } from "../sidebar/UserItem";
 import { UserAvatar } from "../user/UserAvatar";
@@ -12,11 +22,7 @@ interface UserProfilePanelProps {
   chat: Chat | undefined;
 }
 
-export function UserProfilePanel({
-  isOpen,
-  onClose,
-  chat,
-}: UserProfilePanelProps) {
+export function ChatInfo({ isOpen, onClose, chat }: UserProfilePanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const onEdit = () => {
     setIsEditing((prev) => !prev);
@@ -82,15 +88,17 @@ export function UserProfilePanel({
 
         <section className="p-2">
           {chat?.type === "direct" ? (
-            <ProfileInfo icon={Phone} label="Phone" value="+1234567889" />
+            <InfoAction icon={Phone} label="Phone" value="+1234567889" />
           ) : (
-            <ProfileInfo
+            <InfoAction
               icon={Link}
               label="Link"
               value={chat?.metadata.title || "No link attached"}
             />
           )}
-          <ProfileInfo icon={Bell} label="Notifications" value="Enabled" />
+          <InfoAction icon={Bell} label="Notifications" value="Enabled" />
+          <InfoAction icon={BlocksIcon} label="Block User" value="Enabled" />
+          <InfoAction icon={Trash} label="Delete" value="Enabled" />
         </section>
       </div>
 
@@ -116,13 +124,13 @@ export function UserProfilePanel({
   );
 }
 
-interface ProfileInfoProps {
+interface InfoActionProps {
   icon: LucideIcon;
   label: string;
   value: string;
 }
 
-const ProfileInfo = ({ icon: Icon, label, value }: ProfileInfoProps) => {
+const InfoAction = ({ icon: Icon, label, value }: InfoActionProps) => {
   return (
     <div className="px-4 py-2 rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer">
       <div className="flex items-center gap-6">

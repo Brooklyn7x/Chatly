@@ -1,28 +1,27 @@
 import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import socketService from "@/services/socket";
+import socketService from "@/services/socket/socket";
 import useUserStatusStore from "@/store/useStatusStore";
 
-const useAuth = () => {
+export const useAuth = () => {
   const router = useRouter();
-  const { isAuthenticated, user, login, logout, isLoading, accessToken } =
-    useAuthStore();
+  const { user, isAuthenticated, error, login, logout, token } = useAuthStore();
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoading) {
+    if (!isAuthenticated) {
       router.push("/login");
     }
 
-    if (isAuthenticated && accessToken) {
-      socketService.connect(accessToken);
+    if (isAuthenticated && token) {
+      socketService.connect(token);
       useUserStatusStore.getState().setUserStatus(user?._id || "", "online");
     }
 
     return () => {
       socketService.disconnect();
     };
-  }, [isAuthenticated, isLoading, accessToken]);
+  }, [isAuthenticated, token]);
 
   useEffect(() => {
     const handleStatusChange = (data: { userId: string; status: string }) => {
@@ -42,8 +41,5 @@ const useAuth = () => {
     login,
     logout,
     isAuthenticated,
-    isLoading,
   };
 };
-
-export default useAuth;

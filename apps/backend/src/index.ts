@@ -25,9 +25,9 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/conversations", authenticate, conversationRoutes);
-app.use("/messages", authenticate, messageRoutes);
+app.use("/api/users", authenticate, userRoutes);
+app.use("/api/chats", authenticate, conversationRoutes);
+app.use("/api/messages", authenticate, messageRoutes);
 
 httpServer.setMaxListeners(20);
 httpServer.listen(config.port, () => {

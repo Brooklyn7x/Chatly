@@ -17,7 +17,6 @@ interface GroupModalProps {
 export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
   const {
     formData,
-    error,
     shouldRender,
     step,
     loading,

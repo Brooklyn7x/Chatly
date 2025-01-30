@@ -185,7 +185,7 @@ export class ConversationService {
       };
     }
   }
-  async getConversations(
+  async getAllConversations(
     conversationId: string,
     userId: string
   ): Promise<ServiceResponse<any>> {
@@ -199,23 +199,27 @@ export class ConversationService {
         };
       }
 
-      const conversation = await this.db.findOne("Conversation", {
-        id: conversationId,
+      const conversations = await ConversationModel.findOne({
+        _id: conversationId,
         "participants.userId": userId,
+      }).populate({
+        path: "participants",
+        model: "user",
+        select: "username email profilePicture",
       });
 
-      if (!conversation) {
+      if (!conversations) {
         return {
           success: false,
           error: "Conversation not found",
         };
       }
 
-      await this.cacheConversation(conversation);
+      await this.cacheConversation(conversations);
 
       return {
         success: true,
-        data: conversation,
+        data: conversations,
       };
     } catch (error) {
       this.logger.error("Error fetching conversation:", error);
@@ -240,23 +244,27 @@ export class ConversationService {
         };
       }
 
-      const conversation = await this.db.findOne("Conversation", {
+      const conversations = await ConversationModel.findOne({
         _id: conversationId,
         "participants.userId": userId,
+      }).populate({
+        path: "participants.userId",
+        model: "user",
+        select: "username email profilePicture",
       });
 
-      if (!conversation) {
+      if (!conversations) {
         return {
           success: false,
           error: "Conversation not found",
         };
       }
 
-      await this.cacheConversation(conversation);
+      await this.cacheConversation(conversations);
 
       return {
         success: true,
-        data: conversation,
+        data: conversations,
       };
     } catch (error) {
       this.logger.error("Error fetching conversation:", error);
@@ -272,6 +280,7 @@ export class ConversationService {
     userId: string
   ): Promise<ServiceResponse<any>> {
     try {
+      console.log(conversationId, "conversationId");
       const conversation = await this.db.findOne("Conversation", {
         id: conversationId,
       });
@@ -279,7 +288,7 @@ export class ConversationService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversation not found or user not authorized",
+          error: "Conversation not found",
         };
       }
 
@@ -314,13 +323,24 @@ export class ConversationService {
     offset: number = 0
   ): Promise<ServiceResponse<any[]>> {
     try {
-      const conversations = await this.db.find(
-        "Conversation",
-        {
-          "participants.userId": userId,
-        },
-        { sort: { updatedAt: -1 }, skip: offset, limit }
-      );
+      const conversations = await ConversationModel.find({
+        "participants.userId": userId,
+      })
+        .populate({
+          path: "participants.userId",
+          model: "user",
+          select: "username email profilePicture",
+        })
+        .sort({ updatedAt: -1 })
+        .skip(offset)
+        .limit(limit);
+
+      if (!conversations.length) {
+        return {
+          success: false,
+          error: "No conversations found",
+        };
+      }
 
       await Promise.all(
         conversations.map((con) => this.cacheConversation(con))
@@ -331,10 +351,10 @@ export class ConversationService {
         data: conversations,
       };
     } catch (error) {
-      this.logger.error("Error to fetch conversations :", error);
+      this.logger.error("Error fetching conversations:", error);
       return {
         success: false,
-        error: "Error to fetch user conversations",
+        error: "Error fetching user conversations",
       };
     }
   }

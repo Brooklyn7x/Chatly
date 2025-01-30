@@ -1,24 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import socketService from "@/services/socket";
+import socketService from "@/services/socket/socket";
+import { Chat } from "@/types";
+import useAuthStore from "@/store/useAuthStore";
 
-interface TypingData {
-  userId: string;
-}
-import { Chat } from "@/store/useChatStore";
-
-export function useTypingIndicator(
-  currentChat: Chat | null,
-  userId: string | null
-) {
+export function useTypingIndicator(currentChat: Chat | null) {
   const [isTyping, setIsTyping] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const { user } = useAuthStore;
+  const userId = user?._id;
 
   useEffect(() => {
     if (!currentChat || !userId) {
       return;
     }
 
-    const handleTypingUpdate = (data: TypingData) => {
+    const handleTypingUpdate = (data: any) => {
       if (
         data.userId !== userId &&
         currentChat.participants.some((p) => p.userId === data.userId)
@@ -29,7 +25,7 @@ export function useTypingIndicator(
         }
         timeoutRef.current = setTimeout(() => {
           setIsTyping(false);
-        }, 2000);
+        }, 3000);
       }
     };
 

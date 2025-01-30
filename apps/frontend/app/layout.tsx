@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider } from "./theme-provider";
-import AuthProvider from "./AuthPovider";
 import { Toaster } from "sonner";
+import AuthProvider from "@/components/provider/AuthPovider";
+import { ThemeProvider } from "@/components/provider/theme-provider";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",

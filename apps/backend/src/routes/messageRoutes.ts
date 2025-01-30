@@ -4,9 +4,10 @@ import { MessageController } from "../controllers/messageController";
 const router = Router();
 const controller = new MessageController();
 
-//validate message
-router.post("/create-message", controller.sendMessage);
+router.post("/", controller.sendMessage);
 router.delete("/:messageId", controller.deleteMessage);
+router.get("/:conversationId", controller.getMessages);
+
 router.post("/read", controller.markAsRead);
 
 export default router;

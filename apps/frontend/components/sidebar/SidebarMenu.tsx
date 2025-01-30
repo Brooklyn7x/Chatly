@@ -14,6 +14,7 @@ export function SidebarMenu({
   onCreateGroup,
 }: SidebarMenuProps) {
   const [isOpen, setShowMenu] = useState(false);
+  
   const toggleMenu = () => {
     setShowMenu((prev) => !prev);
   };

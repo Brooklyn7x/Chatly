@@ -1,4 +1,4 @@
-import socketService from "@/services/socket";
+import socketService from "@/services/socket/socket";
 import { useChatStore } from "@/store/useChatStore";
 import useUserStore from "@/store/useUserStore";
 import { useState, useEffect, useMemo, useCallback } from "react";

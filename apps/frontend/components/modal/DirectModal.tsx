@@ -4,7 +4,10 @@ import { NavigationButton } from "../shared/NavigationButton";
 import { SearchInput } from "../shared/SearchInput";
 import { UserList } from "../user/UserList";
 import { ActionButton } from "../shared/ActionButton";
-import { useDirectModal } from "@/hooks/useDirectModal";
+import { useChats } from "@/hooks/useChats";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useSearch } from "@/hooks/useSearch";
 
 interface DirectModalProps {
   isOpen: boolean;
@@ -12,18 +15,31 @@ interface DirectModalProps {
 }
 
 export const DirectModal = ({ isOpen, onClose }: DirectModalProps) => {
-  const {
-    searchQuery,
-    searchResults,
-    shouldRender,
-    selectedUserId,
-    loading,
-    handleCreateDirectChat,
-    handleUserSelect,
-    setSearchQuery,
-  } = useDirectModal(isOpen, onClose);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { users: searchResults, loading } = useSearch(searchQuery);
+  const { createChat } = useChats();
 
-  if (!shouldRender) return null;
+  const handleUserSelect = (userId: string) => {
+    setSelectedUserId((prev) => (prev === userId ? null : userId));
+  };
+
+  const handleCreateChat = async () => {
+    if (!selectedUserId) return;
+    try {
+      const selectedUser = searchResults.find(
+        (user) => user._id === selectedUserId
+      );
+      if (!selectedUser) {
+        toast.error("Please select user");
+        return;
+      }
+      await createChat([selectedUserId]);
+      onClose();
+    } catch (error: any) {
+      toast.error("Failed to create chat:", error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50">
@@ -65,7 +81,7 @@ export const DirectModal = ({ isOpen, onClose }: DirectModalProps) => {
           </main>
           <div className="absolute right-6 bottom-6">
             <ActionButton
-              onClick={handleCreateDirectChat}
+              onClick={handleCreateChat}
               disabled={!selectedUserId}
               icon={Plus}
             />
