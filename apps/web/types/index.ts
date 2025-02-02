@@ -15,17 +15,17 @@ export interface Message {
   status: "sent" | "delivered" | "read";
 }
 
-export interface Chat {
-  id: string;
-  participants: User[];
-  messages: Message[];
-  unreadCount: number;
-  type: "direct" | "group";
-  groupName?: string;
-  lastMessage?: Message;
-  metadata: ConversationMetadata;
-  createdAt: string;
-}
+// export interface Chat {
+//   id: string;
+//   participants: User[];
+//   messages: Message[];
+//   unreadCount: number;
+//   type: "direct" | "group";
+//   groupName?: string;
+//   lastMessage?: Message;
+//   metadata: ConversationMetadata;
+//   createdAt: string;
+// }
 
 interface ConversationMetadata {
   avatar?: string;
@@ -42,4 +42,47 @@ export interface Conversation {
   groupName: string | null;
   lastMessage: any;
   unreadCount: number;
+}
+
+export interface Participant {
+  userId: string;
+  role: "owner" | "admin" | "member";
+  joinedAt: Date;
+}
+export interface ChatMetadata {
+  title: string | null;
+  description: string | null;
+  avatar: string | null;
+  isArchived: boolean;
+  isPinned: boolean;
+}
+
+export interface Chat {
+  _id: string;
+  type: "direct" | "group";
+  participants: Participant[];
+  metadata: ChatMetadata;
+  groupName: string | null;
+  lastMessage: any;
+  // unreadCount: { [key: string]: number };
+  updatedAt: Date;
+  createdAt: Date;
+}
+
+interface MessageSender {
+  userId: string;
+  timestamp: string;
+}
+
+export interface Message {
+  _id: string;
+  chatId: string;
+  conversationType: "direct" | "group";
+  content: string;
+  type: "text" | "image" | "video" | "audio";
+  status: "sent" | "delivered" | "read";
+  senderId: string;
+  receiverId: string;
+  timestamp: string;
+  sender?: MessageSender;
 }

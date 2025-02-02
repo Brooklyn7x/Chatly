@@ -1,0 +1,332 @@
+import Redis from "ioredis";
+import { DatabaseService } from "./databaseService";
+import {
+  CreateMessageDTO,
+  Message,
+  MessageStatus,
+  MessageType,
+} from "../types/message";
+import { ServiceResponse } from "../types/service-respone";
+import { BaseService } from "./baseService";
+import mongoose from "mongoose";
+import { MessageModel } from "../models/message.model";
+
+interface MessageData {
+  conversationId: string;
+  content: string;
+  type?: MessageType;
+  metadata?: Record<string, any>;
+  replyTo?: string | null;
+  attachments?: Array<{
+    url: string;
+    type: string;
+    name?: string;
+    size?: number;
+    mimeType?: string;
+  }>;
+  tempId?: string;
+}
+
+export class MessageService extends BaseService {
+  private redis: Redis;
+  private db: DatabaseService;
+
+  constructor() {
+    super("MessageService");
+    this.redis = new Redis(process.env.REDIS_URL as string);
+    this.db = new DatabaseService();
+  }
+
+  async sendMessage(
+    senderId: string,
+    messageData: MessageData
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const conversation = await this.db.findOne<any>("Conversation", {
+        _id: new mongoose.Types.ObjectId(messageData.conversationId),
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found",
+        };
+      }
+
+      const messageObj = {
+        conversationId: messageData.conversationId,
+        senderId: new mongoose.Types.ObjectId(senderId),
+        content: messageData.content,
+        type: messageData.type || MessageType.TEXT,
+        status: MessageStatus.SENDING,
+        metadata: messageData.metadata || {},
+        replyTo: messageData.replyTo
+          ? new mongoose.Types.ObjectId(messageData.replyTo)
+          : null,
+      };
+
+      // if (conversation.type === "direct") {
+      //   const receiver = conversation.participants.find(
+      //     (p: any) => p.userId.toString() !== senderId
+      //   );
+      //   if (receiver) {
+      //     messageObj.receiverId = receiver.userId;
+      //   }
+      // }
+
+      const message = new MessageModel(messageObj);
+      const savedMessage = await message.save();
+
+      // await this.db.update(
+      //   "Conversation",
+      //   { _id: conversation._id },
+      //   {
+      //     me: savedMessage._id,
+      //     lastMessageAt: new Date(),
+      //   }
+      // );
+
+      // await savedMessage.markAsDelivered(senderId);
+
+      return {
+        success: true,
+        data: this.formatMessage(savedMessage),
+      };
+    } catch (error) {
+      this.logger.error("Error creating message:", error);
+      return {
+        success: false,
+        error: "Failed to create message",
+      };
+    }
+  }
+
+  async getMessages(
+    conversationId: string,
+    limit: number = 20,
+    before?: Date
+  ): Promise<ServiceResponse<any[]>> {
+    try {
+      if (!mongoose.isValidObjectId(conversationId)) {
+        this.logger.error(`Invalid conversation ID format: ${conversationId}`);
+        return {
+          success: false,
+          error: "Invalid conversation ID format",
+        };
+      }
+
+      const query = before
+        ? { conversationId, timestamp: { $lt: before } }
+        : { conversationId };
+
+      const message = await this.db.find("Message", query, {
+        sort: { timestamp: -1 },
+        limit,
+      });
+
+      // await this.cacheMessage(message);
+
+      return {
+        success: true,
+        data: message,
+      };
+    } catch (error) {
+      this.logger.error("Error fetching messages:", error);
+      return {
+        success: false,
+        error: "Failed to fetch messages",
+      };
+    }
+  }
+
+  async deleteMessage(messageId: string, userId: string) {
+    try {
+      const message = await MessageModel.findOne({
+        _id: new mongoose.Types.ObjectId(messageId).toString(),
+        senderId: new mongoose.Types.ObjectId(userId).toString(),
+      });
+
+      if (!message) {
+        return {
+          success: false,
+          error: "Message not found or unauthorized",
+        };
+      }
+
+      const deleteMessage = await MessageModel.deleteOne({
+        _id: new mongoose.Types.ObjectId(messageId).toString(),
+      });
+
+      if (!deleteMessage.deletedCount) {
+        return {
+          success: false,
+          error: "Failed to delete message",
+        };
+      }
+
+      // await this.redis.del(`message:${messageId}`);
+      return {
+        success: true,
+      };
+    } catch (error) {
+      this.logger.error("Error deleting message:", error);
+      return {
+        success: false,
+        error: "Failed to delete message",
+      };
+    }
+  }
+
+  async updateMessageStatus(messageId: string, status: MessageStatus) {
+    try {
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        messageId,
+        {
+          $set: {
+            status: status,
+            updatedAt: new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      return {
+        success: true,
+        data: updatedMessage,
+      };
+    } catch (error) {
+      this.logger.error("Error updating message status:", error);
+      return {
+        success: false,
+        error: "Failed to update message status",
+      };
+    }
+  }
+
+  async markMessageAsRead(
+    messageId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const message = await MessageModel.findById(messageId);
+
+      if (!message) {
+        return {
+          success: false,
+          error: "Message not found",
+        };
+      }
+
+      const conversation = await this.db.findOne<any>("Conversation", {
+        _id: new mongoose.Types.ObjectId(message.conversationId),
+        "participants.userId": new mongoose.Types.ObjectId(userId),
+      });
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Unauthorized to mark this message as read",
+        };
+      }
+
+      if (message.senderId.toString() === userId) {
+        return {
+          success: true,
+          data: message,
+        };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        messageId,
+        {
+          $set: {
+            status: MessageStatus.READ,
+            readAt: new Date(),
+            "deliveryStatus.read": true,
+            "deliveryStatus.readAt": new Date(),
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Failed to update message status",
+        };
+      }
+      return { success: true, data: this.formatMessage(updatedMessage) };
+    } catch (error) {
+      this.logger.error("Error marking message as read:", error);
+      return {
+        success: false,
+        error: "Failed to mark message as read",
+      };
+    }
+  }
+
+  // private async cacheMessage(message: any): Promise<void> {
+  //   const pipeline = this.redis.pipeline();
+  //   pipeline.hset(`message:${message.id}`, this.serializeMessage(message));
+  //   pipeline.zadd(
+  //     `message:${message.conversationId}`,
+  //     message.timestamp.getTime(),
+  //     message.id
+  //   );
+  //   pipeline.expire(`message:${message.id}`, 86400);
+  //   pipeline.expire(`message:${message.conversationId}`, 86400);
+  //   await pipeline.exec();
+  // }
+
+  // private async getCacheMessage(
+  //   conversationId: string,
+  //   limit: number
+  // ): Promise<Message[]> {
+  //   const messageIds = await this.redis.zrevrange(
+  //     `message:${conversationId}`,
+  //     0,
+  //     limit - 1
+  //   );
+  //   const message = await Promise.all(
+  //     messageIds.map(async (id) => {
+  //       const messageData = await this.redis.hgetall(`message:${id}`);
+  //       return this.deserializeMessage(messageData);
+  //     })
+  //   );
+
+  //   return message.filter(Boolean);
+  // }
+
+  // private serializeMessage(message: Message): Record<string, string> {
+  //   return {
+  //     id: message.id,
+  //     conversationId: message.conversationId,
+  //     senderId: message.senderId,
+  //     receiverId: message.receiverId,
+  //     content: message.content,
+  //     type: message.type,
+  //     status: message.status,
+  //     timestamp: message.timestamp ? message.timestamp.toISOString() : "",
+  //     metadata: message.metadata ? JSON.stringify(message.metadata) : "",
+  //   };
+  // }
+
+  //}
+
+  private formatMessage(message: any): Message {
+    return {
+      ...message.toObject(),
+      _id: message._id.toString(),
+      senderId: message.senderId.toString(),
+      receiverId: message.receiverId?.toString(),
+      conversationId: message.conversationId.toString(),
+    };
+  }
+}

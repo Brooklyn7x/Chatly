@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import useAuthStore from "@/store/useAuthStore";
 import AuthButton from "./AuthButton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,7 +15,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
+import { LoginInput } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z
@@ -36,17 +36,12 @@ interface LoginFormProps {
   showSignUp: () => void;
 }
 
-interface FormData {
-  email: string;
-  password: string;
-}
-
 export default function LoginForm({ showSignUp }: LoginFormProps) {
-  const router = useRouter();
+  const { login } = useAuth();
+  const { isLoading, error } = useAuthStore();
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading, error } = useAuthStore();
 
-  const form = useForm<LoginFormValues>({
+  const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -56,10 +51,9 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      login(data.email, data.password);
-      router.push("/");
+      await login(data);
     } catch (error: any) {
-      toast.error("Login failed", error);
+      console.error("Login error:", error);
     }
   };
 
@@ -124,7 +118,9 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
               )}
             />
             {error && (
-              <p className="text-sm text-red-500 text-center">{error}</p>
+              <p className="text-sm text-red-500 text-center">
+                {error.message}
+              </p>
             )}
           </div>
           <Button type="submit" className="mt-5 h-12" disabled={isLoading}>

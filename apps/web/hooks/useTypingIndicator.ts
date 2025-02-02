@@ -1,64 +1,65 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import socketService from "@/services/socket";
+import { socketService } from "@/services/socket/socketService";
 
-interface TypingData {
-  userId: string;
-}
-import { Chat } from "@/store/useChatStore";
-
-export function useTypingIndicator(
-  currentChat: Chat | null,
-  userId: string | null
-) {
-  const [isTyping, setIsTyping] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-
-  useEffect(() => {
-    if (!currentChat || !userId) {
-      return;
-    }
-
-    const handleTypingUpdate = (data: TypingData) => {
-      if (
-        data.userId !== userId &&
-        currentChat.participants.some((p) => p.userId === data.userId)
-      ) {
-        setIsTyping(true);
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(() => {
-          setIsTyping(false);
-        }, 2000);
-      }
-    };
-
-    const unsubscribe = socketService.onTypingUpdate(handleTypingUpdate);
-
-    return () => {
-      unsubscribe();
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [currentChat, userId]);
+export function useTypingIndicator(chatId: string, userId: string) {
+  const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
+  const timerRef = useRef<NodeJS.Timeout>();
 
   const handleTypingStart = useCallback(() => {
-    if (!currentChat || !userId) return;
+    if (!chatId) return;
 
-    const recipient = currentChat.participants.find((p) => p.userId !== userId);
-    if (!recipient) return;
+    socketService.sendTypingStart(chatId, userId);
 
-    socketService.startTyping(recipient.userId);
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
-      socketService.startTyping(recipient.userId);
-    }, 3000);
-  }, [currentChat, userId]);
+    timerRef.current = setTimeout(() => {
+      socketService.sendTypingStop(chatId, userId);
+    }, 4000);
+  }, [chatId]);
 
-  return { isTyping, handleTypingStart };
+  useEffect(() => {
+    if (!chatId) return;
+
+    const handleStartTyping = (data: {
+      userId: string;
+      conversationId: string;
+    }) => {
+      console.log(data, "Data start")
+      if (data.conversationId === chatId) {
+        setTypingUsers((prev) => new Set(prev).add(data.userId));
+      }
+    };
+
+    const handleStopTyping = (data: {
+      userId: string;
+      conversationId: string;
+    }) => {
+      console.log(data, "Data stop")
+      if (data.conversationId === chatId) {
+        setTypingUsers((prev) => {
+          const next = new Set(prev);
+          next.delete(data.userId);
+          return next;
+        });
+      }
+    };
+
+    socketService.on("typing:start", handleStartTyping);
+    socketService.on("typing:stop", handleStopTyping);
+
+    return () => {
+      socketService.off("typing:start", handleStartTyping);
+      socketService.off("typing:stop", handleStopTyping);
+    };
+  });
+
+  console.log(typingUsers);
+
+  return {
+    isTyping: typingUsers.size > 0,
+    typingUsers: Array.from(typingUsers),
+    handleTypingStart,
+  };
 }

@@ -20,9 +20,8 @@ const MessageSchema = new Schema(
     receiverId: {
       type: Schema.Types.ObjectId,
       ref: "user",
-      required: true,
+      required: false,
       index: true,
-      sparse: true,
     },
     content: {
       type: String,
@@ -30,36 +29,22 @@ const MessageSchema = new Schema(
     },
     type: {
       type: String,
-      enum: Object.values(MessageType),
-      default: MessageStatus.SENDING,
+      enum: ["text", "image", "video", "audio", "file"],
+      default: "text",
     },
     status: {
       type: String,
-      enum: Object.values(MessageStatus),
-      default: MessageStatus.SENDING,
+      enum: ["sending", "sent", "delivered", "read", "failed"],
+      default: "sending",
     },
-    replyTo: {
-      type: Schema.Types.ObjectId,
-      ref: "Message",
-    },
-    mentions: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "user",
-      },
-    ],
-    timestamp: {
-      type: Date,
-      default: Date.now,
-    },
-
-    readBy: [
+    seenBy: [
       {
         userId: {
           type: Schema.Types.ObjectId,
           ref: "user",
+          required: true,
         },
-        readAt: {
+        seenAt: {
           type: Date,
           default: Date.now,
         },
@@ -70,6 +55,7 @@ const MessageSchema = new Schema(
         userId: {
           type: Schema.Types.ObjectId,
           ref: "user",
+          required: true,
         },
         deliveredAt: {
           type: Date,
@@ -77,21 +63,47 @@ const MessageSchema = new Schema(
         },
       },
     ],
+    replyTo: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
+    },
     attachments: [
       {
         url: {
           type: String,
           required: true,
         },
-        name: String,
         type: {
           type: String,
-          enum: ["image", "video", "audio", "document", "other"],
+          enum: ["image", "video", "audio", "file"],
+          required: true,
         },
+        name: String,
         size: Number,
-        metadata: Schema.Types.Mixed,
+        mimeType: String,
       },
     ],
+    metadata: {
+      type: Schema.Types.Mixed,
+      default: {},
+    },
+    edited: {
+      type: Boolean,
+      default: false,
+    },
+    editedAt: {
+      type: Date,
+      default: null,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -100,8 +112,48 @@ const MessageSchema = new Schema(
 
 MessageSchema.index({ conversationId: 1, createdAt: -1 });
 MessageSchema.index({ senderId: 1, createdAt: -1 });
-MessageSchema.index({ mentions: 1 });
-MessageSchema.index({ createdAt: -1 });
+MessageSchema.index({ receiverId: 1, createdAt: -1 });
+MessageSchema.index({ "seenBy.userId": 1 });
+MessageSchema.index({ "deliveredTo.userId": 1 });
+
+MessageSchema.methods.markAsSeen = async function (userId: string) {
+  if (!this.seenBy.some((entry: { userId: { toString: () => string; }; }) => entry.userId.toString() === userId)) {
+    this.seenBy.push({
+      userId: new mongoose.Types.ObjectId(userId),
+      seenAt: new Date(),
+    });
+
+    if (this.status === "delivered") {
+      this.status = "read";
+    }
+
+    await this.save();
+  }
+  return this;
+};
+MessageSchema.methods.markAsDelivered = async function (userId: string) {
+  if (!this.deliveredTo.some((entry: { userId: mongoose.Types.ObjectId }) => entry.userId.toString() === userId)) {
+    this.deliveredTo.push({
+      userId: new mongoose.Types.ObjectId(userId),
+      deliveredAt: new Date(),
+    });
+
+    if (this.status === "sent") {
+      this.status = "delivered";
+    }
+
+    await this.save();
+  }
+  return this;
+};
+
+MessageSchema.methods.softDelete = async function () {
+  this.deleted = true;
+  this.deletedAt = new Date();
+  this.content = "This message was deleted";
+  await this.save();
+  return this;
+};
 
 export const MessageModel = mongoose.model<MessageDocument>(
   "Message",

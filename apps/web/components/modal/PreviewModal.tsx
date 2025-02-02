@@ -36,7 +36,7 @@ export const PreviewModal = ({
           </button>
         </div>
 
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 max-h-[70vh] overflow-y-auto">
           <div className="space-y-4">
             {files.map((file, index) => (
               <div key={index} className="relative group">
@@ -105,6 +105,8 @@ export const PreviewModal = ({
             </Button>
           </div>
         </div>
+
+        
       </div>
     </div>
   );

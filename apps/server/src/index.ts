@@ -1,13 +1,14 @@
 import express from "express";
 import cors from "cors";
-import userRoutes from "./routes/user.route";
-import authRoutes from "./routes/auth.route";
-import conversationRoutes from "./routes/conversation.route";
-import messageRoutes from "./routes/message.route";
-import { authenticate } from "./middleware/auth.middleware";
+import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
+import conversationRoutes from "./routes/conversationRoutes";
+import messageRoutes from "./routes/messageRoutes";
+import { authenticate } from "./middleware/auth";
 import { config } from "./config/config";
-import { SocketService } from "./services/socket.service";
+import { SocketService } from "./services/socketService";
 import { app, httpServer } from "./utils/socket";
+import { RedisService } from "./config/redis";
 
 app.use(express.json());
 app.use(
@@ -17,15 +18,16 @@ app.use(
   })
 );
 const socketService = SocketService.getInstance();
+const redis = RedisService.getInstance();
 
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });
 });
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/conversations", authenticate, conversationRoutes);
-app.use("/messages", authenticate, messageRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", authenticate, userRoutes);
+app.use("/api/chats", authenticate, conversationRoutes);
+app.use("/api/messages", authenticate, messageRoutes);
 
 httpServer.setMaxListeners(20);
 httpServer.listen(config.port, () => {

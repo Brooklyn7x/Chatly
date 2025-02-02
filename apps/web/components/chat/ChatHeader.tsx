@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { Chat } from "@/types";
@@ -12,44 +12,51 @@ import {
   Phone,
   Search,
 } from "lucide-react";
+import { useChats } from "@/hooks/useChats";
 
 interface ChatHeaderProps {
-  onProfileClick: () => void;
+  onInfoClick: () => void;
   chat: Chat;
   isOnline: boolean;
 }
 
 export default function ChatHeader({
-  onProfileClick,
+  onInfoClick,
   chat,
   isOnline,
 }: ChatHeaderProps) {
-  const { selectedChatId, deleteChat, setSelectChat } = useChatStore();
   const [showMenu, setShowMenu] = useState(false);
+  const { activeChatId, setActiveChat } = useChatStore();
+  const { deleteChat } = useChats();
 
   const handleBack = useCallback(() => {
-    setSelectChat(null);
-  }, [setSelectChat]);
+    setActiveChat(null);
+  }, [setActiveChat]);
 
-  const chatTitle =
-    chat?.type === "direct" ? "Direct" : chat?.metadata?.title || "Group";
-  const chatSubtitle =
+  const displayName = useMemo(() => {
+    if (chat.type === "direct") {
+      return chat.participants[1]?.userId.username || "Direct Message";
+    }
+    return chat.metadata?.title || "Group Chat";
+  }, [chat]);
+  const getChatSubtitle =
     chat?.type === "group"
       ? `${chat.participants.length} Subscribers`
       : "Online";
+
   return (
     <header className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
-      <div className="flex  items-center gap-4">
-        {selectedChatId && (
+      <div className="flex items-center gap-4">
+        {activeChatId && (
           <NavigationButton onClick={handleBack} icon={ArrowLeft} />
         )}
 
-        <button onClick={onProfileClick} className="flex items-center gap-4">
+        <button onClick={onInfoClick} className="flex items-center gap-4">
           <UserAvatar status={isOnline ? "online" : "offline"} size={"sm"} />
           <div className="flex flex-col text-left">
-            <h2 className="text-sm font-semibold">{chatTitle}</h2>
+            <h2 className="text-sm font-semibold">{displayName}</h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {/* {chatSubtitle} */}
+              <h2>{chat.groupName}</h2>
               {isOnline ? "Online" : "Offline"}
             </span>
           </div>
@@ -66,15 +73,18 @@ export default function ChatHeader({
         />
       </div>
 
-      <ChatMenu
-        isOpen={showMenu}
-        onClose={() => setShowMenu(false)}
-        onDelete={deleteChat}
-        chatId={chat?.id}
-      />
+      {showMenu && (
+        <ChatMenu
+          isOpen={showMenu}
+          onClose={() => setShowMenu(false)}
+          onDelete={deleteChat}
+          chatId={chat?._id}
+        />
+      )}
     </header>
   );
 }
+
 interface ButtonProps {
   onClick: () => void;
   icon: LucideIcon;

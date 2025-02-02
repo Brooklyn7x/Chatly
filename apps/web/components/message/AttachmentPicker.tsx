@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Book, Camera } from "lucide-react";
 import { PreviewModal } from "../modal/PreviewModal";
@@ -28,45 +28,54 @@ export default function AttachmentPicker({
   const getFileType = (file: File): "image" | "document" | "video" => {
     if (file.type.startsWith("image/")) return "image";
     if (file.type.startsWith("video/")) return "video";
-
     return "document";
   };
 
-  const createFilePreview = async (file: File): Promise<FilePreview> => {
-    const fileType = getFileType(file);
-    let preview = "";
+  const createFilePreview = useCallback(
+    async (file: File): Promise<FilePreview> => {
+      const fileType = getFileType(file);
+      let preview = "";
 
-    if (fileType === "image") {
-      preview = URL.createObjectURL(file);
-    } else {
-      preview = `/icons/${fileType}-icon.png`;
-    }
+      if (fileType === "image") {
+        preview = URL.createObjectURL(file);
+      } else {
+        preview = `/icons/${fileType}-icon.png`;
+      }
 
-    return { file, preview, type: fileType };
-  };
+      return { file, preview, type: fileType };
+    },
+    [getFileType]
+  );
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const previews = await Promise.all(files.map(createFilePreview));
-    setSelectedFiles((prev) => [...prev, ...previews]);
-  };
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      const previews = await Promise.all(files.map(createFilePreview));
+      setSelectedFiles((prev) => [...prev, ...previews]);
+    },
+    [createFilePreview]
+  );
 
-  const removeFile = (index: number) => {
+  const removeFile = useCallback((index: number) => {
     setSelectedFiles((prev) => {
       const newFiles = [...prev];
       URL.revokeObjectURL(newFiles[index].preview);
       newFiles.splice(index, 1);
       return newFiles;
     });
-  };
-  const handleSend = () => {
-    const files = selectedFiles.map((fp) => fp.file);
+  }, []);
+  const handleSend = useCallback(() => {
+    console.log("selected file", selectedFiles);
+    const files = selectedFiles.map((fp) => ({
+      file: fp.file,
+      type: fp.type,
+    }));
     onAttach(files);
     selectedFiles.forEach((fp) => URL.revokeObjectURL(fp.preview));
     setSelectedFiles([]);
     setShowPreview(false);
     onClose();
-  };
+  }, [selectedFiles, onAttach, onClose]);
 
   return (
     <>
@@ -84,12 +93,12 @@ export default function AttachmentPicker({
         )}
         style={{
           bottom: "100%",
-          right: "80px",
+          right: "60px",
           minWidth: "200px",
         }}
       >
         <div className="p-1">
-          <label className="flex items-center gap-4 px-4 py-2 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
+          <label className="flex items-center gap-4 px-4 py-1.5 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
             <input
               type="file"
               multiple
@@ -101,7 +110,7 @@ export default function AttachmentPicker({
             <span className="text-sm">Photo or Video</span>
           </label>
 
-          <label className="flex items-center gap-4 px-4 py-2 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
+          <label className="flex items-center gap-4 px-4 py-1.5 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
             <input
               type="file"
               multiple

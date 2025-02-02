@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider } from "./theme-provider";
-import AuthProvider from "./AuthPovider";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/provider/ThemeProvider";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",
   title: "Chat",
-  description: "Just Chat",
+  description: "Chat App",
 };
 
 export default function RootLayout({
@@ -24,7 +23,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>{children}</AuthProvider>
+          <Toaster />
+          {children}
         </ThemeProvider>
       </body>
     </html>

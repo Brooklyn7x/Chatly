@@ -1,13 +1,60 @@
 "use client";
 
-import React from "react";
-import useAuth from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import useAuthStore from "@/store/useAuthStore";
+import { Loading } from "@/components/ui/loading";
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
+interface AuthGuardProps {
+  children: React.ReactNode;
+  requireAuth?: boolean;
+}
+
+const PUBLIC_PATHS = ["/auth"];
+const DEFAULT_AUTH_PATH = "/auth";
+const DEFAULT_PRIVATE_PATH = "/chat";
+
+export default function AuthGuard({
+  children,
+  requireAuth = true,
+}: AuthGuardProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isAuthenticated, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const isPublicPath = PUBLIC_PATHS.includes(pathname);
+    const isRootPath = pathname === "/";
+
+    if (isRootPath) {
+      if (isAuthenticated) {
+        router.replace(DEFAULT_PRIVATE_PATH);
+      } else {
+        router.replace(DEFAULT_AUTH_PATH);
+      }
+      return;
+    }
+
+    if (!isAuthenticated && requireAuth && !isPublicPath) {
+      router.replace(DEFAULT_AUTH_PATH);
+    } else if (isAuthenticated && isPublicPath) {
+      router.replace(DEFAULT_PRIVATE_PATH);
+    }
+  }, [isAuthenticated, isLoading, pathname, requireAuth, router]);
+
   if (isLoading) {
-    return <Loader2 className="animate-spin" />;
+    return <Loading />;
   }
-  return isAuthenticated ? <>{children}</> : null;
+
+  if (requireAuth && !isAuthenticated) {
+    return null;
+  }
+
+  if (!requireAuth && isAuthenticated) {
+    return null;
+  }
+
+  return <>{children}</>;
 }

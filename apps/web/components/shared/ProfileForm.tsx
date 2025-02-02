@@ -19,32 +19,31 @@ export function EditProfileForm({ isOpen, onClose }: EditProfileFormProps) {
         isOpen ? "translate-x-0" : "translate-x-full"
       )}
     >
-      <div className="h-16 px-4 flex flex-none border-b">
+      <div className="border-b border-neutral-800 p-3">
         <div className="flex items-center gap-4">
-         <NavigationButton icon={ArrowLeft} onClick={onClose} />
+          <NavigationButton icon={ArrowLeft} onClick={onClose} />
           <h1 className="text-lg font-mono">Edit</h1>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col items-center justify-center gap-6 p-4">
-          
           <UserAvatar size={"xl"} />
 
           <div className="mt-2">
-            <h1 className="text-xl font-semibold">Shubh Babu</h1>
-            <p className="text-center mt-2 text-sm text-muted-foreground">
+            <h1 className="text-xl text-center font-semibold">Shubh Babu</h1>
+            <p className="text-center mt-1 text-sm text-muted-foreground">
               original name{" "}
             </p>
           </div>
         </div>
 
-        <form className="px-6 flex flex-col gap-6 mt-6">
+        <form className="p-4 flex flex-col gap-3 mt-6">
           <Input className="h-12" placeholder="First name" />
           <Input className="h-12" placeholder="Last name" />
         </form>
 
-        <div className="px-4 mt-4">
+        <div className="p-4 mt-2 border-t">
           <button className="flex items-center gap-6 p-2 border w-full rounded-md px-4 py-3 text-red-600">
             <Trash className="h-5 w-5" />
             Delete Contact

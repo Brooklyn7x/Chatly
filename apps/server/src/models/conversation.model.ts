@@ -78,6 +78,13 @@ ConversationSchema.virtual("recentMessages", {
   },
 });
 
+ConversationSchema.virtual("participantsDetails", {
+  ref: "user",
+  localField: "participants.userId",
+  foreignField: "_id",
+  justOne: false,
+});
+
 ConversationSchema.index({ participants: 1 });
 ConversationSchema.index({ "participants.userId": 1 });
 ConversationSchema.index({ updatedAt: -1 });

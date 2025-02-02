@@ -1,17 +1,17 @@
-import { IconNode, Bookmark } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 interface MenuItemProps {
   onClick: () => void;
   label?: string;
-  icon?: any;
+  icon: LucideIcon;
 }
-export function MenuItem({ onClick, label, icon }: MenuItemProps) {
+export function MenuItem({ onClick, label, icon: Icon }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-5 hover:bg-muted/80 w-full rounded-sm px-4 py-2 transition-colors"
+      className="flex items-center gap-5 hover:bg-muted/60 w-full rounded-sm px-4 py-1.5 transition-colors"
     >
-      {icon}
+      <Icon className="h-5 w-5" />
       <span className="text-sm">{label}</span>
     </button>
   );

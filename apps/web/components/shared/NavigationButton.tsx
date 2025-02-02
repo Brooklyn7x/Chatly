@@ -22,7 +22,7 @@ export function NavigationButton({
         "rounded-full",
         "text-muted-foreground",
         "transition-all duration-200",
-        "hover:bg-muted/70 active:bg-muted/50",
+        "hover:bg-muted/90 active:bg-muted/50",
         disabled && "opacity-50 pointer-events-none",
         isActive && "bg-muted/50"
       )}

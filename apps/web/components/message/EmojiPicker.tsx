@@ -15,6 +15,7 @@ export default function EmojiPicker({
   onEmojiSelect,
   containerRef,
 }: EmojiPickerProps) {
+  if (!show) return;
   return (
     <div
       ref={containerRef}

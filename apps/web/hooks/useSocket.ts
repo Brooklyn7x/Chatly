@@ -1,54 +1,56 @@
-import socketService from "@/services/socket";
+import { socketService } from "@/services/socket/socketService";
 import { useMessageStore } from "@/store/useMessageStore";
-import { User } from "@/types";
 import { useEffect } from "react";
+import { Message, MessageResponse } from "@/types/message";
 
-export const useSocketChat = (
-  token: string,
-  selectChatId: string | null,
-  user: User | null
-) => {
-  const userId = user?._id;
-  const { addMessage } = useMessageStore();
-  const messageSet = new Set();
+export const useSocket = () => {
+  const { addMessage, updateMessageStatus, updateMessage } = useMessageStore();
 
   useEffect(() => {
-    if (!token || !selectChatId) {
-      return;
-    }
+    socketService.initialize();
 
-    socketService.connect(token);
+    const handleNewMessage = (message: Message) => {
+      addMessage(message);
+    };
 
-    const unsubscribeMessage = socketService.onMessageReceived((message) => {
-      const messageId = message._id;
-
-      if (messageSet.has(messageId)) {
-        return;
+    const handleMessageSent = (response: MessageResponse) => {
+      if (response.tempId) {
+        updateMessageStatus(response.tempId, {
+          _id: response.messageId,
+          status: "sent",
+          timestamp: response.timestamp,
+        });
       }
+    };
 
-      messageSet.add(messageId);
+    const handleMessageDelivered = (messageId: string) => {
+      updateMessageStatus(messageId, { status: "delivered" });
+    };
 
-      const formattedMessage = {
-        _id: message._id,
-        conversationId: message._doc.conversationId,
-        conversationType: message.conversationType,
-        content: message._doc.content,
-        type: message._doc.type,
-        senderId: message._doc.senderId,
-        receiverId: message._doc.receiverId,
-        timestamp: new Date(message._doc.timestamp).toISOString(),
-        sender: {
-          userId: message._doc.senderId,
-          timestamp: new Date().toISOString(),
-        },
-      };
-
-      addMessage(formattedMessage);
-    });
+    const handleMessageReadAck = (data: {
+      messageIds: string[];
+      conversationId: string;
+      timestamp: string;
+    }) => {
+      data.messageIds.forEach((messageId) => {
+        updateMessageStatus(messageId, {
+          status: "read",
+        });
+      });
+    };
+    socketService.on("message:new", handleNewMessage);
+    socketService.on("message:sent", handleMessageSent);
+    socketService.on("message:delivered", handleMessageDelivered);
+    socketService.on("message:read:ack", handleMessageReadAck);
 
     return () => {
-      unsubscribeMessage();
+      socketService.off("message:new", handleNewMessage);
+      socketService.off("message:sent", handleMessageSent);
+      socketService.off("message:delivered", handleMessageDelivered);
+      socketService.off("message:read:ack", handleMessageReadAck);
       socketService.disconnect();
     };
-  }, [token, selectChatId, userId]);
+  }, [addMessage, updateMessageStatus]);
+
+  return socketService;
 };

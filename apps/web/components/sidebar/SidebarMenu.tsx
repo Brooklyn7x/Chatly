@@ -14,6 +14,7 @@ export function SidebarMenu({
   onCreateGroup,
 }: SidebarMenuProps) {
   const [isOpen, setShowMenu] = useState(false);
+  
   const toggleMenu = () => {
     setShowMenu((prev) => !prev);
   };
@@ -40,7 +41,7 @@ export function SidebarMenu({
       <div
         className={cn(
           "absolute bottom-16 right-0 w-48",
-          "border bg-background rounded-lg shadow-xl",
+          "border bg-background/70 backdrop-blur-md rounded-lg shadow-xl",
           "z-20 overflow-hidden",
           "transform transition-all duration-300 ease-in-out origin-bottom-right",
           isOpen
@@ -50,18 +51,18 @@ export function SidebarMenu({
       >
         <div className="p-1 space-y-1">
           <MenuItem
-            icon={<Volume className="w-4 h-4" />}
+            icon={<Volume className="w-5 h-5" />}
             text="New Channel"
             onClick={() => {}}
             isFirst={true}
           />
           <MenuItem
-            icon={<Users className="w-4 h-4" />}
+            icon={<Users className="w-5 h-5" />}
             text="New Group"
             onClick={() => onCreateGroup()}
           />
           <MenuItem
-            icon={<User className="w-4 h-4" />}
+            icon={<User className="w-5 h-5" />}
             text="New Private Chat"
             onClick={() => onShowContactModal()}
             isLast={true}
@@ -85,7 +86,7 @@ const MenuItem = ({ icon, text, onClick, isFirst, isLast }: MenuItemProps) => {
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 px-4 py-2",
+        "w-full flex items-center gap-3 px-4 py-1.5",
         "hover:bg-muted active:bg-muted/80",
         "transition-colors duration-200",
         isFirst && "rounded-t-xl",

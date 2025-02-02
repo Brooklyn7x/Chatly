@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ActionButton } from "../shared/ActionButton";
@@ -17,7 +18,6 @@ interface GroupModalProps {
 export const GroupModal = ({ isOpen, onClose }: GroupModalProps) => {
   const {
     formData,
-    error,
     shouldRender,
     step,
     loading,

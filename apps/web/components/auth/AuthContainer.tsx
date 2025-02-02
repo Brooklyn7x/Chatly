@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import LoginForm from "./LoginForm";
-import SignUpForm from "./SignUpForm";
+import SignUpForm from "./RegisterForm";
+
 
 export default function AuthContainer() {
   const [showSignUp, setShowSignUp] = useState(false);

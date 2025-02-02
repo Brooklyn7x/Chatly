@@ -5,7 +5,7 @@ interface UserListProps {
   users: User[];
   selectedUserIds: Set<string>;
   onUserToggle: (userId: string) => void;
-  loading: boolean;
+  loading?: boolean;
 }
 
 export const UserList = ({
@@ -14,6 +14,7 @@ export const UserList = ({
   onUserToggle,
   loading,
 }: UserListProps) => {
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-32">
