@@ -11,7 +11,7 @@ export class ConversationController extends BaseController {
     this.conversationService = new ConversationService();
     this.createConversation = this.createConversation.bind(this);
     this.getConversations = this.getConversations.bind(this);
-    this.getUserConversations = this.getUserConversations.bind(this);
+    this.getConversations = this.getConversations.bind(this);
     this.deleteConversation = this.deleteConversation.bind(this);
   }
 
@@ -54,7 +54,7 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async getUserConversations(req: Request, res: Response): Promise<void> {
+  async getConversations(req: Request, res: Response): Promise<void> {
     try {
       const limit = parseInt(req.query.limit as string) || 10;
       const offset = parseInt(req.query.offset as string) || 0;
@@ -73,7 +73,7 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async getConversations(req: Request, res: Response): Promise<void> {
+  async getAllConversations(req: Request, res: Response): Promise<void> {
     try {
       const result = await this.conversationService.getAllConversations(
         req.params.conversationId,
@@ -96,7 +96,7 @@ export class ConversationController extends BaseController {
   async deleteConversation(req: Request, res: Response): Promise<void> {
     try {
       const result = await this.conversationService.deleteConversation(
-        req.params.conversationId,
+        req.params.id,
         req.user!._id
       );
 
@@ -113,6 +113,8 @@ export class ConversationController extends BaseController {
       });
     }
   }
+
+  async updateConversation() {}
 
   //   async updateConversation(req: Request, res: Response): Promise<void> {
   //     try {

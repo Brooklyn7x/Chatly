@@ -20,7 +20,7 @@ export const SearchInput = ({
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           "w-full h-10 pl-12 pr-4",
-          "rounded-full bg-muted/50 border",
+          "rounded-full bg-muted/50",
           "outline-none focus:right-2 focus:ring-blue-500"
         )}
         placeholder={placeholder}

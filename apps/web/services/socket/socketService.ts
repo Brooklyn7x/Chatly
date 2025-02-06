@@ -1,7 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { EventEmitter } from "events";
 import useAuthStore from "@/store/useAuthStore";
-import { Message, MessageResponse } from "@/types/message";
 
 interface TypingData {
   conversationId: string;
@@ -19,9 +18,8 @@ export class SocketService extends EventEmitter {
     this.disconnect = this.disconnect.bind(this);
   }
 
-  initialize() {
+  async initialize() {
     if (this.socket?.connected) return;
-
     const token = useAuthStore.getState().accessToken;
     if (!token) {
       throw new Error("No authentication token found");
@@ -51,17 +49,27 @@ export class SocketService extends EventEmitter {
       this.emit("disconnected", reason);
     });
 
-    this.socket.on("message:new", (message: Message) => {
+    this.socket.on("chat:created", (response: any) => {
+      this.emit("chat:created", response);
+    });
+    this.socket.on("chat:new", (respone: any) => {
+      this.emit("chat:new", respone);
+    });
+    this.socket.on("chat:error", (error: any) => {
+      this.emit("chat:error", error);
+    });
+
+    this.socket.on("message:new", (message: any) => {
       this.emit("message:new", message);
     });
 
-    this.socket.on("message:sent", (response: MessageResponse) => {
+    this.socket.on("message:sent", (response: any) => {
       this.emit("message:sent", response);
     });
 
-    this.socket.on("message:delivered", (messageId: string) => {
-      this.emit("message:delivered", messageId);
-    });
+    // this.socket.on("message:delivered", (messageId: string) => {
+    //   this.emit("message:delivered", messageId);
+    // });
 
     this.socket.on(
       "message:read:ack",
@@ -79,13 +87,6 @@ export class SocketService extends EventEmitter {
       this.emit("message:error", error);
     });
 
-    this.socket.on(
-      "message:seen",
-      (data: { chatId: string; messageId: string }) => {
-        this.emit("message:seen", data);
-      }
-    );
-
     this.socket.on("typing:start", (data: TypingData) => {
       this.emit("typing:start", data);
     });
@@ -93,13 +94,53 @@ export class SocketService extends EventEmitter {
     this.socket.on("typing:stop", (data: TypingData) => {
       this.emit("typing:stop", data);
     });
+
+    this.socket.on("chat:joined", () => {});
+    this.socket.on("chat:left", () => {});
+    this.socket.on("chat:updated", () => {});
+    this.socket.on("chat:error", () => {});
+
+    this.socket.on("group:created", (data) => {
+      this.emit("group:created", data);
+    });
+
+    this.socket.on("group:deleted", (data) => {
+      this.emit("group:deleted", data);
+    });
+
+    this.socket.on("group:member_added", (data) => {
+      this.socket?.emit("group:member_added", data);
+    });
+
+    this.socket.on("group:member_removed", (data) => {
+      this.socket?.emit("group:member_removed", data);
+    });
+
+    this.socket.on("group:updated", (data) => {
+      this.emit("group:updated", data);
+    });
+
+    this.socket.on("group:invite_sent", (data) => {
+      this.emit("group:invite_sent", data);
+    });
+
+    this.socket.on("group:invite_received", (data) => {
+      this.emit("group:invite_received", data);
+    });
+
+    this.socket.on("group:error", (error) => {
+      this.emit("group:error", error);
+    });
+
+    this.socket.on("user:status", (data: { userId: string; status: any }) => {
+      this.emit("user:status", data);
+    });
   }
 
   sendMessage(chatId: string, content: string, tempId?: string) {
     if (!this.socket?.connected) {
       throw new Error("Socket not connected");
     }
-
     this.socket.emit("message:send", {
       conversationId: chatId,
       content,
@@ -116,6 +157,18 @@ export class SocketService extends EventEmitter {
     });
   }
 
+  chatCreate(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("chat:create", data);
+    }
+  }
+
+  chatDelete(chatId: string) {
+    if (this.socket?.connected) {
+      this.socket.emit("chat:delete", chatId);
+    }
+  }
+
   joinChat(chatId: string) {
     if (this.socket?.connected) {
       this.socket.emit("chat:join", { chatId });
@@ -125,6 +178,60 @@ export class SocketService extends EventEmitter {
   leaveChat(chatId: string) {
     if (this.socket?.connected) {
       this.socket.emit("chat:leave", { chatId });
+    }
+  }
+
+  updateChat(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("chat:update", { data });
+    }
+  }
+
+  createGroup(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:create", data);
+    }
+  }
+
+  updateGroupSetting(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:update_settings", { data });
+    }
+  }
+
+  addGroupMember(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:add_member", { data });
+    }
+  }
+
+  removeGroupMember(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:remove_member", { data });
+    }
+  }
+
+  deleteGroup(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:delete", { data });
+    }
+  }
+
+  joinGroup(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:join", { data });
+    }
+  }
+
+  leaveGroup(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:leave", { data });
+    }
+  }
+
+  updateGroup(data: any) {
+    if (this.socket?.connected) {
+      this.socket.emit("group:update", { data });
     }
   }
 
@@ -146,11 +253,10 @@ export class SocketService extends EventEmitter {
     });
   }
 
-  markMessageAsSeen(chatId: string, messageId: string) {
-    if (this.socket?.connected) {
-      this.socket.emit("message:seen", { chatId, messageId });
-    }
-  }
+  updateUserStatus() {}
+  updateAwayStatus() {}
+
+  //notification
 
   disconnect() {
     this.socket?.disconnect();

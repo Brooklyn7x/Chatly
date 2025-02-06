@@ -1,15 +1,14 @@
-import { socketService } from "@/services/socket/socketService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
 import { Message, MessageResponse } from "@/types/message";
+import { socketService } from "@/services/socket/socketService";
 
-export const useSocket = () => {
+export const useMessageSocket = () => {
   const { addMessage, updateMessageStatus, updateMessage } = useMessageStore();
 
   useEffect(() => {
-    socketService.initialize();
-
     const handleNewMessage = (message: Message) => {
+      console.log(message, "New Message");
       addMessage(message);
     };
 
@@ -48,7 +47,6 @@ export const useSocket = () => {
       socketService.off("message:sent", handleMessageSent);
       socketService.off("message:delivered", handleMessageDelivered);
       socketService.off("message:read:ack", handleMessageReadAck);
-      socketService.disconnect();
     };
   }, [addMessage, updateMessageStatus]);
 

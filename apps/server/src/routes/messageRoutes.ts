@@ -4,9 +4,9 @@ import { MessageController } from "../controllers/messageController";
 const router = Router();
 const controller = new MessageController();
 
-router.get("/:conversationId", controller.getMessages);
-router.post("/", controller.sendMessage);
+router.get("/:id", controller.getMessages);
 router.delete("/:messageId", controller.deleteMessage);
-router.post("/read", controller.markAsRead);
+router.put("/:id", controller.updateMessage)
+
 
 export default router;

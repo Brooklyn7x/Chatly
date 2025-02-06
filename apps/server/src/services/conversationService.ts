@@ -31,42 +31,58 @@ export class ConversationService {
     data: CreateConversationDTO
   ): Promise<ServiceResponse<any>> {
     try {
+
+      if (data.type === ConversationType.DIRECT) {
+        const existing = await ConversationModel.findOne({
+          type: ConversationType.DIRECT,
+          "participants.userId": { $all: data.participantIds },
+        }).lean();
+
+        if (existing) {
+          return {
+            success: false,
+            error: "Direct conversation already exists",
+            data: existing,
+          };
+        }
+      }
+
       const validParticipants = await this.validateParticipants(
         data.participantIds
       );
 
       if (!validParticipants.success) {
-        this.logger.error("Invalid participants:", validParticipants.error);
         return validParticipants;
       }
 
       if (data.type === ConversationType.DIRECT) {
-        const existingConversation = await this.findDirectConversation(
+        const existing = await this.findDirectConversation(
           creatorId,
           data.participantIds[0]
         );
 
-        if (existingConversation.success && existingConversation.data) {
-          return existingConversation;
+        if (existing.success && existing.data) {
+          return existing;
         }
       }
 
-      const allParticipantIds = data.participantIds.includes(creatorId)
-        ? data.participantIds
-        : [creatorId, ...data.participantIds];
+      // const allParticipantIds = data.participantIds.includes(creatorId)
+      //   ? data.participantIds
+      //   : [creatorId, ...data.participantIds];
+
+      const allParticipantIds = this.getUniqueParticipants(
+        creatorId,
+        data.participantIds
+      );
 
       const conversationData = {
         type: data.type,
         participants: this.createParticipantsList(creatorId, allParticipantIds),
         metadata: {
-          title: data.metadata?.title || "",
-          description: data.metadata?.description || "",
-          avatar: data.metadata?.avatar || "",
-          isArchived: data.metadata?.isArchived || false,
-          isPinned: data.metadata?.isPinned || false,
+          ...data.metadata,
         },
         lastMessage: null,
-        unreadCount: {},
+        unreadCount: this.initializeUnreadCount(allParticipantIds),
       };
 
       const result = await ConversationModel.create(conversationData);
@@ -91,57 +107,51 @@ export class ConversationService {
     }
   }
 
-  async createGroupConversation(
-    creatorId: string,
-    data: CreateConversationDTO
+  async deleteConversation(
+    conversationId: string,
+    userId: string
   ): Promise<ServiceResponse<any>> {
     try {
-      console.log(data.participantIds, "createGroupConversation");
-      const validParticipants = await this.validateParticipants(
-        data.participantIds
-      );
+      const conversation = await ConversationModel.findOne({
+        _id: conversationId,
+        "participants.userId": userId,
+        "participants.role": ParticipantRole.OWNER,
+      });
 
-      if (!validParticipants.success) {
-        this.logger.error("Invalid participants:", validParticipants.error);
-        return validParticipants;
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found or unauthorized",
+        };
       }
 
-      const allParticipantIds = data?.participantIds.includes(creatorId)
-        ? data.participantIds
-        : [creatorId, ...data.participantIds];
-      console.log(allParticipantIds, "allParticipantIds");
-      const conversationData = {
-        type: ConversationType.GROUP,
-        participants: this.createParticipantsList(creatorId, allParticipantIds),
-        metadata: {
-          title: data.metadata?.title || "",
-          description: data.metadata?.description || "",
-          avatar: data.metadata?.avatar || "",
-          isArchived: data.metadata?.isArchived || false,
-          isPinned: data.metadata?.isPinned || false,
-        },
-        lastMessage: null,
-        unreadCount: {},
-      };
+      //delete file and message here
+      // await Promise.all([
+      // ])
 
-      const result = await ConversationModel.create(conversationData);
+      const result = await ConversationModel.deleteOne({ _id: conversationId });
 
       if (result) {
-        await this.cacheConversation(result);
+        const cacheKey = `conversation:${conversationId}`;
+        await this.redis.del(cacheKey);
+
         return {
           success: true,
-          data: result,
+          data: {
+            id: conversationId,
+            deletedAt: new Date(),
+          },
         };
       }
       return {
         success: false,
-        error: "Failed to create conversation",
+        error: "Failed to delete conversation",
       };
     } catch (error) {
-      this.logger.error("Error creating conversation:", error);
+      this.logger.error("Error deleting conversation:", error);
       return {
         success: false,
-        error: "Failed to create conversation",
+        error: "Failed to delete conversation",
       };
     }
   }
@@ -150,7 +160,6 @@ export class ConversationService {
     conversationId: string
   ): Promise<ServiceResponse<any>> {
     try {
-      console.log(conversationId, "conversationId");
       const cacheConversation = await this.getCacheConversation(conversationId);
 
       if (cacheConversation) {
@@ -201,11 +210,7 @@ export class ConversationService {
 
       const conversations = await ConversationModel.findOne({
         _id: conversationId,
-        "participants.userId": userId,
-      }).populate({
-        path: "participants",
-        model: "user",
-        select: "username email profilePicture",
+        "participants": userId
       });
 
       if (!conversations) {
@@ -230,92 +235,93 @@ export class ConversationService {
     }
   }
 
-  async getUserConversation(
-    conversationId: string,
-    userId: string
-  ): Promise<ServiceResponse<any>> {
-    try {
-      const cacheConversation = await this.getCacheConversation(conversationId);
+  // async getUserConversation(
+  //   conversationId: string,
+  //   userId: string
+  // ): Promise<ServiceResponse<any>> {
+  //   try {
+  //     const cacheConversation = await this.getCacheConversation(conversationId);
 
-      if (cacheConversation) {
-        return {
-          success: true,
-          data: cacheConversation,
-        };
-      }
+  //     if (cacheConversation) {
+  //       return {
+  //         success: true,
+  //         data: cacheConversation,
+  //       };
+  //     }
 
-      const conversations = await ConversationModel.findOne({
-        _id: conversationId,
-        "participants.userId": userId,
-      }).populate({
-        path: "participants.userId",
-        model: "user",
-        select: "username email profilePicture",
-      });
+  //     const conversations = await ConversationModel.findOne({
+  //       _id: conversationId,
+  //       "participants.userId": userId,
+  //     }).populate({
+  //       path: "participants.data",
+  //       model: "user",
+  //       select: "username email",
+  //     });
 
-      if (!conversations) {
-        return {
-          success: false,
-          error: "Conversation not found",
-        };
-      }
+  //     if (!conversations) {
+  //       return {
+  //         success: false,
+  //         error: "Conversation not found",
+  //       };
+  //     }
 
-      await this.cacheConversation(conversations);
+  //     await this.cacheConversation(conversations);
 
-      return {
-        success: true,
-        data: conversations,
-      };
-    } catch (error) {
-      this.logger.error("Error fetching conversation:", error);
-      return {
-        success: false,
-        error: "Failed to fetch conversation",
-      };
-    }
-  }
+  //     return {
+  //       success: true,
+  //       data: conversations,
+  //     };
+  //   } catch (error) {
+  //     this.logger.error("Error fetching conversation:", error);
+  //     return {
+  //       success: false,
+  //       error: "Failed to fetch conversation",
+  //     };
+  //   }
+  // }
 
-  async deleteConversation(
-    conversationId: string,
-    userId: string
-  ): Promise<ServiceResponse<any>> {
-    try {
-      console.log(conversationId, "conversationId");
-      const conversation = await this.db.findOne("Conversation", {
-        id: conversationId,
-      });
+  // async deleteConversation(
+  //   conversationId: string,
+  //   userId: string
+  // ): Promise<ServiceResponse<any>> {
+  //   try {
+  //     console.log(conversationId, "conversationId");
+  //     const conversation = await this.db.findOne("Conversation", {
+  //       id: conversationId,
+  //     });
 
-      if (!conversation) {
-        return {
-          success: false,
-          error: "Conversation not found",
-        };
-      }
+  //     if (!conversation) {
+  //       return {
+  //         success: false,
+  //         error: "Conversation not found",
+  //       };
+  //     }
 
-      const result = await ConversationModel.deleteOne({
-        id: conversationId,
-      });
+  //     const result = await ConversationModel.deleteOne({
+  //       id: conversationId,
+  //     });
 
-      if (result) {
-        const cacheKey = `conversation:${conversationId}`;
-        await this.redis.del(cacheKey);
+  //     if (result) {
+  //       const cacheKey = `conversation:${conversationId}`;
+  //       await this.redis.del(cacheKey);
 
-        return {
-          success: true,
-        };
-      }
-      return {
-        success: false,
-        error: "Failed to delete conversation",
-      };
-    } catch (error) {
-      this.logger.error("Error deleting conversation:", error);
-      return {
-        success: false,
-        error: "Failed to delete conversation",
-      };
-    }
-  }
+  //       return {
+  //         success: true,
+  //         data: result,
+  //       };
+  //     }
+  //     return {
+  //       success: false,
+  //       error: "Failed to delete conversation",
+  //     };
+  //   } catch (error) {
+  //     this.logger.error("Error deleting conversation:", error);
+  //     return {
+  //       success: false,
+  //       error: "Failed to delete conversation",
+  //     };
+  //   }
+  // }
 
   async getUserConversations(
     userId: string,
@@ -329,7 +335,7 @@ export class ConversationService {
         .populate({
           path: "participants.userId",
           model: "user",
-          select: "username email profilePicture",
+          select: "username email",
         })
         .sort({ updatedAt: -1 })
         .skip(offset)
@@ -505,5 +511,24 @@ export class ConversationService {
         error: "Failed to validate participants",
       };
     }
+  }
+
+  private getUniqueParticipants(
+    creatorId: string,
+    participantIds: string[]
+  ): string[] {
+    return [...new Set([creatorId, ...participantIds])];
+  }
+
+  private initializeUnreadCount(
+    participantIds: string[]
+  ): Record<string, number> {
+    return participantIds.reduce(
+      (acc, id) => ({
+        ...acc,
+        [id]: 0,
+      }),
+      {}
+    );
   }
 }

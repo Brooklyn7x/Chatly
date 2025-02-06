@@ -13,19 +13,19 @@ export const ChatList = memo(({ chats }: ChatListProps) => {
   if (isLoading) {
     return <h1>Loading..</h1>;
   }
-  if (chats.length === 0) {
-    return (
-      <div className="h-full flex items-center justify-center p-4">
-        <p className="text-muted-foreground text-center">
-          No conversations yet. Start a new chat to begin messaging.
-        </p>
-      </div>
-    );
-  }
+  // if (chats.length <= 0) {
+  //   return (
+  //     <div className="h-full flex items-center justify-center p-4">
+  //       <p className="text-muted-foreground text-center">
+  //         No conversations yet. Start a new chat to begin messaging.
+  //       </p>
+  //     </div>
+  //   );
+  // }
   return (
     <nav className="flex flex-col overflow-y-auto overflow-x-hidden">
       <ul className="p-2 space-y-1">
-        {chats.map((chat) => (
+        {chats?.map((chat) => (
           <ChatItem
             key={chat._id}
             chat={chat}

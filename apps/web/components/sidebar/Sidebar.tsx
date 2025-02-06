@@ -7,21 +7,21 @@ import { useChatStore } from "@/store/useChatStore";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { FloatingActionButton } from "./FloatingActionButton";
-import { DirectModal } from "../modal/DirectModal";
-import { GroupModal } from "../modal/GroupModal";
-import SidebarMenu from "./Menu";
 
 export default function SideBar() {
   const { isMobile } = useUIStore();
   const { activeChatId } = useChatStore();
 
   const [view, setView] = useState<
-    "main" | "search" | "settings" | "contacts" | "archived"
+    | "main"
+    | "search"
+    | "settings"
+    | "contacts"
+    | "archived"
+    | "new_message"
+    | "new_group"
+    | "new_channel"
   >("main");
-
-  const [groupModal, setGroupModal] = useState(false);
-  const [channelModal, setChannelModal] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <aside
@@ -34,39 +34,9 @@ export default function SideBar() {
         isMobile ? "absolute inset-y-0 left-0 z-10" : "relative"
       )}
     >
-      <div>
-        <SidebarHeader
-          view={view}
-          onViewChange={setView}
-          onMenuToggle={() => setMenuOpen(!menuOpen)}
-        />
-
-        <SidebarContent view={view} />
-
-        <FloatingActionButton
-          view={view}
-          onNewMessage={() => setView("contacts")}
-          onNewChannel={() => setChannelModal(true)}
-          onNewGroup={() => setGroupModal(true)}
-        />
-      </div>
-
-      {menuOpen && (
-        <SidebarMenu
-          showMenu={menuOpen}
-          setShowMenu={() => setMenuOpen(false)}
-        />
-      )}
-
-      {channelModal && (
-        <DirectModal
-          isOpen={channelModal}
-          onClose={() => setChannelModal(false)}
-        />
-      )}
-      {groupModal && (
-        <GroupModal isOpen={groupModal} onClose={() => setGroupModal(false)} />
-      )}
+      <SidebarHeader view={view} onViewChange={setView} />
+      <SidebarContent view={view} onBack={() => setView("main")} />
+      <FloatingActionButton view={view} onViewChange={setView} />
     </aside>
   );
 }

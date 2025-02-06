@@ -1,8 +1,9 @@
-import socketService from "@/services/socket/socket";
+import { socketService } from "@/services/socket/socketService";
 import { useChatStore } from "@/store/useChatStore";
 import useUserStore from "@/store/useUserStore";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { toast } from "sonner";
+import { useSearch } from "./useSearch";
 
 interface GroupFormData {
   name: string;
@@ -23,12 +24,12 @@ export const useGroupModal = (isOpen: boolean, onClose: () => void) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { searchUsers, searchResults, loading } = useUserStore();
+  const { users } = useSearch("");
 
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      searchUsers();
+
       document.body.style.overflow = "hidden";
     } else {
       const timer = setTimeout(() => {
@@ -40,22 +41,9 @@ export const useGroupModal = (isOpen: boolean, onClose: () => void) => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      const unsubscribeGroupCreated = socketService.onGroupCreated((data) => {
-        console.log("Group created:", data);
-      });
-
-      return () => {
-        unsubscribeGroupCreated();
-      };
-    }
-  }, [isOpen]);
-
   const selectedUsers = useMemo(
-    () =>
-      searchResults.filter((user) => formData.selectedUserIds.has(user._id)),
-    [searchResults, formData.selectedUserIds]
+    () => users.filter((user) => formData.selectedUserIds.has(user._id)),
+    [users, formData.selectedUserIds]
   );
 
   const resetForm = () => {
@@ -134,10 +122,10 @@ export const useGroupModal = (isOpen: boolean, onClose: () => void) => {
         throw new Error("Failed to create group conversation");
       }
 
-      const selectedUsers = searchResults.filter((user) =>
+      const selectedUsers = users.filter((user) =>
         formData.selectedUserIds.has(user._id)
       );
-      useChatStore.getState().createChat(selectedUsers, formData.name);
+      // useChatStore.getState().createChat(selectedUsers, formData.name);
       onClose();
     } catch (error) {
       toast.error("Failed to create group");
@@ -152,7 +140,6 @@ export const useGroupModal = (isOpen: boolean, onClose: () => void) => {
     step,
     searchQuery,
     previewImage,
-    loading,
     error,
     formData,
     selectedUsers,
@@ -161,7 +148,7 @@ export const useGroupModal = (isOpen: boolean, onClose: () => void) => {
     handleGroupNameChange,
     handleNext,
     setSearchQuery,
-    searchResults,
+    users,
     setStep,
   };
 };

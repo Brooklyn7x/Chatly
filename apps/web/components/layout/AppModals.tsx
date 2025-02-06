@@ -1,5 +1,5 @@
-import { DirectModal } from "../modal/DirectModal";
-import { GroupModal } from "../modal/GroupModal";
+import { DirectModal } from "../sidebar/PrivateChat";
+import { GroupModal } from "../sidebar/GroupChat";
 import { useModals } from "@/contexts/ModalContext";
 
 export function AppModals() {

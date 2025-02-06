@@ -4,7 +4,7 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-export const useSocketChat = (chatId: string) => {
+export const useChatSocket = (chatId: string) => {
   const { addMessage } = useMessageStore();
   const { user } = useAuthStore();
 

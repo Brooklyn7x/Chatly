@@ -14,7 +14,7 @@ export class UserController extends BaseController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const userId = req.params.userId || req.user!._id;
+    const userId = req.params.id;
 
     await this.handleRequest(req, res, async () => {
       const result = await this.userService.getUserById(userId);
@@ -26,6 +26,8 @@ export class UserController extends BaseController {
       }
     });
   };
+
+  async updateProfile() {}
 
   // public updateProfile = async (req: Request, res: Response): Promise<void> => {
   //   const userId = req.params!.id;

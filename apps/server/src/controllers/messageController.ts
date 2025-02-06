@@ -44,7 +44,7 @@ export class MessageController extends BaseController {
         return;
       }
 
-      await this.socket.broadcastMessage("newMessage", result.data);
+      // await this.socket.broadcastMessage("newMessage", result.data);
       res.status(201).json(result);
     } catch (error) {
       this.logger.error("Error sending message:", error);
@@ -57,7 +57,7 @@ export class MessageController extends BaseController {
 
   async getMessages(req: Request, res: Response): Promise<void> {
     try {
-      const conversationId = req.params.conversationId;
+      const conversationId = req.params.id;
       const limit = parseInt(req.query.limit as string) || 10;
       const before = req.query.before as string;
 

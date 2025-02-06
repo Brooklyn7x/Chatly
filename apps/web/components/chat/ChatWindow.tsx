@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useUIStore } from "@/store/useUiStore";
@@ -7,84 +7,36 @@ import { ChatInfo } from "./ChatInfo";
 import ChatHeader from "./ChatHeader";
 import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
-import socketService from "@/services/socket/socket";
+
 import useAuthStore from "@/store/useAuthStore";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { useSocketChat } from "@/hooks/useSocketChat";
+import { useChatSocket } from "@/hooks/useChatSocket";
 import { EmptyState } from "./EmptyChat";
-import useUserStatusStore from "@/store/useStatusStore";
 import { useMessage } from "@/hooks/useMessage";
-import { useSocket } from "@/hooks/useSocket";
+import { useMessageSocket } from "@/hooks/useMessageSocket";
 import { useReadReceipts } from "@/hooks/useReadReceipt";
+import { useUserStatus } from "@/hooks/useUserStatus";
 
 export default function ChatWindow() {
+  const [showChatInfo, setShowChatInfo] = useState(false);
   const { user } = useAuthStore();
+  const userId = user?._id;
   const { isMobile } = useUIStore();
   const { activeChatId, chats } = useChatStore();
   const { messages } = useMessage(activeChatId || "");
-
-  const [showChatInfo, setShowChatInfo] = useState(false);
-  // const [userStatuses, setUserStatuses] = useState<Record<string, string>>({});
-  // const messages = activeChatId ? getMessages(activeChatId) : [];
-  const userId = user?._id;
-  const currentChat = chats.find((chat) => chat._id === activeChatId);
-  const userStatuses = useUserStatusStore((state) => state.userStatus);
-  const { sendMessage } = useSocketChat(activeChatId || "");
-  useSocket();
-  useReadReceipts(activeChatId, messages, user?._id);
-
-  //   }
-  //   const unreadMessages = messages.filter(
-  //     (message) => message.senderId !== userId && message.status !== "read"
-  //   );
-
-  //   if (unreadMessages.length > 0) {
-  //     socketService.markMessagesAsRead({
-  //       messageIds: unreadMessages.map((msg) => msg._id),
-  //       conversationId: activeChatId,
-  //     });
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   const unsubscribeMessageStatus = socketService.onMessageStatus((status) => {
-  //     if (status.conversationId === activeChatId) {
-  //       useMessageStore
-  //         .getState()
-  //         .updateMessageStatus(status.messageId, status.status);
-  //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribeMessageStatus();
-  //   };
-  // }, [activeChatId]);
-
-  // useEffect(() => {
-  //   const handleStatusChange = (data: { userId: string; status: string }) => {
-  //     useUserStatusStore.getState().setUserStatus(data.userId, data.status);
-  //   };
-
-  //   const unsubscribeUserStatus =
-  //     socketService.onUserStatusChange(handleStatusChange);
-
-  //   return () => {
-  //     unsubscribeUserStatus();
-  //   };
-  // }, []);
-
-  const otherUser = currentChat?.participants.find((p) => p.userId !== userId);
-  const isOnline = otherUser
-    ? userStatuses[otherUser.userId] === "online"
-    : false;
-
+  const { sendMessage } = useChatSocket(activeChatId || "");
   const { isTyping, handleTypingStart } = useTypingIndicator(
     activeChatId,
     userId
   );
-
-  console.log(isTyping, "tpying");
+  useMessageSocket();
+  useReadReceipts(activeChatId, messages, user?._id);
+  const currentChat = chats.find((chat) => chat._id === activeChatId);
+  const otherUser = currentChat?.participants.find(
+    (p) => p.userId.id !== userId
+  );
+  const { isOnline } = useUserStatus(otherUser?.userId.id);
 
   const handleMessage = useCallback(
     (content: string) => {
@@ -95,25 +47,24 @@ export default function ChatWindow() {
   );
 
   const handleAttachmentUpload = async (files: any) => {
-    if (!activeChatId || !currentChat || !userId) return;
-    console.log(files, "file attachment");
-    try {
-      for (const fileData of files) {
-        const receiverId =
-          currentChat.type === "direct"
-            ? currentChat.participants.find((p) => p.userId !== userId)?.userId
-            : undefined;
-
-        await socketService.uploadFile({
-          file: fileData.file,
-          conversationId: activeChatId,
-          receiverId,
-          type: fileData.type,
-        });
-      }
-    } catch (error) {
-      console.error("File upload failed:", error);
-    }
+    // if (!activeChatId || !currentChat || !userId) return;
+    // console.log(files, "file attachment");
+    // try {
+    //   for (const fileData of files) {
+    //     const receiverId =
+    //       currentChat.type === "direct"
+    //         ? currentChat.participants.find((p) => p.userId !== userId)?.userId
+    //         : undefined;
+    //     await socketService.uploadFile({
+    //       file: fileData.file,
+    //       conversationId: activeChatId,
+    //       receiverId,
+    //       type: fileData.type,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("File upload failed:", error);
+    // }
   };
 
   const toggleProfile = useCallback(() => {
@@ -137,6 +88,7 @@ export default function ChatWindow() {
       {currentChat ? (
         <>
           <ChatHeader
+            chatId={activeChatId}
             onInfoClick={toggleProfile}
             chat={currentChat}
             isOnline={isOnline}

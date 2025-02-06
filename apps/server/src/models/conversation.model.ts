@@ -83,6 +83,9 @@ ConversationSchema.virtual("participantsDetails", {
   localField: "participants.userId",
   foreignField: "_id",
   justOne: false,
+  options: {
+    select: "-password -__v -createdAt -updatedAt",
+  },
 });
 
 ConversationSchema.index({ participants: 1 });

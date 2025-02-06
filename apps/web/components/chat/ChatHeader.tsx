@@ -15,12 +15,14 @@ import {
 import { useChats } from "@/hooks/useChats";
 
 interface ChatHeaderProps {
+  chatId: string;
   onInfoClick: () => void;
   chat: Chat;
   isOnline: boolean;
 }
 
 export default function ChatHeader({
+  chatId,
   onInfoClick,
   chat,
   isOnline,

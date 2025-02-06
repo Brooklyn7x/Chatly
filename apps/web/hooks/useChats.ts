@@ -1,4 +1,5 @@
 import { chatApi } from "@/services/api/chat";
+import { socketService } from "@/services/socket/socketService";
 import { useChatStore } from "@/store/useChatStore";
 import { useEffect } from "react";
 
@@ -22,52 +23,52 @@ export const useChats = () => {
     fetchChats();
   }, []);
 
-  const createChat = async (participantIds: any) => {
+  const createChat = async (participantIds: string[]) => {
     try {
-      setLoading(true);
+      const tempId = new Date();
       const payload = {
-        type: participantIds.length > 1 ? "group" : "direct",
+        tempId,
+        type: "direct",
         participantIds: participantIds,
         metadata: {
-          title: participantIds.length > 1 ? "" : null,
-          description:
-            participantIds.length > 1
-              ? "Group conversation"
-              : "Direct conversation",
-          avatar: null,
+          title: "",
+          description: "Direct conversation",
+          avatar: "/user.png",
           isArchived: false,
           isPinned: false,
         },
       };
-      const { data } = await chatApi.createChat(payload);
-      console.log(data, "chat-data");
-      addChats(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to create chat"
-      );
-    } finally {
-      setLoading(false);
+      // addChats(payload);
+      console.log(payload, "new chat payload");
+      socketService.chatCreate(payload);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const deleteChat = async (chatId: string) => {
+  // const deleteChat = async (chatId: string) => {
+  //   try {
+  //     setLoading(true);
+  //     const { data } = await chatApi.deleteChat(chatId);
+  //     console.log(data, "delete-chat-data");
+  //     if (data.success) {
+  //       deleteChat(chatId);
+  //     }
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error ? error.message : "Failed to delete chat"
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const deleteChat = (chatId: string) => {
     try {
-      setLoading(true);
-      const { data } = await chatApi.deleteChat(chatId);
-      console.log(data, "delete-chat-data");
-      if (data.success) {
-        deleteChat(chatId);
-      }
+      socketService.chatDelete(chatId);
     } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to delete chat"
-      );
-    } finally {
-      setLoading(false);
+      console.error(error);
     }
   };
-
   return {
     chats,
     createChat,
@@ -76,3 +77,6 @@ export const useChats = () => {
     error,
   };
 };
+function uuidv4(): any {
+  throw new Error("Function not implemented.");
+}

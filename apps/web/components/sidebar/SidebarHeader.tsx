@@ -1,24 +1,30 @@
 import { ArrowLeft, MenuIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { SearchInput } from "../shared/SearchInput";
+import SidebarMenu from "./Menu";
 
-type ViewType = "main" | "search" | "settings" | "contacts" | "archived";
+type ViewType =
+  | "main"
+  | "search"
+  | "settings"
+  | "contacts"
+  | "archived"
+  | "new_message"
+  | "new_group"
+  | "new_channel";
 
 interface SidebarHeaderProps {
   view: ViewType;
   onViewChange: (view: ViewType) => void;
-  onMenuToggle: () => void;
 }
 
-const SidebarHeader = ({
-  view,
-  onViewChange,
-  onMenuToggle,
-}: SidebarHeaderProps) => {
+const SidebarHeader = ({ view, onViewChange }: SidebarHeaderProps) => {
+  const [menu, setMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const handleSearchFocus = () => {
     onViewChange("search");
+    setMenu(false)
   };
 
   return (
@@ -26,7 +32,7 @@ const SidebarHeader = ({
       {view === "main" && (
         <div className="flex items-center gap-4 w-full">
           <button
-            onClick={onMenuToggle}
+            onClick={() => setMenu((prev) => !prev)}
             className="p-2 border hover:bg-hover rounded-full"
           >
             <MenuIcon className="w-6 h-6" />
@@ -50,6 +56,10 @@ const SidebarHeader = ({
           onBack={() => onViewChange("main")}
         />
       )}
+
+      {menu && (
+        <SidebarMenu showMenu={menu} setShowMenu={() => setMenu(false)} />
+      )}
     </div>
   );
 };
@@ -67,7 +77,7 @@ const SearchHeader = ({ query, onQueryChange, onBack }: SearchHeaderProps) => {
     <div className="flex items-center gap-4 w-full">
       <button
         onClick={onBack}
-        className={`p-2 borderflex items-center justify-center text-muted-foreground rounded-full transition-all duration-300 ease-in-out
+        className={`p-2 border borderflex items-center justify-center text-muted-foreground rounded-full transition-all duration-300 ease-in-out
         }`}
       >
         <ArrowLeft className="h-6 w-6" />
