@@ -1,59 +1,82 @@
-import { useChats } from "@/hooks/useChats";
-import { ChatList } from "../chat/ChatList";
-import { ErrorMessage } from "../shared/ErrorMessage";
-import { SearchView } from "./SearchView";
+import { useMemo } from "react";
+
+import { useChatStore } from "@/store/useChatStore";
+import { useDebounce } from "@/hooks/useDebounce";
+import { ChatItem } from "../chat/ChatItem";
 import { PrivateChat } from "./PrivateChat";
 import { GroupChat } from "./GroupChat";
-import { GlobalSearch } from "./GlobalSearch";
-
+type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
 interface SidebarContentProps {
-  view: string;
-  onBack: () => void;
+  view: ViewType;
+  searchQuery: string;
+  onViewChange: (view: ViewType) => void;
 }
 
-const SidebarContent = ({ view, onBack }: SidebarContentProps) => {
+export default function SidebarContent({
+  view,
+  searchQuery,
+  onViewChange,
+}: SidebarContentProps) {
+  const { chats, setActiveChat } = useChatStore();
+  const isLoading = false;
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
+  const filteredChats = useMemo(() => {
+    if (!debouncedQuery.trim()) return chats || [];
+
+    const searchLower = debouncedQuery.toLowerCase().trim();
+
+    return (chats || []).filter((chat) => {
+      if (chat.metadata.title?.toLowerCase().includes(searchLower)) {
+        return true;
+      }
+
+      if (
+        chat.participants?.some((p) =>
+          p.userId.username?.toLowerCase().includes(searchLower)
+        )
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [chats, debouncedQuery]);
+
   return (
-    <div className="w-full flex-1 overflow-y-auto">
-      {view === "main" && <ChatList />}
-      {view === "search" && <SearchView />}
-      {view === "contacts" && <ContactList contacts={[]} />}
-      {view === "archived" && <ArchivedChats />}
-      {view === "settings" && <Settings />}
-      {view === "new_message" && <PrivateChat onClose={onBack} />}
-      {view === "new_group" && <GroupChat onClose={onBack} />}
-      {view === "new_channel" && <h1>New Channel</h1>}
-    </div>
-  );
-};
-
-interface ContactListProps {
-  contacts: any[];
-}
-const ContactList = ({ contacts }: ContactListProps) => {
-  return <div>Contact List</div>;
-};
-const ArchivedChats = () => {
-  return <div>Archived Chats</div>;
-};
-
-const Settings = () => {
-  return <div>Settings</div>;
-};
-
-export default SidebarContent;
-
-const ChatListSkeleton = () => {
-  return (
-    <div className="space-y-4 p-4">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="h-3 bg-gray-200 rounded w-2/3 animate-pulse" />
+    <div className="flex-1 overflow-y-auto">
+      {view === "main" &&
+        (isLoading ? (
+          <div className="space-y-4 p-4">
+            {Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  {/* <Skeleton className="h-12 w-12 rounded-full" /> */}
+                  {/* <div className="space-y-2 flex-1">
+                <Skeleton className="h-4 w-[200px]" />
+                <Skeleton className="h-3 w-[150px]" />
+              </div>  */}
+                </div>
+              ))}
           </div>
-        </div>
-      ))}
+        ) : (
+          <div className="space-y-1 p-2">
+            {filteredChats?.map((chat) => (
+              <ChatItem
+                key={chat._id}
+                chat={chat}
+                onClick={() => setActiveChat(chat._id)}
+              />
+            ))}
+          </div>
+        ))}
+      {view === "new_message" && (
+        <PrivateChat onClose={() => onViewChange("main")} />
+      )}
+      {view === "new_group" && (
+        <GroupChat onClose={() => onViewChange("main")} />
+      )}
     </div>
   );
-};
+}

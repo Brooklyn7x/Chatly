@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Pencil, User, Users, Volume, X } from "lucide-react";
-type ViewType =
-  | "main"
-  | "search"
-  | "settings"
-  | "contacts"
-  | "archived"
-  | "new_message"
-  | "new_group"
-  | "new_channel";
+type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
 interface FBAProps {
   view: string;
   onViewChange: (view: ViewType) => void;

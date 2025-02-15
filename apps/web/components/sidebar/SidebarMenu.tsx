@@ -4,11 +4,8 @@ import { MenuItem } from "../shared/MenuItem";
 import useAuthStore from "@/store/useAuthStore";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
-interface SidebarMenuProps {
-  setShowMenu: (show: boolean) => void;
-}
 
-const SidebarMenu = ({ setShowMenu }: SidebarMenuProps) => {
+const SidebarMenu = () => {
   const { user } = useAuthStore();
   const { logout } = useAuth();
   const handleLogout = async () => {
