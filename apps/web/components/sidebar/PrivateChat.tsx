@@ -21,7 +21,7 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { users } = useSearchUser("");
   const { activeChatId } = useChatStore();
-  const { createChat } = useChats(activeChatId);
+  const { createChat } = useChats();
 
   const handleUserSelect = (userId: string) => {
     setSelectedUserId((prev) => (prev === userId ? null : userId));

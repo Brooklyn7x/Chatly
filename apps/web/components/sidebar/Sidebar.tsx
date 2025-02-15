@@ -1,40 +1,38 @@
 "use client";
-
 import { useState } from "react";
-import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
-import { FloatingActionButton } from "./FloatingActionButton";
 import { useLayout } from "@/hooks/useLayout";
-
-export default function SideBar() {
+import { FloatingActionButton } from "./FloatingActionButton";
+type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
+export default function Sidebar() {
   const { isMobile, activeChatId } = useLayout();
-
-  const [view, setView] = useState<
-    | "main"
-    | "search"
-    | "settings"
-    | "contacts"
-    | "archived"
-    | "new_message"
-    | "new_group"
-    | "new_channel"
-  >("main");
+  const [view, setView] = useState<ViewType>("main");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div
       className={cn(
-        "w-full md:w-[420px] md:border-r",
-        "flex flex-col relative",
-        isMobile && activeChatId ? "-translate-x-full" : "translate-x-0",
-        "md:translate-x-0",
+        "w-full md:w-[420px] md:border-r flex flex-col relative",
         "backdrop-blur-sm bg-background/60",
+        isMobile && activeChatId ? "-translate-x-full" : "translate-x-0",
         isMobile ? "absolute inset-y-0 left-0 z-10" : "relative"
       )}
     >
-      <SidebarHeader view={view} onViewChange={setView} />
-      <SidebarContent view={view} onBack={() => setView("main")} />
+      <SidebarHeader
+        view={view}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onViewChange={setView}
+      />
+
+      <SidebarContent
+        view={view}
+        searchQuery={searchQuery}
+        onViewChange={setView}
+      />
+
       <FloatingActionButton view={view} onViewChange={setView} />
     </div>
   );
