@@ -1,28 +1,24 @@
+import { useChatStore } from "@/store/useChatStore";
 import { useState } from "react";
 
-interface SearchViewProps {
-  query: string;
-}
-
-export const SearchView = ({ query }: SearchViewProps) => {
-  const [searchQuery, setSearchQuery] = useState(query);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+export const SearchView = () => {
+  const { chats } = useChatStore();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    // TODO: Implement search logic here
   };
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4">
-        {searchResults.length === 0 ? (
+        {chats.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
             {searchQuery ? "No results found" : "Enter a search term to begin"}
           </div>
         ) : (
           <div className="space-y-4">
-            {searchResults.map((result: any) => (
+            {chats.map((result: any) => (
               <SearchResult key={result.id} result={result} />
             ))}
           </div>

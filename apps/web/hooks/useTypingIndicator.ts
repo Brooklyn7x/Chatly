@@ -26,7 +26,6 @@ export function useTypingIndicator(chatId: string, userId: string) {
       userId: string;
       conversationId: string;
     }) => {
-      console.log(data, "Data start")
       if (data.conversationId === chatId) {
         setTypingUsers((prev) => new Set(prev).add(data.userId));
       }
@@ -36,7 +35,6 @@ export function useTypingIndicator(chatId: string, userId: string) {
       userId: string;
       conversationId: string;
     }) => {
-      console.log(data, "Data stop")
       if (data.conversationId === chatId) {
         setTypingUsers((prev) => {
           const next = new Set(prev);
@@ -54,8 +52,6 @@ export function useTypingIndicator(chatId: string, userId: string) {
       socketService.off("typing:stop", handleStopTyping);
     };
   });
-
-  console.log(typingUsers);
 
   return {
     isTyping: typingUsers.size > 0,

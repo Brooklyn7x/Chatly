@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useSocketChat } from "./useSocketChat";
+
 import { Message } from "@/types/message";
+import { useMessage } from "./useMessage";
 
 export const useReadReceipts = (
   conversationId: string | null,
@@ -8,11 +9,10 @@ export const useReadReceipts = (
   userId?: string
 ) => {
   const processedMessagesRef = useRef<Set<string>>(new Set());
-  const { markAsRead } = useSocketChat(conversationId || "");
+  const { markAsRead } = useMessage(conversationId);
   const batchTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    // Clear processed messages when conversation changes
     return () => {
       processedMessagesRef.current.clear();
       if (batchTimeoutRef.current) {
@@ -39,7 +39,6 @@ export const useReadReceipts = (
       }
     };
 
-    // Batch process messages with a small delay
     if (batchTimeoutRef.current) {
       clearTimeout(batchTimeoutRef.current);
     }

@@ -1,16 +1,19 @@
-import { socketService } from "@/services/socket/socketService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
-import { Message, MessageResponse } from "@/types/message";
+import { MessageResponse } from "@/types/message";
+import { socketService } from "@/services/socket/socketService";
 
-export const useSocket = () => {
-  const { addMessage, updateMessageStatus, updateMessage } = useMessageStore();
+export const useMessageSocket = () => {
+  const { addMessage, updateMessageStatus } = useMessageStore();
 
   useEffect(() => {
-    socketService.initialize();
-
-    const handleNewMessage = (message: Message) => {
-      addMessage(message);
+    const handleNewMessage = (message: any) => {
+      const messageData = message._doc ? message._doc : message;
+      addMessage({
+        ...messageData,
+        _id: messageData._id || `temp-${Date.now()}`,
+        status: "sent",
+      });
     };
 
     const handleMessageSent = (response: MessageResponse) => {
@@ -48,7 +51,6 @@ export const useSocket = () => {
       socketService.off("message:sent", handleMessageSent);
       socketService.off("message:delivered", handleMessageDelivered);
       socketService.off("message:read:ack", handleMessageReadAck);
-      socketService.disconnect();
     };
   }, [addMessage, updateMessageStatus]);
 

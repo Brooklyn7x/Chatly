@@ -4,7 +4,6 @@ import { useState } from "react";
 import LoginForm from "./LoginForm";
 import SignUpForm from "./RegisterForm";
 
-
 export default function AuthContainer() {
   const [showSignUp, setShowSignUp] = useState(false);
   const toggleForm = () => setShowSignUp((prev) => !prev);

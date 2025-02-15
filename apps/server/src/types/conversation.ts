@@ -28,8 +28,6 @@ export enum ParticipantRole {
   MEMBER = "member",
 }
 
-
-
 export interface ConversationMetadata {
   title?: string;
   description?: string;
@@ -42,4 +40,23 @@ export interface CreateConversationDTO {
   type: ConversationType;
   participantIds: string[];
   metadata?: ConversationMetadata;
+}
+
+export interface CreateChatDTO {
+  tempId: string;
+  participantIds: string[];
+  metadata?: {
+    title?: string;
+    description?: string;
+    avatar?: string;
+  };
+}
+
+export interface ChatResponse {
+  tempId?: string;
+  conversationId: string;
+  type: ConversationType;
+  participants: Participant[];
+  metadata: any;
+  createdAt: Date;
 }

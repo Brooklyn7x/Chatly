@@ -45,9 +45,14 @@ export interface Conversation {
 }
 
 export interface Participant {
-  userId: string;
   role: "owner" | "admin" | "member";
   joinedAt: Date;
+  userId: {
+    id: string;
+    _id: string;
+    username: string;
+    email: string;
+  };
 }
 export interface ChatMetadata {
   title: string | null;

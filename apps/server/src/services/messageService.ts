@@ -1,11 +1,6 @@
 import Redis from "ioredis";
 import { DatabaseService } from "./databaseService";
-import {
-  CreateMessageDTO,
-  Message,
-  MessageStatus,
-  MessageType,
-} from "../types/message";
+import { Message, MessageStatus, MessageType } from "../types/message";
 import { ServiceResponse } from "../types/service-respone";
 import { BaseService } from "./baseService";
 import mongoose from "mongoose";
@@ -65,28 +60,8 @@ export class MessageService extends BaseService {
           : null,
       };
 
-      // if (conversation.type === "direct") {
-      //   const receiver = conversation.participants.find(
-      //     (p: any) => p.userId.toString() !== senderId
-      //   );
-      //   if (receiver) {
-      //     messageObj.receiverId = receiver.userId;
-      //   }
-      // }
-
       const message = new MessageModel(messageObj);
       const savedMessage = await message.save();
-
-      // await this.db.update(
-      //   "Conversation",
-      //   { _id: conversation._id },
-      //   {
-      //     me: savedMessage._id,
-      //     lastMessageAt: new Date(),
-      //   }
-      // );
-
-      // await savedMessage.markAsDelivered(senderId);
 
       return {
         success: true,
@@ -106,36 +81,30 @@ export class MessageService extends BaseService {
     limit: number = 20,
     before?: Date
   ): Promise<ServiceResponse<any[]>> {
+    console.log(conversationId, "message-data");
     try {
-      if (!mongoose.isValidObjectId(conversationId)) {
-        this.logger.error(`Invalid conversation ID format: ${conversationId}`);
-        return {
-          success: false,
-          error: "Invalid conversation ID format",
-        };
+      const query: any = {
+        conversationId: new mongoose.Types.ObjectId(conversationId),
+        deleted: false,
+      };
+
+      if (before) {
+        query.createdAt = { $lt: before };
       }
 
-      const query = before
-        ? { conversationId, timestamp: { $lt: before } }
-        : { conversationId };
-
-      const message = await this.db.find("Message", query, {
-        sort: { timestamp: -1 },
-        limit,
-      });
-
-      // await this.cacheMessage(message);
+      const messages = await MessageModel.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .populate("metadata", "username avatar")
+        .lean();
 
       return {
         success: true,
-        data: message,
+        data: messages.map((msg) => this.formatMessage(msg)),
       };
     } catch (error) {
       this.logger.error("Error fetching messages:", error);
-      return {
-        success: false,
-        error: "Failed to fetch messages",
-      };
+      return { success: false, error: "Failed to fetch messages" };
     }
   }
 
@@ -143,8 +112,8 @@ export class MessageService extends BaseService {
     try {
       const message = await MessageModel.findOne({
         _id: new mongoose.Types.ObjectId(messageId).toString(),
-        senderId: new mongoose.Types.ObjectId(userId).toString(),
-      });
+        senderId: new mongoose.Types.ObjectId(userId),
+      }).lean();
 
       if (!message) {
         return {
@@ -153,20 +122,35 @@ export class MessageService extends BaseService {
         };
       }
 
-      const deleteMessage = await MessageModel.deleteOne({
+      const existingMessage = await MessageModel.findById({ messageId });
+
+      if (!existingMessage) {
+        return {
+          success: false,
+          error: "Message already deleted",
+        };
+      }
+
+      const deleteResult = await MessageModel.deleteOne({
         _id: new mongoose.Types.ObjectId(messageId).toString(),
+        senderId: new mongoose.Types.ObjectId(userId),
       });
 
-      if (!deleteMessage.deletedCount) {
+      if (deleteResult.deletedCount === 0) {
         return {
           success: false,
           error: "Failed to delete message",
         };
       }
-
       // await this.redis.del(`message:${messageId}`);
+
       return {
         success: true,
+        data: {
+          messageId,
+          conversationId: message.conversationId.toString(),
+          deletedAt: new Date(),
+        },
       };
     } catch (error) {
       this.logger.error("Error deleting message:", error);
@@ -174,6 +158,79 @@ export class MessageService extends BaseService {
         success: false,
         error: "Failed to delete message",
       };
+    }
+  }
+
+  async editMessage(
+    messageId: string,
+    userId: string,
+    content: string,
+    metadata?: Record<string, any>
+  ): Promise<ServiceResponse<any>> {
+    try {
+      if (!content?.trim() || content.length > 2000) {
+        return {
+          success: false,
+          error: "Message content must be between 1 and 2000 characters",
+        };
+      }
+
+      const message = await MessageModel.findOne({
+        _id: new mongoose.Types.ObjectId(messageId),
+        senderId: new mongoose.Types.ObjectId(userId),
+      });
+
+      if (!message) {
+        return { success: false, error: "Message not found or unauthorized" };
+      }
+
+      const editWindow = 15 * 60 * 1000;
+      if (Date.now() - message.createdAt.getTime() > editWindow) {
+        return {
+          success: false,
+          error: "Message cannot be edited after 15 minutes",
+        };
+      }
+
+      const updatePayload: any = {
+        content: content.trim(),
+        editedAt: new Date(),
+        edited: true,
+        $inc: { editCount: 1 },
+      };
+
+      if (metadata) {
+        updatePayload.metadata = { ...message.metadata, ...metadata };
+      }
+
+      const updatedMessage = await MessageModel.findByIdAndUpdate(
+        messageId,
+        updatePayload,
+        { new: true, runValidators: true }
+      ).populate("conversationId");
+
+      if (!updatedMessage) {
+        return { success: false, error: "Failed to update message" };
+      }
+
+      await this.redis.set(
+        `message:${messageId}`,
+        JSON.stringify(this.formatMessage(updatedMessage)),
+        "EX",
+        86400
+      );
+
+      return {
+        success: true,
+        data: {
+          ...this.formatMessage(updatedMessage),
+          previousContent: message.content,
+          editCount: updatedMessage.get("editCount"),
+        },
+      };
+    } catch (error) {
+      this.logger.error("Error editing message:", error);
+      return { success: false, error: "Failed to edit message" };
     }
   }
 
@@ -232,7 +289,7 @@ export class MessageService extends BaseService {
       if (!conversation) {
         return {
           success: false,
-          error: "Unauthorized to mark this message as read",
+          error: "Unauthorized",
         };
       }
 
@@ -322,9 +379,8 @@ export class MessageService extends BaseService {
 
   private formatMessage(message: any): Message {
     return {
-      ...message.toObject(),
-      _id: message._id.toString(),
-      senderId: message.senderId.toString(),
+      ...message,
+      _id: message._id,
       receiverId: message.receiverId?.toString(),
       conversationId: message.conversationId.toString(),
     };

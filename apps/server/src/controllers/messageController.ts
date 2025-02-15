@@ -44,7 +44,7 @@ export class MessageController extends BaseController {
         return;
       }
 
-      await this.socket.broadcastMessage("newMessage", result.data);
+      // await this.socket.broadcastMessage("newMessage", result.data);
       res.status(201).json(result);
     } catch (error) {
       this.logger.error("Error sending message:", error);
@@ -57,7 +57,7 @@ export class MessageController extends BaseController {
 
   async getMessages(req: Request, res: Response): Promise<void> {
     try {
-      const conversationId = req.params.conversationId;
+      const conversationId = req.params.id;
       const limit = parseInt(req.query.limit as string) || 10;
       const before = req.query.before as string;
 
@@ -71,10 +71,9 @@ export class MessageController extends BaseController {
         res.status(400).json(result);
         return;
       }
-
       res.status(200).json(result);
     } catch (error) {
-      console.log("Error fetching messages:", error);
+      this.logger.error("Failed to fetch messages:", error);
       res.status(500).json({
         success: false,
         error: "Failed to fetch messages",

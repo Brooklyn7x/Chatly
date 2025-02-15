@@ -1,39 +1,36 @@
 import { chatApi } from "@/services/api/chat";
 import { useChatStore } from "@/store/useChatStore";
-import { useEffect } from "react";
+import { useState, useCallback } from "react";
 
 export const useChats = () => {
-  const { chats, isLoading, error, setChats, addChats, setLoading, setError } =
-    useChatStore();
+  const { setChats, addChats } = useChatStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        setLoading(false);
-        const { data } = await chatApi.getChats();
-        setChats(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch chats");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChats();
-  }, []);
-
-  const createChat = async (participantIds: any) => {
+  const fetchChats = useCallback(async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
+      const { data } = await chatApi.getChats();
+      setChats(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch chats");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setChats]);
+
+  const createChat = async (participantIds: any[], title?: string) => {
+    try {
+      setIsLoading(true);
       const payload = {
         type: participantIds.length > 1 ? "group" : "direct",
         participantIds: participantIds,
         metadata: {
-          title: participantIds.length > 1 ? "" : null,
+          title: participantIds.length > 1 ? title : null,
           description:
             participantIds.length > 1
               ? "Group conversation"
-              : "Direct conversation",
+              : "Private conversation",
           avatar: null,
           isArchived: false,
           isPinned: false,
@@ -47,31 +44,13 @@ export const useChats = () => {
         error instanceof Error ? error.message : "Failed to create chat"
       );
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteChat = async (chatId: string) => {
-    try {
-      setLoading(true);
-      const { data } = await chatApi.deleteChat(chatId);
-      console.log(data, "delete-chat-data");
-      if (data.success) {
-        deleteChat(chatId);
-      }
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to delete chat"
-      );
-    } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return {
-    chats,
+    fetchChats,
     createChat,
-    deleteChat,
     isLoading,
     error,
   };

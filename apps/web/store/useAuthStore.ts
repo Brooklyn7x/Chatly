@@ -48,7 +48,6 @@ const useAuthStore = create<AuthStore>()(
           isLoading: false,
         });
 
-        // Reset all other stores
         resetAllStores();
       },
 
@@ -62,16 +61,6 @@ const useAuthStore = create<AuthStore>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-      // storage: {
-      //   getItem: (name) => {
-      //     const str = localStorage.getItem(name);
-      //     return str ? JSON.parse(str) : null;
-      //   },
-      //   setItem: (name, value) => {
-      //     localStorage.setItem(name, JSON.stringify(value));
-      //   },
-      //   removeItem: (name) => localStorage.removeItem(name),
-      // },
     }
   )
 );

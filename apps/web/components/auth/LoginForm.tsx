@@ -18,6 +18,7 @@ import {
 import { LoginInput } from "@/types/auth";
 import { useAuth } from "@/hooks/useAuth";
 import useAuthStore from "@/store/useAuthStore";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z
@@ -53,7 +54,8 @@ export default function LoginForm({ showSignUp }: LoginFormProps) {
     try {
       await login(data);
     } catch (error: any) {
-      console.error("Login error:", error);
+      toast.error(error.message);
+      console.log("Login error:", error.message);
     }
   };
 

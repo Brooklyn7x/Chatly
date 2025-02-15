@@ -1,8 +1,8 @@
-import React from 'react';
-import { Search } from 'lucide-react';
-import { useSearch } from '@/hooks/useSearch';
-import SearchResultItem from './SearchResultItem';
-import { AnimatePresence, motion } from 'framer-motion';
+import React from "react";
+import { Search } from "lucide-react";
+import { useSearch } from "@/hooks/useSearchUser";
+import SearchResultItem from "./SearchResultItem";
+import { AnimatePresence, motion } from "framer-motion";
 
 const SearchView = () => {
   const { searchQuery, searchResults, setSearchQuery } = useSearch();
@@ -49,4 +49,4 @@ const SearchView = () => {
   );
 };
 
-export default SearchView; 
+export default SearchView;

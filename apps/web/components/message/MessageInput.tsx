@@ -2,29 +2,30 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Paperclip, SendHorizonal, Smile } from "lucide-react";
 import EmojiPicker from "./EmojiPicker";
 import AttachmentPicker from "./AttachmentPicker";
+import { AnimatePresence } from "framer-motion";
+import { useChatStore } from "@/store/useChatStore";
+import { useMessage } from "@/hooks/useMessage";
+import { useTypingIndicator } from "@/hooks/useTypingIndicator";
+import useAuthStore from "@/store/useAuthStore";
 
-interface MessageInputProps {
-  onSendMessage: (content: string) => void;
-  onTypingStart: () => void;
-  onFileUpload: (file: File[]) => void;
-}
-
-export default function MessageInput({
-  onSendMessage,
-  onTypingStart,
-  onFileUpload,
-}: MessageInputProps) {
+export default function MessageInput() {
+  const { activeChatId } = useChatStore();
+  const { user } = useAuthStore();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachment, setShowAttachment] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const attachmentPickerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+  const { sendMessage } = useMessage(activeChatId);
+  const { isTyping, handleTypingStart } = useTypingIndicator(
+    activeChatId || "",
+    user?._id
+  );
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = event.target.value;
     setMessage(content);
-    onTypingStart();
+    handleTypingStart();
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -42,17 +43,12 @@ export default function MessageInput({
     }
   };
 
-  const handleAttach = (files: any) => {
-    onFileUpload(files);
-  };
+  const handleAttach = (files: any) => {};
 
-  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSendMessage = () => {
     if (message.trim()) {
-      onSendMessage(message);
+      sendMessage(message);
       setMessage("");
-      setShowEmojiPicker(false);
-      setShowAttachment(false);
     }
   };
 
@@ -91,7 +87,7 @@ export default function MessageInput({
   return (
     <div className="bottom-0 left-0 right-0">
       <div className="relative max-w-2xl mx-auto px-4 pb-3">
-        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <div className="relative flex-1 flex items-center">
             <button
               type="button"
@@ -120,31 +116,35 @@ export default function MessageInput({
           </div>
 
           <button
-            type="submit"
+            onClick={handleSendMessage}
             className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
             aria-label="Send message"
           >
             <SendHorizonal className="h-5 w-5" />
           </button>
-        </form>
+        </div>
 
-        {showEmojiPicker && (
-          <EmojiPicker
-            show={showEmojiPicker}
-            onClose={() => setShowEmojiPicker(false)}
-            onEmojiSelect={handleEmojiSelect}
-            containerRef={emojiPickerRef}
-          />
-        )}
+        <AnimatePresence>
+          {showEmojiPicker && (
+            <EmojiPicker
+              show={showEmojiPicker}
+              onClose={() => setShowEmojiPicker(false)}
+              onEmojiSelect={handleEmojiSelect}
+              containerRef={emojiPickerRef}
+            />
+          )}
+        </AnimatePresence>
 
-        {setShowAttachment && (
-          <AttachmentPicker
-            show={showAttachment}
-            onClose={() => setShowAttachment(false)}
-            onAttach={handleAttach}
-            containerRef={attachmentPickerRef}
-          />
-        )}
+        <AnimatePresence>
+          {setShowAttachment && (
+            <AttachmentPicker
+              show={showAttachment}
+              onClose={() => setShowAttachment(false)}
+              onAttach={handleAttach}
+              containerRef={attachmentPickerRef}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

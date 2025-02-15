@@ -54,6 +54,29 @@ export class UserService {
     }
   }
 
+  async getUserStatus(userId: string): Promise<ServiceResponse<any>> {
+    try {
+      const user = await this.db.findById("user", userId);
+      if (!user) {
+        return {
+          success: false,
+          error: "User not found",
+        };
+      }
+
+      return {
+        success: true,
+        data: user.get("status"),
+      };
+    } catch (error) {
+      this.logger.error("Error fetching user status:", error);
+      return {
+        success: false,
+        error: "Failed to fetch user status",
+      };
+    }
+  }
+
   async getUserById(id: string): Promise<ServiceResponse<UserProfile>> {
     try {
       const cacheUser = await this.redis.hgetall(`user${id}`);
@@ -172,7 +195,7 @@ export class UserService {
         }),
       ]);
 
-      return { success: true };
+      return { data: status, success: true };
     } catch (error) {
       this.logger.error("Error updating user status:", error);
       return {

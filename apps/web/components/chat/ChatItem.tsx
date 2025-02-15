@@ -2,14 +2,17 @@ import { cn } from "@/lib/utils";
 import { UserAvatar } from "../user/UserAvatar";
 import { useMemo } from "react";
 import { Chat } from "@/types";
+import { useChatStore } from "@/store/useChatStore";
 
 interface ChatItemProps {
   chat: Chat;
-  isActive: boolean;
   onClick: () => void;
 }
 
-export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
+export function ChatItem({ chat, onClick }: ChatItemProps) {
+  const { activeChat } = useChatStore();
+  const isActive = activeChat === chat._id;
+
   const formattedDate = useMemo(() => {
     if (!chat.updatedAt) return "";
     const date = new Date(chat.updatedAt);
@@ -38,7 +41,7 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
   }, [chat]);
 
   return (
-    <button
+    <div
       onClick={onClick}
       className={cn(
         "w-full p-2 rounded-md border",
@@ -61,6 +64,22 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
               {formattedDate}
             </span>
           </div>
+          {/* 
+          <div className="flex items-center ml-2">
+            {chat.isPinned && <span>📌</span>}
+            {chat.isMuted && <span>🔇</span>}
+            {chat.unreadCount > 0 && (
+              <div 
+                className={`
+                  ml-2 px-2 py-1 rounded-full text-xs font-medium
+                  ${chat.isMuted ? 'bg-telegram-badge-muted' : 'bg-telegram-badge'}
+                `}
+              >
+                {chat.unreadCount}
+              </div>
+            )}
+          </div>
+        </div> */}
 
           <div className="flex justify-between items-baseline">
             <p className="text-sm text-muted-foreground truncate">
@@ -72,6 +91,6 @@ export function ChatItem({ chat, isActive, onClick }: ChatItemProps) {
           </div>
         </div>
       </div>
-    </button>
+    </div>
   );
 }

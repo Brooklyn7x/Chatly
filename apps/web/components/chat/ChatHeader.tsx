@@ -1,8 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
-import { Chat } from "@/types";
-import ChatMenu from "./ChatMenu";
 import { NavigationButton } from "../shared/NavigationButton";
 import { UserAvatar } from "../user/UserAvatar";
 import {
@@ -12,52 +10,59 @@ import {
   Phone,
   Search,
 } from "lucide-react";
-import { useChats } from "@/hooks/useChats";
+import { useUserStatus } from "@/hooks/useUserStatus";
+import useAuthStore from "@/store/useAuthStore";
+import ChatHeaderMenu from "./ChatHeaderMenu";
+import { useChatPanelStore } from "@/store/useChatPanelStore";
 
-interface ChatHeaderProps {
-  onInfoClick: () => void;
-  chat: Chat;
-  isOnline: boolean;
-}
+export default function ChatHeader() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuthStore;
+  const { activeChatId, chats, setActiveChat, deleteChat } = useChatStore();
+  const chat = chats.find((chat) => chat._id === activeChatId);
+  const otherUser = chat?.participants.find((p) => p.userId.id !== user);
 
-export default function ChatHeader({
-  onInfoClick,
-  chat,
-  isOnline,
-}: ChatHeaderProps) {
-  const [showMenu, setShowMenu] = useState(false);
-  const { activeChatId, setActiveChat } = useChatStore();
-  const { deleteChat } = useChats();
+  const { setIsOpen } = useChatPanelStore();
 
-  const handleBack = useCallback(() => {
-    setActiveChat(null);
-  }, [setActiveChat]);
+  const otherUserId = otherUser?.userId?._id;
+  const { status, getStatusText } = useUserStatus(otherUserId);
 
   const displayName = useMemo(() => {
-    if (chat.type === "direct") {
+    if (chat?.type === "direct") {
       return chat.participants[1]?.userId.username || "Direct Message";
     }
-    return chat.metadata?.title || "Group Chat";
+    return chat?.metadata?.title || "Group Chat";
   }, [chat]);
+
   const getChatSubtitle =
     chat?.type === "group"
       ? `${chat.participants.length} Subscribers`
       : "Online";
 
   return (
-    <header className="h-16 flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
+    <header className="h-16 w-full flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
       <div className="flex items-center gap-4">
         {activeChatId && (
-          <NavigationButton onClick={handleBack} icon={ArrowLeft} />
+          <NavigationButton
+            onClick={() => setActiveChat(null)}
+            icon={ArrowLeft}
+          />
         )}
 
-        <button onClick={onInfoClick} className="flex items-center gap-4">
-          <UserAvatar status={isOnline ? "online" : "offline"} size={"sm"} />
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-4"
+        >
+          <UserAvatar
+            status={status === "online" ? "online" : "offline"}
+            size={"sm"}
+          />
           <div className="flex flex-col text-left">
             <h2 className="text-sm font-semibold">{displayName}</h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              <h2>{chat.groupName}</h2>
-              {isOnline ? "Online" : "Offline"}
+              {chat?.type === "group"
+                ? `${chat.participants.length} members`
+                : getStatusText()}
             </span>
           </div>
         </button>
@@ -67,18 +72,17 @@ export default function ChatHeader({
         <IconButton onClick={() => {}} icon={Phone} isActive={false} />
         <IconButton onClick={() => {}} icon={Search} isActive={false} />
         <IconButton
-          onClick={() => setShowMenu(!showMenu)}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
           icon={EllipsisVertical}
-          isActive={showMenu}
+          isActive={isMenuOpen}
         />
       </div>
 
-      {showMenu && (
-        <ChatMenu
-          isOpen={showMenu}
-          onClose={() => setShowMenu(false)}
-          onDelete={deleteChat}
-          chatId={chat?._id}
+      {isMenuOpen && (
+        <ChatHeaderMenu
+          onClose={() => setIsMenuOpen(false)}
+          chatId={activeChatId}
+          onDeleteChat={deleteChat}
         />
       )}
     </header>

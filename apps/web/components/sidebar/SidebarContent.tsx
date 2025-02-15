@@ -2,29 +2,26 @@ import { useChats } from "@/hooks/useChats";
 import { ChatList } from "../chat/ChatList";
 import { ErrorMessage } from "../shared/ErrorMessage";
 import { SearchView } from "./SearchView";
+import { PrivateChat } from "./PrivateChat";
+import { GroupChat } from "./GroupChat";
+import { GlobalSearch } from "./GlobalSearch";
 
 interface SidebarContentProps {
   view: string;
+  onBack: () => void;
 }
 
-const SidebarContent = ({ view }: SidebarContentProps) => {
-  const { chats, isLoading, error } = useChats();
-
-  if (isLoading) {
-    <ChatListSkeleton />;
-  }
-
-  if (error) {
-    <ErrorMessage message={error} />;
-  }
-
+const SidebarContent = ({ view, onBack }: SidebarContentProps) => {
   return (
-    <div className="flex-1 overflow-y-auto">
-      {view === "main" && <ChatList chats={chats} />}
-      {view === "search" && <SearchView query="" />}
+    <div className="w-full flex-1 overflow-y-auto">
+      {view === "main" && <ChatList />}
+      {view === "search" && <SearchView />}
       {view === "contacts" && <ContactList contacts={[]} />}
       {view === "archived" && <ArchivedChats />}
       {view === "settings" && <Settings />}
+      {view === "new_message" && <PrivateChat onClose={onBack} />}
+      {view === "new_group" && <GroupChat onClose={onBack} />}
+      {view === "new_channel" && <h1>New Channel</h1>}
     </div>
   );
 };

@@ -87,6 +87,10 @@ export class FileService extends BaseService {
     }
   }
 
+  async getFilePreview() {}
+
+  async deleteFile() {}
+
   private async generateSignedUrl(s3Key: string): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,

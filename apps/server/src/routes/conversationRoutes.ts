@@ -4,10 +4,10 @@ import { ConversationController } from "../controllers/conversationController";
 const router = Router();
 const controller = new ConversationController();
 
-router.get("/", controller.getConversations);
+router.get("/", controller.getAllConversations);
 router.post("/", controller.createConversation);
-router.get("/user-chats", controller.getUserConversations);
-router.delete("/:conversationId", controller.deleteConversation);
-// router.post("/:conversationId/read", controller.markAsRead);
+router.get("/:id", controller.getConversations);
+router.delete("/:id", controller.deleteConversation);
+router.put("/:id", controller.updateConversation)
 
 export default router;

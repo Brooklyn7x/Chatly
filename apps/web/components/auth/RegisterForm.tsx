@@ -17,6 +17,7 @@ import { RegisterInput, registerSchema } from "@/types/auth";
 import { useAuth } from "@/hooks/useAuth";
 import useAuthStore from "@/store/useAuthStore";
 import { LoaderIcon } from "lucide-react";
+import { toast } from "sonner";
 
 interface SignUpFormProps {
   showLogin: () => void;
@@ -39,8 +40,9 @@ const RegisterForm = ({ showLogin }: SignUpFormProps) => {
   const onSubmit = async (data: RegisterInput) => {
     try {
       await register(data);
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch (error: any) {
+      toast.error(error.message);
+      console.log("Registration error:", error.message);
     }
   };
 
