@@ -1,11 +1,8 @@
-"use client";
-
-import { useCallback, useEffect } from "react";
-import { useUIStore } from "@/store/useUiStore";
 import { useChatStore } from "@/store/useChatStore";
-import ChatWindow from "@/components/chat/ChatWindow";
+import { useUIStore } from "@/store/useUiStore";
+import { useCallback, useEffect } from "react";
 
-export default function MainLayout() {
+export function useLayout() {
   const { isMobile, setIsMobile } = useUIStore();
   const { activeChatId } = useChatStore();
 
@@ -19,5 +16,8 @@ export default function MainLayout() {
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  return (!isMobile || activeChatId) && <ChatWindow />;
+  return {
+    isMobile,
+    activeChatId,
+  };
 }

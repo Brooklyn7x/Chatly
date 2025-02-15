@@ -12,7 +12,7 @@ interface AuthGuardProps {
 
 const PUBLIC_PATHS = ["/auth"];
 const DEFAULT_AUTH_PATH = "/auth";
-const DEFAULT_PRIVATE_PATH = "/chat";
+const DEFAULT_PRIVATE_PATH = "/";
 
 export default function AuthGuard({
   children,

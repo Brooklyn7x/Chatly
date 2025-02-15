@@ -1,15 +1,19 @@
 import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
-import { Message, MessageResponse } from "@/types/message";
+import { MessageResponse } from "@/types/message";
 import { socketService } from "@/services/socket/socketService";
 
 export const useMessageSocket = () => {
-  const { addMessage, updateMessageStatus, updateMessage } = useMessageStore();
+  const { addMessage, updateMessageStatus } = useMessageStore();
 
   useEffect(() => {
-    const handleNewMessage = (message: Message) => {
-      console.log(message, "New Message");
-      addMessage(message);
+    const handleNewMessage = (message: any) => {
+      const messageData = message._doc ? message._doc : message;
+      addMessage({
+        ...messageData,
+        _id: messageData._id || `temp-${Date.now()}`,
+        status: "sent",
+      });
     };
 
     const handleMessageSent = (response: MessageResponse) => {

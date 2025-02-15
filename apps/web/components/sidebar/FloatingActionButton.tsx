@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Pencil, User, Users, Volume, X } from "lucide-react";
 type ViewType =
   | "main"
@@ -22,7 +23,12 @@ export const FloatingActionButton = ({ view, onViewChange }: FBAProps) => {
   return (
     <div className="absolute bottom-6 right-6">
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-48 border bg-background/70 backdrop-blur-md rounded-lg shadow-xl py-2">
+        <motion.div
+          initial={{}}
+          animate={{}}
+          exit={{}}
+          className="absolute bottom-16 right-0 w-48 border bg-background/70 backdrop-blur-md rounded-lg shadow-xl py-2"
+        >
           <button
             onClick={() => onViewChange("new_message")}
             className="flex items-center px-4 py-2 hover:bg-hover w-full"
@@ -44,7 +50,7 @@ export const FloatingActionButton = ({ view, onViewChange }: FBAProps) => {
             <User className="w-5 h-5 mr-3" />
             New Channel
           </button>
-        </div>
+        </motion.div>
       )}
       <button
         onClick={() => setIsOpen((prev) => !prev)}

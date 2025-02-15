@@ -60,28 +60,8 @@ export class MessageService extends BaseService {
           : null,
       };
 
-      // if (conversation.type === "direct") {
-      //   const receiver = conversation.participants.find(
-      //     (p: any) => p.userId.toString() !== senderId
-      //   );
-      //   if (receiver) {
-      //     messageObj.receiverId = receiver.userId;
-      //   }
-      // }
-
       const message = new MessageModel(messageObj);
       const savedMessage = await message.save();
-
-      // await this.db.update(
-      //   "Conversation",
-      //   { _id: conversation._id },
-      //   {
-      //     me: savedMessage._id,
-      //     lastMessageAt: new Date(),
-      //   }
-      // );
-
-      // await savedMessage.markAsDelivered(senderId);
 
       return {
         success: true,
@@ -96,69 +76,31 @@ export class MessageService extends BaseService {
     }
   }
 
-  // async getMessages(
-  //   conversationId: string,
-  //   limit: number = 20,
-  //   before?: Date
-  // ): Promise<ServiceResponse<any[]>> {
-  //   try {
-  //     if (!mongoose.isValidObjectId(conversationId)) {
-  //       this.logger.error(`Invalid conversation ID format: ${conversationId}`);
-  //       return {
-  //         success: false,
-  //         error: "Invalid conversation ID format",
-  //       };
-  //     }
-
-  //     const query = before
-  //       ? { conversationId, timestamp: { $lt: before } }
-  //       : { conversationId };
-
-  //     const message = await this.db.find("Message", query, {
-  //       sort: { timestamp: -1 },
-  //       limit,
-  //     });
-
-  //     // await this.cacheMessage(message);
-
-  //     return {
-  //       success: true,
-  //       data: message,
-  //     };
-  //   } catch (error) {
-  //     this.logger.error("Error fetching messages:", error);
-  //     return {
-  //       success: false,
-  //       error: "Failed to fetch messages",
-  //     };
-  //   }
-  // }
-
-
   async getMessages(
     conversationId: string,
     limit: number = 20,
     before?: Date
   ): Promise<ServiceResponse<any[]>> {
+    console.log(conversationId, "message-data");
     try {
-      const query: any = { 
+      const query: any = {
         conversationId: new mongoose.Types.ObjectId(conversationId),
-        deleted: false 
+        deleted: false,
       };
-      
+
       if (before) {
         query.createdAt = { $lt: before };
       }
-  
+
       const messages = await MessageModel.find(query)
         .sort({ createdAt: -1 })
         .limit(limit)
-        .populate('senderId', 'username avatar')
+        .populate("metadata", "username avatar")
         .lean();
-  
+
       return {
         success: true,
-        data: messages.map(msg => this.formatMessage(msg))
+        data: messages.map((msg) => this.formatMessage(msg)),
       };
     } catch (error) {
       this.logger.error("Error fetching messages:", error);
@@ -226,7 +168,6 @@ export class MessageService extends BaseService {
     metadata?: Record<string, any>
   ): Promise<ServiceResponse<any>> {
     try {
-      // Validation
       if (!content?.trim() || content.length > 2000) {
         return {
           success: false,
@@ -243,7 +184,6 @@ export class MessageService extends BaseService {
         return { success: false, error: "Message not found or unauthorized" };
       }
 
-      // 15-minute edit window
       const editWindow = 15 * 60 * 1000;
       if (Date.now() - message.createdAt.getTime() > editWindow) {
         return {
@@ -439,9 +379,8 @@ export class MessageService extends BaseService {
 
   private formatMessage(message: any): Message {
     return {
-      ...message.toObject(),
-      _id: message._id.toString(),
-      senderId: message.senderId.toString(),
+      ...message,
+      _id: message._id,
       receiverId: message.receiverId?.toString(),
       conversationId: message.conversationId.toString(),
     };

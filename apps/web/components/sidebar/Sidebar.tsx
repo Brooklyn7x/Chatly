@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { useUIStore } from "@/store/useUiStore";
 import { cn } from "@/lib/utils";
-import { useChatStore } from "@/store/useChatStore";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { FloatingActionButton } from "./FloatingActionButton";
+import { useLayout } from "@/hooks/useLayout";
 
 export default function SideBar() {
-  const { isMobile } = useUIStore();
-  const { activeChatId } = useChatStore();
+  const { isMobile, activeChatId } = useLayout();
 
   const [view, setView] = useState<
     | "main"
@@ -24,19 +23,19 @@ export default function SideBar() {
   >("main");
 
   return (
-    <aside
+    <div
       className={cn(
         "w-full md:w-[420px] md:border-r",
         "flex flex-col relative",
         isMobile && activeChatId ? "-translate-x-full" : "translate-x-0",
-        "transition-[transform,width] duration-200 ease-in-out",
         "md:translate-x-0",
+        "backdrop-blur-sm bg-background/60",
         isMobile ? "absolute inset-y-0 left-0 z-10" : "relative"
       )}
     >
       <SidebarHeader view={view} onViewChange={setView} />
       <SidebarContent view={view} onBack={() => setView("main")} />
       <FloatingActionButton view={view} onViewChange={setView} />
-    </aside>
+    </div>
   );
 }

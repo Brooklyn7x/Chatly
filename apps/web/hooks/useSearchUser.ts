@@ -1,7 +1,7 @@
 import { UserApi } from "@/services/api/users";
 import { useEffect, useState } from "react";
 
-export const useSearch = (query: string) => {
+export const useSearchUser = (query: string) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

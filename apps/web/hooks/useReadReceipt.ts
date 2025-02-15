@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useChatSocket } from "./useChatSocket";
+
 import { Message } from "@/types/message";
+import { useMessage } from "./useMessage";
 
 export const useReadReceipts = (
   conversationId: string | null,
@@ -8,7 +9,7 @@ export const useReadReceipts = (
   userId?: string
 ) => {
   const processedMessagesRef = useRef<Set<string>>(new Set());
-  const { markAsRead } = useChatSocket(conversationId || "");
+  const { markAsRead } = useMessage(conversationId);
   const batchTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {

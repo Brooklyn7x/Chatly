@@ -1,21 +1,18 @@
-import { socketService } from "@/services/socket/socketService";
-import useUserStatusStore from "@/store/useUserStatusStore";
-import { useEffect } from "react";
+import { useUserStatusStore } from "@/store/useUserStatusStore";
 
-export const useUserStatus = (userId: string) => {
-  const { userStatus, setUserStatus } = useUserStatusStore();
-
-  useEffect(() => {
-    const handleStatus = (data: { userId: string; status: any }) => {
-      setUserStatus(data.userId, data.status);
-    };
-    socketService.on("user:status", handleStatus);
-    return () => {
-      socketService.off("user:status", handleStatus);
-    };
-  }, []);
+export const useUserStatus = (userId?: string) => {
+  const status = useUserStatusStore((state) =>
+    userId ? state.statusMap[userId] : null
+  );
 
   return {
-    isOnline: userId ? userStatus[userId] === "online" : false,
+    status: status?.status || "offline",
+    lastSeen: status?.lastSeen || "",
+    isOnline: status?.status === "online",
+    getStatusText: () => {
+      if (!status) return "Offline";
+      if (status.status === "online") return "Online";
+      return `Last seen ${new Date(status.lastSeen).toLocaleTimeString()}`;
+    },
   };
 };

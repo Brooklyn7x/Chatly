@@ -87,18 +87,26 @@ export class SocketService extends EventEmitter {
       this.emit("message:error", error);
     });
 
-    this.socket.on("typing:start", (data: TypingData) => {
+    this.socket.on("typing:start", (data: any) => {
       this.emit("typing:start", data);
     });
 
-    this.socket.on("typing:stop", (data: TypingData) => {
+    this.socket.on("typing:stop", (data: any) => {
       this.emit("typing:stop", data);
+    });
+
+    this.socket.on("typing:update", (data: any) => {
+      this.emit("typing:update", data);
     });
 
     this.socket.on("chat:joined", () => {});
     this.socket.on("chat:left", () => {});
     this.socket.on("chat:updated", () => {});
     this.socket.on("chat:error", () => {});
+
+    this.socket.on("group:joined", (data) => {
+      this.emit("group:joined", data);
+    });
 
     this.socket.on("group:created", (data) => {
       this.emit("group:created", data);
@@ -132,8 +140,8 @@ export class SocketService extends EventEmitter {
       this.emit("group:error", error);
     });
 
-    this.socket.on("user:status", (data: { userId: string; status: any }) => {
-      this.emit("user:status", data);
+    this.socket.on("user:status_change", (data: any) => {
+      this.emit("user:status_change", data);
     });
   }
 
@@ -150,7 +158,6 @@ export class SocketService extends EventEmitter {
 
   markMessageAsRead(chatId: string, messageIds: string[]) {
     if (!this.socket?.connected) return;
-
     this.socket.emit("message:read", {
       conversationId: chatId,
       messageIds,
@@ -217,9 +224,9 @@ export class SocketService extends EventEmitter {
     }
   }
 
-  joinGroup(data: any) {
+  joinGroup(data: { groupId: string }) {
     if (this.socket?.connected) {
-      this.socket.emit("group:join", { data });
+      this.socket.emit("group:join", data);
     }
   }
 
@@ -255,8 +262,6 @@ export class SocketService extends EventEmitter {
 
   updateUserStatus() {}
   updateAwayStatus() {}
-
-  //notification
 
   disconnect() {
     this.socket?.disconnect();

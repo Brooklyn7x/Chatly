@@ -1,82 +1,57 @@
 import { chatApi } from "@/services/api/chat";
-import { socketService } from "@/services/socket/socketService";
 import { useChatStore } from "@/store/useChatStore";
-import { useEffect } from "react";
+import { useState, useCallback } from "react";
 
 export const useChats = () => {
-  const { chats, isLoading, error, setChats, addChats, setLoading, setError } =
-    useChatStore();
+  const { setChats, addChats } = useChatStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        setLoading(false);
-        const { data } = await chatApi.getChats();
-        setChats(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch chats");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChats();
-  }, []);
-
-  const createChat = async (participantIds: string[]) => {
+  const fetchChats = useCallback(async () => {
     try {
-      const tempId = new Date();
+      setIsLoading(true);
+      const { data } = await chatApi.getChats();
+      setChats(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch chats");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setChats]);
+
+  const createChat = async (participantIds: any[], title?: string) => {
+    try {
+      setIsLoading(true);
       const payload = {
-        tempId,
-        type: "direct",
+        type: participantIds.length > 1 ? "group" : "direct",
         participantIds: participantIds,
         metadata: {
-          title: "",
-          description: "Direct conversation",
-          avatar: "/user.png",
+          title: participantIds.length > 1 ? title : null,
+          description:
+            participantIds.length > 1
+              ? "Group conversation"
+              : "Private conversation",
+          avatar: null,
           isArchived: false,
           isPinned: false,
         },
       };
-      // addChats(payload);
-      console.log(payload, "new chat payload");
-      socketService.chatCreate(payload);
-    } catch (err) {
-      console.error(err);
+      const { data } = await chatApi.createChat(payload);
+      console.log(data, "chat-data");
+      addChats(data);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Failed to create chat"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // const deleteChat = async (chatId: string) => {
-  //   try {
-  //     setLoading(true);
-  //     const { data } = await chatApi.deleteChat(chatId);
-  //     console.log(data, "delete-chat-data");
-  //     if (data.success) {
-  //       deleteChat(chatId);
-  //     }
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error ? error.message : "Failed to delete chat"
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  const deleteChat = (chatId: string) => {
-    try {
-      socketService.chatDelete(chatId);
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return {
-    chats,
+    fetchChats,
     createChat,
-    deleteChat,
     isLoading,
     error,
   };
 };
-function uuidv4(): any {
-  throw new Error("Function not implemented.");
-}

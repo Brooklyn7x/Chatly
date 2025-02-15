@@ -7,13 +7,7 @@ import { UserStatus } from "../types/user.types";
 import { BaseService } from "./baseService";
 import { ConversationService } from "./conversationService";
 import { AttachmentType, MessageStatus, MessageType } from "../types/message";
-import { FileService } from "./fileService";
 import { GroupService } from "./groupService";
-import {
-  ConversationType,
-  CreateChatDTO,
-  ParticipantRole,
-} from "../types/conversation";
 
 export class SocketService extends BaseService {
   private static instance: SocketService;
@@ -21,9 +15,9 @@ export class SocketService extends BaseService {
   private messageService: MessageService;
   private userService: UserService;
   private conversationService: ConversationService;
-  private fileService: FileService;
   private groupService: GroupService;
   private onlineUsers: Map<string, string>;
+  private typingUsers: Map<string, Set<string>>;
 
   constructor() {
     super("SocketService");
@@ -31,8 +25,8 @@ export class SocketService extends BaseService {
     this.authService = new AuthService();
     this.userService = new UserService();
     this.conversationService = new ConversationService();
-    this.fileService = new FileService();
     this.onlineUsers = new Map();
+    this.typingUsers = new Map();
     this.groupService = new GroupService();
     this.setUpSocketHandler();
     BaseService.setSocketService(this);
@@ -78,7 +72,6 @@ export class SocketService extends BaseService {
       await this.setupUserConnection(socket);
       this.setupConnection(socket);
       this.setupMessageHandlers(socket);
-      this.setupUserStatusHandlers(socket);
       this.setupChatHandlers(socket);
       this.setupGroupHandlers(socket);
       this.setupNotificationHandlers(socket);
@@ -90,15 +83,10 @@ export class SocketService extends BaseService {
 
   private async setupUserConnection(socket: Socket) {
     const { userId } = socket.data;
-    socket.join(`user:${userId}`);
-    this.logger.info(`user join ${userId}`);
     this.onlineUsers.set(userId, socket.id);
+    socket.join(`user:${userId}`);
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
-    const conversations =
-      await this.conversationService.getConversationsByUser(userId);
-    for (const conv of conversations.data || []) {
-      socket.join(`conversation:${conv._id}`);
-    }
+    this.broadcastUserStatus(userId, UserStatus.ONLINE);
   }
 
   private async setupConnection(socket: Socket) {
@@ -116,131 +104,27 @@ export class SocketService extends BaseService {
     });
   }
 
-  private setupUserStatusHandlers(socket: Socket) {
-    socket.on("user:status_change", async (data) => {});
-    socket.on("user:away", async () => {});
-  }
-
   private setupChatHandlers(socket: Socket) {
     const { userId } = socket.data;
-    socket.on("chat:create", async (data: CreateChatDTO) => {
-      try {
-        if (!data.participantIds?.length) {
-          throw new Error("Participants are required");
-        }
-
-        const createDirectChat = {
-          type: ConversationType.DIRECT,
-          participantIds: data.participantIds,
-          metadata: {
-            title: data.metadata?.title,
-            description: data.metadata?.description,
-            avatar: data.metadata?.avatar,
-            isArchived: false,
-            isPinned: false,
-          },
-        };
-
-        const result = await this.conversationService.createConversation(
-          userId,
-          createDirectChat
-        );
-
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-
-        await socket.join(`chat:${result.data.id}`);
-
-        console.log(result, "result");
-
-        socket.emit("chat:created", {
-          tempId: data.tempId,
-          conversationId: result.data._id,
-          type: result.data.type,
-          participants: result.data.participants,
-          metadata: result.data.metadata,
-          createdAt: result.data.createdAt,
-        });
-
-        const otherParticipant = result.data.participants.find(
-          (p: any) => p.userId.toString() !== userId
-        );
-
-        if (otherParticipant) {
-          this.sendToUser(otherParticipant.userId, "chat:new", {
-            conversationId: result.data._id,
-            type: result.data.type,
-            participants: result.data.participants,
-            metadata: result.data.metadata,
-            createdAt: result.data.createdAt,
-            createdBy: userId,
-          });
-        }
-      } catch (error) {
-        this.handleError(socket, "chat:error", error);
-      }
-    });
-
-    socket.on("chat:delete", async (chatId: string) => {
-      try {
-        const conversation =
-          await this.conversationService.getConversationById(chatId);
-
-        if (!conversation.success) {
-          throw new Error("Conversation not found");
-        }
-
-        const userParticipant = conversation.data.participants.find(
-          (p: any) => p.userId.toString() === userId
-        );
-
-        if (
-          !userParticipant ||
-          userParticipant.role !== ParticipantRole.OWNER
-        ) {
-          throw new Error("Unauthorized to delete conversation");
-        }
-
-        const result = await this.conversationService.deleteConversation(
-          chatId,
-          userId
-        );
-
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-
-        conversation.data.participants.forEach((participant: any) => {
-          this.sendToUser(participant.userId, "chat:deleted", {
-            conversationId: chatId,
-            deletedBy: userId,
-            deletedAt: new Date(),
-          });
-        });
-
-        io.in(`chat:${chatId}`).socketsLeave(`chat:${chatId}`);
-      } catch (error) {
-        this.handleError(socket, "chat:error", error);
-      }
-    });
 
     socket.on("chat:join", async (data) => {
       try {
         await socket.join(`chat:${data.chatId}`);
+        this.logger.info(`chat:${data.chatId} joined room`);
         socket.to(`chat:${data.chatId}`).emit("chat:joined", {
-          userId: data.userId,
+          userId,
           chatId: data.chatId,
         });
       } catch (error) {
         this.handleError(socket, "chat:error", error);
       }
     });
+
     socket.on("chat:leave", async (data) => {
       try {
         await socket.leave(`chat:${data.chatId}`);
         socket.to(`chat:${data.chatId}`).emit("chat:left", {
-          userId: data.userId,
+          userId,
           chatId: data.chatId,
         });
       } catch (error) {
@@ -263,7 +147,31 @@ export class SocketService extends BaseService {
   private setupGroupHandlers(socket: Socket): void {
     const { userId } = socket.data;
 
-    // Group Creation
+    socket.on("group:join", async (data: { groupId: string }) => {
+      console.log(data.groupId, "socket.data");
+      try {
+        await socket.join(`group:${data.groupId}`);
+        this.logger.info(`group:${data.groupId} joint the group`);
+        socket.to(`group:${data.groupId}`).emit("group:joined", {
+          userId: userId,
+          groupId: data.groupId,
+        });
+      } catch (error) {
+        this.handleError(socket, "group:error", error);
+      }
+    });
+    socket.on("group:leave", async (data) => {
+      try {
+        await socket.leave(`group:${data.groupId}`);
+        socket.to(`group:${data.groupId}`).emit("group:left", {
+          userId: data.userId,
+          groupId: data.groupId,
+        });
+      } catch (error) {
+        this.handleError(socket, "group:error", error);
+      }
+    });
+
     socket.on(
       "group:create",
       async (data: {
@@ -272,9 +180,8 @@ export class SocketService extends BaseService {
         metadata?: any;
       }) => {
         try {
-          console.log(data, "group-data");
-
           const { name, participantIds, metadata } = data;
+
           const result = await this.groupService.createGroup(
             userId,
             name,
@@ -283,7 +190,6 @@ export class SocketService extends BaseService {
           );
 
           if (result.success) {
-            // Add all participants to the group room
             result.data.participants.forEach((p: any) => {
               const participantSocket = this.onlineUsers.get(p.userId);
               if (participantSocket) {
@@ -313,7 +219,6 @@ export class SocketService extends BaseService {
       }
     );
 
-    // Group Settings Update
     socket.on(
       "group:update_settings",
       async (data: {
@@ -350,7 +255,6 @@ export class SocketService extends BaseService {
       }
     );
 
-    // Member Management
     socket.on(
       "group:add_member",
       async (data: { groupId: string; userId: string }) => {
@@ -423,7 +327,6 @@ export class SocketService extends BaseService {
       }
     );
 
-    // Group Deletion
     socket.on("group:delete", async (groupId: string) => {
       try {
         const result = await this.groupService.deleteGroup(groupId, userId);
@@ -476,7 +379,6 @@ export class SocketService extends BaseService {
       }
     );
 
-    // Group Invitations
     socket.on(
       "group:invite",
       async (data: { groupId: string; userId: string; message?: string }) => {
@@ -510,11 +412,7 @@ export class SocketService extends BaseService {
     );
   }
 
-  //auth auth:login, auth:logout auth:status
-  //read Receipts //delivered,read,seen
-
   private setupMessageHandlers(socket: Socket): void {
-    //edit,delete,pin,unpin,reply,react,read,delivered,read,seen
     const { userId } = socket.data;
     socket.on("message:send", async (data) => {
       try {
@@ -531,15 +429,11 @@ export class SocketService extends BaseService {
             timestamp: new Date(),
           });
         }
+
         await this.deliverMessage(result.data);
       } catch (error) {
         this.handleError(socket, "message:error", error);
       }
-    });
-
-    socket.on("message:delivered", async () => {
-      try {
-      } catch (error) {}
     });
 
     socket.on(
@@ -630,112 +524,44 @@ export class SocketService extends BaseService {
     });
   }
 
-  private setupChannelHandlers(socket: Socket) {
-    //create,delete,join,leave,post,update
-  }
-
-  private setupFileHandlers(socket: Socket) {
-    // socket.on("file:upload", async (data) => {
-    //   try {
-    //     const fileBuffer = Buffer.from(data.file, "base64");
-    //     const fileData = {
-    //       buffer: fileBuffer,
-    //       originalname: data.originalname,
-    //       mimetype: data.mimetype,
-    //       size: data.size,
-    //       mimeType: data.mimetype,
-    //     };
-    //     const uploadResult = await this.fileService.uploadFile(
-    //       fileData,
-    //       socket.data.userId,
-    //       data.conversationId
-    //     );
-    //     if (uploadResult.success) {
-    //       console.log(uploadResult.data, "File upload successful");
-    //       const messageData = {
-    //         _id: uploadResult.data._id,
-    //         conversationId: data.conversationId,
-    //         senderId: socket.data.userId,
-    //         receiverId: data.receiverId,
-    //         content: "content",
-    //         // metadata: {s
-    //         //   attachments: {
-    //         //     id: uploadResult.data._id,
-    //         //     type: AttachmentType.IMAGE,
-    //         //     url: uploadResult.data.url,
-    //         //     size: uploadResult.data.size,
-    //         //     name: uploadResult.data.originalName,
-    //         //   },
-    //         // },
-    //         type: MessageType.IMAGE,
-    //         status: MessageStatus.SENDING,
-    //         timestamp: new Date().toISOString(),
-    //       };
-    //       const messageResult = await this.messageService.sendMessage(
-    //         socket.data.userId,
-    //         messageData
-    //       );
-    //       if (messageResult.success) {
-    //         socket.emit("file:uploaded", {
-    //           fileId: uploadResult.data.file.fileId,
-    //           messageId: messageResult.data._id,
-    //         });
-    //       }
-    //       const conversation =
-    //         await this.conversationService.getConversationById(
-    //           data.conversationId
-    //         );
-    //       if (conversation.success) {
-    //         if (conversation.data.type === "direct") {
-    //           await this.handleDirectMessage(
-    //             socket,
-    //             messageData,
-    //             messageResult
-    //           );
-    //         } else {
-    //           await this.handleGroupMessage(socket, messageData, messageResult);
-    //         }
-    //       }
-    //     } else {
-    //       socket.emit("file:error", { error: uploadResult.error });
-    //     }
-    //   } catch (error) {
-    //     this.logger.error("File upload error:", error);
-    //     socket.emit("file:error", { error: "File upload failed" });
-    //   }
-    // });
-  }
-
   private setupTypingHandlers(socket: Socket): void {
-    socket.on(
-      "typing:start",
-      (data: { conversationId: string; userId: string }) => {
-        try {
-          socket
-            .to(`conversation:${data.conversationId}`)
-            .emit("typing:start", {
-              userId: data.userId,
-              conversationId: data.conversationId,
-            });
-        } catch (error) {
-          this.logger.error("Typing indicator error:", error);
-        }
-      }
-    );
+    socket.on("typing:start", async (data: { conversationId: string }) => {
+      const { userId } = socket.data;
+      const { conversationId } = data;
 
-    socket.on(
-      "typing:stop",
-      (data: { conversationId: string; userId: string }) => {
-        try {
-          socket.to(`conversation:${data.conversationId}`).emit("typing:stop", {
-            userId: data.userId,
-            conversationId: data.conversationId,
-          });
-        } catch (error) {
-          this.logger.error("Typing indicator error:", error);
-        }
+      if (!this.typingUsers.has(conversationId)) {
+        this.typingUsers.set(conversationId, new Set());
       }
-    );
+
+      this.typingUsers.get(conversationId)?.add(userId);
+      socket.to(`chat:${conversationId}`).emit("typing:update", {
+        conversationId,
+        userIds: Array.from(this.typingUsers.get(conversationId) || []),
+      });
+    });
+
+    socket.on("typing:stop", async (data: { conversationId: string }) => {
+      const { userId } = socket.data;
+      const { conversationId } = data;
+
+      this.typingUsers.get(conversationId)?.delete(userId);
+      socket.to(conversationId).emit("typing:update", {
+        conversationId,
+        userIds: Array.from(this.typingUsers.get(conversationId) || []),
+      });
+    });
+
+    socket.on("disconnect", () => {
+      this.typingUsers.forEach((users, conversationId) => {
+        if (users.has(socket.data.userId)) {
+          users.delete(socket.data.userId);
+          socket.to(conversationId).emit("typing:update", {
+            conversationId,
+            userIds: Array.from(users),
+          });
+        }
+      });
+    });
   }
 
   private async deliverMessage(message: any): Promise<void> {
@@ -760,10 +586,7 @@ export class SocketService extends BaseService {
         io.to(`user:${receiverId}`).emit("message:new", messageData);
       }
     } else {
-      io.to(`conversation:${message.conversationId}`).emit(
-        "message:new",
-        messageData
-      );
+      io.to(`group:${message.conversationId}`).emit("message:new", messageData);
     }
   }
 
@@ -802,44 +625,15 @@ export class SocketService extends BaseService {
 
   private async handleDirectMessage(socket: Socket, data: any, result: any) {
     io.to(`user:${data.receiverId}`).emit("message:new", {
-      // ...result.data,
-      // _id: result.data._id,
-      // senderId: result.data.senderId,
-      // receiverId: data.receiverId,
-      // conversationType: "direct",
-      // timestamp: new Date(),
-      // status: MessageStatus.DELIVERED,
-      // sender: {
-      //   userId: result.data.senderId,
-      //   timestamp: new Date(),
-      // },
       data,
     });
   }
 
   private async handleDisconnect(socket: Socket) {
     const { userId } = socket.data;
-
-    try {
-      this.onlineUsers.delete(userId);
-
-      await this.userService.updateUserStatus(userId, UserStatus.OFFLINE);
-
-      io.emit("user:status", {
-        userId,
-        status: "offline",
-        timestamp: new Date(),
-      });
-
-      this.logger.info(`User ${userId} went offline (no active connections)`);
-    } catch (error) {
-      this.logger.error(`Disconnect error for user ${userId}:`, error);
-    }
-  }
-
-  private async handleReconnect(socket: Socket) {
-    try {
-    } catch (error) {}
+    this.onlineUsers.delete(userId);
+    await this.userService.updateUserStatus(userId, UserStatus.OFFLINE);
+    this.broadcastUserStatus(userId, UserStatus.OFFLINE);
   }
 
   public async sendToUser(
@@ -852,18 +646,6 @@ export class SocketService extends BaseService {
 
   public async broadcast(event: string, data: any): Promise<void> {
     io.emit(event, data);
-  }
-
-  private getAttachmentType(mimetype: string): AttachmentType {
-    if (mimetype.startsWith("image/")) return AttachmentType.IMAGE;
-    if (mimetype.startsWith("video/")) return AttachmentType.VIDEO;
-    if (mimetype.startsWith("audio/")) return AttachmentType.AUDIO;
-    return AttachmentType.DOCUMENT;
-  }
-
-  private getMessageType(mimetype: string): MessageType {
-    if (mimetype.startsWith("image/")) return MessageType.IMAGE;
-    return MessageType.FILE;
   }
 
   private broadcastUserStatus(userId: string, status: UserStatus): void {
@@ -881,5 +663,3 @@ export class SocketService extends BaseService {
     });
   }
 }
-
-const socketService = SocketService.getInstance();

@@ -6,9 +6,7 @@ import conversationRoutes from "./routes/conversationRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import { authenticate } from "./middleware/auth";
 import { config } from "./config/config";
-import { SocketService } from "./services/socketService";
 import { app, httpServer } from "./utils/socket";
-import { RedisService } from "./config/redis";
 
 app.use(express.json());
 app.use(
@@ -17,8 +15,8 @@ app.use(
     credentials: true,
   })
 );
-const socketService = SocketService.getInstance();
-const redis = RedisService.getInstance();
+// const socketService = SocketService.getInstance();
+// const redis = RedisService.getInstance();
 
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date().toISOString() });

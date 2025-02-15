@@ -1,6 +1,8 @@
 "use client";
-import { cn } from "@/lib/utils";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { ActionButton } from "../shared/ActionButton";
 import { GroupDetailsForm } from "../form/GroupDetailsForm";
 import { StepContainer } from "../modal/StepContainer";
@@ -8,33 +10,20 @@ import { UserList } from "../user/UserList";
 import { SelectUserList } from "../user/SelectedUserList";
 import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
+import { useSearchUser } from "@/hooks/useSearchUser";
+import { useChats } from "@/hooks/useChats";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearch } from "@/hooks/useSearch";
-import { toast } from "sonner";
-import { socketService } from "@/services/socket/socketService";
+interface GroupFormData {
+  name: string;
+  image: File | null;
+  selectedUserIds: Set<string>;
+}
 
 interface GroupChatProps {
   onClose: () => void;
 }
 
 export const GroupChat = ({ onClose }: GroupChatProps) => {
-  // const {
-  //   formData,
-  //   shouldRender,
-  //   step,
-  //   searchQuery,
-  //   previewImage,
-  //   selectedUsers,
-  //   users,
-  //   setStep,
-  //   setSearchQuery,
-  //   handleGroupNameChange,
-  //   handleImageChange,
-  //   handleNext,
-  //   handleUserToggle,
-  // } = useGroupChat(isOpen, onClose);
-
   const [step, setStep] = useState<"members" | "details">("members");
   const [searchQuery, setSearchQuery] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -44,16 +33,16 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
     selectedUserIds: new Set(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const { users } = useSearch("");
+  const { createChat } = useChats();
+  const { users } = useSearchUser(searchQuery);
 
   const selectedUsers = useMemo(
     () => users.filter((user) => formData.selectedUserIds.has(user._id)),
     [users, formData.selectedUserIds]
   );
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setStep("members");
     setFormData({
       name: "",
@@ -62,19 +51,22 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
     });
     setPreviewImage(null);
     setSearchQuery("");
-  };
+  }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, image: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const handleImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setFormData((prev) => ({ ...prev, image: file }));
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    []
+  );
 
   const handleUserToggle = useCallback((userId: string) => {
     setFormData((prev) => {
@@ -88,61 +80,60 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
     });
   }, []);
 
-  const handleNext = useCallback(() => {
-    if (step === "members" && formData.selectedUserIds.size > 0) {
-      setStep("details");
-    } else if (step === "details" && formData.name.trim()) {
-      handleSubmit();
-    }
-  }, [step, formData.selectedUserIds.size, error]);
+  const handleGroupNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, name: e.target.value }));
+    },
+    []
+  );
 
-  const handleGroupNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, name: e.target.value }));
-  };
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return;
 
-  const handleSubmit = async () => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      setError(null);
-
       if (formData.selectedUserIds.size === 0) {
         toast.error("Please select at least one user");
         return;
       }
-
       if (!formData.name.trim()) {
         toast.error("Please enter a group name");
         return;
       }
 
       const selectedUserIds = Array.from(formData.selectedUserIds);
-
-      // const selectedUsers = users.filter((user) =>
-      //   formData.selectedUserIds.has(user._id)
-      // );
-
-      const groupResponse = await socketService.createGroup({
-        name: formData.name.trim(),
-        participantIds: selectedUserIds,
-      });
-
-      console.log(selectedUsers, formData, "formdata");
-      // useChatStore.getState().createChat(selectedUsers, formData.name);
-
-      // resetForm();
-      // onClose();
+      await createChat(selectedUserIds, formData.name.trim());
+      toast.success("Group created successfully");
+      resetForm();
+      onClose();
     } catch (error) {
       toast.error("Failed to create group");
       console.error("Failed to create group:", error);
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [createChat, formData, isSubmitting, onClose, resetForm]);
+
+  const handleNext = useCallback(() => {
+    if (step === "members") {
+      if (formData.selectedUserIds.size > 0) {
+        setStep("details");
+      } else {
+        toast.error("Please select at least one user");
+      }
+    } else if (step === "details") {
+      if (formData.name.trim()) {
+        handleSubmit();
+      } else {
+        toast.error("Please enter a group name");
+      }
+    }
+  }, [step, formData, handleSubmit]);
 
   return (
-    <div className="fixed inset-0 ">
-      <div onClick={onClose} />
-      <div className="relative h-full w-full flex flex-col p-4">
+    <div className="fixed inset-0">
+      <div onClick={onClose} className="absolute inset-0 bg-black opacity-30" />
+      <div className="relative h-full w-full flex flex-col p-4 ">
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
             <header className="flex items-center gap-4 mb-4">
@@ -151,17 +142,14 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
                 Add Members ({formData.selectedUserIds.size})
               </h1>
             </header>
-
             <div className="mb-4">
               <SearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
                 placeholder="Search Users"
               />
-
               <SelectUserList users={selectedUsers} />
             </div>
-
             <UserList
               users={users}
               selectedUserIds={formData.selectedUserIds}
@@ -178,7 +166,6 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
                 icon={ArrowLeft}
               />
             </header>
-
             <GroupDetailsForm
               name={formData.name}
               onNameChange={handleGroupNameChange}
@@ -194,7 +181,8 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
           onClick={handleNext}
           disabled={
             (step === "members" && formData.selectedUserIds.size === 0) ||
-            (step === "details" && !formData.name.trim())
+            (step === "details" && !formData.name.trim()) ||
+            isSubmitting
           }
           icon={ArrowRight}
         />

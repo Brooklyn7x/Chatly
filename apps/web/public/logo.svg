@@ -1,50 +1,18 @@
-<svg width="82" height="40" viewBox="0 0 82 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Background -->
-    <rect width="82" height="40" rx="8" fill="#4F46E5"/>
-    
-    <!-- Left chat bubble -->
-    <path d="M12 12C12 10.8954 12.8954 10 14 10H30C31.1046 10 32 10.8954 32 12V20C32 21.1046 31.1046 22 30 22H14C12.8954 22 12 21.1046 12 20V12Z" 
-          fill="white" 
-          opacity="0.9">
-        <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
-    </path>
-    
-    <!-- Right chat bubble -->
-    <path d="M50 18C50 16.8954 50.8954 16 52 16H68C69.1046 16 70 16.8954 70 18V26C70 27.1046 69.1046 28 68 28H52C50.8954 28 50 27.1046 50 26V18Z" 
-          fill="white" 
-          opacity="0.7">
-        <animate attributeName="opacity" values="0.7;0.8;0.7" dur="2s" repeatCount="indefinite"/>
-    </path>
-    
-    <!-- Message lines in left bubble -->
-    <path d="M16 14H28" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
-    <path d="M16 18H24" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
-    
-    <!-- Message lines in right bubble -->
-    <path d="M54 20H66" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
-    <path d="M54 24H62" stroke="#4F46E5" stroke-width="2" stroke-linecap="round"/>
-    
-    <!-- Connecting dots -->
-    <circle cx="38" cy="20" r="2" fill="white">
-        <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="42" cy="20" r="2" fill="white">
-        <animate attributeName="opacity" values="1;0.3;1" dur="1s" begin="0.3s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="46" cy="20" r="2" fill="white">
-        <animate attributeName="opacity" values="1;0.3;1" dur="1s" begin="0.6s" repeatCount="indefinite"/>
-    </circle>
-    
-    <!-- Shine effect -->
-    <rect width="82" height="40" rx="8" fill="url(#shine)" fill-opacity="0.1"/>
-    
-    <defs>
-        <linearGradient id="shine" x1="0" y1="0" x2="82" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="white"/>
-            <stop offset="0.5" stop-color="white" stop-opacity="0"/>
-            <stop offset="1" stop-color="white"/>
-            <animate attributeName="x1" values="-82;82" dur="3s" repeatCount="indefinite"/>
-            <animate attributeName="x2" values="0;164" dur="3s" repeatCount="indefinite"/>
-        </linearGradient>
-    </defs>
+<svg
+  width="100"
+  height="100"
+  viewBox="0 0 64 64"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="chatGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00C6FF" />
+      <stop offset="100%" stop-color="#0072FF" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M32 4C17.664 4 6 15.664 6 30C6 38.832 10.644 46.84 17.124 52.124C16.812 55.112 16.048 59.108 16 62L16 62C16 62 20.4 60.56 23.5 59.024C26.768 57.364 30.536 56.024 32 56.024C46.336 56.024 58 44.36 58 30.024C58 15.688 46.336 4 32 4Z"
+    fill="url(#chatGradient)"
+  />
 </svg>

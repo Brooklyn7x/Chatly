@@ -5,20 +5,23 @@ import { NavigationButton } from "../shared/NavigationButton";
 import { SearchInput } from "../shared/SearchInput";
 import { UserList } from "../user/UserList";
 import { ActionButton } from "../shared/ActionButton";
-import { useChats } from "@/hooks/useChats";
+
 import { toast } from "sonner";
 import { useState } from "react";
-import { useSearch } from "@/hooks/useSearch";
+import { useSearchUser } from "@/hooks/useSearchUser";
+import { useChats } from "@/hooks/useChats";
+import { useChatStore } from "@/store/useChatStore";
 
 interface PrivateChatProps {
   onClose: () => void;
 }
 
-export const PrivateChat = ({ isOpen, onClose }: PrivateChatProps) => {
+export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { users } = useSearch("");
-  const { createChat } = useChats();
+  const { users } = useSearchUser("");
+  const { activeChatId } = useChatStore();
+  const { createChat } = useChats(activeChatId);
 
   const handleUserSelect = (userId: string) => {
     setSelectedUserId((prev) => (prev === userId ? null : userId));
@@ -32,8 +35,10 @@ export const PrivateChat = ({ isOpen, onClose }: PrivateChatProps) => {
         toast.error("Please select user");
         return;
       }
+
       await createChat([selectedUserId]);
-      // onClose();
+
+      onClose();
     } catch (error: any) {
       toast.error("Failed to create chat:", error);
     }

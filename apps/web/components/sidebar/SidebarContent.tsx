@@ -4,6 +4,7 @@ import { ErrorMessage } from "../shared/ErrorMessage";
 import { SearchView } from "./SearchView";
 import { PrivateChat } from "./PrivateChat";
 import { GroupChat } from "./GroupChat";
+import { GlobalSearch } from "./GlobalSearch";
 
 interface SidebarContentProps {
   view: string;
@@ -11,20 +12,10 @@ interface SidebarContentProps {
 }
 
 const SidebarContent = ({ view, onBack }: SidebarContentProps) => {
-  const { chats, isLoading, error } = useChats();
-
-  if (isLoading) {
-    <ChatListSkeleton />;
-  }
-
-  if (error) {
-    <ErrorMessage message={error} />;
-  }
-
   return (
     <div className="w-full flex-1 overflow-y-auto">
-      {view === "main" && <ChatList chats={chats} />}
-      {view === "search" && <SearchView query="" />}
+      {view === "main" && <ChatList />}
+      {view === "search" && <SearchView />}
       {view === "contacts" && <ContactList contacts={[]} />}
       {view === "archived" && <ArchivedChats />}
       {view === "settings" && <Settings />}

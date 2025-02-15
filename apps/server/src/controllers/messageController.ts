@@ -71,10 +71,9 @@ export class MessageController extends BaseController {
         res.status(400).json(result);
         return;
       }
-
       res.status(200).json(result);
     } catch (error) {
-      console.log("Error fetching messages:", error);
+      this.logger.error("Failed to fetch messages:", error);
       res.status(500).json({
         success: false,
         error: "Failed to fetch messages",

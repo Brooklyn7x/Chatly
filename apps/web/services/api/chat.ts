@@ -1,3 +1,4 @@
+import { handleApiError } from "@/lib/error";
 import { apiClient } from "./client";
 
 export const chatApi = {
@@ -6,7 +7,7 @@ export const chatApi = {
       const { data } = await apiClient.get("/chats/user-chats");
       return data;
     } catch (error) {
-      throw new Error(`Failed to fetch chat ${error}`);
+      handleApiError(error);
     }
   },
 
@@ -15,7 +16,7 @@ export const chatApi = {
       const { data } = await apiClient.get(`/chats/${chatId}`);
       return data;
     } catch (error) {
-      throw new Error(`Failed to fetch chat ${chatId}: ${error}`);
+      handleApiError(error);
     }
   },
 
@@ -24,7 +25,7 @@ export const chatApi = {
       const { data } = await apiClient.post("/chats", payload);
       return data;
     } catch (error) {
-      throw new Error(`Failed to create chat: ${error}`);
+      handleApiError(error);
     }
   },
 
@@ -32,7 +33,7 @@ export const chatApi = {
     try {
       await apiClient.delete(`/chats/${chatId}`);
     } catch (error) {
-      throw new Error(`Failed to delete chat ${chatId}: ${error}`);
+      handleApiError(error);
     }
   },
 };

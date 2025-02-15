@@ -1,9 +1,9 @@
 export interface Message {
   _id: string;
-  conversationId: string;
+  chatId: string;
   content: string;
   type: string;
-  senderId: string;
+  senderId:string
   receiverId: string;
   timestamp: string;
   status?: "sent" | "delivered" | "read";
