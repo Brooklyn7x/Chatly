@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 
 interface AddMemberProps {
   open: boolean;
-  onClose: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
   onAdd: () => void;
 }
 
@@ -30,10 +30,10 @@ const mockUsers = [
   { _id: "9", username: "User 3" },
 ];
 
-export const AddMemberDailog = ({ open, onClose }: AddMemberProps) => {
+export const AddMemberDailog = ({ open, onOpenChange }: AddMemberProps) => {
   const [selectedMember, setSelectedMember] = useState([]);
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>

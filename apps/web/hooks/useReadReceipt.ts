@@ -9,7 +9,7 @@ export const useReadReceipts = (
   userId?: string
 ) => {
   const processedMessagesRef = useRef<Set<string>>(new Set());
-  const { markAsRead } = useMessage(conversationId);
+  const { markAsRead } = useMessage(conversationId || "");
   const batchTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {

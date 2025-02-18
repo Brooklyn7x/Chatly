@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { BaseService } from "./baseService";
@@ -87,9 +88,67 @@ export class FileService extends BaseService {
     }
   }
 
-  async getFilePreview() {}
+  async getFile(fileId: string, userId: string): Promise<ServiceResponse<any>> {
+    try {
+      const fileRecord = await FileModel.findOne({
+        fileId,
+        uploadedBy: userId,
+      });
 
-  async deleteFile() {}
+      if (!fileRecord) {
+        return { success: false, error: "File not found or unauthorized" };
+      }
+
+      const url = await this.generateSignedUrl(fileRecord.s3Key);
+
+      return {
+        success: true,
+        data: {
+          ...fileRecord.toObject(),
+          url,
+        },
+      };
+    } catch (error) {
+      this.logger.error("File fetch error:", error);
+      return { success: false, error: "Failed to fetch file" };
+    }
+  }
+
+  async deleteFile(
+    fileId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const fileRecord = await FileModel.findOneAndDelete({
+        fileId,
+        uploadedBy: userId,
+      });
+
+      if (!fileRecord) {
+        return { success: false, error: "File not found or unauthorized" };
+      }
+
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.AWS_BUCKET_NAME,
+          Key: fileRecord.s3Key,
+        })
+      );
+
+      return {
+        success: true,
+        data: {
+          conversationId: fileRecord.conversationId,
+          fileId: fileRecord.fileId,
+        },
+      };
+    } catch (error) {
+      this.logger.error("File deletion error:", error);
+      return { success: false, error: "Failed to delete file" };
+    }
+  }
+
+  async getFilePreview() {}
 
   private async generateSignedUrl(s3Key: string): Promise<string> {
     const command = new GetObjectCommand({

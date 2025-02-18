@@ -31,7 +31,6 @@ export class ConversationService {
     data: CreateConversationDTO
   ): Promise<ServiceResponse<any>> {
     try {
-
       if (data.type === ConversationType.DIRECT) {
         const existing = await ConversationModel.findOne({
           type: ConversationType.DIRECT,
@@ -160,40 +159,25 @@ export class ConversationService {
     conversationId: string
   ): Promise<ServiceResponse<any>> {
     try {
-      const cacheConversation = await this.getCacheConversation(conversationId);
-
-      if (cacheConversation) {
-        return {
-          success: true,
-          data: cacheConversation,
-        };
-      }
-
-      const conversation = await this.db.findOne("Conversation", {
+      const conversation = await ConversationModel.findOne({
         _id: conversationId,
       });
 
       if (!conversation) {
         return {
           success: false,
-          error: "Conversation not found",
+          error: "Conversation not found or unauthorized",
         };
       }
 
       await this.cacheConversation(conversation);
-
-      return {
-        success: true,
-        data: conversation,
-      };
+      return { success: true, data: conversation };
     } catch (error) {
       this.logger.error("Error fetching conversation:", error);
-      return {
-        success: false,
-        error: "Failed to fetch conversation",
-      };
+      return { success: false, error: "Failed to fetch conversation" };
     }
   }
+
   async getAllConversations(
     conversationId: string,
     userId: string
@@ -210,7 +194,7 @@ export class ConversationService {
 
       const conversations = await ConversationModel.findOne({
         _id: conversationId,
-        "participants": userId
+        participants: userId,
       });
 
       if (!conversations) {
@@ -530,5 +514,73 @@ export class ConversationService {
       }),
       {}
     );
+  }
+
+  async updateConversation(
+    conversationId: string,
+    userId: string,
+    updateData: any
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const conversation = await ConversationModel.findOneAndUpdate(
+        {
+          _id: conversationId,
+          "participants.userId": userId,
+          "participants.role": ParticipantRole.OWNER,
+        },
+        { $set: updateData },
+        { new: true }
+      );
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found or unauthorized",
+        };
+      }
+
+      await this.cacheConversation(conversation);
+      return { success: true, data: conversation };
+    } catch (error) {
+      this.logger.error("Error updating conversation:", error);
+      return { success: false, error: "Failed to update conversation" };
+    }
+  }
+
+  async markAsRead(
+    conversationId: string,
+    userId: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      const conversation = await ConversationModel.findOneAndUpdate(
+        {
+          _id: conversationId,
+          "participants.userId": userId,
+        },
+        {
+          $set: {
+            "participants.$[elem].lastReadAt": new Date(),
+            "unreadCount.$[elem].count": 0,
+          },
+        },
+        {
+          arrayFilters: [{ "elem.userId": userId }],
+          new: true,
+        }
+      );
+
+      if (!conversation) {
+        return {
+          success: false,
+          error: "Conversation not found",
+        };
+      }
+
+      await this.cacheConversation(conversation);
+      return { success: true, data: conversation };
+    } catch (error) {
+      this.logger.error("Error marking conversation as read:", error);
+      return { success: false, error: "Failed to mark conversation as read" };
+    }
   }
 }

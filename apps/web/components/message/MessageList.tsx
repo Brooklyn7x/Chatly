@@ -4,16 +4,19 @@ import { MessageBubble } from "./MessageBubble";
 import { useMessages } from "@/hooks/useMessages";
 import { useChatStore } from "@/store/useChatStore";
 import useAuthStore from "@/store/useAuthStore";
+import { useTypingIndicator } from "@/hooks/useTypingIndicator";
+import { TypingIndicator } from "../shared/TypingIndicator";
 
-interface MessageListProps {}
-
-export default function MessageList({}: MessageListProps) {
-  const { user } = useAuthStore();
-  const { activeChatId } = useChatStore();
+export default function MessageList() {
+  const [isNearBottom, setIsNearBottom] = useState(true);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isNearBottom, setIsNearBottom] = useState(true);
+  const { user } = useAuthStore();
+  const { activeChatId } = useChatStore();
   const { messages, isLoading, error } = useMessages(activeChatId || "");
+  const { isTyping, typingUsers } = useTypingIndicator(activeChatId || "");
+  console.log(isTyping, typingUsers, "isTyping");
+
   const scrollToBottom = () => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -62,6 +65,13 @@ export default function MessageList({}: MessageListProps) {
           ))
         )}
       </div>
+
+      {isTyping && (
+        <div className="py-2">
+          <TypingIndicator />
+        </div>
+      )}
+
       {!isNearBottom && (
         <button
           onClick={scrollToBottom}

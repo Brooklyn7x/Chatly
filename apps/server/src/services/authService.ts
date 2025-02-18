@@ -90,7 +90,7 @@ export class AuthService {
         await this.incrementLoginAttempts(data.email);
         return {
           success: false,
-          error: "Invalid data",
+          error: "Invalid Password",
         };
       }
 

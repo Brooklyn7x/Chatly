@@ -28,7 +28,7 @@ export const ChatContainer = () => {
     <div
       className={cn(
         "flex flex-col h-full",
-        "dark:bg-neutral-900",
+        "bg-background",
         "transition-transform duration-300",
         {
           "fixed inset-0 z-50": isMobile,

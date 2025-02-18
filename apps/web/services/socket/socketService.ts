@@ -2,11 +2,6 @@ import { io, Socket } from "socket.io-client";
 import { EventEmitter } from "events";
 import useAuthStore from "@/store/useAuthStore";
 
-interface TypingData {
-  conversationId: string;
-  userId: string;
-}
-
 export class SocketService extends EventEmitter {
   private socket: Socket | null = null;
   private readonly MAX_RECONNECT_ATTEMPTS = 5;
@@ -49,12 +44,6 @@ export class SocketService extends EventEmitter {
       this.emit("disconnected", reason);
     });
 
-    this.socket.on("chat:created", (response: any) => {
-      this.emit("chat:created", response);
-    });
-    this.socket.on("chat:new", (respone: any) => {
-      this.emit("chat:new", respone);
-    });
     this.socket.on("chat:error", (error: any) => {
       this.emit("chat:error", error);
     });
@@ -66,10 +55,6 @@ export class SocketService extends EventEmitter {
     this.socket.on("message:sent", (response: any) => {
       this.emit("message:sent", response);
     });
-
-    // this.socket.on("message:delivered", (messageId: string) => {
-    //   this.emit("message:delivered", messageId);
-    // });
 
     this.socket.on(
       "message:read:ack",
@@ -95,10 +80,6 @@ export class SocketService extends EventEmitter {
       this.emit("typing:stop", data);
     });
 
-    this.socket.on("typing:update", (data: any) => {
-      this.emit("typing:update", data);
-    });
-
     this.socket.on("chat:joined", () => {});
     this.socket.on("chat:left", () => {});
     this.socket.on("chat:updated", () => {});
@@ -106,14 +87,6 @@ export class SocketService extends EventEmitter {
 
     this.socket.on("group:joined", (data) => {
       this.emit("group:joined", data);
-    });
-
-    this.socket.on("group:created", (data) => {
-      this.emit("group:created", data);
-    });
-
-    this.socket.on("group:deleted", (data) => {
-      this.emit("group:deleted", data);
     });
 
     this.socket.on("group:member_added", (data) => {
@@ -164,18 +137,6 @@ export class SocketService extends EventEmitter {
     });
   }
 
-  chatCreate(data: any) {
-    if (this.socket?.connected) {
-      this.socket.emit("chat:create", data);
-    }
-  }
-
-  chatDelete(chatId: string) {
-    if (this.socket?.connected) {
-      this.socket.emit("chat:delete", chatId);
-    }
-  }
-
   joinChat(chatId: string) {
     if (this.socket?.connected) {
       this.socket.emit("chat:join", { chatId });
@@ -194,12 +155,6 @@ export class SocketService extends EventEmitter {
     }
   }
 
-  createGroup(data: any) {
-    if (this.socket?.connected) {
-      this.socket.emit("group:create", data);
-    }
-  }
-
   updateGroupSetting(data: any) {
     if (this.socket?.connected) {
       this.socket.emit("group:update_settings", { data });
@@ -215,12 +170,6 @@ export class SocketService extends EventEmitter {
   removeGroupMember(data: any) {
     if (this.socket?.connected) {
       this.socket.emit("group:remove_member", { data });
-    }
-  }
-
-  deleteGroup(data: any) {
-    if (this.socket?.connected) {
-      this.socket.emit("group:delete", { data });
     }
   }
 
@@ -253,15 +202,11 @@ export class SocketService extends EventEmitter {
 
   sendTypingStop(conversationId: string, userId: string) {
     if (!this.socket?.connected) return;
-    console.log("Sending typing stop:", conversationId);
     this.socket.emit("typing:stop", {
       conversationId,
       userId,
     });
   }
-
-  updateUserStatus() {}
-  updateAwayStatus() {}
 
   disconnect() {
     this.socket?.disconnect();

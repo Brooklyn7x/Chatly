@@ -16,18 +16,18 @@ import { Loading } from "../ui/loading";
 
 interface EditChatProps {
   open: boolean;
-  onClose: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void;
   onSubmit: () => void;
 }
 
-export function EditChatDailog({ open, onClose, onSubmit }: EditChatProps) {
+export function EditChatDailog({ open, onOpenChange, onSubmit }: EditChatProps) {
   const [data, setData] = useState({
     groupName: "Data",
     groupDescription: "Descropt",
   });
   const [isLoading, setIsLoading] = useState(false);
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Group</DialogTitle>

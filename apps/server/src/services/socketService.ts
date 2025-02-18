@@ -6,7 +6,7 @@ import { MessageService } from "./messageService";
 import { UserStatus } from "../types/user.types";
 import { BaseService } from "./baseService";
 import { ConversationService } from "./conversationService";
-import { AttachmentType, MessageStatus, MessageType } from "../types/message";
+import { MessageStatus } from "../types/message";
 import { GroupService } from "./groupService";
 
 export class SocketService extends BaseService {
@@ -110,7 +110,6 @@ export class SocketService extends BaseService {
     socket.on("chat:join", async (data) => {
       try {
         await socket.join(`chat:${data.chatId}`);
-        this.logger.info(`chat:${data.chatId} joined room`);
         socket.to(`chat:${data.chatId}`).emit("chat:joined", {
           userId,
           chatId: data.chatId,
@@ -379,37 +378,37 @@ export class SocketService extends BaseService {
       }
     );
 
-    socket.on(
-      "group:invite",
-      async (data: { groupId: string; userId: string; message?: string }) => {
-        try {
-          const groupResult =
-            await this.conversationService.getConversationById(data.groupId);
-          if (!groupResult.success) {
-            throw new Error("Group not found");
-          }
+    // socket.on(
+    //   "group:invite",
+    //   async (data: { groupId: string; userId: string; message?: string }) => {
+    //     try {
+    //       // const groupResult =
+    //       //   await this.conversationService.getConversationById(data.groupId);
+    //       // if (!groupResult.success) {
+    //       //   throw new Error("Group not found");
+    //       // }
 
-          const userResult = await this.userService.getUserById(data.userId);
-          if (!userResult.success) {
-            throw new Error("User not found");
-          }
+    //       const userResult = await this.userService.getUserById(data.userId);
+    //       if (!userResult.success) {
+    //         throw new Error("User not found");
+    //       }
 
-          this.sendToUser(data.userId, "group:invite_received", {
-            groupId: data.groupId,
-            groupName: groupResult.data.metadata.title,
-            invitedBy: userId,
-            message: data.message,
-          });
+    //       this.sendToUser(data.userId, "group:invite_received", {
+    //         groupId: data.groupId,
+    //         groupName: groupResult.data.metadata.title,
+    //         invitedBy: userId,
+    //         message: data.message,
+    //       });
 
-          socket.emit("group:invite_sent", {
-            groupId: data.groupId,
-            userId: data.userId,
-          });
-        } catch (error) {
-          this.handleError(socket, "group:error", error);
-        }
-      }
-    );
+    //       socket.emit("group:invite_sent", {
+    //         groupId: data.groupId,
+    //         userId: data.userId,
+    //       });
+    //     } catch (error) {
+    //       this.handleError(socket, "group:error", error);
+    //     }
+    //   }
+    // );
   }
 
   private setupMessageHandlers(socket: Socket): void {
@@ -532,9 +531,8 @@ export class SocketService extends BaseService {
       if (!this.typingUsers.has(conversationId)) {
         this.typingUsers.set(conversationId, new Set());
       }
-
       this.typingUsers.get(conversationId)?.add(userId);
-      socket.to(`chat:${conversationId}`).emit("typing:update", {
+      io.emit("typing:start", {
         conversationId,
         userIds: Array.from(this.typingUsers.get(conversationId) || []),
       });
@@ -543,12 +541,11 @@ export class SocketService extends BaseService {
     socket.on("typing:stop", async (data: { conversationId: string }) => {
       const { userId } = socket.data;
       const { conversationId } = data;
-
-      this.typingUsers.get(conversationId)?.delete(userId);
-      socket.to(conversationId).emit("typing:update", {
+      io.emit("typing:stop", {
         conversationId,
         userIds: Array.from(this.typingUsers.get(conversationId) || []),
       });
+      this.typingUsers.get(conversationId)?.delete(userId);
     });
 
     socket.on("disconnect", () => {
@@ -588,45 +585,6 @@ export class SocketService extends BaseService {
     } else {
       io.to(`group:${message.conversationId}`).emit("message:new", messageData);
     }
-  }
-
-  private async handleGroupMessage(socket: Socket, data: any, result: any) {
-    console.log("Group message handling", data, result);
-    try {
-      const conversation = await this.conversationService.getConversationById(
-        data.conversationId
-      );
-      if (!conversation.success) {
-        socket.emit("message:error", {
-          error: conversation.error,
-          messageId: data.messageId,
-        });
-        return;
-      }
-
-      io.to(`group:${data.conversationId}`).emit("message:new", {
-        ...result.data,
-        type: "group",
-        conversationType: "group",
-        conversationId: data.conversationId,
-        sender: {
-          userId: result.data.userId,
-          time: new Date(),
-        },
-      });
-    } catch (error) {
-      this.logger.error("Group message handling error", error);
-      socket.emit("message:error", {
-        error: "Failed to send message",
-        messageId: data.messageId,
-      });
-    }
-  }
-
-  private async handleDirectMessage(socket: Socket, data: any, result: any) {
-    io.to(`user:${data.receiverId}`).emit("message:new", {
-      data,
-    });
   }
 
   private async handleDisconnect(socket: Socket) {

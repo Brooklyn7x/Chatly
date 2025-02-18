@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "../user/UserAvatar";
+
 import { useMemo } from "react";
 import { Chat } from "@/types";
 import { useChatStore } from "@/store/useChatStore";
+import { UserAvatar } from "../shared/Avatar";
 
 interface ChatItemProps {
   chat: Chat;
@@ -52,7 +53,13 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
     >
       <div className="flex items-center gap-3">
         <div className="relative flex-shrink-0">
-          <UserAvatar size={"md"} />
+          {/* <img
+            src="https://api.dicebear.com/9.x/dylan/svg"
+            alt="avatat"
+            className="h-12 w-12 border rounded-full"
+          /> */}
+          <UserAvatar />
+          {/* <UserAvatar size={"md"} imageUrl={"https://api.dicebear.com/9.x/avataaars/svg?seed=Felix"}/> */}
           {/* {chat.participants[0]?.status === "online" && (
             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2" />
           )} */}
