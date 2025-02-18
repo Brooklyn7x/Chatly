@@ -10,7 +10,6 @@ export function useTypingSocket() {
       conversationId: string;
       userIds: string[];
     }) => {
-      console.log("Received typing update:", data);
       setTypingUsers(data.conversationId, data.userIds);
     };
 

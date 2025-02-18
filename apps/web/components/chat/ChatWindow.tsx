@@ -5,8 +5,6 @@ import { useUIStore } from "@/store/useUiStore";
 import { ChatInfo } from "./ChatInfo";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { useMessageSocket } from "@/hooks/useMessageSocket";
-import { useReadReceipts } from "@/hooks/useReadReceipt";
 import ChatHeader from "./ChatHeader";
 import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
@@ -25,11 +23,6 @@ export default function ChatWindow() {
   const { activeChatId } = useChatStore();
   const { messages, isLoading, error } = useMessages(activeChatId || "");
   const { isTyping } = useTypingIndicator(activeChatId, user?._id);
-  const { chat } = useChats(activeChatId);
-
-  // useGroupSocket(chat?.type === "group" ? chat?._id : "");
-  // useReadReceipts(activeChatId, messages, user?._id);
-  // useMessageSocket(activeChatId);
 
   const toggleProfile = useCallback(() => {
     setShowChatInfo((prev) => !prev);
@@ -54,7 +47,7 @@ export default function ChatWindow() {
     <div
       className={cn(
         "flex flex-col h-full",
-        "dark:bg-neutral-900",
+        "bg-background",
         "transition-transform duration-300",
         {
           "fixed inset-0 z-50": isMobile,
@@ -93,9 +86,7 @@ export default function ChatWindow() {
         </div>
       </div>
 
-      {showChatInfo && (
-        <ChatInfo/>
-      )}
+      {showChatInfo && <ChatInfo />}
     </div>
   );
 }

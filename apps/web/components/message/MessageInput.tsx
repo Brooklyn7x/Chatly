@@ -6,22 +6,18 @@ import { AnimatePresence } from "framer-motion";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessage } from "@/hooks/useMessage";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import useAuthStore from "@/store/useAuthStore";
 
 export default function MessageInput() {
   const { activeChatId } = useChatStore();
-  const { user } = useAuthStore();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachment, setShowAttachment] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const attachmentPickerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useMessage(activeChatId);
-  const { isTyping, handleTypingStart } = useTypingIndicator(
-    activeChatId || "",
-    user?._id
-  );
+  const { sendMessage } = useMessage(activeChatId || "");
+  const { handleTypingStart } = useTypingIndicator(activeChatId || "");
+  
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = event.target.value;
     setMessage(content);

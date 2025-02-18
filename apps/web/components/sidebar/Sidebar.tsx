@@ -5,7 +5,9 @@ import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { useLayout } from "@/hooks/useLayout";
 import { FloatingActionButton } from "./FloatingActionButton";
+
 type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
+
 export default function Sidebar() {
   const { isMobile, activeChatId } = useLayout();
   const [view, setView] = useState<ViewType>("main");
@@ -24,8 +26,9 @@ export default function Sidebar() {
         view={view}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onViewChange={setView}
       />
+
+      {/* <ChatFilters onChangeFilter={() => {}} /> */}
 
       <SidebarContent
         view={view}

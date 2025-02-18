@@ -329,6 +329,46 @@ export class MessageService extends BaseService {
     }
   }
 
+  async updateMessage(
+    messageId: string,
+    userId: string,
+    content: string
+  ): Promise<ServiceResponse<any>> {
+    try {
+      if (!content || content.trim().length === 0) {
+        return { success: false, error: "Message content cannot be empty" };
+      }
+
+      const updatedMessage = await MessageModel.findOneAndUpdate(
+        {
+          _id: messageId,
+          sender: userId,
+          deletedAt: { $exists: false },
+        },
+        {
+          $set: {
+            content: content.trim(),
+            editedAt: new Date(),
+            "metadata.lastEditedBy": userId,
+          },
+        },
+        { new: true, runValidators: true }
+      ).populate("sender", "username avatar");
+
+      if (!updatedMessage) {
+        return {
+          success: false,
+          error: "Message not found or unauthorized to edit",
+        };
+      }
+
+      return { success: true, data: updatedMessage };
+    } catch (error) {
+      this.logger.error("Error updating message:", error);
+      return { success: false, error: "Failed to update message" };
+    }
+  }
+
   // private async cacheMessage(message: any): Promise<void> {
   //   const pipeline = this.redis.pipeline();
   //   pipeline.hset(`message:${message.id}`, this.serializeMessage(message));

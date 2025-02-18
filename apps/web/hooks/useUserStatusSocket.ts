@@ -18,6 +18,8 @@ export function useUserStatusSocket() {
       });
     };
 
+    
+
     socketService.on("user:status_change", handleStatusChange);
 
     return () => {

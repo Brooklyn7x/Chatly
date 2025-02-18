@@ -8,6 +8,7 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ user, selected }: UserItemProps) => {
+  const { username, email } = user;
   return (
     <div
       className={cn(
@@ -22,12 +23,12 @@ export const UserItem = ({ user, selected }: UserItemProps) => {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="font-semibold truncate">{user?.username || "User"}</div>
+        <div className="font-semibold truncate">{username || "User"}</div>
         {/* <div className="text-muted-foreground text-sm truncate">
           Last message
         </div> */}
         <div className="text-muted-foreground text-sm truncate">
-          {user.email || "email"}
+          {email || "email"}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ export default function MainPage() {
   useAppInitialization();
   useUserStatusSocket();
   useMessageSocket();
-  useTypingSocket();
+  // useTypingSocket();
 
   return (
     <AuthGuard requireAuth={true}>

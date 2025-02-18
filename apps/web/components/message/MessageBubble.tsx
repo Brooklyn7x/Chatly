@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageContent } from "./MessageContent";
 import { MessageStatus } from "./MessageStatus";
 import { Message } from "@/types/message";
-import { UserAvatar } from "../user/UserAvatar";
+import { UserAvatar } from "../shared/Avatar";
+
 
 interface MessageBubbleProps {
   message: Message;
@@ -26,7 +27,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
       }`}
     >
       <div
-      className="flex gap-3 items-center"
+        className="flex gap-3 items-center"
         ref={bubbleRef}
         onContextMenu={(e) => {
           e.preventDefault();
@@ -34,7 +35,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         }}
       >
         {!isOwn && (
-         <UserAvatar size={"md"} imageUrl={"/user.png"} />
+       <UserAvatar url="https://api.dicebear.com/9.x/avataaars/svg?seed=Ryker" />
         )}
         <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
           {!isOwn && (

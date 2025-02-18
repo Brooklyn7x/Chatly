@@ -13,6 +13,9 @@ export class ConversationController extends BaseController {
     this.getConversations = this.getConversations.bind(this);
     this.getConversations = this.getConversations.bind(this);
     this.deleteConversation = this.deleteConversation.bind(this);
+    this.getConversationById = this.getConversationById.bind(this);
+    this.updateConversation = this.updateConversation.bind(this);
+    this.markAsRead = this.markAsRead.bind(this);
   }
 
   async createConversation(req: Request, res: Response): Promise<void> {
@@ -73,22 +76,23 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async getAllConversations(req: Request, res: Response): Promise<void> {
+  async getConversationById(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.conversationService.getAllConversations(
-        req.params.conversationId,
-        req.user!._id
+      const result = await this.conversationService.getConversationById(
+        req.params.id
       );
 
       if (!result.success) {
         res.status(404).json(result);
         return;
       }
+
       res.json(result);
     } catch (error) {
+      this.logger.error("Error fetching conversation:", error);
       res.status(500).json({
         success: false,
-        error: "Failed to fetch chats",
+        error: "Failed to fetch conversation",
       });
     }
   }
@@ -114,58 +118,50 @@ export class ConversationController extends BaseController {
     }
   }
 
-  async updateConversation() {}
+  async updateConversation(req: Request, res: Response): Promise<void> {
+    try {
+      const updateData = req.body;
+      const result = await this.conversationService.updateConversation(
+        req.params.id,
+        req.user!._id,
+        updateData
+      );
 
-  //   async updateConversation(req: Request, res: Response): Promise<void> {
-  //     try {
-  //       const validationResult = validateRequest(req.body, "updateConversation");
+      if (!result.success) {
+        const statusCode = result.error?.includes("not found") ? 404 : 400;
+        res.status(statusCode).json(result);
+        return;
+      }
 
-  //       if (!validationResult.success) {
-  //         res.status(400).json({
-  //           success: false,
-  //           error: validationResult.error,
-  //         });
-  //         return;
-  //       }
+      res.json(result);
+    } catch (error) {
+      this.logger.error("Error updating conversation:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to update conversation",
+      });
+    }
+  }
 
-  //       const result = await this.conversationService.updateConversation(
-  //         req.params.conversationId,
-  //         req.user!.id,
-  //         req.body as UpdateConversationDTO
-  //       );
+  async markAsRead(req: Request, res: Response): Promise<void> {
+    try {
+      const result = await this.conversationService.markAsRead(
+        req.params.id,
+        req.user!._id
+      );
 
-  //       if (!result.success) {
-  //         res.status(404).json(result);
-  //         return;
-  //       }
+      if (!result.success) {
+        res.status(404).json(result);
+        return;
+      }
 
-  //       res.json(result);
-  //     } catch (error) {
-  //       res.status(500).json({
-  //         success: false,
-  //         error: "Failed to update conversation",
-  //       });
-  //     }
-  //   }
-
-  // async markAsRead(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const result = await this.conversationService.markConversationAsRead(
-  //       req.params.conversationId,
-  //       req.user!.id
-  //     );
-
-  //     if (!result.success) {
-  //       res.status(404).json(result);
-  //       return;
-  //     }
-
-  //     res.json(result);
-  //   } catch (error) {
-  //     res.status(500).json({
-  //       success: false,
-  //       error: "Failed to mark conversation as read",
-  //     });
-  //   }
-  // }
+      res.json(result);
+    } catch (error) {
+      this.logger.error("Error marking conversation as read:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to mark conversation as read",
+      });
+    }
+  }
 }

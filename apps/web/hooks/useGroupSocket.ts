@@ -3,7 +3,6 @@ import { useEffect } from "react";
 
 export function useGroupSocket(groupId: string) {
   useEffect(() => {
-    if (!groupId) return;
     socketService.joinGroup({ groupId });
     return () => {
       socketService.leaveGroup(groupId);

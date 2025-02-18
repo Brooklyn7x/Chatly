@@ -4,7 +4,7 @@ import { apiClient } from "./client";
 export const chatApi = {
   getChats: async (): Promise<any> => {
     try {
-      const { data } = await apiClient.get("/chats/user-chats");
+      const { data } = await apiClient.get("/chats");
       return data;
     } catch (error) {
       handleApiError(error);
