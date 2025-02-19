@@ -1,9 +1,11 @@
 import { chatApi } from "@/services/api/chat";
 import { useChatStore } from "@/store/useChatStore";
+import { ChatUpdatePayload } from "@/types/chat";
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 export const useChats = () => {
-  const { setChats, addChats } = useChatStore();
+  const { setChats, addChats, deleteChat, updateChat } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +39,6 @@ export const useChats = () => {
         },
       };
       const { data } = await chatApi.createChat(payload);
-      console.log(data, "chat-data");
       addChats(data);
     } catch (error) {
       setError(
@@ -48,11 +49,35 @@ export const useChats = () => {
     }
   };
 
-  
+  const deleteCht = async (chatId: string) => {
+    try {
+      await chatApi.deleteChat(chatId);
+      deleteChat(chatId);
+    } catch (error) {
+      throw new Error("Failed to delete chat. Please try again.");
+    }
+  };
+
+  const updateCht = async (chatId: string, updateData: ChatUpdatePayload) => {
+    try {
+      setIsLoading(true);
+      const { data } = await chatApi.updateChat(chatId, updateData);
+      // updateChat(chatId, data);
+      return data;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Update failed";
+      toast.error(message);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     fetchChats,
     createChat,
+    deleteCht,
+    updateCht,
     isLoading,
     error,
   };

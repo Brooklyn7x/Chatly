@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useChats } from "@/hooks/useChats";
 
 interface ChatHeaderMenuProps {
   onClose: () => void;
@@ -14,14 +15,14 @@ export default function ChatHeaderMenu({
   onDeleteChat,
 }: ChatHeaderMenuProps) {
   const menuRef = useRef(null);
-
+  
   return (
     <motion.div
       ref={menuRef}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="bg-background/50 backdrop-blur-sm absolute mt-2 top-full right-5 origin-top-right border rounded-lg shadow-lg py-2 min-w-[200px]"
+      className="bg-background/90 backdrop-blur-md absolute top-full right-5 origin-top-right border rounded-lg shadow-lg py-2 min-w-[200px] z-20"
     >
       <ChatMenuItem
         onClick={() => {

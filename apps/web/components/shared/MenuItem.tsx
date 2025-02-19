@@ -9,7 +9,7 @@ export function MenuItem({ onClick, label, icon: Icon }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-5 hover:bg-muted/60 w-full rounded-sm px-4 py-1.5 transition-colors"
+      className="flex items-center gap-5 hover:bg-muted/90 w-full rounded-sm px-4 py-2 md:py-1.5 transition-colors"
     >
       <Icon className="h-5 w-5" />
       <span className="text-sm">{label}</span>

@@ -16,7 +16,7 @@ export const handleApiError = (error: unknown) => {
     return new AppError(
       error.response?.data?.message || "An error occurred",
       error.response?.data?.code || "UNKNOWN_ERROR",
-      error.response?.status || 500
+      error.response?.status || 500,
     );
   }
 

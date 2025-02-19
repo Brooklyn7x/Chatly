@@ -13,6 +13,12 @@ import {
 import { ServiceResponse } from "../types/service-respone";
 import { ConversationModel } from "../models/conversation.model";
 
+interface ParticipantUpdate {
+  action: "add" | "remove" | "updateRole";
+  userId: string;
+  role?: ParticipantRole;
+}
+
 export class ConversationService {
   private redis: Redis;
   private db: DatabaseService;
@@ -154,6 +160,8 @@ export class ConversationService {
       };
     }
   }
+
+  async updateParticipants() {}
 
   async getConversationById(
     conversationId: string
@@ -519,31 +527,147 @@ export class ConversationService {
   async updateConversation(
     conversationId: string,
     userId: string,
-    updateData: any
+    updateData: {
+      metadata?: {
+        title?: string;
+        description?: string;
+        avatar?: string;
+        isArchived?: boolean;
+        isPinned?: boolean;
+      };
+      participants?: ParticipantUpdate[];
+    }
   ): Promise<ServiceResponse<any>> {
     try {
-      const conversation = await ConversationModel.findOneAndUpdate(
-        {
-          _id: conversationId,
-          "participants.userId": userId,
-          "participants.role": ParticipantRole.OWNER,
+      // 1. Verify conversation exists and user has permission
+      const conversation = await ConversationModel.findOne({
+        _id: conversationId,
+        "participants.userId": userId,
+        "participants.role": {
+          $in: [ParticipantRole.OWNER, ParticipantRole.ADMIN],
         },
-        { $set: updateData },
-        { new: true }
-      );
+      });
 
       if (!conversation) {
         return {
           success: false,
-          error: "Conversation not found or unauthorized",
+          error: "Conversation not found or insufficient permissions",
         };
       }
 
-      await this.cacheConversation(conversation);
-      return { success: true, data: conversation };
+      // 2. Prepare update operations
+      const updateOperations: Record<string, any> = {
+        $set: { updatedAt: new Date() },
+        $inc: { __v: 1 },
+      };
+
+      // 3. Handle metadata updates
+      if (updateData.metadata) {
+        if (conversation.type === ConversationType.DIRECT) {
+          if (updateData.metadata.title || updateData.metadata.avatar) {
+            return {
+              success: false,
+              error:
+                "Direct conversations cannot have custom titles or avatars",
+            };
+          }
+        } else {
+          if (updateData.metadata.title) {
+            updateOperations.$set["metadata.title"] = updateData.metadata.title;
+          }
+          if (updateData.metadata.avatar) {
+            updateOperations.$set["metadata.avatar"] =
+              updateData.metadata.avatar;
+          }
+        }
+
+        if (typeof updateData.metadata.isArchived === "boolean") {
+          updateOperations.$set["metadata.isArchived"] =
+            updateData.metadata.isArchived;
+        }
+        if (typeof updateData.metadata.isPinned === "boolean") {
+          updateOperations.$set["metadata.isPinned"] =
+            updateData.metadata.isPinned;
+        }
+      }
+
+      // 4. Handle participant updates
+      if (updateData.participants) {
+        for (const update of updateData.participants) {
+          switch (update.action) {
+            case "add":
+              const exists = conversation.participants.some(
+                (p) => p.userId.toString() === update.userId
+              );
+              if (!exists) {
+                updateOperations.$addToSet = {
+                  participants: {
+                    userId: new mongoose.Types.ObjectId(update.userId),
+                    role: update.role || ParticipantRole.MEMBER,
+                    joinedAt: new Date(),
+                  },
+                };
+              }
+              break;
+
+            case "remove":
+              updateOperations.$pull = {
+                participants: {
+                  userId: new mongoose.Types.ObjectId(update.userId),
+                },
+              };
+              break;
+
+            case "updateRole":
+              updateOperations.$set = updateOperations.$set || {};
+              updateOperations.$set["participants.$[elem].role"] = update.role;
+              break;
+          }
+        }
+      }
+
+      // 5. Perform update
+      const options = {
+        new: true,
+        arrayFilters: updateData.participants?.some(
+          (u) => u.action === "updateRole"
+        )
+          ? [
+              {
+                "elem.userId": {
+                  $in: updateData.participants.map((u) => u.userId),
+                },
+              },
+            ]
+          : undefined,
+      };
+
+      const updatedConversation = await ConversationModel.findByIdAndUpdate(
+        conversationId,
+        updateOperations,
+        options
+      );
+
+      if (!updatedConversation) {
+        return {
+          success: false,
+          error: "Failed to update conversation",
+        };
+      }
+
+      // 6. Update cache
+      await this.cacheConversation(updatedConversation);
+
+      return {
+        success: true,
+        data: updatedConversation,
+      };
     } catch (error) {
       this.logger.error("Error updating conversation:", error);
-      return { success: false, error: "Failed to update conversation" };
+      return {
+        success: false,
+        error: "Failed to update conversation",
+      };
     }
   }
 

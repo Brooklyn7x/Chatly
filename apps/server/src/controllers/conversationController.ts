@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { ConversationService } from "../services/conversationService";
 import { BaseController } from "./baseController";
 import { CreateConversationDTO } from "../types/conversation";
+import { UpdateConversationSchema } from "../validators/conversation";
+import { ParticipantRole, ConversationType } from "../types/conversation";
 
 export class ConversationController extends BaseController {
   private readonly conversationService: ConversationService;
@@ -118,27 +120,79 @@ export class ConversationController extends BaseController {
     }
   }
 
+  // async updateConversation(req: Request, res: Response): Promise<void> {
+  //   try {
+  //     const updateData = req.body;
+  //     const result = await this.conversationService.updateConversation(
+  //       req.params.id,
+  //       req.user!._id,
+  //       updateData
+  //     );
+
+  //     if (!result.success) {
+  //       const statusCode = result.error?.includes("not found") ? 404 : 400;
+  //       res.status(statusCode).json(result);
+  //       return;
+  //     }
+
+  //     res.json(result);
+  //   } catch (error) {
+  //     this.logger.error("Error updating conversation:", error);
+  //     res.status(500).json({
+  //       success: false,
+  //       error: "Failed to update conversation",
+  //     });
+  //   }
+  // }
+
   async updateConversation(req: Request, res: Response): Promise<void> {
     try {
-      const updateData = req.body;
+      // Validate request body
+      const validationResult = UpdateConversationSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        res.status(400).json({
+          success: false,
+          error: validationResult.error.errors[0].message,
+        });
+        return;
+      }
+
+      // Get validated data
+      const updateData = validationResult.data;
+
       const result = await this.conversationService.updateConversation(
         req.params.id,
-        req.user!._id,
+        req.user!._id.toString(), // Ensure string ID
         updateData
       );
 
+      // Handle service response
       if (!result.success) {
-        const statusCode = result.error?.includes("not found") ? 404 : 400;
+        const statusCode = result.error?.includes("not found")
+          ? 404
+          : result.error?.includes("permissions")
+            ? 403
+            : 400;
         res.status(statusCode).json(result);
         return;
       }
 
-      res.json(result);
+      // Return updated conversation
+      res.status(200).json({
+        success: true,
+        data: {
+          ...result.data.toObject(),
+          participants: result.data.participants.map((p: any) => ({
+            ...p,
+            userId: p.userId._id ? p.userId._id : p.userId,
+          })),
+        },
+      });
     } catch (error) {
       this.logger.error("Error updating conversation:", error);
       res.status(500).json({
         success: false,
-        error: "Failed to update conversation",
+        error: "Internal server error during conversation update",
       });
     }
   }

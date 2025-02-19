@@ -6,7 +6,13 @@ import SidebarContent from "./SidebarContent";
 import { useLayout } from "@/hooks/useLayout";
 import { FloatingActionButton } from "./FloatingActionButton";
 
-type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
+type ViewType =
+  | "main"
+  | "search"
+  | "new_message"
+  | "new_group"
+  | "new_channel"
+  | "setting";
 
 export default function Sidebar() {
   const { isMobile, activeChatId } = useLayout();
@@ -22,13 +28,14 @@ export default function Sidebar() {
         isMobile ? "absolute inset-y-0 left-0 z-10" : "relative"
       )}
     >
-      <SidebarHeader
-        view={view}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-
-      {/* <ChatFilters onChangeFilter={() => {}} /> */}
+      {view === "main" && (
+        <SidebarHeader
+          view={view}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onViewChange={setView}
+        />
+      )}
 
       <SidebarContent
         view={view}

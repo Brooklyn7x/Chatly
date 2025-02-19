@@ -1,17 +1,24 @@
 import { Message } from "./message";
+import mongoose from "mongoose";
 
 export interface Conversation {
   type: ConversationType;
   participants: Participant[];
   lastMessage?: Message;
   unreadCount: Record<string, number>;
-  metadata?: ConversationMetadata;
+  metadata: {
+    title?: string;
+    description?: string;
+    avatar?: string;
+    isArchived: boolean;
+    isPinned: boolean;
+  };
   updatedAt: Date;
   createdAt: Date;
 }
 
 export interface Participant {
-  userId: string;
+  userId: string | mongoose.Types.ObjectId;
   role: ParticipantRole;
   joinedAt: Date;
   lastReadAt?: Date;
@@ -59,4 +66,14 @@ export interface ChatResponse {
   participants: Participant[];
   metadata: any;
   createdAt: Date;
+}
+
+interface UpdateConversationDTO {
+  metadata?: {
+    title?: string; // Group chat name
+    description?: string; // Group description
+    avatar?: string; // URL or image ID
+    isArchived?: boolean; // Archive state
+    isPinned?: boolean; // Priority pinning
+  };
 }

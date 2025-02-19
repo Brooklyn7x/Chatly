@@ -6,18 +6,21 @@ import { AnimatePresence } from "framer-motion";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessage } from "@/hooks/useMessage";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 export default function MessageInput() {
   const { activeChatId } = useChatStore();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachment, setShowAttachment] = useState(false);
+  const [attachments, setAttachments] = useState<File[]>([]);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const attachmentPickerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage } = useMessage(activeChatId || "");
   const { handleTypingStart } = useTypingIndicator(activeChatId || "");
-  
+  const { uploadFile, isLoading: isUploading } = useFileUpload();
+
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = event.target.value;
     setMessage(content);
@@ -39,7 +42,13 @@ export default function MessageInput() {
     }
   };
 
-  const handleAttach = (files: any) => {};
+  const handleAttach = async (files: FileList) => {
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    const uploadPromises = imageFiles.map((file) => uploadFile(file));
+    const uploadedImages = await Promise.all(uploadPromises);
+  };
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -111,6 +120,10 @@ export default function MessageInput() {
             </button>
           </div>
 
+          {/* <button onClick={handleAttach}>
+            onAttach
+          </button> */}
+
           <button
             onClick={handleSendMessage}
             className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
@@ -131,16 +144,15 @@ export default function MessageInput() {
           )}
         </AnimatePresence>
 
-        <AnimatePresence>
-          {setShowAttachment && (
-            <AttachmentPicker
-              show={showAttachment}
-              onClose={() => setShowAttachment(false)}
-              onAttach={handleAttach}
-              containerRef={attachmentPickerRef}
-            />
-          )}
-        </AnimatePresence>
+        <AttachmentPicker
+          show={showAttachment}
+          onClose={() => setShowAttachment(false)}
+          onAttach={(files) => {
+            setAttachments((prev) => [...prev, ...Array.from(files)]);
+            setShowAttachment(false);
+          }}
+          containerRef={attachmentPickerRef}
+        />
       </div>
     </div>
   );

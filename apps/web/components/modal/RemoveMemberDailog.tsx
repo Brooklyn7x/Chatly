@@ -6,35 +6,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
 import { UserAvatar } from "../user/UserAvatar";
 import { Participant } from "@/types";
-import { useState } from "react";
 
 export const RemoveMemberDialog = ({
   open,
   onOpenChange,
   participants,
   onRemove,
+  isRemoving,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   participants: Participant[];
   onRemove: (userId: string) => Promise<void>;
+  isRemoving?: boolean;
 }) => {
-  const [isRemoving, setIsRemoving] = useState(false);
-
-  const handleRemove = async (userId: string) => {
-    try {
-      setIsRemoving(true);
-      await onRemove(userId);
-      onOpenChange(false);
-      toast.success("User removed successfully");
-    } catch (error) {
-      toast.error("Failed to remove user");
-    } finally {
-      setIsRemoving(false);
-    }
+  const handleRemove = (userId: string) => {
+    onRemove(userId);
   };
 
   return (

@@ -1,5 +1,6 @@
 import { handleApiError } from "@/lib/error";
 import { apiClient } from "./client";
+import { ChatUpdatePayload } from "@/types/chat";
 
 export const chatApi = {
   getChats: async (): Promise<any> => {
@@ -34,6 +35,19 @@ export const chatApi = {
       await apiClient.delete(`/chats/${chatId}`);
     } catch (error) {
       handleApiError(error);
+    }
+  },
+
+  updateChat: async (
+    chatId: string,
+    payload: ChatUpdatePayload
+  ): Promise<any> => {
+    try {
+      const { data } = await apiClient.put(`/chats/${chatId}`, payload);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+      throw error;
     }
   },
 };

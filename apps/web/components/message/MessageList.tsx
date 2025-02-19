@@ -15,7 +15,6 @@ export default function MessageList() {
   const { activeChatId } = useChatStore();
   const { messages, isLoading, error } = useMessages(activeChatId || "");
   const { isTyping, typingUsers } = useTypingIndicator(activeChatId || "");
-  console.log(isTyping, typingUsers, "isTyping");
 
   const scrollToBottom = () => {
     if (messageEndRef.current) {

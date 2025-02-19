@@ -28,4 +28,13 @@ export const MessageApi = {
       handleApiError(error);
     }
   },
+
+  updateMessage: async (messageId: string) => {
+    try {
+      const { data } = await apiClient.put(`/messages/${messageId}`);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
 };
