@@ -42,7 +42,7 @@ export default function SidebarHeader({
             className="p-2 border rounded-full"
             onClick={() => setShowMenu((prev) => !prev)}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5" />
           </button>
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

@@ -7,6 +7,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = loginSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().min(2, "UserName must be at least 2 characters"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

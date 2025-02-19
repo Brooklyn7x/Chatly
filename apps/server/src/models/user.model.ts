@@ -1,26 +1,37 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { UserStatus } from "../types/user.types";
-
-export interface IUser {
-  username: string;
-  email: string;
-  password: string;
-  status: UserStatus;
-  lastSeen: Date;
-  profilePicture?: string;
+import { IUser, UserStatus } from "../types/user.types";
+interface IUserDefaults {
+  defaultAvatars: string[];
 }
+const userDefaults: IUserDefaults = {
+  defaultAvatars: process.env.DEFAULT_AVATARS?.split(",") || [
+    "https://api.dicebear.com/9.x/avataaars/svg?seed=Kimberly",
+    "https://api.dicebear.com/9.x/avataaars/svg?seed=Brooklynn",
+    "https://api.dicebear.com/9.x/avataaars/svg?seed=Eden",
+    "https://api.dicebear.com/9.x/avataaars/svg?seed=Oliver",
+    "https://api.dicebear.com/9.x/avataaars/svg?seed=George",
+  ],
+};
 
 export interface IUserDocument extends IUser, Document {}
 
 const userSchema = new Schema<IUserDocument>(
   {
+    name: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 30,
+    },
     username: {
       type: String,
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
       minlength: 3,
       maxlength: 30,
+      index: true,
     },
     email: {
       type: String,
@@ -28,10 +39,12 @@ const userSchema = new Schema<IUserDocument>(
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
     password: {
       type: String,
       required: true,
+      minlength: 7,
     },
     status: {
       type: String,
@@ -42,11 +55,26 @@ const userSchema = new Schema<IUserDocument>(
       type: Date,
       default: Date.now,
     },
-    profilePicture: String,
+    profilePicture: {
+      type: String,
+      default: function () {
+        const avatars = userDefaults.defaultAvatars;
+        return avatars[Math.floor(Math.random() * avatars.length)];
+      },
+    },
   },
   {
     timestamps: true,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.password;
+        delete ret.__v;
+      },
+    },
   }
 );
 
-export const UserModel = mongoose.model<IUserDocument>("user", userSchema);
+userSchema.index({ username: 1 });
+userSchema.index({ email: 1 });
+userSchema.index({ lastSeen: -1 });
+export const UserModel = mongoose.model<IUserDocument>("User", userSchema);

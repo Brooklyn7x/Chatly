@@ -13,13 +13,13 @@ const MessageSchema = new Schema(
     },
     senderId: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: true,
       index: true,
     },
     receiverId: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: false,
       index: true,
     },
@@ -41,7 +41,7 @@ const MessageSchema = new Schema(
       {
         userId: {
           type: Schema.Types.ObjectId,
-          ref: "user",
+          ref: "User",
           required: true,
         },
         seenAt: {
@@ -54,7 +54,7 @@ const MessageSchema = new Schema(
       {
         userId: {
           type: Schema.Types.ObjectId,
-          ref: "user",
+          ref: "User",
           required: true,
         },
         deliveredAt: {
@@ -117,7 +117,12 @@ MessageSchema.index({ "seenBy.userId": 1 });
 MessageSchema.index({ "deliveredTo.userId": 1 });
 
 MessageSchema.methods.markAsSeen = async function (userId: string) {
-  if (!this.seenBy.some((entry: { userId: { toString: () => string; }; }) => entry.userId.toString() === userId)) {
+  if (
+    !this.seenBy.some(
+      (entry: { userId: { toString: () => string } }) =>
+        entry.userId.toString() === userId
+    )
+  ) {
     this.seenBy.push({
       userId: new mongoose.Types.ObjectId(userId),
       seenAt: new Date(),
@@ -132,7 +137,12 @@ MessageSchema.methods.markAsSeen = async function (userId: string) {
   return this;
 };
 MessageSchema.methods.markAsDelivered = async function (userId: string) {
-  if (!this.deliveredTo.some((entry: { userId: mongoose.Types.ObjectId }) => entry.userId.toString() === userId)) {
+  if (
+    !this.deliveredTo.some(
+      (entry: { userId: mongoose.Types.ObjectId }) =>
+        entry.userId.toString() === userId
+    )
+  ) {
     this.deliveredTo.push({
       userId: new mongoose.Types.ObjectId(userId),
       deliveredAt: new Date(),

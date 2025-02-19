@@ -6,8 +6,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { UserAvatar } from "../user/UserAvatar";
 import { Participant } from "@/types";
+import { UserAvatar } from "../shared/UserAvatar";
 
 export const RemoveMemberDialog = ({
   open,

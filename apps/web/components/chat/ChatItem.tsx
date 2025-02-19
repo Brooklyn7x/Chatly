@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 import { Chat } from "@/types";
 import { useChatStore } from "@/store/useChatStore";
-import { UserAvatar } from "../shared/Avatar";
+import { UserAvatar } from "../shared/UserAvatar";
 
 interface ChatItemProps {
   chat: Chat;

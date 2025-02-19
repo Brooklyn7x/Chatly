@@ -12,7 +12,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useSearchUser } from "@/hooks/useSearchUser";
-import { UserAvatar } from "../shared/Avatar";
+import { UserAvatar } from "../shared/UserAvatar";
 import useAuthStore from "@/store/useAuthStore";
 import { Participant } from "@/types";
 

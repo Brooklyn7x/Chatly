@@ -7,10 +7,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { UserAvatar } from "../user/UserAvatar";
+
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Loading } from "../ui/loading";
+import { UserAvatar } from "../shared/UserAvatar";
 
 interface EditChatProps {
   title: string;

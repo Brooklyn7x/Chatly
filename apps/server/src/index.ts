@@ -31,7 +31,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", authenticate, userRoutes);
+app.use("/api/user", authenticate, userRoutes);
 app.use("/api/chats", authenticate, conversationRoutes);
 app.use("/api/messages", authenticate, messageRoutes);
 app.use("/api/upload", authenticate, fileRouts);

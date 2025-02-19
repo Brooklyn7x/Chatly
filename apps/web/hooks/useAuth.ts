@@ -15,7 +15,7 @@ export const useAuth = () => {
       setIsLoading(true);
       setError(null);
       const response = await authApi.login(data);
-      setAuth(response.accessToken, response.user.data);
+      setAuth(response.accessToken, response.user);
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -50,7 +50,6 @@ export const useAuth = () => {
     try {
       setIsLoading(true);
       setError(null);
-      // r
       clearAuth();
       router.replace("/auth");
     } catch (error) {

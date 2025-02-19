@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageContent } from "./MessageContent";
 import { MessageStatus } from "./MessageStatus";
 import { Message } from "@/types/message";
-import { UserAvatar } from "../shared/Avatar";
-
+import { UserAvatar } from "../shared/UserAvatar";
 
 interface MessageBubbleProps {
   message: Message;
@@ -35,12 +34,12 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         }}
       >
         {!isOwn && (
-       <UserAvatar url="https://api.dicebear.com/9.x/avataaars/svg?seed=Ryker" />
+          <UserAvatar url="https://api.dicebear.com/9.x/avataaars/svg?seed=Ryker" />
         )}
         <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
           {!isOwn && (
             <span className="text-xs text-muted-foreground mb-1">
-              {message.senderId?.username || "user"}
+              {message.senderId?.username || "User"}
             </span>
           )}
           <div

@@ -15,7 +15,7 @@ export const useSearchUsers = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get("http://localhost:8000/users/search", {
+      const response = await axios.get("http://localhost:8000/user/search", {
         params: {
           query,
           limit,

@@ -11,7 +11,7 @@ const ParticipantSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: true,
     },
     role: {
@@ -79,7 +79,7 @@ ConversationSchema.virtual("recentMessages", {
 });
 
 ConversationSchema.virtual("participantsDetails", {
-  ref: "user",
+  ref: "User",
   localField: "participants.userId",
   foreignField: "_id",
   justOne: false,

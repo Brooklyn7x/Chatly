@@ -33,7 +33,7 @@ export class FileService extends BaseService {
     file: any,
     userId: string,
     context: {
-      type: "user" | "group" | "message" | "channel";
+      type: "User" | "group" | "message" | "channel";
       id: string;
       purpose?: "avatar" | "banner" | "attachment";
     }

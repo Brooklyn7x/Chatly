@@ -1,5 +1,4 @@
 import Redis from "ioredis";
-import { DatabaseService } from "./databaseService";
 import {
   CreateUserDTO,
   UpdateUserDTO,
@@ -13,12 +12,10 @@ const bcrypt = require("bcrypt");
 
 export class UserService {
   private redis: Redis;
-  private db: DatabaseService;
   private logger: Logger;
 
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL as string);
-    this.db = new DatabaseService();
     this.logger = new Logger("UserService");
   }
 
@@ -38,7 +35,7 @@ export class UserService {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      const user = await this.db.create<any>("user", userData);
+      const user = await UserModel.create(userData);
       await this.cacheUserProfile(user);
 
       return {
@@ -56,7 +53,7 @@ export class UserService {
 
   async getUserStatus(userId: string): Promise<ServiceResponse<any>> {
     try {
-      const user = await this.db.findById("user", userId);
+      const user = await UserModel.findById(userId);
       if (!user) {
         return {
           success: false,
@@ -87,7 +84,7 @@ export class UserService {
         };
       }
 
-      const user = await this.db.findById("user", id);
+      const user = await UserModel.findById(id);
       if (!user) {
         return {
           success: false,
@@ -112,7 +109,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<ServiceResponse<any>> {
     try {
-      const user = await this.db.findOne<any>("user", { email });
+      const user = await UserModel.findOne({ email });
       if (!user) {
         return {
           success: false,
@@ -138,13 +135,12 @@ export class UserService {
     data: UpdateUserDTO
   ): Promise<ServiceResponse<UserProfile>> {
     try {
-      if (data.password) {
-        data.password = await bcrypt.hash(data.password, 12);
-      }
-
       if (data.email) {
-        const existingUser = await this.findByEmail(data.email);
-        if (existingUser.success && existingUser.data?.id !== id) {
+        const existingUser = await UserModel.findOne({
+          email: data.email,
+        });
+
+        if (existingUser && existingUser.id !== id) {
           return {
             success: false,
             error: "Email already in use",
@@ -152,23 +148,31 @@ export class UserService {
         }
       }
 
-      const updateUser = await this.db.findByIdAndUpdate<any>("user", id, {
-        ...data,
-        updatedAt: new Date(),
-      });
+      if (data.password) {
+        data.password = await bcrypt.hash(data.password, 12);
+      }
 
-      if (!updateUser) {
+      const updatedUser = await UserModel.findByIdAndUpdate(
+        id,
+        {
+          ...data,
+          updatedAt: new Date(),
+        },
+        { new: true, runValidators: true }
+      ).select("-password -__v");
+
+      if (!updatedUser) {
         return {
-          success: true,
+          success: false,
           error: "User not found",
         };
       }
 
-      await this.cacheUserProfile(updateUser);
+      await this.cacheUserProfile(updatedUser);
 
       return {
         success: true,
-        data: this.formatUserProfile(updateUser),
+        data: this.formatUserProfile(updatedUser),
       };
     } catch (error) {
       this.logger.error("Error updating user:", error);
@@ -204,47 +208,48 @@ export class UserService {
       };
     }
   }
+
   async searchUsers(
     query: string,
     currentUserId: string,
-    options: {
-      limit?: number;
-      offset?: number;
-    }
+    options: { limit?: number; offset?: number }
   ): Promise<ServiceResponse<any>> {
     try {
       const { limit = 10, offset = 0 } = options;
-
       const searchQuery = {
+        _id: { $ne: currentUserId },
         $or: [
           { username: { $regex: query, $options: "i" } },
           { email: { $regex: query, $options: "i" } },
+          { name: { $regex: query, $options: "i" } },
         ],
       };
 
-      const users = await this.db.find("user", searchQuery, {
-        limit,
-        skip: offset,
-        projection: {
-          id: 1,
-          username: 1,
-          email: 1,
-          name: 1,
-          avatar: 1,
-          status: 1,
-          lastSeen: 1,
-        },
-        sort: { username: 1 },
-      });
+      const [users, total] = await Promise.all([
+        UserModel.find(searchQuery)
+          .select("-password -__v -createdAt -updatedAt")
+          .skip(offset)
+          .limit(limit)
+          .lean(),
+        UserModel.countDocuments(searchQuery),
+      ]);
 
       return {
         success: true,
         data: {
-          users,
+          results: users.map((user) => ({
+            id: user._id.toString(),
+            username: user.username,
+            email: user.email,
+            avatar: user.profilePicture,
+            status: user.status,
+            lastSeen: user.lastSeen,
+          })),
           pagination: {
+            total,
             limit,
             offset,
-            total: users.length,
+            hasMore: total > offset + limit,
           },
         },
       };

@@ -2,13 +2,7 @@ import { Request, Response } from "express";
 import { BaseController } from "./baseController";
 import { AuthService } from "../services/authService";
 import { LoginDTO } from "../types/auth.types";
-import { z } from "zod";
-
-const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+import { loginSchema, registerSchema } from "../validators/auth";
 
 export class AuthController extends BaseController {
   private authService: AuthService;
@@ -20,9 +14,7 @@ export class AuthController extends BaseController {
 
   register = async (req: Request, res: Response): Promise<void> => {
     try {
-      this.logger.info("Registration request received:", { body: req.body });
       const parseResult = registerSchema.safeParse(req.body);
-
       if (!parseResult.success) {
         res.status(400).json({
           success: false,
@@ -48,14 +40,18 @@ export class AuthController extends BaseController {
         res.status(201).json({
           success: true,
           accessToken: result.data!.accessToken,
-          // user: result.data!.user,
         });
       } else {
         res.status(400).json({ error: result.error });
       }
     } catch (error) {
       this.logger.error("Registration error:", error);
-      res.status(500).json({ success: false, error: "Registration failed" });
+      res
+        .status(500)
+        .json({
+          success: false,
+          error: "Internal server error failed to register user",
+        });
     }
   };
 
@@ -63,13 +59,15 @@ export class AuthController extends BaseController {
     try {
       const loginData: LoginDTO = req.body;
 
-      //validate Request
-      // const validateResult = validateLoginData(loginData)
-      // if(!validateResult.success){
-      //     res.status(400).json({
-      //         error: validateResult.error
-      //     })
-      // }
+      const validateResult = loginSchema.safeParse(loginData);
+      if (!validateResult.success) {
+        res.status(400).json({
+          success: false,
+          error: "Validation failed",
+          details: validateResult.error.format(),
+        });
+        return;
+      }
 
       const result = await this.authService.login(loginData);
       if (result.success) {
@@ -153,7 +151,7 @@ export class AuthController extends BaseController {
         return;
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
         data: result.data,
       });

@@ -1,5 +1,18 @@
+export interface IUser {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  status: UserStatus;
+  lastSeen: Date;
+  profilePicture?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface User {
-  _id : string
+  _id: string;
+  name: string;
   username: string;
   email: string;
   password: string;
@@ -36,8 +49,4 @@ export interface UpdateUserDTO {
   email?: string;
   password?: string;
   status?: UserStatus;
-}
-
-export interface UserDocument extends User, Document {
-  id: string;
 }

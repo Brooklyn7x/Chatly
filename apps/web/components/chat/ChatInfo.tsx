@@ -9,7 +9,7 @@ import { AddMemberDailog } from "../modal/AddMemberDailog";
 import { EditChatDailog } from "../modal/EditChatDailog";
 import { useChats } from "@/hooks/useChats";
 import { SharedMedia } from "./SharedMedia";
-import { UserAvatar } from "../shared/Avatar";
+import { UserAvatar } from "../shared/UserAvatar";
 import { toast } from "sonner";
 import { ParticipantRole } from "@/types/chat";
 import { DeleteChatDailog } from "../modal/DeleteChatDailog";
@@ -152,15 +152,17 @@ export function ChatInfo() {
             <h1 className="text-lg truncate">{displayName}</h1>
           </div>
 
-          {isGroupChat && <button
-            onClick={onEdit}
-            className={cn(
-              "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-              "hover:bg-muted/90 transition-colors duration-200"
-            )}
-          >
-            <Pencil className="h-5 w-5" />
-          </button>}
+          {isGroupChat && (
+            <button
+              onClick={onEdit}
+              className={cn(
+                "p-2 flex items-center justify-center rounded-full text-muted-foreground",
+                "hover:bg-muted/90 transition-colors duration-200"
+              )}
+            >
+              <Pencil className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -204,16 +206,18 @@ export function ChatInfo() {
         </section>
       </div>
 
-      <section className="flex-1 pt-10 p-2 overflow-y-auto">
+      <section className="flex-1 pt-10 p-2 border-t overflow-y-auto">
         <SharedMedia chat={chat} />
       </section>
 
-      {isGroupChat && <button
-        onClick={() => setAddMember(true)}
-        className="h-12 w-12 flex items-center justify-center bg-green-400 rounded-full absolute bottom-5 right-5 "
-      >
-        <PlusCircle className="h-6 w-6" />
-      </button>}
+      {isGroupChat && (
+        <button
+          onClick={() => setAddMember(true)}
+          className="h-12 w-12 flex items-center justify-center bg-green-400 rounded-full absolute bottom-5 right-5 "
+        >
+          <PlusCircle className="h-6 w-6" />
+        </button>
+      )}
 
       <EditChatDailog
         title={chat?.metadata.title || ""}

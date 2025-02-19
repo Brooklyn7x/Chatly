@@ -120,31 +120,6 @@ export class ConversationController extends BaseController {
     }
   }
 
-  // async updateConversation(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     const updateData = req.body;
-  //     const result = await this.conversationService.updateConversation(
-  //       req.params.id,
-  //       req.user!._id,
-  //       updateData
-  //     );
-
-  //     if (!result.success) {
-  //       const statusCode = result.error?.includes("not found") ? 404 : 400;
-  //       res.status(statusCode).json(result);
-  //       return;
-  //     }
-
-  //     res.json(result);
-  //   } catch (error) {
-  //     this.logger.error("Error updating conversation:", error);
-  //     res.status(500).json({
-  //       success: false,
-  //       error: "Failed to update conversation",
-  //     });
-  //   }
-  // }
-
   async updateConversation(req: Request, res: Response): Promise<void> {
     try {
       // Validate request body

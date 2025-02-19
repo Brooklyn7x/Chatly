@@ -14,6 +14,9 @@ export const UserList = ({
   onUserToggle,
   loading,
 }: UserListProps) => {
+  if (users.length <= 0) {
+    return <h1>No User Found.</h1>;
+  }
 
   if (loading) {
     return (
@@ -26,14 +29,14 @@ export const UserList = ({
     <div className="h-full w-full">
       <div className="border-t p-2 space-y-1">
         {users
-          .filter((user) => user._id)
+          .filter((user) => user.id)
           .map((user) => (
             <div
               key={user._id}
-              onClick={() => onUserToggle(user._id)}
+              onClick={() => onUserToggle(user.id)}
               className="cursor-pointer"
             >
-              <UserItem user={user} selected={selectedUserIds.has(user._id)} />
+              <UserItem user={user} selected={selectedUserIds.has(user.id)} />
             </div>
           ))}
       </div>

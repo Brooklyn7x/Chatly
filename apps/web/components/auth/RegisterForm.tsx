@@ -32,6 +32,7 @@ const RegisterForm = ({ showLogin }: SignUpFormProps) => {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
+      username: "",
       email: "",
       password: "",
     },
@@ -47,7 +48,7 @@ const RegisterForm = ({ showLogin }: SignUpFormProps) => {
   };
 
   return (
-    <div className="w-full sm:max-w-sm mx-auto p-4 border rounded-sm overflow-hidden">
+    <div className="w-full sm:max-w-sm mx-auto p-4 sm:border rounded-sm overflow-hidden">
       <div className="p-4">
         <h1 className="text-center text-2xl font-bold">Signup to Chat-app</h1>
         <p className="text-center">select anything</p>
@@ -62,10 +63,28 @@ const RegisterForm = ({ showLogin }: SignUpFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
+                <FormLabel className="sr-only">Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Name"
+                    type="text"
+                    className="h-12"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel className="sr-only">Username</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Username"
+                    placeholder="@Username"
                     type="text"
                     className="h-12"
                     {...field}

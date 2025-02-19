@@ -14,7 +14,7 @@ import { useUserStatus } from "@/hooks/useUserStatus";
 import useAuthStore from "@/store/useAuthStore";
 import ChatHeaderMenu from "./ChatHeaderMenu";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
-import { UserAvatar } from "../shared/Avatar";
+import { UserAvatar } from "../shared/UserAvatar";
 import { useChats } from "@/hooks/useChats";
 import { toast } from "sonner";
 

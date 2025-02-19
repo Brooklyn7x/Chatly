@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useAuthStore from "@/store/useAuthStore";
+import Setting from "./Setting";
 
 type ViewType =
   | "main"
@@ -29,90 +30,6 @@ interface SidebarContentProps {
   searchQuery: string;
   onViewChange: (view: ViewType) => void;
 }
-
-const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user } = useAuthStore();
-  const [name, setName] = useState(user?.username);
-  const [username, setUsername] = useState(user?.username);
-  const [email, setEmail] = useState(user?.email);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string>("");
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
-      setProfileImage(file);
-      setPreviewImage(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({ name, username, email, profileImage });
-    onClose();
-  };
-
-  return (
-    <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Settings</h2>
-        <Button variant="ghost" onClick={onClose}>
-          ✕
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-col items-center gap-4">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src={previewImage} />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-fit"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label>Name</label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Full Name"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label>Username</label>
-          <Input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label>Email</label>
-          <Input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-          />
-        </div>
-
-        <div className="flex gap-2 justify-end">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit">Save Changes</Button>
-        </div>
-      </form>
-    </div>
-  );
-};
 
 export default function SidebarContent({
   view,

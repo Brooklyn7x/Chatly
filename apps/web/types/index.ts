@@ -1,10 +1,12 @@
 export interface User {
   _id: string;
+  id: string;
+  name: string;
   username: string;
   email: string;
-  avatar?: string;
+  profilePicture: string;
   status: "offline" | "online";
-  lastSeen?: string;
+  lastSeen: string;
 }
 
 export interface Message {

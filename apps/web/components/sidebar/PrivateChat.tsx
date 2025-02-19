@@ -20,7 +20,6 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { users } = useSearchUser("");
-  const { activeChatId } = useChatStore();
   const { createChat } = useChats();
 
   const handleUserSelect = (userId: string) => {
@@ -30,7 +29,7 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const handleCreateChat = async () => {
     if (!selectedUserId) return;
     try {
-      const selectedUser = users.find((user) => user._id === selectedUserId);
+      const selectedUser = users.find((user) => user.id === selectedUserId);
       if (!selectedUser) {
         toast.error("Please select user");
         return;

@@ -5,6 +5,7 @@ export interface LoginDTO {
 
 export interface RegisterDTO {
   username: string;
+  name: string;
   email: string;
   password: string;
 }
@@ -27,4 +28,3 @@ export interface AuthSession {
   ipAddress: string;
   userAgent: string;
 }
-

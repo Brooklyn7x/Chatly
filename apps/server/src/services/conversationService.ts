@@ -246,7 +246,7 @@ export class ConversationService {
   //       "participants.userId": userId,
   //     }).populate({
   //       path: "participants.data",
-  //       model: "user",
+  //       model: "User",
   //       select: "username email",
   //     });
 
@@ -326,7 +326,7 @@ export class ConversationService {
       })
         .populate({
           path: "participants.userId",
-          model: "user",
+          model: "User",
           select: "username email",
         })
         .sort({ updatedAt: -1 })

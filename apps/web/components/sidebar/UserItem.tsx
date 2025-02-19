@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
-import { UserAvatar } from "../user/UserAvatar";
+import { UserAvatar } from "../shared/UserAvatar";
 
 interface UserItemProps {
   user: User;
@@ -8,7 +8,7 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ user, selected }: UserItemProps) => {
-  const { username, email } = user;
+  const { username, email, profilePicture } = user;
   return (
     <div
       className={cn(
@@ -19,14 +19,12 @@ export const UserItem = ({ user, selected }: UserItemProps) => {
       )}
     >
       <div className="relative flex-shrink-0 h-12 w-12">
-        <UserAvatar size={"md"} />
+        <UserAvatar size={"md"} url={profilePicture} />
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="font-semibold truncate">{username || "User"}</div>
-        {/* <div className="text-muted-foreground text-sm truncate">
-          Last message
-        </div> */}
+
         <div className="text-muted-foreground text-sm truncate">
           {email || "email"}
         </div>

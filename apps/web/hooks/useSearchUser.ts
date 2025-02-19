@@ -11,8 +11,8 @@ export const useSearchUser = (query: string) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const data = await UserApi.searchUsers(query);
-        setUsers(data.data.users);
+        const response = await UserApi.searchUsers(query);
+        setUsers(response.data.results);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch users");
       } finally {

@@ -38,7 +38,7 @@ const SidebarMenu = ({ onViewChange }: SidebarMenuProps) => {
       <div className="p-1 space-y-1">
         <div className="flex items-center gap-4 px-4 p-1.5 border-b">
           <User className="h-5 w-5" />
-          <span className="font-medium">{user?.username || "user"}</span>
+          <span className="font-medium">{user?.username || "User"}</span>
         </div>
 
         <MenuItem icon={Bookmark} onClick={() => {}} label="Saved Messages" />

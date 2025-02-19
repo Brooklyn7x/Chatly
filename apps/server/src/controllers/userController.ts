@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { BaseController } from "./baseController";
 import { UserService } from "../services/userService";
+import { UserStatus } from "../types/user.types";
+import { UpdateUser } from "../validators/user";
 
 export class UserController extends BaseController {
   private userService: UserService;
@@ -27,37 +29,65 @@ export class UserController extends BaseController {
     });
   };
 
-  async updateProfile() {}
+  public updateProfile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.user._id;
 
-  // public updateProfile = async (req: Request, res: Response): Promise<void> => {
-  //   const userId = req.params!.id;
-  //   const updateData: UpdateUserDTO = req.body;
+      const validationResult = UpdateUser.safeParse(req.body);
+      if (!validationResult.success) {
+        res.status(400).json({
+          success: false,
+          error: validationResult.error.errors[0].message,
+        });
+        return;
+      }
+      const updateData = validationResult.data;
 
-  //   await this.handleRequest(req, res, async () => {
-  //     const result = await this.userService.updateUser(userId, updateData);
+      await this.handleRequest(req, res, async () => {
+        const result = await this.userService.updateUser(userId, updateData);
 
-  //     if (result.success) {
-  //       res.json(result.data);
-  //     } else {
-  //       this.sendError(res, 400, result.error);
-  //     }
-  //   });
-  // };
+        if (!result.success) {
+          this.sendError(res, 400, result.error!);
+          return;
+        }
 
-  // public updateStatus = async (req: Request, res: Response): Promise<void> => {
-  //   const userId = req.params.userId;
-  //   const { status } = req.body;
+        res.status(200).json({
+          success: true,
+          data: result.data,
+        });
+      });
+    } catch (error) {
+      this.logger.error("Error updating user data :", error);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error during conversation update",
+      });
+    }
+  };
 
-  //   await this.handleRequest(req, res, async () => {
-  //     const result = await this.userService.updateUserStatus(userId, status);
+  public updateStatus = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user!._id;
+    const { status } = req.body;
 
-  //     if (result.success) {
-  //       res.json(result.data);
-  //     } else {
-  //       this.sendError(res, 400, result.error!);
-  //     }
-  //   });
-  // };
+    if (!Object.values(UserStatus).includes(status)) {
+      this.sendError(res, 400, "Invalid status value");
+      return;
+    }
+
+    await this.handleRequest(req, res, async () => {
+      const result = await this.userService.updateUserStatus(userId, status);
+
+      if (!result.success) {
+        this.sendError(res, 400, result.error!);
+        return;
+      }
+
+      res.json({
+        success: true,
+        data: result.data,
+      });
+    });
+  };
 
   public searchUsers = async (req: Request, res: Response): Promise<void> => {
     try {

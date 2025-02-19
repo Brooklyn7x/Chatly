@@ -5,12 +5,12 @@ import { ServiceResponse } from "../types/service-respone";
 import { Logger } from "../utils/logger";
 import { UserService } from "./userService";
 import jwt from "jsonwebtoken";
+import { UserModel } from "../models/user.model";
 
 const bcrypt = require("bcrypt");
 
 export class AuthService {
   private redis: Redis;
-  private db: DatabaseService;
   private user: UserService;
   private logger: Logger;
 
@@ -21,7 +21,6 @@ export class AuthService {
 
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL as string);
-    this.db = new DatabaseService();
     this.user = new UserService();
     this.logger = new Logger("AuthService");
   }
@@ -73,18 +72,19 @@ export class AuthService {
         };
       }
 
-      const user = await this.user.findByEmail(data.email);
-      if (!user.success || !user.data) {
+      const user = await UserModel.findOne({ email: data.email });
+
+      if (!user) {
         await this.incrementLoginAttempts(data.email);
         return {
           success: false,
-          error: "Invalid credentials",
+          error: "Invalid Email",
         };
       }
 
       const isValidPassword = await bcrypt.compare(
         data.password,
-        user.data.password
+        user.password
       );
       if (!isValidPassword) {
         await this.incrementLoginAttempts(data.email);
@@ -96,9 +96,9 @@ export class AuthService {
 
       await this.clearLoginAttempts(data.email);
 
-      const tokens = await this.generateAuthTokens(user.data!.id);
+      const tokens = await this.generateAuthTokens(user!.id);
 
-      await this.storeRefreshToken(user.data!.id, tokens.refreshToken);
+      await this.storeRefreshToken(user!.id, tokens.refreshToken);
 
       return {
         success: true,
@@ -127,22 +127,6 @@ export class AuthService {
     //     error: "Logout failed",
     //   };
     // }
-  }
-
-  private async generateAuthTokens(userId: string): Promise<any> {
-    const accessToken = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET!, {
-      expiresIn: this.ACCESS_TOKEN_EXPIRY,
-    });
-
-    const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET!, {
-      expiresIn: this.REFRESH_TOKEN_EXPIRY,
-    });
-
-    return {
-      accessToken,
-      refreshToken,
-      expiresIn: 3600, // 1h
-    };
   }
 
   async refreshToken(refreshToken: string): Promise<ServiceResponse<any>> {
@@ -284,6 +268,22 @@ export class AuthService {
     pipeline.sadd(`user:${userId}:sessions`);
     pipeline.expire(`session:${userId}`, 7 * 24 * 60 * 60);
     await pipeline.exec();
+  }
+
+  private async generateAuthTokens(userId: string): Promise<any> {
+    const accessToken = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET!, {
+      expiresIn: this.ACCESS_TOKEN_EXPIRY,
+    });
+
+    const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET!, {
+      expiresIn: this.REFRESH_TOKEN_EXPIRY,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      expiresIn: 3600, // 1h
+    };
   }
 
   private async incrementLoginAttempts(email: string): Promise<void> {
