@@ -7,31 +7,55 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { UserAvatar } from "../user/UserAvatar";
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
+import { useSearchUser } from "@/hooks/useSearchUser";
+import { UserAvatar } from "../shared/Avatar";
+import useAuthStore from "@/store/useAuthStore";
+import { Participant } from "@/types";
 
 interface AddMemberProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAdd: () => void;
+  onAdd: (userId: string[]) => void;
+  participants: Participant[];
 }
 
-const mockUsers = [
-  { _id: "1", username: "User 1" },
-  { _id: "2", username: "User 2" },
-  { _id: "3", username: "User 3" },
-  { _id: "4", username: "User 1" },
-  { _id: "5", username: "User 2" },
-  { _id: "6", username: "User 3" },
-  { _id: "7", username: "User 1" },
-  { _id: "8", username: "User 2" },
-  { _id: "9", username: "User 3" },
-];
+export const AddMemberDailog = ({
+  open,
+  onOpenChange,
+  onAdd,
+  participants,
+}: AddMemberProps) => {
+  const { user: current } = useAuthStore();
+  const [selectedMember, setSelectedMember] = useState<string[]>([]);
+  const { users } = useSearchUser("");
+  const availableUsers = users.filter((user) => {
+    const isNotCurrentUser = user._id !== current?._id;
+    const isNotParticipant = !participants.some(
+      (participant) => participant.userId === user._id
+    );
+    const isNotSelected = !selectedMember.includes(user._id);
+    return isNotCurrentUser && isNotParticipant && isNotSelected;
+  });
 
-export const AddMemberDailog = ({ open, onOpenChange }: AddMemberProps) => {
-  const [selectedMember, setSelectedMember] = useState([]);
+  const handleAddMember = () => {
+    if (selectedMember.length === 0) {
+      toast.error("Please select at least one member to add");
+      return;
+    }
+
+    try {
+      onAdd(selectedMember);
+      setSelectedMember([]);
+      onOpenChange(false);
+    } catch (error) {
+      toast.error("Failed to add members");
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -43,31 +67,27 @@ export const AddMemberDailog = ({ open, onOpenChange }: AddMemberProps) => {
           <div className="p-2">
             <h1 className="mb-2">Selected Users ({selectedMember.length})</h1>
             <div className="flex flex-wrap gap-2">
-              {mockUsers
-                .filter((user) => selectedMember.includes(user._id))
-                .map((user) => (
-                  <div
-                    key={user._id}
-                    className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full"
+              {selectedMember.map((id) => (
+                <div
+                  key={id}
+                  className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full"
+                >
+                  <span>{id}</span>
+                  <button
+                    onClick={() =>
+                      setSelectedMember((prev) => prev.filter((i) => i !== id))
+                    }
+                    className="text-muted-foreground hover:text-foreground"
                   >
-                    <span>{user.username}</span>
-                    <button
-                      onClick={() =>
-                        setSelectedMember((prev) =>
-                          prev.filter((id) => id !== user._id)
-                        )
-                      }
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
           <div className="min-h-64 max-h-64 p-2 border rounded-xl overflow-y-auto">
             <div className="space-y-2">
-              {mockUsers.map((user) => (
+              {availableUsers.map((user) => (
                 <div
                   key={user._id}
                   onClick={() =>
@@ -85,7 +105,7 @@ export const AddMemberDailog = ({ open, onOpenChange }: AddMemberProps) => {
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <UserAvatar user={user} size="sm" />
+                    <UserAvatar size="sm" />
                     <span>{user.username}</span>
                   </div>
                 </div>
@@ -94,7 +114,7 @@ export const AddMemberDailog = ({ open, onOpenChange }: AddMemberProps) => {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={onsubmit}>
+          <Button type="submit" onClick={handleAddMember}>
             Add member
           </Button>
         </DialogFooter>

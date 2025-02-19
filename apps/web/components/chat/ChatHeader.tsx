@@ -15,6 +15,8 @@ import useAuthStore from "@/store/useAuthStore";
 import ChatHeaderMenu from "./ChatHeaderMenu";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/Avatar";
+import { useChats } from "@/hooks/useChats";
+import { toast } from "sonner";
 
 export default function ChatHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,7 +27,7 @@ export default function ChatHeader() {
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
   const { status, getStatusText } = useUserStatus(otherUserId);
-
+  const { deleteCht } = useChats();
   const displayName = useMemo(() => {
     if (chat?.type === "direct") {
       return (
@@ -80,7 +82,13 @@ export default function ChatHeader() {
         <ChatHeaderMenu
           onClose={() => setIsMenuOpen(false)}
           chatId={activeChatId || ""}
-          onDeleteChat={deleteChat}
+          onDeleteChat={async () => {
+            try {
+              await deleteCht(activeChatId || "");
+            } catch (error: any) {
+              toast.error(error.message);
+            }
+          }}
         />
       )}
     </header>

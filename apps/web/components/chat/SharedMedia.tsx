@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { UserItem } from "../sidebar/UserItem";
+import { UserAvatar } from "../shared/Avatar";
 
 interface SharedMediaProps {
   chat: any;
@@ -44,11 +45,7 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
               key={index}
               className="aspect-square relative cursor-pointer group"
             >
-              <img
-                src={"/user.png"}
-                alt=""
-                className="w-full h-full object-cover"
-              />
+              <UserAvatar />
               <div
                 className="absolute inset-0 bg-black/50 opacity-0 
             group-hover:opacity-100 transition-opacity"

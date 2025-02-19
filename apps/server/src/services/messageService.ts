@@ -81,7 +81,6 @@ export class MessageService extends BaseService {
     limit: number = 20,
     before?: Date
   ): Promise<ServiceResponse<any[]>> {
-    console.log(conversationId, "message-data");
     try {
       const query: any = {
         conversationId: new mongoose.Types.ObjectId(conversationId),

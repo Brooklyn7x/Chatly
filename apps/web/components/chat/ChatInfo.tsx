@@ -1,34 +1,27 @@
 import { cn } from "@/lib/utils";
-import {
-  X,
-  Pencil,
-  Phone,
-  Bell,
-  Link,
-  LucideIcon,
-  BlocksIcon,
-  Trash,
-  PlusCircle,
-} from "lucide-react";
+import { X, Pencil, Trash, PlusCircle, User2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
-import { Button } from "../ui/button";
 import { RemoveMemberDialog } from "../modal/RemoveMemberDailog";
 import { AddMemberDailog } from "../modal/AddMemberDailog";
 import { EditChatDailog } from "../modal/EditChatDailog";
 import { useChats } from "@/hooks/useChats";
 import { SharedMedia } from "./SharedMedia";
 import { UserAvatar } from "../shared/Avatar";
+import { toast } from "sonner";
+import { ParticipantRole } from "@/types/chat";
+import { DeleteChatDailog } from "../modal/DeleteChatDailog";
 
 export function ChatInfo() {
   const [editing, setEditing] = useState(false);
-  const [addMemeber, setAddMember] = useState(false);
+  const [addMember, setAddMember] = useState(false);
   const [removingUser, setRemovingUser] = useState(false);
+  const [deleteChat, setDeleteChat] = useState(false);
   const { chats, activeChatId } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
-  const {} = useChats();
+  const { updateCht, deleteCht } = useChats();
 
   const chat = chats.find((chat) => chat._id === activeChatId);
   const onEdit = () => {
@@ -55,28 +48,73 @@ export function ChatInfo() {
     transition: { duration: 0.3, ease: [0.32, 0.72, 0, 1] },
   };
 
-  const onSubmit = async () => {
-    // try {
-    //   if (!data.groupName.trim()) {
-    //     toast.error("Please enter group name");
-    //     return;
-    //   }
-    //   setEditing(false);
-    // } catch (error: any) {
-    //   toast.error("Failed to update group");
-    // }
+  const handleUpdateTitle = async (data: any) => {
+    try {
+      await updateCht(activeChatId || "", {
+        metadata: {
+          title: data.groupTitle,
+          description: data.groupDescription,
+        },
+      });
+      setEditing(false);
+      //update store here
+    } catch (error: any) {
+      toast.error("Failed to update group data. Try again!");
+    }
   };
 
-  const onAddMember = async () => {
-    // try {
-    //   if (selectedMember.length < 0) {
-    //     toast.error("Select Member");
-    //     return;
-    //   }
-    //   await new Promise((resolve, reject) => setTimeout(reject, 1000));
-    // } catch (error) {
-    //   toast.error("Failed to add members! Try again");
-    // }
+  const handleAddMember = async (userIds: string[]) => {
+    try {
+      if (!activeChatId) {
+        toast.error("No active chat selected");
+        return;
+      }
+
+      if (userIds.length === 0) {
+        toast.error("Select at least one member to add");
+        return;
+      }
+
+      await updateCht(activeChatId, {
+        participants: userIds.map((userId) => ({
+          action: "add",
+          userId,
+          role: ParticipantRole.MEMBER,
+        })),
+      });
+      //update store after adding user
+      setAddMember(false);
+      toast.success("Members added successfully");
+    } catch (error) {
+      toast.error("Failed to add members. Please try again.");
+    }
+  };
+
+  const handleRemoveMemeber = async (userId: string) => {
+    try {
+      await updateCht(activeChatId || "", {
+        participants: [
+          {
+            action: "remove",
+            userId,
+          },
+        ],
+      });
+      setRemovingUser(false);
+      //update store after removing user
+    } catch (error: any) {
+      toast.error("Failed to update group data. Try again!");
+    }
+  };
+
+  const handleDeleteChat = async () => {
+    try {
+      if (!activeChatId) return;
+      await deleteCht(activeChatId);
+      setIsOpen(false);
+    } catch (error) {
+      toast.error("Failed to delete chat");
+    }
   };
 
   return (
@@ -114,7 +152,7 @@ export function ChatInfo() {
             <h1 className="text-lg truncate">{displayName}</h1>
           </div>
 
-          <button
+          {isGroupChat && <button
             onClick={onEdit}
             className={cn(
               "p-2 flex items-center justify-center rounded-full text-muted-foreground",
@@ -122,7 +160,7 @@ export function ChatInfo() {
             )}
           >
             <Pencil className="h-5 w-5" />
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -137,72 +175,73 @@ export function ChatInfo() {
           </div>
         </section>
 
-        <section className="p-2">
-          {/* <InfoAction icon={Bell} label="Notifications" value="Enabled" />
-          <InfoAction icon={BlocksIcon} label="Block User" value="Enabled" /> */}
-          <InfoAction icon={Trash} label="Delete" value="Enabled" />
+        <section className="p-2 space-y-2">
+          <div
+            onClick={() => setDeleteChat(true)}
+            className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer"
+          >
+            <div className="flex items-center gap-6">
+              <Trash className="h-5 w-5" />
+              <div className="flex-1">
+                <p className="text-sm">Delete this chat</p>
+              </div>
+            </div>
+          </div>
+
+          {isGroupChat && (
+            <div
+              onClick={() => setRemovingUser(true)}
+              className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer"
+            >
+              <div className="flex items-center gap-6">
+                <User2 className="h-5 w-5" />
+                <div className="flex-1">
+                  <p className="text-sm">Manage Members</p>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </div>
 
-      <section className="flex-1 p-2 overflow-y-auto border-t">
-        <div className="flex items-center justify-between mb-4">
-          {chat?.type === "group" && (
-            <Button size="sm" onClick={() => setRemovingUser(true)}>
-              Manage Members
-            </Button>
-          )}
-        </div>
-
+      <section className="flex-1 pt-10 p-2 overflow-y-auto">
         <SharedMedia chat={chat} />
       </section>
 
-      <button
+      {isGroupChat && <button
         onClick={() => setAddMember(true)}
         className="h-12 w-12 flex items-center justify-center bg-green-400 rounded-full absolute bottom-5 right-5 "
       >
         <PlusCircle className="h-6 w-6" />
-      </button>
+      </button>}
 
       <EditChatDailog
+        title={chat?.metadata.title || ""}
+        description={chat?.metadata.description || ""}
         open={editing}
         onOpenChange={setEditing}
-        onSubmit={onEdit}
+        onSubmit={handleUpdateTitle}
       />
 
       <AddMemberDailog
-        open={addMemeber}
+        open={addMember}
         onOpenChange={setAddMember}
-        onAdd={onAddMember}
+        participants={chat?.participants || []}
+        onAdd={handleAddMember}
       />
 
       <RemoveMemberDialog
         open={removingUser}
         onOpenChange={setRemovingUser}
         participants={chat?.participants || []}
-        onRemove={async (userId) => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }}
+        onRemove={handleRemoveMemeber}
+      />
+
+      <DeleteChatDailog
+        open={deleteChat}
+        onOpenChange={setDeleteChat}
+        onConfirm={handleDeleteChat}
       />
     </motion.div>
   );
 }
-
-interface InfoActionProps {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}
-
-const InfoAction = ({ icon: Icon, label, value }: InfoActionProps) => {
-  return (
-    <div className="px-4 py-2 rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer">
-      <div className="flex items-center gap-6">
-        <Icon className="h-5 w-5 text-muted-foreground" />
-        <div className="flex-1">
-          <p className="text-sm">{value}</p>
-          <p className="text-muted-foreground text-sm">{label}</p>
-        </div>
-      </div>
-    </div>
-  );
-};

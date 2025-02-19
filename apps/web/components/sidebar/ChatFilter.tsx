@@ -51,7 +51,7 @@ export default function ChatFilters({
   };
   
   return (
-    <div className="flex items-center gap-4 p-1 overflow-x-auto scrollbar-hide">
+    <div className="flex items-center gap-4 p-2 my-1 overflow-x-auto scrollbar-hide">
       {filterOptions.map((options) => (
         <button
           key={options.value}

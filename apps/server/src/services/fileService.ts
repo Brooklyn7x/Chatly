@@ -11,9 +11,12 @@ import mongoose from "mongoose";
 import sharp from "sharp";
 import { ServiceResponse } from "../types/service-respone";
 import { FileModel, FileStatus } from "../models/file.model";
+import { FileProcessingService } from "./fileProcessingService";
 
 export class FileService extends BaseService {
   private s3Client: S3Client;
+  private processingService: FileProcessingService;
+
   constructor() {
     super("FileService");
     this.s3Client = new S3Client({
@@ -23,17 +26,22 @@ export class FileService extends BaseService {
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
       },
     });
+    this.processingService = new FileProcessingService();
   }
 
   async uploadFile(
     file: any,
     userId: string,
-    conversationId: string
+    context: {
+      type: "user" | "group" | "message" | "channel";
+      id: string;
+      purpose?: "avatar" | "banner" | "attachment";
+    }
   ): Promise<ServiceResponse<any>> {
     try {
       const fileId = new mongoose.Types.ObjectId();
       const extension = file.originalname.split(".").pop();
-      const s3Key = `conversation/${conversationId}/${fileId}.${extension}`;
+      const s3Key = `conversation/${context.id}/${fileId}.${extension}`;
 
       const category = this.getFileCategory(file.mimeType);
       let metadata: any = {};
@@ -60,24 +68,23 @@ export class FileService extends BaseService {
         mimeType: file.mimetype,
         size: file.size,
         uploadedBy: userId,
-        conversationId,
+        conversationId: context.id,
         url,
-        status: FileStatus.READY,
+        status: FileStatus.PROCESSING,
         metadata,
       });
 
+      // await this.processingService.addJob({
+      //   fileId: fileRecord.fileId,
+      //   operations: this.getProcessingOperations(
+      //     file.mimetype,
+      //     context.purpose
+      //   ),
+      // });
+
       return {
         success: true,
-        data: {
-          file: fileRecord,
-          attachment: {
-            url,
-            name: file.originalname,
-            type: category,
-            size: file.size,
-            metadata,
-          },
-        },
+        data: this.formatFileResponse(fileRecord),
       };
     } catch (error) {
       this.logger.error("File upload error:", error);
@@ -99,7 +106,7 @@ export class FileService extends BaseService {
         return { success: false, error: "File not found or unauthorized" };
       }
 
-      const url = await this.generateSignedUrl(fileRecord.s3Key);
+      const url = await this.generateSignedUrl(fileRecord.s3_key);
 
       return {
         success: true,
@@ -131,16 +138,12 @@ export class FileService extends BaseService {
       await this.s3Client.send(
         new DeleteObjectCommand({
           Bucket: process.env.AWS_BUCKET_NAME,
-          Key: fileRecord.s3Key,
+          Key: fileRecord.s3_key,
         })
       );
 
       return {
         success: true,
-        data: {
-          conversationId: fileRecord.conversationId,
-          fileId: fileRecord.fileId,
-        },
       };
     } catch (error) {
       this.logger.error("File deletion error:", error);
@@ -179,5 +182,43 @@ export class FileService extends BaseService {
       this.logger.error("Image processing error:", error);
       return {};
     }
+  }
+
+  private getProcessingOperations(
+    mimeType: string,
+    purpose?: string
+  ): string[] {
+    const operations: string[] = ["virus-scan"];
+
+    if (mimeType.startsWith("image/")) {
+      operations.push("thumbnail");
+      if (purpose === "banner") operations.push("optimize");
+    }
+
+    if (mimeType.startsWith("video/")) {
+      operations.push("transcode");
+    }
+
+    return operations;
+  }
+
+  private formatFileResponse(fileRecord: any) {
+    return {
+      id: fileRecord.fileId,
+      status: fileRecord.status,
+      preview:
+        fileRecord.status === FileStatus.READY
+          ? fileRecord.versions.thumbnail
+          : null,
+      originalName: fileRecord.originalName,
+      s3Key: fileRecord.s3Key,
+      category: fileRecord.category,
+      mimeType: fileRecord.mimeType,
+      size: fileRecord.size,
+      uploadedBy: fileRecord.uploadedBy,
+      conversationId: fileRecord.conversationId,
+      url: fileRecord.url,
+      metadata: fileRecord.metadata,
+    };
   }
 }

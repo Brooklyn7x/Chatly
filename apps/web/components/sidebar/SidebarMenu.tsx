@@ -6,7 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 
-const SidebarMenu = () => {
+interface SidebarMenuProps {
+  onViewChange: (view: any) => void;
+}
+const SidebarMenu = ({ onViewChange }: SidebarMenuProps) => {
   const { user } = useAuthStore();
   const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -29,7 +32,7 @@ const SidebarMenu = () => {
       exit={{ scale: 0.75, opacity: 0, y: -2 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
-        "absolute top-14 left-2 w-56 rounded-md z-20 shadow-md bg-background/70 border backdrop-blur-sm origin-top-left"
+        "absolute top-full left-5 w-56 rounded-md z-10 shadow-md bg-background/90 border backdrop-blur-md origin-top-left"
       )}
     >
       <div className="p-1 space-y-1">
@@ -40,7 +43,11 @@ const SidebarMenu = () => {
 
         <MenuItem icon={Bookmark} onClick={() => {}} label="Saved Messages" />
         <MenuItem icon={User} onClick={() => {}} label="Contact" />
-        <MenuItem icon={Settings} onClick={() => {}} label="Settings" />
+        <MenuItem
+          icon={Settings}
+          onClick={() => onViewChange("setting")}
+          label="Settings"
+        />
         <MenuItem
           icon={Moon}
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

@@ -7,25 +7,34 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
 import { UserAvatar } from "../user/UserAvatar";
-import { Participant } from "@/types";
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { Loading } from "../ui/loading";
 
 interface EditChatProps {
+  title: string;
+  description: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: () => void;
+  onSubmit: (data: any) => void;
 }
 
-export function EditChatDailog({ open, onOpenChange, onSubmit }: EditChatProps) {
+export function EditChatDailog({
+  title,
+  description,
+  open,
+  onOpenChange,
+  onSubmit,
+}: EditChatProps) {
   const [data, setData] = useState({
-    groupName: "Data",
-    groupDescription: "Descropt",
+    groupTitle: title,
+    groupDescription: description,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const handleSubmit = () => {
+    onSubmit(data);
+  };
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -38,8 +47,8 @@ export function EditChatDailog({ open, onOpenChange, onSubmit }: EditChatProps) 
           </div>
           <Input
             placeholder="Group Name"
-            value={data.groupName}
-            onChange={(e) => setData({ ...data, groupName: e.target.value })}
+            value={data.groupTitle}
+            onChange={(e) => setData({ ...data, groupTitle: e.target.value })}
           />
           <Input
             placeholder="Description"
@@ -50,7 +59,7 @@ export function EditChatDailog({ open, onOpenChange, onSubmit }: EditChatProps) 
           />
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={onSubmit} disabled={isLoading}>
+          <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
             {isLoading ? <Loading /> : "Save changes"}
           </Button>
         </DialogFooter>

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { FileService } from "../services/fileService";
 import { SocketService } from "../services/socketService";
 import { BaseController } from "./baseController";
+import { FileStatus } from "../models/file.model";
 
 export class FileController extends BaseController {
   private fileService: FileService;
@@ -29,18 +30,23 @@ export class FileController extends BaseController {
       const result = await this.fileService.uploadFile(
         req.file,
         req.user!._id,
-        req.body.conversationId
+        {
+          type: req.body.contextType,
+          id: req.body.contextId,
+          purpose: req.body.purpose,
+        }
       );
 
-      // if (result.success) {
-      //   this.socket.emitToConversation(
-      //     req.body.conversationId,
-      //     "file:uploaded",
-      //     result.data
-      //   );
-      // }
-
-      res.status(result.success ? 201 : 400).json(result);
+      res.status(201).json({
+        success: true,
+        data: {
+          ...result.data,
+          message:
+            result.data.status === FileStatus.PROCESSING
+              ? "File is being processed"
+              : "File ready",
+        },
+      });
     } catch (error) {
       this.logger.error("File upload error:", error);
       res.status(500).json({
@@ -50,17 +56,33 @@ export class FileController extends BaseController {
     }
   }
 
+  async uploadAvatar() {}
+  async uploadAttachments() {}
+  async uploadBanner() {}
+
   async getFile(req: Request, res: Response): Promise<void> {
     try {
-      const fileId = req.params.id;
-      const result = await this.fileService.getFile(req.user.id, fileId);
+      const result = await this.fileService.getFile(
+        req.params.id,
+        req.user!._id
+      );
 
       if (!result.success) {
         res.status(404).json(result);
         return;
       }
 
-      res.json(result);
+      res.json({
+        success: true,
+        data: {
+          ...result.data,
+          url: result.data.status === FileStatus.READY ? result.data.url : null,
+          thumbnail:
+            result.data.status === FileStatus.READY
+              ? result.data.versions.thumbnail
+              : null,
+        },
+      });
     } catch (error) {
       this.logger.error("File fetch error:", error);
       res.status(500).json({

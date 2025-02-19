@@ -1,21 +1,28 @@
-import { MenuIcon, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import SidebarMenu from "./SidebarMenu";
 import { useState, useRef } from "react";
 import { useClickAway } from "@/hooks/useClickAway";
 
-type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
+type ViewType =
+  | "main"
+  | "search"
+  | "new_message"
+  | "new_group"
+  | "new_channel"
+  | "setting";
 interface SidebarHeaderProps {
   view: ViewType;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onViewChange: (view: ViewType) => void;
 }
 
 export default function SidebarHeader({
   view,
   searchQuery,
   onSearchChange,
+  onViewChange,
 }: SidebarHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -25,22 +32,23 @@ export default function SidebarHeader({
   });
 
   return (
-    <div className="h-16 flex items-center px-4 border-b gap-3" ref={menuRef}>
+    <div
+      className="relative h-16 flex items-center px-4 border-b gap-3"
+      ref={menuRef}
+    >
       {view === "main" && (
         <>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full h-10 w-10 border"
+          <button
+            className="p-2 border rounded-full"
             onClick={() => setShowMenu((prev) => !prev)}
           >
-            <MenuIcon className="h-6 w-6" />
-          </Button>
+            <Menu className="h-6 w-6" />
+          </button>
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               placeholder="Search chats"
-              className="pl-12 h-10 text-base rounded-full bg-background"
+              className="pl-12 py-5 text-base rounded-full bg-background"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />
@@ -48,7 +56,7 @@ export default function SidebarHeader({
         </>
       )}
 
-      {showMenu && <SidebarMenu />}
+      {showMenu && <SidebarMenu onViewChange={onViewChange} />}
     </div>
   );
 }
