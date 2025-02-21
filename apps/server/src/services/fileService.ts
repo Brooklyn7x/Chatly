@@ -10,15 +10,17 @@ import mongoose from "mongoose";
 
 import sharp from "sharp";
 import { ServiceResponse } from "../types/service-respone";
-import { FileModel, FileStatus } from "../models/file.model";
+import { FileModel, FileStatus } from "../models/file";
 import { FileProcessingService } from "./fileProcessingService";
+import { Logger } from "../utils/logger";
 
-export class FileService extends BaseService {
+export class FileService {
   private s3Client: S3Client;
   private processingService: FileProcessingService;
-
+  private logger: Logger;
   constructor() {
-    super("FileService");
+    // super("FileService");
+    this.logger = new Logger();
     this.s3Client = new S3Client({
       region: process.env.AWS_REGION,
       credentials: {

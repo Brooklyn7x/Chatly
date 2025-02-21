@@ -120,10 +120,6 @@ export default function MessageInput() {
             </button>
           </div>
 
-          {/* <button onClick={handleAttach}>
-            onAttach
-          </button> */}
-
           <button
             onClick={handleSendMessage}
             className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"

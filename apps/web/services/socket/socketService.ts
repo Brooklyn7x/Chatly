@@ -68,6 +68,13 @@ export class SocketService extends EventEmitter {
       }
     );
 
+    this.socket.on("message:edited", (data: any) => {
+      this.emit("message:edited", data);
+    });
+    this.socket.on("message:deleted", (data: any) => {
+      this.emit("message:deleted", data);
+    });
+
     this.socket.on("message:error", (error: any) => {
       this.emit("message:error", error);
     });
@@ -79,11 +86,6 @@ export class SocketService extends EventEmitter {
     this.socket.on("typing:stop", (data: any) => {
       this.emit("typing:stop", data);
     });
-
-    this.socket.on("chat:joined", () => {});
-    this.socket.on("chat:left", () => {});
-    this.socket.on("chat:updated", () => {});
-    this.socket.on("chat:error", () => {});
 
     this.socket.on("group:joined", (data) => {
       this.emit("group:joined", data);
@@ -126,6 +128,24 @@ export class SocketService extends EventEmitter {
       conversationId: chatId,
       content,
       tempId,
+    });
+  }
+
+  editMessage(messageId: string, content: string) {
+    if (!this.socket?.connected) {
+      throw new Error("Socket not connected");
+    }
+    this.socket.emit("message:edit", {
+      messageId,
+      content,
+    });
+  }
+  deleteMessage(messageId: string) {
+    if (!this.socket?.connected) {
+      throw new Error("Socket not connected");
+    }
+    this.socket.emit("message:delete", {
+      messageId,
     });
   }
 

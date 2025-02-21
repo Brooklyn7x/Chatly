@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
+import { useUserStatus } from "@/hooks/useUserStatus";
 
 interface UserItemProps {
   user: User;
@@ -8,7 +9,8 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ user, selected }: UserItemProps) => {
-  const { username, email, profilePicture } = user;
+  const { id, username, email, profilePicture } = user;
+  const { getStatusText } = useUserStatus(id);
   return (
     <div
       className={cn(
@@ -23,7 +25,10 @@ export const UserItem = ({ user, selected }: UserItemProps) => {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="font-semibold truncate">{username || "User"}</div>
+        <div className="flex items-center justify-between font-semibold truncate">
+          <span >{username || "User"}</span>{" "}
+          <span className="text-sm text-muted-foreground">{getStatusText()}</span>
+        </div>
 
         <div className="text-muted-foreground text-sm truncate">
           {email || "email"}

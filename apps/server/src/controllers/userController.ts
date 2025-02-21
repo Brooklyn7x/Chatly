@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { BaseController } from "./baseController";
 import { UserService } from "../services/userService";
-import { UserStatus } from "../types/user.types";
+import { UserStatus } from "../types/user";
 import { UpdateUser } from "../validators/user";
 
 export class UserController extends BaseController {

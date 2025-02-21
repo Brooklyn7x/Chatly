@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import { useChats } from "@/hooks/useChats";
 
 interface ChatHeaderMenuProps {
   onClose: () => void;
@@ -15,7 +14,7 @@ export default function ChatHeaderMenu({
   onDeleteChat,
 }: ChatHeaderMenuProps) {
   const menuRef = useRef(null);
-  
+
   return (
     <motion.div
       ref={menuRef}

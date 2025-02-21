@@ -4,10 +4,10 @@ import {
   UpdateUserDTO,
   UserProfile,
   UserStatus,
-} from "../types/user.types";
+} from "../types/user";
 import { Logger } from "../utils/logger";
 import { ServiceResponse } from "../types/service-respone";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../models/user";
 const bcrypt = require("bcrypt");
 
 export class UserService {

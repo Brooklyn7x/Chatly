@@ -6,10 +6,6 @@ import { ChatItem } from "../chat/ChatItem";
 import { PrivateChat } from "./PrivateChat";
 import { GroupChat } from "./GroupChat";
 import ChatFilters from "./ChatFilter";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useAuthStore from "@/store/useAuthStore";
 import Setting from "./Setting";
 
 type ViewType =

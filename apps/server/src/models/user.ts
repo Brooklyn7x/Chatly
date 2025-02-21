@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { IUser, UserStatus } from "../types/user.types";
+import { IUser, UserStatus } from "../types/user";
 interface IUserDefaults {
   defaultAvatars: string[];
 }
 const userDefaults: IUserDefaults = {
-  defaultAvatars: process.env.DEFAULT_AVATARS?.split(",") || [
+  defaultAvatars: [
     "https://api.dicebear.com/9.x/avataaars/svg?seed=Kimberly",
     "https://api.dicebear.com/9.x/avataaars/svg?seed=Brooklynn",
     "https://api.dicebear.com/9.x/avataaars/svg?seed=Eden",
@@ -17,12 +17,6 @@ export interface IUserDocument extends IUser, Document {}
 
 const userSchema = new Schema<IUserDocument>(
   {
-    name: {
-      type: String,
-      trim: true,
-      minlength: 2,
-      maxlength: 30,
-    },
     username: {
       type: String,
       required: true,

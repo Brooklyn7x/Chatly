@@ -5,7 +5,7 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import sharp from "sharp";
-import { FileModel } from "../models/file.model";
+import { FileModel } from "../models/file";
 import { StreamingBlobPayloadOutputTypes } from "@smithy/types";
 interface ProcessingJob {
   fileId: string;
@@ -107,7 +107,11 @@ export class FileProcessingService {
     }
   }
 }
-function streamToBuffer(fileStream: StreamingBlobPayloadOutputTypes | undefined): sharp.SharpOptions | PromiseLike<sharp.SharpOptions | undefined> | undefined {
-    throw new Error("Function not implemented.");
+function streamToBuffer(
+  fileStream: StreamingBlobPayloadOutputTypes | undefined
+):
+  | sharp.SharpOptions
+  | PromiseLike<sharp.SharpOptions | undefined>
+  | undefined {
+  throw new Error("Function not implemented.");
 }
-

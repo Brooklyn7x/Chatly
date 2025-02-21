@@ -1,11 +1,6 @@
 import { create } from "zustand";
 
-export type UserStatus =
-  | "online"
-  | "offline"
-  | "away"
-  | "idle"
-  | "do_not_disturb";
+export type UserStatus = "online" | "offline";
 
 export interface UserStatusData {
   userId: string;
@@ -21,13 +16,13 @@ interface UserStatusState {
 
 interface UserStatusStore {
   statusMap: Record<string, UserStatusState>;
-  getStatus: (userId: string) => UserStatusState | null;
+  getStatus: (userId: string) => UserStatusState | string;
   updateStatus: (data: UserStatusState) => void;
 }
 
 export const useUserStatusStore = create<UserStatusStore>((set, get) => ({
   statusMap: {},
-  getStatus: (userId) => get().statusMap[userId] || null,
+  getStatus: (userId) => get().statusMap[userId] || "offline",
   updateStatus: (data) =>
     set((state) => ({
       statusMap: {

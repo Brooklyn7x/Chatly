@@ -1,17 +1,14 @@
 import { Request, Response } from "express";
 import { FileService } from "../services/fileService";
-import { SocketService } from "../services/socketService";
 import { BaseController } from "./baseController";
-import { FileStatus } from "../models/file.model";
+import { FileStatus } from "../models/file";
 
 export class FileController extends BaseController {
   private fileService: FileService;
-  private socket: SocketService;
 
   constructor() {
     super("FileController");
     this.fileService = new FileService();
-    this.socket = new SocketService();
     this.uploadFile = this.uploadFile.bind(this);
     this.getFile = this.getFile.bind(this);
     this.deleteFile = this.deleteFile.bind(this);

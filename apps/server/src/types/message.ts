@@ -31,6 +31,21 @@ export interface Message {
   updatedAt: Date;
 }
 
+import { Types } from "mongoose";
+
+// export interface Message {
+//   _id: Types.ObjectId;
+//   roomId: Types.ObjectId;
+//   userId: Types.ObjectId;
+//   encryptedMessages: { userId: string; data: string }[];
+//   fileUrl?: string;
+//   timestamp: Date;
+//   delivered: Types.ObjectId[];
+//   read: Types.ObjectId[];
+//   edited: boolean;
+//   deleted: boolean;
+//   reactions: { userId: string; reaction: string }[];
+// }
 export enum MessageStatus {
   SENDING = "sending",
   SENT = "sent",

@@ -1,7 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import jwt from "jsonwebtoken";
-import { config } from "../config/config";
-import { UserModel } from "../models/user.model";
+
+import { UserModel } from "../models/user";
 import { AppError } from "../utils/error";
 
 export const authenticate = async (
@@ -15,7 +15,7 @@ export const authenticate = async (
       throw new AppError(401, "No auth token provided");
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret!) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
       userId: string;
     };
 

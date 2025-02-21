@@ -1,6 +1,6 @@
 import { useUserStatusStore } from "@/store/useUserStatusStore";
 
-export const useUserStatus = (userId?: string) => {
+export const useUserStatus = (userId: string) => {
   const status = useUserStatusStore((state) =>
     userId ? state.statusMap[userId] : null
   );
@@ -10,9 +10,9 @@ export const useUserStatus = (userId?: string) => {
     lastSeen: status?.lastSeen || "",
     isOnline: status?.status === "online",
     getStatusText: () => {
-      if (!status) return "Offline";
+      if (!status) return "offline";
       if (status.status === "online") return "Online";
-      return `Last seen ${new Date(status.lastSeen).toLocaleTimeString()}`;
+      return `Last seen ${new Date(status.lastSeen).toDateString()}`;
     },
   };
 };

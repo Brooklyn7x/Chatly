@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { Message, MessageStatus, MessageType } from "../types/message";
+import { Message } from "../types/message";
 
 export interface MessageDocument extends Message, Document {}
 
@@ -169,3 +169,5 @@ export const MessageModel = mongoose.model<MessageDocument>(
   "Message",
   MessageSchema
 );
+
+

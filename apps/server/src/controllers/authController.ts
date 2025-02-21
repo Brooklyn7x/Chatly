@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { BaseController } from "./baseController";
 import { AuthService } from "../services/authService";
-import { LoginDTO } from "../types/auth.types";
+import { LoginDTO } from "../types/auth";
 import { loginSchema, registerSchema } from "../validators/auth";
 
 export class AuthController extends BaseController {
@@ -46,12 +46,10 @@ export class AuthController extends BaseController {
       }
     } catch (error) {
       this.logger.error("Registration error:", error);
-      res
-        .status(500)
-        .json({
-          success: false,
-          error: "Internal server error failed to register user",
-        });
+      res.status(500).json({
+        success: false,
+        error: "Internal server error failed to register user",
+      });
     }
   };
 

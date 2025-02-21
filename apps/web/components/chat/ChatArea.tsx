@@ -4,7 +4,7 @@ import MessageList from "../message/MessageList";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "../message/MessageInput";
 
-export const PrivateChat = () => {
+export const ChatArea = () => {
   const { activeChatId } = useChatStore();
   useChatSocket(activeChatId || "");
 

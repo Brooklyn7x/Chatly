@@ -3,17 +3,13 @@ import { ConversationService } from "../services/conversationService";
 import { MessageService } from "../services/messageService";
 import { SocketService } from "../services/socketService";
 import { BaseController } from "./baseController";
-import { CreateMessageDTO } from "../types/message";
 
 export class MessageController extends BaseController {
   private messageService: MessageService;
-  private conversationService: ConversationService;
-  private socket: SocketService;
 
   constructor() {
     super("MessageController");
-    this.conversationService = new ConversationService();
-    this.socket = new SocketService();
+
     this.messageService = new MessageService();
     this.sendMessage = this.sendMessage.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);

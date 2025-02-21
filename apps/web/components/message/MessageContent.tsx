@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-type MessageType = "text" | "image" | "video" | "audio";
+type MessageType = "text" | "image" | "video" | "audio" | "file";
 
 export const MessageContent = ({
   content,

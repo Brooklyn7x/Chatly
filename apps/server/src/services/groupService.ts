@@ -1,14 +1,15 @@
-import { BaseService } from "./baseService";
-import { ConversationModel } from "../models/conversation.model";
+import { ConversationModel } from "../models/conversation";
 import { ServiceResponse } from "../types/service-respone";
 import { ConversationType, ParticipantRole } from "../types/conversation";
 import mongoose from "mongoose";
+import { Logger } from "../utils/logger";
 
-export class GroupService extends BaseService {
+export class GroupService {
+  private logger: Logger;
+
   constructor() {
-    super("GroupService");
+    this.logger = new Logger();
   }
-
   async createGroup(
     creatorId: string,
     name: string,

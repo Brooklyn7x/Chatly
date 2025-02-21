@@ -17,7 +17,7 @@ export function useTypingIndicator(chatId: string) {
     }
     timerRef.current = setTimeout(() => {
       socketService.sendTypingStop(chatId, userId);
-    }, 4000);
+    }, 3000);
   }, [chatId]);
 
   useEffect(() => {
@@ -27,7 +27,6 @@ export function useTypingIndicator(chatId: string) {
       conversationId: string;
       userIds: [];
     }) => {
-      console.log(data, "start");
       if (data.conversationId === chatId) {
         console.log(data.conversationId, chatId, "adas");
         setTypingUsers((prev) => {
@@ -43,7 +42,6 @@ export function useTypingIndicator(chatId: string) {
       conversationId: string;
       userIds: [];
     }) => {
-      console.log(data, "stop");
       if (data.conversationId === chatId) {
         setTypingUsers((prev) => {
           const next = new Set(prev);
@@ -56,7 +54,6 @@ export function useTypingIndicator(chatId: string) {
 
     socketService.on("typing:start", handleStartTyping);
     socketService.on("typing:stop", handleStopTyping);
-
     return () => {
       socketService.off("typing:start", handleStartTyping);
       socketService.off("typing:stop", handleStopTyping);

@@ -1,6 +1,6 @@
 import { useChatStore } from "@/store/useChatStore";
 import { GroupChat } from "./GroupChat";
-import { PrivateChat } from "./PrivateChat";
+import { ChatArea } from "./ChatArea";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/useUiStore";
 import { EmptyState } from "./EmptyChat";
@@ -8,22 +8,9 @@ import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { ChatInfo } from "./ChatInfo";
 
 export const ChatContainer = () => {
-  const { chats, activeChatId } = useChatStore();
+  const { activeChatId } = useChatStore();
   const { isMobile } = useUIStore();
-  const chat = chats.find((chat) => chat._id === activeChatId);
   const { isOpen } = useChatPanelStore();
-  const renderChat = () => {
-    switch (chat?.type) {
-      case "direct":
-        return <PrivateChat />;
-      case "group":
-        return <GroupChat />;
-      //   case "channel":
-      //     return <ChannelChat />;
-      default:
-        return <EmptyState />;
-    }
-  };
   return (
     <div
       className={cn(
@@ -38,8 +25,7 @@ export const ChatContainer = () => {
         }
       )}
     >
-      {renderChat()}
-
+      <ChatArea />
       {isOpen && <ChatInfo />}
     </div>
   );

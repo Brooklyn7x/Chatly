@@ -1,11 +1,10 @@
 import { Redis } from "ioredis";
-import { DatabaseService } from "./databaseService";
-import { LoginDTO, RegisterDTO, TokenPayload } from "../types/auth.types";
+import { LoginDTO, RegisterDTO, TokenPayload } from "../types/auth";
 import { ServiceResponse } from "../types/service-respone";
 import { Logger } from "../utils/logger";
 import { UserService } from "./userService";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "../models/user";
 
 const bcrypt = require("bcrypt");
 

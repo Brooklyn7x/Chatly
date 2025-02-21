@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserStatus } from "../types/user.types";
+import { UserStatus } from "../types/user";
 
 export const userValidation = {
   updateProfile: z.object({

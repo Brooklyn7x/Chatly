@@ -7,8 +7,8 @@ export function useUserStatusSocket() {
 
   useEffect(() => {
     const handleStatusChange = (data: {
-      userId: string;
       status: string;
+      userId: string;
       lastSeen: Date;
     }) => {
       updateStatus({
@@ -17,11 +17,7 @@ export function useUserStatusSocket() {
         lastSeen: data.lastSeen,
       });
     };
-
-    
-
     socketService.on("user:status_change", handleStatusChange);
-
     return () => {
       socketService.off("user:status_change", handleStatusChange);
     };

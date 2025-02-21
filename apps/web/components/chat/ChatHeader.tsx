@@ -22,11 +22,11 @@ export default function ChatHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuthStore();
   const { setIsOpen } = useChatPanelStore();
-  const { activeChatId, chats, setActiveChat, deleteChat } = useChatStore();
+  const { activeChatId, chats, setActiveChat } = useChatStore();
   const chat = chats.find((chat) => chat._id === activeChatId);
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
-  const { status, getStatusText } = useUserStatus(otherUserId);
+  const { getStatusText } = useUserStatus(otherUserId || "");
   const { deleteCht } = useChats();
   const displayName = useMemo(() => {
     if (chat?.type === "direct") {
@@ -52,10 +52,6 @@ export default function ChatHeader() {
           onClick={() => setIsOpen(true)}
           className="flex items-center gap-4"
         >
-          {/* <UserAvatar
-            status={status === "online" ? "online" : "offline"}
-            size={"sm"}
-          /> */}
           <UserAvatar />
           <div className="flex flex-col text-left">
             <h2 className="text-sm font-semibold">{displayName}</h2>

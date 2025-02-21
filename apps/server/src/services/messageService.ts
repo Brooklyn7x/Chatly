@@ -1,10 +1,9 @@
 import Redis from "ioredis";
-import { DatabaseService } from "./databaseService";
 import { Message, MessageStatus, MessageType } from "../types/message";
 import { ServiceResponse } from "../types/service-respone";
-import { BaseService } from "./baseService";
 import mongoose from "mongoose";
-import { MessageModel } from "../models/message.model";
+import { MessageModel } from "../models/message";
+import { Logger } from "../utils/logger";
 
 interface MessageData {
   conversationId: string;
@@ -22,14 +21,13 @@ interface MessageData {
   tempId?: string;
 }
 
-export class MessageService extends BaseService {
+export class MessageService {
   private redis: Redis;
-  private db: DatabaseService;
 
+  private logger: Logger;
   constructor() {
-    super("MessageService");
+    this.logger = new Logger();
     this.redis = new Redis(process.env.REDIS_URL as string);
-    this.db = new DatabaseService();
   }
 
   async sendMessage(
@@ -37,16 +35,16 @@ export class MessageService extends BaseService {
     messageData: MessageData
   ): Promise<ServiceResponse<any>> {
     try {
-      const conversation = await this.db.findOne<any>("Conversation", {
-        _id: new mongoose.Types.ObjectId(messageData.conversationId),
-      });
+      // const conversation = await MessageModel.findOne({
+      //   _id: new mongoose.Types.ObjectId(messageData.conversationId),
+      // });
 
-      if (!conversation) {
-        return {
-          success: false,
-          error: "Conversation not found",
-        };
-      }
+      // if (!conversation) {
+      //   return {
+      //     success: false,
+      //     error: "Conversation not found",
+      //   };
+      // }
 
       const messageObj = {
         conversationId: messageData.conversationId,
@@ -94,7 +92,7 @@ export class MessageService extends BaseService {
       const messages = await MessageModel.find(query)
         .sort({ createdAt: -1 })
         .limit(limit)
-        .populate("metadata", "username avatar")
+        .populate("senderId", "username profilePicture")
         .lean();
 
       return {
@@ -110,7 +108,7 @@ export class MessageService extends BaseService {
   async deleteMessage(messageId: string, userId: string) {
     try {
       const message = await MessageModel.findOne({
-        _id: new mongoose.Types.ObjectId(messageId).toString(),
+        _id: new mongoose.Types.ObjectId(messageId),
         senderId: new mongoose.Types.ObjectId(userId),
       }).lean();
 
@@ -121,7 +119,7 @@ export class MessageService extends BaseService {
         };
       }
 
-      const existingMessage = await MessageModel.findById({ messageId });
+      const existingMessage = await MessageModel.findById(messageId);
 
       if (!existingMessage) {
         return {
@@ -131,7 +129,7 @@ export class MessageService extends BaseService {
       }
 
       const deleteResult = await MessageModel.deleteOne({
-        _id: new mongoose.Types.ObjectId(messageId).toString(),
+        _id: new mongoose.Types.ObjectId(messageId),
         senderId: new mongoose.Types.ObjectId(userId),
       });
 
@@ -152,6 +150,7 @@ export class MessageService extends BaseService {
         },
       };
     } catch (error) {
+      console.log(error);
       this.logger.error("Error deleting message:", error);
       return {
         success: false,
@@ -206,7 +205,7 @@ export class MessageService extends BaseService {
         messageId,
         updatePayload,
         { new: true, runValidators: true }
-      ).populate("conversationId");
+      );
 
       if (!updatedMessage) {
         return { success: false, error: "Failed to update message" };
@@ -280,7 +279,7 @@ export class MessageService extends BaseService {
         };
       }
 
-      const conversation = await this.db.findOne<any>("Conversation", {
+      const conversation = await MessageModel.findOne<any>({
         _id: new mongoose.Types.ObjectId(message.conversationId),
         "participants.userId": new mongoose.Types.ObjectId(userId),
       });

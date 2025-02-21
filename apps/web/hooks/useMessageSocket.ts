@@ -8,12 +8,8 @@ export const useMessageSocket = () => {
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
-      const messageData = message._doc ? message._doc : message;
-      addMessage({
-        ...messageData,
-        _id: messageData._id || `temp-${Date.now()}`,
-        status: "sent",
-      });
+      const messageData = message.data._doc ? message.data._doc : message;
+      addMessage(messageData);
     };
 
     const handleMessageSent = (response: MessageResponse) => {
@@ -30,6 +26,35 @@ export const useMessageSocket = () => {
       updateMessageStatus(messageId, { status: "delivered" });
     };
 
+    const handleMessageEdited = (data: any) => {
+      const message = data.data._doc ? data.data._doc : data.data;
+      const { _id: messageId, content, editedAt, previousContent } = message;
+
+      updateMessageStatus(messageId, {
+        content,
+        edited: true,
+        editedAt,
+        previousContent,
+        updatedAt: new Date().toISOString(),
+      });
+    };
+
+    const handleMessageDeleted = (data: {
+      conversationId: string;
+      deletedAt: Date;
+      messageId: string;
+    }) => {
+      const { messageId, deletedAt } = data;
+
+      updateMessageStatus(messageId, {
+        deleted: true,
+        deletedAt,
+        content: "[Message deleted]",
+        attachments: [],
+        updatedAt: new Date().toISOString(),
+      });
+    };
+
     const handleMessageReadAck = (data: {
       messageIds: string[];
       conversationId: string;
@@ -41,8 +66,11 @@ export const useMessageSocket = () => {
         });
       });
     };
+
     socketService.on("message:new", handleNewMessage);
     socketService.on("message:sent", handleMessageSent);
+    socketService.on("message:edited", handleMessageEdited);
+    socketService.on("message:deleted", handleMessageDeleted);
     socketService.on("message:delivered", handleMessageDelivered);
     socketService.on("message:read:ack", handleMessageReadAck);
 
@@ -51,6 +79,8 @@ export const useMessageSocket = () => {
       socketService.off("message:sent", handleMessageSent);
       socketService.off("message:delivered", handleMessageDelivered);
       socketService.off("message:read:ack", handleMessageReadAck);
+      socketService.off("message:edited", handleMessageEdited);
+      socketService.off("message:deleted", handleMessageDeleted);
     };
   }, [addMessage, updateMessageStatus]);
 

@@ -24,7 +24,7 @@ export default function AttachmentPicker({
 }: AttachmentPickerProps) {
   const [selectedFiles, setSelectedFiles] = useState<FilePreview[]>([]);
   const [showPreview, setShowPreview] = useState(false);
-
+  if (!show) return null;
   const getFileType = (file: File): "image" | "document" | "video" => {
     if (file.type.startsWith("image/")) return "image";
     if (file.type.startsWith("video/")) return "video";

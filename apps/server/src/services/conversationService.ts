@@ -1,6 +1,5 @@
 import Redis from "ioredis";
 import mongoose from "mongoose";
-import { DatabaseService } from "./databaseService";
 import { UserService } from "./userService";
 import { Logger } from "../utils/logger";
 import {
@@ -11,7 +10,7 @@ import {
   ParticipantRole,
 } from "../types/conversation";
 import { ServiceResponse } from "../types/service-respone";
-import { ConversationModel } from "../models/conversation.model";
+import { ConversationModel } from "../models/conversation";
 
 interface ParticipantUpdate {
   action: "add" | "remove" | "updateRole";
@@ -21,13 +20,13 @@ interface ParticipantUpdate {
 
 export class ConversationService {
   private redis: Redis;
-  private db: DatabaseService;
+
   private userService: UserService;
   private logger: Logger;
 
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL as string);
-    this.db = new DatabaseService();
+
     this.userService = new UserService();
     this.logger = new Logger("ConversationService");
   }
@@ -161,8 +160,6 @@ export class ConversationService {
     }
   }
 
-  async updateParticipants() {}
-
   async getConversationById(
     conversationId: string
   ): Promise<ServiceResponse<any>> {
@@ -203,7 +200,7 @@ export class ConversationService {
       const conversations = await ConversationModel.findOne({
         _id: conversationId,
         participants: userId,
-      });
+      }).sort({ createdAt: -1 });
 
       if (!conversations) {
         return {
@@ -359,7 +356,7 @@ export class ConversationService {
 
   async getConversationsByUser(userId: string) {
     try {
-      const conversations = await this.db.find("Conversation", {
+      const conversations = await ConversationModel.find({
         "participants.userId": userId,
       });
       return {
@@ -380,7 +377,7 @@ export class ConversationService {
     otherParticipantId: string
   ): Promise<ServiceResponse<any | null>> {
     try {
-      const existingConversation = await this.db.findOne("Conversation", {
+      const existingConversation = await ConversationModel.findOne({
         type: ConversationType.DIRECT,
         participants: {
           $all: [
