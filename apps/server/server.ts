@@ -9,17 +9,18 @@ import { SocketService } from "./src/services/socketService";
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://192.168.31.197:3000"],
     methods: ["GET", "POST"],
+    credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type"],
   },
 });
 
 SocketService.getInstance();
 connectDB();
 //redis()
-
-const PORT = process.env.PORT || 8000;
-server.listen(Number(PORT), "0.0.0.0", () => {
+const PORT = parseInt(process.env.PORT || "8000", 10);
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
 

@@ -9,10 +9,9 @@ export const MessageContent = ({
   content: string;
   type: MessageType;
 }) => {
-  //tap to view full image function
   switch (type) {
     case "text":
-      return <p className="text-sm">{content}</p>;
+      return <p className="text-md">{content}</p>;
     case "image":
       return (
         <div className="relative w-48 h-48">

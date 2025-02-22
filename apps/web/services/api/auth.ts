@@ -5,8 +5,6 @@ export const authApi = {
   login: async (data: LoginInput) => {
     try {
       const response = await apiClient.post("/auth/login", data);
-      // apiClient.defaults.headers.common["Authorization"] =
-      //   `Bearer ${response.data.accessToken}`;
       return response.data;
     } catch (error) {
       console.log(error);

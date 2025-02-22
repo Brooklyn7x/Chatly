@@ -1,11 +1,8 @@
 import { io, Socket } from "socket.io-client";
 import { EventEmitter } from "events";
-import useAuthStore from "@/store/useAuthStore";
 
 export class SocketService extends EventEmitter {
   private socket: Socket | null = null;
-  private readonly MAX_RECONNECT_ATTEMPTS = 5;
-  private readonly RECONNECT_INTERVAL = 3000;
 
   constructor() {
     super();
@@ -13,22 +10,21 @@ export class SocketService extends EventEmitter {
     this.disconnect = this.disconnect.bind(this);
   }
 
-  async initialize() {
-    if (this.socket?.connected) return;
-    const token = useAuthStore.getState().accessToken;
-    if (!token) {
-      throw new Error("No authentication token found");
-    }
+  initialize(token: string) {
+    if (this.socket?.connected) return this.socket;
 
     this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
       auth: { token },
+      withCredentials: true,
+      autoConnect: true,
       reconnection: true,
-      reconnectionAttempts: this.MAX_RECONNECT_ATTEMPTS,
-      reconnectionDelay: this.RECONNECT_INTERVAL,
-      timeout: 10000,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
 
     this.setupEventListeners();
+    return this.socket;
   }
 
   private setupEventListeners() {
@@ -42,6 +38,11 @@ export class SocketService extends EventEmitter {
     this.socket.on("disconnect", (reason) => {
       console.log("Socket disconnected:", reason);
       this.emit("disconnected", reason);
+    });
+
+    this.socket.on("connect_error", (err) => {
+      console.log("Socket connection error:", err.message);
+      this.emit("connect_error", err);
     });
 
     this.socket.on("chat:error", (error: any) => {
@@ -229,8 +230,10 @@ export class SocketService extends EventEmitter {
   }
 
   disconnect() {
-    this.socket?.disconnect();
-    this.socket = null;
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
   }
 }
 

@@ -2,12 +2,6 @@ import { create } from "zustand";
 
 export type UserStatus = "online" | "offline";
 
-export interface UserStatusData {
-  userId: string;
-  status: UserStatus;
-  lastSeen: string;
-}
-
 interface UserStatusState {
   userId: string;
   status: UserStatus;

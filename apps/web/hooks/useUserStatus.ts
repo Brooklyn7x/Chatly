@@ -12,7 +12,7 @@ export const useUserStatus = (userId: string) => {
     getStatusText: () => {
       if (!status) return "offline";
       if (status.status === "online") return "Online";
-      return `Last seen ${new Date(status.lastSeen).toDateString()}`;
+      return `Last seen ${status.lastSeen.toISOString()}`;
     },
   };
 };

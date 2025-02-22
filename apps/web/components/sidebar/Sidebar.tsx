@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { useLayout } from "@/hooks/useLayout";
 import { FloatingActionButton } from "./FloatingActionButton";
+import { useChats } from "@/hooks/useChats";
 
 type ViewType =
   | "main"
@@ -18,7 +19,10 @@ export default function Sidebar() {
   const { isMobile, activeChatId } = useLayout();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const { fetchChats } = useChats();
+  useEffect(() => {
+    fetchChats();
+  }, []);
   return (
     <div
       className={cn(
