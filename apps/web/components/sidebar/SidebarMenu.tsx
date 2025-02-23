@@ -32,7 +32,7 @@ const SidebarMenu = ({ onViewChange }: SidebarMenuProps) => {
       exit={{ scale: 0.75, opacity: 0, y: -2 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className={cn(
-        "absolute top-full left-5 w-56 rounded-md z-10 shadow-md bg-background/90 border backdrop-blur-md origin-top-left"
+        "absolute top-full left-2 w-56 rounded-md z-10 shadow-md bg-background/90 border backdrop-blur-md origin-top-left"
       )}
     >
       <div className="p-1 space-y-1">

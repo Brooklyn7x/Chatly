@@ -44,12 +44,13 @@ export function EditChatDailog({
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
           <div className="p-4">
-            <UserAvatar size={"xl"} />
+            <UserAvatar size="xl" />
           </div>
           <Input
             placeholder="Group Name"
             value={data.groupTitle}
             onChange={(e) => setData({ ...data, groupTitle: e.target.value })}
+            className="text-sm"
           />
           <Input
             placeholder="Description"
@@ -57,10 +58,16 @@ export function EditChatDailog({
             onChange={(e) =>
               setData({ ...data, groupDescription: e.target.value })
             }
+            className="text-sm"
           />
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="text-sm"
+          >
             {isLoading ? <Loading /> : "Save changes"}
           </Button>
         </DialogFooter>

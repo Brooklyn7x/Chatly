@@ -58,26 +58,28 @@ export const AddMemberDailog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
           <DialogDescription>Add Member to Group</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-4">
           <div className="p-2">
-            <h1 className="mb-2">Selected Users ({selectedMember.length})</h1>
+            <h1 className="mb-2 text-sm font-medium">
+              Selected Users ({selectedMember.length})
+            </h1>
             <div className="flex flex-wrap gap-2">
               {selectedMember.map((id) => (
                 <div
                   key={id}
-                  className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm"
                 >
                   <span>{id}</span>
                   <button
                     onClick={() =>
                       setSelectedMember((prev) => prev.filter((i) => i !== id))
                     }
-                    className="text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -85,8 +87,8 @@ export const AddMemberDailog = ({
               ))}
             </div>
           </div>
-          <div className="min-h-64 max-h-64 p-2 border rounded-xl overflow-y-auto">
-            <div className="space-y-2">
+          <div className="min-h-64 max-h-64 p-2 border rounded-lg overflow-y-auto">
+            <div className="space-y-1">
               {availableUsers.map((user) => (
                 <div
                   key={user._id}
@@ -98,7 +100,7 @@ export const AddMemberDailog = ({
                     )
                   }
                   className={cn(
-                    "p-2 rounded-lg cursor-pointer transition-colors",
+                    "p-2 rounded-md cursor-pointer transition-colors",
                     selectedMember.includes(user._id)
                       ? "bg-muted"
                       : "hover:bg-muted/50"
@@ -106,7 +108,7 @@ export const AddMemberDailog = ({
                 >
                   <div className="flex items-center gap-3">
                     <UserAvatar size="sm" />
-                    <span>{user.username}</span>
+                    <span className="text-sm">{user.username}</span>
                   </div>
                 </div>
               ))}

@@ -35,21 +35,22 @@ export const RemoveMemberDialog = ({
             Select a user to remove from the group
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-64 overflow-y-auto">
+        <div className="max-h-64 overflow-y-auto space-y-1">
           {participants.map((participant) => (
             <div
               key={participant.userId._id}
-              className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-lg"
+              className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md transition-colors"
             >
               <div className="flex items-center gap-3">
                 <UserAvatar user={participant.userId} size="sm" />
-                <span>{participant.userId.username}</span>
+                <span className="text-sm">{participant.userId.username}</span>
               </div>
               <Button
                 variant="destructive"
                 size="sm"
                 onClick={() => handleRemove(participant.userId._id)}
                 disabled={isRemoving}
+                className="text-xs"
               >
                 {isRemoving ? "Removing..." : "Remove"}
               </Button>

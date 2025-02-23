@@ -8,7 +8,7 @@ export const useMessageSocket = () => {
 
   useEffect(() => {
     const handleNewMessage = (message: any) => {
-      const messageData = message.data._doc ? message.data._doc : message;
+      const messageData = message?._doc ? message?._doc : message;
       addMessage(messageData);
     };
 
@@ -22,14 +22,14 @@ export const useMessageSocket = () => {
       }
     };
 
-    const handleMessageDelivered = (messageId: string) => {
-      updateMessageStatus(messageId, { status: "delivered" });
+    const handleMessageDelivered = (data: { messageId: string }) => {
+      console.log(data);
+      updateMessageStatus(data.messageId, { status: "delivered" });
     };
 
     const handleMessageEdited = (data: any) => {
       const message = data.data._doc ? data.data._doc : data.data;
       const { _id: messageId, content, editedAt, previousContent } = message;
-
       updateMessageStatus(messageId, {
         content,
         edited: true,

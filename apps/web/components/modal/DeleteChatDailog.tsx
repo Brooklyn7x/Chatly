@@ -42,17 +42,18 @@ export const DeleteChatDailog = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Chat</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             This action cannot be undone. All messages and media will be
-            removed.
+            permanently removed.
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
+            className="text-sm"
           >
             Cancel
           </Button>
@@ -60,6 +61,7 @@ export const DeleteChatDailog = ({
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}
+            className="text-sm"
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>

@@ -1,21 +1,9 @@
-import { cn } from "@/lib/utils";
-
-export const TypingIndicator = () => {
+export function TypingIndicator() {
   return (
-    <div className="w-16 h-6 ml-2 mb-2 bg-background/80 rounded-full p-1 flex items-center justify-center">
-      <div className="flex gap-1">
-        {[0, 1, 2, 3].map((i) => (
-          <span
-            key={i}
-            className={cn(
-              "h-2 w-2 rounded-full bg-white/80",
-              "animate-pulse",
-              i === 1 && "delay-75",
-              i === 2 && "delay-150"
-            )}
-          />
-        ))}
-      </div>
+    <div className="flex items-center gap-1.5 px-3 py-2 bg-background/60 backdrop-blur-sm border rounded-full w-fit">
+      <div className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+      <div className="h-2 w-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+      <div className="h-2 w-2 bg-primary rounded-full animate-bounce" />
     </div>
   );
-};
+}

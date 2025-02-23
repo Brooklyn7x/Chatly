@@ -84,9 +84,18 @@ export class SocketService {
     const { userId } = socket.data;
     this.onlineUsers.set(userId, socket.id);
     socket.join(`user:${userId}`);
-    //join all chats
+    this.logger.info(`user:${userId}`);
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
     this.broadcastUserStatus(userId, UserStatus.ONLINE);
+    const conversationsResponse =
+      await this.conversationService.getUserConversations(userId);
+
+    if (conversationsResponse.success && conversationsResponse.data) {
+      conversationsResponse.data.forEach((conversation: any) => {
+        socket.join(`chat:${conversation._id}`);
+        this.logger.info(`chat:${conversation._id}`);
+      });
+    }
   }
 
   private setupConnection(socket: Socket) {
@@ -411,20 +420,38 @@ export class SocketService {
           socket.emit("message:sent", {
             tempId: data.tempId,
             messageId: result.data._id,
-            status: "sent",
+            status: MessageStatus.SENT,
             timestamp: new Date(),
           });
-        }
-        const messageData = {
-          ...result,
-          messageId: result.data._id,
-          status: MessageStatus.DELIVERED,
-          timestamp: new Date(),
-        };
 
-        socket
-          .to(`chat:${data.conversationId}`)
-          .emit("message:new", messageData);
+          const recipientSocketId = this.onlineUsers.get(data.recipientId);
+          const messageStatus = recipientSocketId
+            ? MessageStatus.DELIVERED
+            : MessageStatus.SENT;
+
+          const messageData = {
+            ...result.data,
+            messageId: result.data._id,
+            status: messageStatus,
+            timestamp: new Date(),
+          };
+
+          socket
+            .to(`chat:${data.conversationId}`)
+            .emit("message:new", messageData);
+
+          if (recipientSocketId) {
+            await this.messageService.updateMessageStatus(
+              result.data._id,
+              MessageStatus.DELIVERED
+            );
+
+            socket.emit("message:delivered", {
+              messageId: result.data._id,
+              timestamp: new Date(),
+            });
+          }
+        }
       } catch (error) {
         this.handleError(socket, "message:error", error);
       }
@@ -435,17 +462,11 @@ export class SocketService {
       async (data: { messageIds: string[]; conversationId: string }) => {
         try {
           const { userId } = socket.data;
-
-          const updateMessage = data.messageIds.map(async (messageId) => {
-            const result = await this.messageService.markMessageAsRead(
-              messageId,
-              userId
-            );
-            return result;
-          });
-
-          await Promise.all(updateMessage);
-
+          await Promise.all(
+            data.messageIds.map((messageId) =>
+              this.messageService.markMessageAsRead(messageId, userId)
+            )
+          );
           socket.to(`chat:${data.conversationId}`).emit("message:read:ack", {
             messageIds: data.messageIds,
             conversationId: data.conversationId,

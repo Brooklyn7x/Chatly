@@ -7,6 +7,7 @@ import { useChatStore } from "@/store/useChatStore";
 import { useMessage } from "@/hooks/useMessage";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useFileUpload } from "@/hooks/useFileUpload";
+import { Textarea } from "../ui/textarea";
 
 export default function MessageInput() {
   const { activeChatId } = useChatStore();
@@ -90,42 +91,43 @@ export default function MessageInput() {
   }, [showEmojiPicker, showAttachment]);
 
   return (
-    <div className="bottom-0 left-0 right-0">
-      <div className="relative max-w-2xl mx-auto px-4 pb-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm">
+      <div className="relative max-w-2xl mx-auto px-4 pb-3 pt-2">
         <div className="flex items-center gap-2">
-          <div className="relative flex-1 flex items-center">
+          <div className="relative flex-1 flex items-center min-w-0">
             <button
               type="button"
               onClick={handleEmojiPicker}
-              className="absolute left-4 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+              className="absolute left-3 hover:scale-105 transition-transform text-muted-foreground hover:text-foreground"
             >
-              <Smile className="h-6 w-6" />
+              <Smile className="h-5 w-5" />
             </button>
 
             <textarea
               ref={textareaRef}
-              className="w-full pl-12 pr-12 py-3 rounded-2xl border resize-none min-h-[50px] max-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl border bg-background resize-none min-h-[40px] max-h-[150px] text-sm ring-0 focus-visible:bg-none focus:outline-none overflow-hidden"
               placeholder="Type a message..."
               onChange={handleTyping}
               value={message}
               rows={1}
+              style={{ fontSize: "16px" }}
             />
 
             <button
               type="button"
               onClick={handleAttachmentPicker}
-              className="absolute right-4 hover:scale-110 transition-transform text-muted-foreground hover:text-foreground"
+              className="absolute right-3 hover:scale-105 transition-transform text-muted-foreground hover:text-foreground"
             >
-              <Paperclip className="h-6 w-6" />
+              <Paperclip className="h-5 w-5" />
             </button>
           </div>
 
           <button
             onClick={handleSendMessage}
-            className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center hover:bg-blue-600 transition-colors flex-shrink-0"
+            className="h-9 w-9 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors flex-shrink-0 min-w-[36px]"
             aria-label="Send message"
           >
-            <SendHorizonal className="h-5 w-5" />
+            <SendHorizonal className="h-4 w-4 text-white" />
           </button>
         </div>
 

@@ -5,7 +5,7 @@ export type UserStatus = "online" | "offline";
 interface UserStatusState {
   userId: string;
   status: UserStatus;
-  lastSeen: Date;
+  timestamp: string;
 }
 
 interface UserStatusStore {
@@ -24,7 +24,7 @@ export const useUserStatusStore = create<UserStatusStore>((set, get) => ({
         [data.userId]: {
           userId: data.userId,
           status: data.status,
-          lastSeen: data.lastSeen,
+          timestamp: data.timestamp,
         },
       },
     })),

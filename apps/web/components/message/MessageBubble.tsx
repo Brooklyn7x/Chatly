@@ -16,12 +16,12 @@ interface MessageBubbleProps {
 
 export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [reactions, setReactions] = useState<string[]>(["⭐️", "☠️"]);
+  const [reactions, setReactions] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const { _id, content, type, status, timestamp, senderId } = message;
-  const reaction = "😂❤️";
+
   const handleEdit = () => {
     if (editedContent.trim() && editedContent !== content) {
       socketService.editMessage(_id, editedContent);
@@ -58,36 +58,22 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         }}
       >
         <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
-          <div className="absolute -top-10 z-20 flex items-center gap-2 px-2 py-1 mb-1 border rounded-md bg-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {["😬", "🥶", "🦋", "⭐️", "👍🏻", "🤩"].map((item, key) => (
-              <div
-                className="hover:scale-150 transition-transform ease-in-out duration-300 text-2xl cursor-pointer"
-                key={key}
-                onClick={() => {
-                  setReactions([...reactions, item]);
-                }}
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-
           <div className="flex items-center gap-2">
             {isOwn && (
               <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background border shadow-sm"
+                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary/10 border border-primary/20 text-primary hover:text-primary/90 shadow-sm hover:shadow-md transition-all hover:scale-105"
                   onClick={() => setIsEditing(true)}
                   title="Edit message"
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-red-50 border-red-200 text-red-500 hover:text-red-600 shadow-sm"
+                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm border hover:bg-primary/10 shadow-sm hover:shadow-md transition-all hover:scale-105"
                   onClick={handleDelete}
                   title="Delete message"
                 >
@@ -98,14 +84,14 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
 
             <div
               className={cn(
-                "max-w-md rounded-2xl p-2 relative shadow-sm",
+                "max-w-md rounded-2xl p-3 relative shadow-sm transition-all",
                 isOwn
-                  ? "bg-blue-500 text-white rounded-br-none"
-                  : "bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 rounded-bl-none"
+                  ? "bg-primary text-white rounded-br-none hover:shadow-md"
+                  : "bg-secondary rounded-bl-none hover:shadow-md"
               )}
             >
               {!isOwn && (
-                <span className="text-xs font-medium text-muted-foreground mb-1">
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
                   {senderId.username || "User"}
                 </span>
               )}
@@ -114,7 +100,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                   <textarea
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="w-full p-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-transparent bg-white text-neutral-900"
+                    className="w-full p-2 rounded-lg border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none scrollbar-thin scrollbar-thumb-primary/50 scrollbar-track-transparent bg-white/90 text-neutral-900 transition-all"
                     autoFocus
                     rows={Math.min(
                       Math.max(editedContent.split("\n").length, 1),
@@ -131,29 +117,40 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                     </Button>
                     <Button
                       size="sm"
+                      variant={"outline"}
                       onClick={handleEdit}
-                      className="hover:bg-blue-600"
+                      className="bg-primary text-white transition-colors"
                     >
                       Save
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-1">
                   <MessageContent content={content} type={type} />
-                  <div className="flex gap-1 bg-white/40 border rounded-xl px-1 py-0.5 w-fit">
-                    {reactions.map((reaction, idx) => (
-                      <span key={idx}>{reaction}</span>
-                    ))}
-                  </div>
+                  {reactions.length > 0 && (
+                    <div className="flex gap-1 bg-white/40 border rounded-full px-2 py-1 w-fit mt-1 backdrop-blur-sm">
+                      {reactions.map((reaction, idx) => (
+                        <span
+                          key={idx}
+                          className="hover:scale-110 transition-transform cursor-pointer"
+                          onClick={() => {
+                            setReactions(reactions.filter((_, i) => i !== idx));
+                          }}
+                        >
+                          {reaction}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-4">
+              <div className="flex items-center justify-end gap-2 mt-1">
                 {message.edited && (
-                  <span className="text-xs opacity-60">(edited)</span>
+                  <span className="text-xs opacity-60 italic">(edited)</span>
                 )}
-                <span className="text-xs opacity-30">
+                <span className="text-xs opacity-50">
                   {new Date(timestamp || new Date()).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -164,6 +161,22 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        className={`absolute -top-8 ${isOwn ? "right-0" : "left-0"} flex gap-1 p-1.5 bg-background/95 backdrop-blur-sm rounded-full shadow-lg border border-border/50 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out`}
+      >
+        {["👍", "❤️", "😂", "😮", "👏"].map((emoji, index) => (
+          <button
+            key={index}
+            className="p-1.5 hover:scale-110 active:scale-95 transition-transform duration-150 ease-in-out hover:bg-accent/50 rounded-full"
+            onClick={() => setReactions([...reactions, emoji])}
+          >
+            <span className="text-xl hover:drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+              {emoji}
+            </span>
+          </button>
+        ))}
       </div>
     </motion.div>
   );

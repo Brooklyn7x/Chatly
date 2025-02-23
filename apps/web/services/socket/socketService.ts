@@ -1,13 +1,16 @@
 import { io, Socket } from "socket.io-client";
 import { EventEmitter } from "events";
+import useAuthStore from "@/store/useAuthStore";
 
 export class SocketService extends EventEmitter {
   private socket: Socket | null = null;
+  private cleanupTimer: NodeJS.Timeout | null = null;
 
   constructor() {
     super();
     this.initialize = this.initialize.bind(this);
     this.disconnect = this.disconnect.bind(this);
+    this.setupCleanup = this.setupCleanup.bind(this);
   }
 
   initialize(token: string) {
@@ -24,6 +27,7 @@ export class SocketService extends EventEmitter {
     });
 
     this.setupEventListeners();
+    this.setupCleanup();
     return this.socket;
   }
 
@@ -49,19 +53,23 @@ export class SocketService extends EventEmitter {
       this.emit("chat:error", error);
     });
 
-    this.socket.on("message:new", (message: any) => {
-      this.emit("message:new", message);
+    this.socket.on("message:new", (response: any) => {
+      this.emit("message:new", response);
     });
 
     this.socket.on("message:sent", (response: any) => {
       this.emit("message:sent", response);
     });
 
+    this.socket.on("message:delivered", (response: any) => {
+      this.emit("message:delivered", response);
+    });
+
     this.socket.on(
       "message:read:ack",
       (data: {
-        messageIds: string[];
         conversationId: string;
+        messageIds: string[];
         readBy: string;
         timestamp: string;
       }) => {
@@ -121,7 +129,41 @@ export class SocketService extends EventEmitter {
     });
   }
 
-  sendMessage(chatId: string, content: string, tempId?: string) {
+  private setupCleanup() {
+    if (this.cleanupTimer) {
+      clearTimeout(this.cleanupTimer);
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", this.disconnect);
+      window.addEventListener("pagehide", this.disconnect);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          this.cleanupTimer = setTimeout(() => {
+            this.disconnect();
+          }, 30000);
+        } else {
+          if (this.cleanupTimer) {
+            clearTimeout(this.cleanupTimer);
+          }
+
+          if (!this.socket?.connected) {
+            // const { accessToken } = useAuthStore();
+            // if (!accessToken) return;
+            this.initialize("");
+          }
+        }
+      });
+    }
+  }
+
+  sendMessage(
+    chatId: string,
+    content: string,
+    tempId?: string,
+    recipientId?: string
+  ) {
     if (!this.socket?.connected) {
       throw new Error("Socket not connected");
     }
@@ -129,6 +171,7 @@ export class SocketService extends EventEmitter {
       conversationId: chatId,
       content,
       tempId,
+      recipientId,
     });
   }
 
@@ -150,7 +193,7 @@ export class SocketService extends EventEmitter {
     });
   }
 
-  markMessageAsRead(chatId: string, messageIds: string[]) {
+  markMessageAsRead(messageIds: string[], chatId: string) {
     if (!this.socket?.connected) return;
     this.socket.emit("message:read", {
       conversationId: chatId,
@@ -233,6 +276,16 @@ export class SocketService extends EventEmitter {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
+    }
+
+    if (typeof window !== "undefined") {
+      window.removeEventListener("beforeunload", this.disconnect);
+      window.removeEventListener("pagehide", this.disconnect);
+      document.removeEventListener("visibilitychange", this.setupCleanup);
+    }
+
+    if (this.cleanupTimer) {
+      clearTimeout(this.cleanupTimer);
     }
   }
 }

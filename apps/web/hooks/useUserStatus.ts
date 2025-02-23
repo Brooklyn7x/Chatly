@@ -7,12 +7,12 @@ export const useUserStatus = (userId: string) => {
 
   return {
     status: status?.status || "offline",
-    lastSeen: status?.lastSeen || "",
+    timestamp: status?.timestamp || "",
     isOnline: status?.status === "online",
     getStatusText: () => {
-      if (!status) return "offline";
+      if (!status) return "Offline";
       if (status.status === "online") return "Online";
-      return `Last seen ${status.lastSeen.toISOString()}`;
+      return `Last seen ${new Date(status.timestamp).toLocaleString()}`;
     },
   };
 };

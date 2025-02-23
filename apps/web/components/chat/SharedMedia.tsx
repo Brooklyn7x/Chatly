@@ -10,18 +10,19 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
 
   return (
     <div>
-      <div className="flex items-center justify-center gap-4 mb-4">
+      <div className="flex items-center justify-center gap-2 mb-6">
         {["members", "media", "files", "links"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as typeof activeTab)}
             className={`
-              px-4 py-2 rounded-lg text-sm
+              px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
               ${
                 activeTab === tab
-                  ? "bg-muted text-green-400"
-                  : "text-white hover:bg-muted/60"
+                  ? "bg-primary/10 text-primary shadow-sm"
+                  : "text-muted-foreground hover:bg-muted/40"
               }
+              
             `}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -30,24 +31,32 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
       </div>
 
       {activeTab === "members" && (
-        <div className="space-y-1">
+        <div className="space-y-2">
           {chat?.participants.map((participant: any) => (
-            <UserItem key={participant.userId._id} user={participant.userId} />
+            <UserItem
+              key={participant.userId._id}
+              user={participant.userId}
+              className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
+            />
           ))}
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid grid-cols-3 gap-2">
         {activeTab === "media" &&
           Array.from({ length: 10 }).map((item, index) => (
             <div
               key={index}
-              className="aspect-square relative cursor-pointer group"
+              className="aspect-square relative cursor-pointer group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
             >
-              <img alt="user" src="/user.png" />
+              <img
+                alt="user"
+                src="/user.png"
+                className="object-cover w-full h-full"
+              />
               <div
                 className="absolute inset-0 bg-black/50 opacity-0 
-            group-hover:opacity-100 transition-opacity"
+                group-hover:opacity-100 transition-opacity duration-200"
               />
             </div>
           ))}

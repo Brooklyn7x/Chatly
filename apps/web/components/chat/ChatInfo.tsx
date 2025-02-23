@@ -133,7 +133,7 @@ export function ChatInfo() {
         ease: "easeOut",
       }}
       className={cn(
-        "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background/70 backdrop-blur-md  sm:border-l shadow-md",
+        "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background/90 backdrop-blur-md  sm:border-l shadow-md",
         "flex flex-col"
       )}
     >
@@ -143,13 +143,14 @@ export function ChatInfo() {
             onClick={() => setIsOpen(false)}
             className={cn(
               "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-              "hover:bg-muted/90 transition-colors duration-200"
+              "hover:bg-muted/90 transition-colors duration-200",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             )}
           >
             <X className="h-6 w-6" />
           </button>
           <div className="flex-1 pl-4">
-            <h1 className="text-lg truncate">{displayName}</h1>
+            <h1 className="text-lg font-medium truncate">{displayName}</h1>
           </div>
 
           {isGroupChat && (
@@ -157,7 +158,8 @@ export function ChatInfo() {
               onClick={onEdit}
               className={cn(
                 "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-                "hover:bg-muted/90 transition-colors duration-200"
+                "hover:bg-muted/90 transition-colors duration-200",
+                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               )}
             >
               <Pencil className="h-5 w-5" />
@@ -168,10 +170,10 @@ export function ChatInfo() {
 
       <div className="flex flex-col overflow-hidden">
         <section className="flex flex-col items-center justify-center gap-4 p-4">
-          <UserAvatar size="xl" />
+          <UserAvatar size="xl" className="ring-2 ring-primary/50" />
           <div className="mt-2 text-center">
             <h1 className="text-xl font-semibold">{displayName}</h1>
-            <p className="text-center text-sm text-muted-foreground">
+            <p className="text-center text-sm text-muted-foreground mt-1">
               {statusText}
             </p>
           </div>
@@ -180,10 +182,10 @@ export function ChatInfo() {
         <section className="p-2 space-y-2">
           <div
             onClick={() => setDeleteChat(true)}
-            className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer"
+            className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer active:scale-[0.98]"
           >
             <div className="flex items-center gap-6">
-              <Trash className="h-5 w-5" />
+              <Trash className="h-5 w-5 text-red-500" />
               <div className="flex-1">
                 <p className="text-sm">Delete this chat</p>
               </div>
@@ -193,10 +195,10 @@ export function ChatInfo() {
           {isGroupChat && (
             <div
               onClick={() => setRemovingUser(true)}
-              className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer"
+              className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer active:scale-[0.98]"
             >
               <div className="flex items-center gap-6">
-                <User2 className="h-5 w-5" />
+                <User2 className="h-5 w-5 text-primary" />
                 <div className="flex-1">
                   <p className="text-sm">Manage Members</p>
                 </div>
@@ -213,7 +215,7 @@ export function ChatInfo() {
       {isGroupChat && (
         <button
           onClick={() => setAddMember(true)}
-          className="h-12 w-12 flex items-center justify-center bg-green-400 rounded-full absolute bottom-5 right-5 "
+          className="h-12 w-12 flex items-center justify-center bg-primary/90 rounded-full absolute bottom-5 right-5 shadow-lg hover:bg-primary transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           <PlusCircle className="h-6 w-6" />
         </button>
