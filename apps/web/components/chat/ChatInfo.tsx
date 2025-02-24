@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Trash, PlusCircle, User2 } from "lucide-react";
+import { X, Pencil, Trash, PlusCircle, User2, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useChatStore } from "@/store/useChatStore";
@@ -13,6 +13,7 @@ import { UserAvatar } from "../shared/UserAvatar";
 import { toast } from "sonner";
 import { ParticipantRole } from "@/types/chat";
 import { DeleteChatDailog } from "../modal/DeleteChatDailog";
+import FloatinButton from "../shared/FloatinButton";
 
 export function ChatInfo() {
   const [editing, setEditing] = useState(false);
@@ -143,8 +144,7 @@ export function ChatInfo() {
             onClick={() => setIsOpen(false)}
             className={cn(
               "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-              "hover:bg-muted/90 transition-colors duration-200",
-              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              "hover:bg-muted/90 transition-colors duration-200"
             )}
           >
             <X className="h-6 w-6" />
@@ -157,12 +157,11 @@ export function ChatInfo() {
             <button
               onClick={onEdit}
               className={cn(
-                "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-                "hover:bg-muted/90 transition-colors duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                "h-10 w-10 p-2 flex items-center justify-center rounded-full text-muted-foreground",
+                "hover:bg-muted/90 transition-colors duration-200"
               )}
             >
-              <Pencil className="h-5 w-5" />
+              <Pencil size={18} />
             </button>
           )}
         </div>
@@ -208,17 +207,22 @@ export function ChatInfo() {
         </section>
       </div>
 
-      <section className="flex-1 pt-10 p-2 border-t overflow-y-auto">
+      <section className="flex-1 border-t overflow-y-auto">
         <SharedMedia chat={chat} />
       </section>
 
       {isGroupChat && (
-        <button
-          onClick={() => setAddMember(true)}
-          className="h-12 w-12 flex items-center justify-center bg-primary/90 rounded-full absolute bottom-5 right-5 shadow-lg hover:bg-primary transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-        >
-          <PlusCircle className="h-6 w-6" />
-        </button>
+        // <button
+        //   onClick={() => setAddMember(true)}
+        //   className="h-14 w-14 flex items-center justify-center bg-primary/90 rounded-full absolute bottom-5 right-5 shadow-lg hover:bg-primary transition-all duration-200 active:scale-95 focus:outline-none"
+        // >
+        //   <UserPlus className="h-5 w-5" />
+        // </button>
+        <div className="absolute right-5 bottom-5">
+          <FloatinButton onClick={() => setAddMember(true)}>
+            <UserPlus className="h-5 w-5" />
+          </FloatinButton>
+        </div>
       )}
 
       <EditChatDailog

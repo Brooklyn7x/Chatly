@@ -3,12 +3,21 @@ import { ChatContainer } from "@/components/chat/ChatContainer";
 import AuthGuard from "@/components/shared/AuthGuard";
 import SideBar from "@/components/sidebar/Sidebar";
 import { useSocket } from "@/hooks/useSocket";
-import { useLayout } from "@/hooks/useLayout";
 import { useMessageSocket } from "@/hooks/useMessageSocket";
 import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 export default function MainPage() {
-  const { activeChatId, isMobile } = useLayout();
+  const [isMobile, setIsMobile] = useState(false);
+
+  const handleResize = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, [setIsMobile]);
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [handleResize]);
 
   useSocket();
   useUserStatusSocket();
@@ -17,8 +26,8 @@ export default function MainPage() {
   return (
     <AuthGuard requireAuth={true}>
       <div className="flex h-dvh overflow-hidden">
-        <SideBar />
-        {(!isMobile || activeChatId) && <ChatContainer />}
+        <SideBar isMobile={isMobile} />
+        <ChatContainer isMobile={isMobile} />
       </div>
     </AuthGuard>
   );

@@ -4,8 +4,11 @@ import { cn } from "@/lib/utils";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { useLayout } from "@/hooks/useLayout";
-import { FloatingActionButton } from "./FloatingActionButton";
+
 import { useChats } from "@/hooks/useChats";
+import { useChatStore } from "@/store/useChatStore";
+import FloatingButton from "./FloatingActionButton";
+import FloatingActionButton from "./FloatingActionButton";
 
 type ViewType =
   | "main"
@@ -15,21 +18,25 @@ type ViewType =
   | "new_channel"
   | "setting";
 
-export default function Sidebar() {
-  const { isMobile, activeChatId } = useLayout();
+interface SidebarProps {
+  isMobile: Boolean;
+}
+export default function Sidebar({ isMobile }: SidebarProps) {
+  const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
   const { fetchChats } = useChats();
   useEffect(() => {
     fetchChats();
   }, []);
+
   return (
     <div
       className={cn(
         "w-full md:w-[420px] md:border-r flex flex-col relative",
         "backdrop-blur-sm bg-background/60",
         isMobile && activeChatId ? "-translate-x-full" : "translate-x-0",
-        isMobile ? "absolute inset-y-0 left-0 z-10" : "relative"
+        !isMobile ? "" : "absolute inset-y-0 left-0 z-10"
       )}
     >
       {view === "main" && (
@@ -47,7 +54,7 @@ export default function Sidebar() {
         onViewChange={setView}
       />
 
-      <FloatingActionButton view={view} onViewChange={setView} />
+      {view === "main" && <FloatingActionButton onViewChange={setView} />}
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default function AuthContainer() {
   const toggleForm = () => setShowSignUp((prev) => !prev);
 
   return (
-    <div className="min-h-dvh flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center p-2">
       {showSignUp ? (
         <SignUpForm showLogin={toggleForm} />
       ) : (

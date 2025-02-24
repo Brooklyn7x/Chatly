@@ -5,12 +5,11 @@ import { NavigationButton } from "../shared/NavigationButton";
 import { SearchInput } from "../shared/SearchInput";
 import { UserList } from "../user/UserList";
 import { ActionButton } from "../shared/ActionButton";
-
 import { toast } from "sonner";
 import { useState } from "react";
 import { useSearchUser } from "@/hooks/useSearchUser";
 import { useChats } from "@/hooks/useChats";
-import { useChatStore } from "@/store/useChatStore";
+import FloatinButton from "../shared/FloatinButton";
 
 interface PrivateChatProps {
   onClose: () => void;
@@ -47,7 +46,7 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
     <div className="fixed inset-0">
       <div onClick={onClose} />
       <div className="relative h-full w-full flex flex-col">
-        <div className="h-16 flex items-center gap-4 p-4">
+        <div className="h-16 flex items-center gap-4 p-4 border-b">
           <NavigationButton onClick={onClose} icon={ArrowLeft} />
           <SearchInput
             onChange={setSearchQuery}
@@ -65,11 +64,9 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
           />
         </main>
         <div className="absolute right-6 bottom-6">
-          <ActionButton
-            onClick={handleCreateChat}
-            disabled={!selectedUserId}
-            icon={Plus}
-          />
+          <FloatinButton onClick={handleCreateChat} disabled={!selectedUserId}>
+            <Plus className="h-5 w-5" />
+          </FloatinButton>
         </div>
       </div>
     </div>

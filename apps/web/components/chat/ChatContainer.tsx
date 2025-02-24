@@ -1,15 +1,15 @@
 import { useChatStore } from "@/store/useChatStore";
-import { GroupChat } from "./GroupChat";
 import { ChatArea } from "./ChatArea";
 import { cn } from "@/lib/utils";
-import { useUIStore } from "@/store/useUiStore";
-import { EmptyState } from "./EmptyChat";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { ChatInfo } from "./ChatInfo";
 
-export const ChatContainer = () => {
+interface ChatContainerProps {
+  isMobile: boolean;
+}
+
+export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
   const { activeChatId } = useChatStore();
-  const { isMobile } = useUIStore();
   const { isOpen } = useChatPanelStore();
   return (
     <div

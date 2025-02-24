@@ -2,24 +2,28 @@ import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { NavigationButton } from "../shared/NavigationButton";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   ArrowLeft,
   EllipsisVertical,
   LucideIcon,
   Phone,
   Search,
+  Trash,
 } from "lucide-react";
 import { useUserStatus } from "@/hooks/useUserStatus";
 import useAuthStore from "@/store/useAuthStore";
-import ChatHeaderMenu from "./ChatHeaderMenu";
+
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/UserAvatar";
 import { useChats } from "@/hooks/useChats";
-import { toast } from "sonner";
 
 export default function ChatHeader() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useAuthStore();
   const { setIsOpen } = useChatPanelStore();
   const { activeChatId, chats, setActiveChat } = useChatStore();
@@ -37,6 +41,11 @@ export default function ChatHeader() {
     }
     return chat?.metadata?.title || "Group Chat";
   }, [chat]);
+
+  const handleDelete = () => {
+    if (!activeChatId) return;
+    deleteCht(activeChatId);
+  };
 
   return (
     <header className="h-16 w-full flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
@@ -64,29 +73,26 @@ export default function ChatHeader() {
         </button>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <IconButton onClick={() => {}} icon={Phone} isActive={false} />
         <IconButton onClick={() => {}} icon={Search} isActive={false} />
-        <IconButton
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          icon={EllipsisVertical}
-          isActive={isMenuOpen}
-        />
-      </div>
 
-      {isMenuOpen && (
-        <ChatHeaderMenu
-          onClose={() => setIsMenuOpen(false)}
-          chatId={activeChatId || ""}
-          onDeleteChat={async () => {
-            try {
-              await deleteCht(activeChatId || "");
-            } catch (error: any) {
-              toast.error(error.message);
-            }
-          }}
-        />
-      )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-accent">
+              <EllipsisVertical className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" alignOffset={10} className="w-36">
+            <DropdownMenuItem onClick={handleDelete}>
+              <div className="flex items-center gap-4 text-muted-foreground">
+                <Trash size={16} />
+                <p>Delete</p>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

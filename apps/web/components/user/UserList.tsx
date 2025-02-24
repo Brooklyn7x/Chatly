@@ -32,7 +32,7 @@ export const UserList = ({
           .filter((user) => user.id)
           .map((user) => (
             <div
-              key={user._id}
+              key={user.id}
               onClick={() => onUserToggle(user.id)}
               className="cursor-pointer"
             >

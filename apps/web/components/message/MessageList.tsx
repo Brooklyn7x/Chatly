@@ -70,7 +70,7 @@ export default function MessageList() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : error ? (
-            <div className="text-red-500 text-sm p-4 text-center">{error}</div>
+            <div className="text-red-500 text-sm p-4 text-center">{error.message || "something went wrong."}</div>
           ) : (
             messages.map((message) => (
               <MessageBubble

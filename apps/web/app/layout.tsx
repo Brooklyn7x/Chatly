@@ -5,8 +5,8 @@ import { ThemeProvider } from "@/components/provider/ThemeProvider";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",
-  title: "Chat",
-  description: "Chat App",
+  title: "MsgMate",
+  description: "Chatting with fun!",
 };
 
 export default function RootLayout({

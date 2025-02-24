@@ -87,15 +87,15 @@ export class SocketService {
     this.logger.info(`user:${userId}`);
     await this.userService.updateUserStatus(userId, UserStatus.ONLINE);
     this.broadcastUserStatus(userId, UserStatus.ONLINE);
-    const conversationsResponse =
-      await this.conversationService.getUserConversations(userId);
+    // const conversationsResponse =
+    //   await this.conversationService.getUserConversations(userId);
 
-    if (conversationsResponse.success && conversationsResponse.data) {
-      conversationsResponse.data.forEach((conversation: any) => {
-        socket.join(`chat:${conversation._id}`);
-        this.logger.info(`chat:${conversation._id}`);
-      });
-    }
+    // if (conversationsResponse.success && conversationsResponse.data) {
+    //   conversationsResponse.data.forEach((conversation: any) => {
+    //     socket.join(`chat:${conversation._id}`);
+    //     this.logger.info(`chat:${conversation._id}`);
+    //   });
+    // }
   }
 
   private setupConnection(socket: Socket) {

@@ -15,6 +15,7 @@ import { useSearchUser } from "@/hooks/useSearchUser";
 import { UserAvatar } from "../shared/UserAvatar";
 import useAuthStore from "@/store/useAuthStore";
 import { Participant } from "@/types";
+import { toast } from "sonner";
 
 interface AddMemberProps {
   open: boolean;
@@ -91,7 +92,7 @@ export const AddMemberDailog = ({
             <div className="space-y-1">
               {availableUsers.map((user) => (
                 <div
-                  key={user._id}
+                  key={user.id}
                   onClick={() =>
                     setSelectedMember((prev) =>
                       prev.includes(user._id)

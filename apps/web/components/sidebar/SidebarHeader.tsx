@@ -1,8 +1,28 @@
-import { Menu, Search } from "lucide-react";
+import {
+  Bookmark,
+  LogOut,
+  Menu,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+  User,
+  User2Icon,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
-import SidebarMenu from "./SidebarMenu";
-import { useState, useRef } from "react";
-import { useClickAway } from "@/hooks/useClickAway";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
+import useAuthStore from "@/store/useAuthStore";
+import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
 
 type ViewType =
   | "main"
@@ -24,26 +44,97 @@ export default function SidebarHeader({
   onSearchChange,
   onViewChange,
 }: SidebarHeaderProps) {
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuthStore();
+  const { logout } = useAuth();
+  const { theme, setTheme } = useTheme();
 
-  useClickAway(menuRef, () => {
-    setShowMenu(false);
-  });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Logout !");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
+  const handleThemeToggle = () => {
+    setTheme(() => (theme === "dark" ? "light" : "dark"));
+  };
   return (
-    <div
-      className="relative h-16 flex items-center px-4 border-b gap-3"
-      ref={menuRef}
-    >
+    <div className="relative h-16 flex items-center px-4 border-b gap-3">
       {view === "main" && (
         <>
-          <button
-            className="p-2 border rounded-full"
-            onClick={() => setShowMenu((prev) => !prev)}
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"outline"} size={"icon"}>
+                <Menu />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuLabel>
+                <div className="flex items-center gap-4 text-muted-foreground">
+                  <User2Icon size={16} strokeWidth={2} />
+                  <p>{user?.username || "user"}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <div className="flex gap-4 items-center text-muted-foreground">
+                  <Bookmark size={16} strokeWidth={2} />
+                  <p>Saved Message</p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <div className="flex gap-4 items-center">
+                  <User
+                    size={16}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
+                  <p className="text-muted-foreground">Contact</p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onViewChange("setting")}>
+                <div className="flex gap-4 items-center">
+                  <Settings
+                    size={16}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
+                  <p className="text-muted-foreground">Settings</p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleThemeToggle}>
+                <div className="flex gap-4 items-center">
+                  {theme === "light" ? (
+                    <Moon
+                      size={16}
+                      strokeWidth={2}
+                      className="text-muted-foreground"
+                    />
+                  ) : (
+                    <Sun
+                      size={16}
+                      strokeWidth={2}
+                      className="text-muted-foreground"
+                    />
+                  )}
+
+                  <p className="text-muted-foreground">App Theme</p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                <div className="flex gap-4 items-center">
+                  <LogOut
+                    size={16}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
+                  <p className="text-muted-foreground">Logout</p>
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -55,8 +146,6 @@ export default function SidebarHeader({
           </div>
         </>
       )}
-
-      {showMenu && <SidebarMenu onViewChange={onViewChange} />}
     </div>
   );
 }

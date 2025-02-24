@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { ActionButton } from "../shared/ActionButton";
@@ -12,6 +12,7 @@ import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
 import { useSearchUser } from "@/hooks/useSearchUser";
 import { useChats } from "@/hooks/useChats";
+import FloatinButton from "../shared/FloatinButton";
 
 interface GroupFormData {
   name: string;
@@ -177,15 +178,16 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
       </div>
 
       <div className="absolute right-6 bottom-6">
-        <ActionButton
+        <FloatinButton
           onClick={handleNext}
           disabled={
             (step === "members" && formData.selectedUserIds.size === 0) ||
             (step === "details" && !formData.name.trim()) ||
             isSubmitting
           }
-          icon={ArrowRight}
-        />
+        >
+          <ArrowRight className="h-5 w-5" />
+        </FloatinButton>
       </div>
     </div>
   );
