@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDownIcon, Loader2 } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
-import { useMessages } from "@/hooks/useMessages";
+import { getMessages } from "@/hooks/useMessages";
 import { useChatStore } from "@/store/useChatStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { useMessage } from "@/hooks/useMessage";
+import { useMessageStore } from "@/store/useMessageStore";
 
 export default function MessageList() {
   const [isNearBottom, setIsNearBottom] = useState(true);
@@ -14,26 +15,29 @@ export default function MessageList() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { user } = useAuthStore();
   const { activeChatId } = useChatStore();
-  const { messages, isLoading, error } = useMessages(activeChatId || "");
-  const { markAsRead } = useMessage(activeChatId || "");
-  const { isTyping } = useTypingIndicator(activeChatId || "");
+  if (!activeChatId) return null;
+  const { markAsRead } = useMessage(activeChatId);
+  const { isTyping } = useTypingIndicator(activeChatId);
   const scrollToBottom = () => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  const unReadMessages = messages.filter(
-    (message) =>
-      message.status !== "read" &&
-      message.senderId._id !== user?._id &&
-      !message._id.startsWith("temp-")
-  );
-  const messageIds = unReadMessages.map((message) => message._id);
-  useEffect(() => {
-    if (messageIds.length > 0) {
-      markAsRead(messageIds);
-    }
-  }, [messages]);
+  const { isLoading, error } = getMessages(activeChatId);
+  const { messages } = useMessageStore();
+
+  // const unReadMessages = messages.filter(
+  //   (message: any) =>
+  //     message.status !== "read" &&
+  //     message.senderId._id !== user?._id &&
+  //     !message._id.startsWith("temp-")
+  // );
+  // const messageIds = unReadMessages.map((message) => message._id);
+  // useEffect(() => {
+  //   if (messageIds.length > 0) {
+  //     markAsRead(messageIds);
+  //   }
+  // }, [messages]);
 
   useEffect(() => {
     if (isNearBottom) {
@@ -70,9 +74,11 @@ export default function MessageList() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : error ? (
-            <div className="text-red-500 text-sm p-4 text-center">{error.message || "something went wrong."}</div>
+            <div className="text-red-500 text-sm p-4 text-center">
+              {error.message || "something went wrong."}
+            </div>
           ) : (
-            messages.map((message) => (
+            messages[activeChatId]?.map((message) => (
               <MessageBubble
                 key={message._id}
                 message={message}
@@ -87,7 +93,7 @@ export default function MessageList() {
       </div>
 
       {isTyping && (
-        <div className="sticky bottom-14 ml-4 bg-background/95 backdrop-blur-sm">
+        <div className="sticky bottom-14 ml-4  backdrop-blur-sm">
           <TypingIndicator />
         </div>
       )}

@@ -18,13 +18,6 @@ interface MessageStore {
   updateMessageStatus: (messageId: string, updates: Partial<Message>) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-
-  // deleteMessage: (messageId: string) => void;
-  // updateMessageId: (tempId: string, messageId: string) => void;
-  // updateMessageStatus: (
-  //   messageId: string,
-  //   status: "sent" | "delivered" | "read"
-  // ) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
@@ -89,7 +82,7 @@ export const useMessageStore = create<MessageStore>()(
         })),
 
       setLoading: (loading: boolean) => set({ isLoading: loading }),
-      setError: (error) => set({ error })
+      setError: (error) => set({ error }),
     }),
     {
       name: "message-store",

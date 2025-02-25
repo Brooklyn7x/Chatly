@@ -20,7 +20,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         case AUTH_ERROR_CODES.TOKEN_EXPIRED:
         case AUTH_ERROR_CODES.INVALID_TOKEN:
           logout();
-          router.replace("/auth");
+          router.replace("/login");
           break;
         case AUTH_ERROR_CODES.NETWORK_ERROR:
           verificationTimer.current = setTimeout(verifyToken, 5000);

@@ -11,7 +11,7 @@ export const MessageContent = ({
 }) => {
   switch (type) {
     case "text":
-      return <p className="text-sm">{content}</p>;
+      return <p className="text-sm text-blue-500">{content}</p>;
     case "image":
       return (
         <div className="relative w-48 h-48">

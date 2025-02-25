@@ -2,11 +2,16 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
 import { MessageResponse } from "@/types/message";
 import { socketService } from "@/services/socket/socketService";
+import { useSocket } from "./useSocket";
 
 export const useMessageSocket = () => {
   const { addMessage, updateMessageStatus } = useMessageStore();
+  const { isConnected } = useSocket();
 
   useEffect(() => {
+    // Only set up event listeners if the socket is connected
+    if (!isConnected) return;
+
     const handleNewMessage = (message: any) => {
       const messageData = message?._doc ? message?._doc : message;
       addMessage(messageData);
@@ -29,12 +34,11 @@ export const useMessageSocket = () => {
 
     const handleMessageEdited = (data: any) => {
       const message = data.data._doc ? data.data._doc : data.data;
-      const { _id: messageId, content, editedAt, previousContent } = message;
+      const { _id: messageId, content, editedAt } = message;
       updateMessageStatus(messageId, {
         content,
         edited: true,
         editedAt,
-        previousContent,
         updatedAt: new Date().toISOString(),
       });
     };
@@ -82,7 +86,7 @@ export const useMessageSocket = () => {
       socketService.off("message:edited", handleMessageEdited);
       socketService.off("message:deleted", handleMessageDeleted);
     };
-  }, [addMessage, updateMessageStatus]);
+  }, [addMessage, updateMessageStatus, isConnected]);
 
   return socketService;
 };

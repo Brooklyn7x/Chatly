@@ -3,9 +3,9 @@ import { useChatStore } from "@/store/useChatStore";
 import { ChatUpdatePayload } from "@/types/chat";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
-
+import useSWR from "swr";
 export const useChats = () => {
-  const { setChats, addChats, deleteChat, updateChat } = useChatStore();
+  const { setChats, addChats, deleteChat } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,6 +78,21 @@ export const useChats = () => {
     createChat,
     deleteCht,
     updateCht,
+    isLoading,
+    error,
+  };
+};
+
+export const getChats = () => {
+  const { setChats } = useChatStore();
+  const { data, isLoading, error } = useSWR("/api/chats", chatApi.getChats, {
+    onSuccess: (response) => {
+      setChats(response.data);
+    },
+  });
+
+  return {
+    chats: data || [],
     isLoading,
     error,
   };

@@ -1,13 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
-import { useLayout } from "@/hooks/useLayout";
-
-import { useChats } from "@/hooks/useChats";
 import { useChatStore } from "@/store/useChatStore";
-import FloatingButton from "./FloatingActionButton";
 import FloatingActionButton from "./FloatingActionButton";
 
 type ViewType =
@@ -16,7 +12,8 @@ type ViewType =
   | "new_message"
   | "new_group"
   | "new_channel"
-  | "setting";
+  | "setting"
+  | "theme_setting";
 
 interface SidebarProps {
   isMobile: Boolean;
@@ -25,10 +22,10 @@ export default function Sidebar({ isMobile }: SidebarProps) {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
-  const { fetchChats } = useChats();
-  useEffect(() => {
-    fetchChats();
-  }, []);
+  // const { fetchChats } = useChats();
+  // useEffect(() => {
+  //   fetchChats();
+  // }, []);
 
   return (
     <div

@@ -64,7 +64,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary/10 border border-primary/20 text-primary hover:text-primary/90 shadow-sm hover:shadow-md transition-all hover:scale-105"
+                  className="p-1.5 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary/10 border border-primary/20 shadow-sm hover:shadow-md transition-all hover:scale-105"
                   onClick={() => setIsEditing(true)}
                   title="Edit message"
                 >
@@ -86,12 +86,12 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
               className={cn(
                 "max-w-md rounded-2xl p-3 relative shadow-sm transition-all",
                 isOwn
-                  ? "bg-primary text-white rounded-br-none hover:shadow-md"
-                  : "bg-secondary rounded-bl-none hover:shadow-md"
+                  ? "bg-primary rounded-br-none hover:shadow-md"
+                  : "bg-secondary text-primary rounded-bl-none hover:shadow-md"
               )}
             >
               {!isOwn && (
-                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                <span className="text-xs font-medium mb-1 block">
                   {senderId.username || "User"}
                 </span>
               )}
@@ -100,7 +100,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                   <textarea
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none scrollbar-thin scrollbar-thumb-primary/50 scrollbar-track-transparent bg-white/90 text-neutral-900 transition-all"
+                    className="w-full p-2 rounded-lg border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none scrollbar-thin scrollbar-thumb-primary/50 scrollbar-track-transparent text-neutral-900 transition-all"
                     autoFocus
                     rows={Math.min(
                       Math.max(editedContent.split("\n").length, 1),
@@ -119,7 +119,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                       size="sm"
                       variant={"outline"}
                       onClick={handleEdit}
-                      className="bg-primary text-white transition-colors"
+                      className="bg-primary transition-colors"
                     >
                       Save
                     </Button>
@@ -148,9 +148,9 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
 
               <div className="flex items-center justify-end gap-2 mt-1">
                 {message.edited && (
-                  <span className="text-xs opacity-60 italic">(edited)</span>
+                  <span className="text-xs italic">(edited)</span>
                 )}
-                <span className="text-xs opacity-50">
+                <span className="text-xs">
                   {new Date(timestamp || new Date()).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -163,7 +163,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         </div>
       </div>
 
-      <div
+      {/* <div
         className={`absolute -top-8 ${isOwn ? "right-0" : "left-0"} flex gap-1 p-1.5 bg-background/95 backdrop-blur-sm rounded-full shadow-lg border border-border/50 opacity-0 group-hover:opacity-100 transition-all duration-200 ease-out`}
       >
         {["👍", "❤️", "😂", "😮", "👏"].map((emoji, index) => (
@@ -177,7 +177,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
             </span>
           </button>
         ))}
-      </div>
+      </div> */}
     </motion.div>
   );
 };

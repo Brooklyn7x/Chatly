@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 export default function Error({
@@ -14,8 +15,8 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black p-6">
-      <div className="bg-gray-800 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-lg shadow-xl p-8 max-w-md text-center animate-fadeIn">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-secondary p-6">
+      <div className="bg-black rounded-lg shadow-xl p-8 max-w-md text-center">
         <h2 className="text-3xl font-bold text-red-500 mb-4">
           Oops! Something went wrong.
         </h2>
@@ -23,12 +24,13 @@ export default function Error({
           We encountered an error and are unable to process your request at the
           moment.
         </p>
-        <button
+        <Button
+          variant={"outline"}
           onClick={reset}
-          className="px-4 py-2 border transition-colors rounded shadow text-white font-medium"
+          className="px-4 py-2 transition-colors rounded shadow text-white font-medium"
         >
-          Try Again
-        </button>
+          Try Again.!
+        </Button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { MessageApi } from "@/services/api/message";
-import useAuthStore from "@/store/useAuthStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 export const useMessages = (chatId: string) => {
   const { messages, setMessages, addMessage, updateMessage, deleteMessage } =
@@ -27,27 +27,6 @@ export const useMessages = (chatId: string) => {
     fetchMessages();
   }, [chatId]);
 
-  // const sendMessage = async (content: string) => {
-  //   const tempId = `temp-${Date.now()}`;
-  //   const messageData = {
-  //     _id: tempId,
-  //     senderId: user?._id,
-  //     conversationId: chatId,
-  //     content,
-  //     type: "text",
-  //     status: "sending",
-  //     timestamp: new Date().toISOString(),
-  //   };
-  //   addMessage(messageData as any);
-
-  //   try {
-  //     const response = await MessageApi.sendMessage(messageData);
-  //     updateMessage(chatId, tempId, response.data);
-  //   } catch (err) {
-  //     setError(err instanceof Error ? err.message : "Failed to send message");
-  //     deleteMessage(chatId, tempId);
-  //   }
-  // };
   const deleteMsg = async (messageId: string) => {
     const message = messages[chatId]?.find((m) => m._id === messageId);
     if (!message) return;
@@ -112,4 +91,18 @@ export const useMessages = (chatId: string) => {
     isLoading,
     error,
   };
+};
+
+export const getMessages = (id: string) => {
+  const { setMessages } = useMessageStore();
+  const { data, isLoading, error } = useSWR(
+    `/api/messages/${id}`,
+    () => MessageApi.getMessages(id),
+    {
+      onSuccess: (response) => {
+        setMessages(id, response?.data);
+      },
+    }
+  );
+  return { messages: data?.data || [], isLoading, error };
 };
