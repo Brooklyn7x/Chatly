@@ -7,7 +7,7 @@ export const useMessage = (chatId: string) => {
   const { addMessage } = useMessageStore();
   const { user } = useAuthStore();
   const { chats } = useChatStore();
-  const currentChat = chats.find((chat) => chat._id === chatId);
+  const currentChat = chats?.find((chat) => chat._id === chatId);
   const recipient = currentChat?.participants.find(
     (participant) => participant.userId._id !== user?._id
   );

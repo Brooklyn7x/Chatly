@@ -10,9 +10,9 @@ interface AuthGuardProps {
   requireAuth?: boolean;
 }
 
-const PUBLIC_PATHS = ["/auth"];
-const DEFAULT_AUTH_PATH = "/auth";
-const DEFAULT_PRIVATE_PATH = "/";
+const PUBLIC_PATHS = ["/login", "/signup", "/"];
+const DEFAULT_AUTH_PATH = "/login";
+const DEFAULT_PRIVATE_PATH = "/chat";
 
 export default function AuthGuard({
   children,
@@ -26,7 +26,7 @@ export default function AuthGuard({
     if (isLoading) return;
 
     const isPublicPath = PUBLIC_PATHS.includes(pathname);
-    const isRootPath = pathname === "/";
+    const isRootPath = pathname === "/chat";
 
     if (isRootPath) {
       if (isAuthenticated) {

@@ -8,20 +8,23 @@ import {
 import { Button } from "../ui/button";
 import { Participant } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
+import { Loader2 } from "lucide-react";
+
+interface RemoveMemberDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  participants: Participant[];
+  onRemove: (userId: string) => Promise<void>;
+  removingUserId?: string | null;
+}
 
 export const RemoveMemberDialog = ({
   open,
   onOpenChange,
   participants,
   onRemove,
-  isRemoving,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  participants: Participant[];
-  onRemove: (userId: string) => Promise<void>;
-  isRemoving?: boolean;
-}) => {
+  removingUserId,
+}: RemoveMemberDialogProps) => {
   const handleRemove = (userId: string) => {
     onRemove(userId);
   };
@@ -46,13 +49,16 @@ export const RemoveMemberDialog = ({
                 <span className="text-sm">{participant.userId.username}</span>
               </div>
               <Button
-                variant="destructive"
+                variant="secondary"
                 size="sm"
                 onClick={() => handleRemove(participant.userId._id)}
-                disabled={isRemoving}
+                disabled={removingUserId === participant.userId._id}
                 className="text-xs"
               >
-                {isRemoving ? "Removing..." : "Remove"}
+                {removingUserId === participant.userId._id ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Remove
               </Button>
             </div>
           ))}

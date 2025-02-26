@@ -1,54 +1,159 @@
 import { io, Socket } from "socket.io-client";
 import { EventEmitter } from "events";
-import useAuthStore from "@/store/useAuthStore";
 
 export class SocketService extends EventEmitter {
   private socket: Socket | null = null;
   private cleanupTimer: NodeJS.Timeout | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private token: string = "";
+  private isConnecting = false;
+  private manuallyDisconnected = false;
+  private pingInterval: NodeJS.Timeout | null = null;
+  private pingTimeout: NodeJS.Timeout | null = null;
+  private lastPingTime: number = 0;
+  private connectionHealthy: boolean = true;
+  private lastConnectionAttempt: number = 0;
+  private connectionAttemptThrottleMs: number = 5000;
 
   constructor() {
     super();
     this.initialize = this.initialize.bind(this);
     this.disconnect = this.disconnect.bind(this);
     this.setupCleanup = this.setupCleanup.bind(this);
+    this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
+    this.reconnect = this.reconnect.bind(this);
+    // this.ping = this.ping.bind(this);
+    // this.resetPingTimeout = this.resetPingTimeout.bind(this);
   }
 
   initialize(token: string) {
-    if (this.socket?.connected) return this.socket;
+    // Prevent rapid reconnection attempts
+    const now = Date.now();
+    if (now - this.lastConnectionAttempt < this.connectionAttemptThrottleMs) {
+      console.log(
+        "Connection attempt throttled, too many attempts in short period"
+      );
+      return this.socket;
+    }
+    this.lastConnectionAttempt = now;
 
-    this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
-      auth: { token },
-      withCredentials: true,
-      autoConnect: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-    });
+    if (this.socket?.connected) {
+      console.log("Socket already connected, reusing existing connection");
+      return this.socket;
+    }
 
-    this.setupEventListeners();
-    this.setupCleanup();
-    return this.socket;
+    if (this.isConnecting) {
+      console.log("Socket connection already in progress");
+      return this.socket;
+    }
+
+    if (!token) {
+      console.log("No token provided for socket initialization");
+      this.emit("connect_error", new Error("No token provided"));
+      return null;
+    }
+
+    this.token = token;
+    this.isConnecting = true;
+    this.manuallyDisconnected = false;
+    this.connectionHealthy = true;
+
+    try {
+      this.cleanupSocket();
+      console.log("Initializing socket connection...");
+      this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
+        auth: { token },
+        withCredentials: true,
+        autoConnect: true,
+        reconnection: false,
+        timeout: 10000,
+        transports: ["websocket", "polling"],
+      });
+
+      this.setupEventListeners();
+      this.setupCleanup();
+      return this.socket;
+    } catch (error) {
+      console.log("Socket initialization error:", error);
+      this.isConnecting = false;
+      this.emit("connect_error", error);
+      return null;
+    }
+  }
+
+  private cleanupSocket() {
+    if (this.socket) {
+      this.socket.removeAllListeners();
+      this.socket.disconnect();
+      this.socket = null;
+    }
+
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
+
+    if (this.pingTimeout) {
+      clearTimeout(this.pingTimeout);
+      this.pingTimeout = null;
+    }
   }
 
   private setupEventListeners() {
     if (!this.socket) return;
-
     this.socket.on("connect", () => {
-      console.log("Socket connected");
+      console.log("Socket connected successfully");
+      this.isConnecting = false;
+      this.reconnectAttempts = 0;
+      this.connectionHealthy = true;
       this.emit("connected");
+
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
     });
 
     this.socket.on("disconnect", (reason) => {
       console.log("Socket disconnected:", reason);
+      this.isConnecting = false;
+      this.connectionHealthy = false;
       this.emit("disconnected", reason);
+
+      if (this.pingInterval) {
+        clearInterval(this.pingInterval);
+        this.pingInterval = null;
+      }
+
+      if (this.pingTimeout) {
+        clearTimeout(this.pingTimeout);
+        this.pingTimeout = null;
+      }
+
+      if (
+        reason === "io client disconnect" ||
+        reason === "io server disconnect" ||
+        this.manuallyDisconnected
+      ) {
+        console.log("Not attempting reconnect due to intentional disconnect");
+        return;
+      }
+
+      this.attemptReconnect();
     });
 
     this.socket.on("connect_error", (err) => {
       console.log("Socket connection error:", err.message);
+      this.isConnecting = false;
+      this.connectionHealthy = false;
       this.emit("connect_error", err);
-    });
 
+      if (!this.manuallyDisconnected) {
+        this.attemptReconnect();
+      }
+    });
     this.socket.on("chat:error", (error: any) => {
       this.emit("chat:error", error);
     });
@@ -80,6 +185,7 @@ export class SocketService extends EventEmitter {
     this.socket.on("message:edited", (data: any) => {
       this.emit("message:edited", data);
     });
+
     this.socket.on("message:deleted", (data: any) => {
       this.emit("message:deleted", data);
     });
@@ -96,16 +202,20 @@ export class SocketService extends EventEmitter {
       this.emit("typing:stop", data);
     });
 
+    this.socket.on("typing:update", (data: any) => {
+      this.emit("typing:update", data);
+    });
+
     this.socket.on("group:joined", (data) => {
       this.emit("group:joined", data);
     });
 
     this.socket.on("group:member_added", (data) => {
-      this.socket?.emit("group:member_added", data);
+      this.emit("group:member_added", data);
     });
 
     this.socket.on("group:member_removed", (data) => {
-      this.socket?.emit("group:member_removed", data);
+      this.emit("group:member_removed", data);
     });
 
     this.socket.on("group:updated", (data) => {
@@ -127,33 +237,139 @@ export class SocketService extends EventEmitter {
     this.socket.on("user:status_change", (data: any) => {
       this.emit("user:status_change", data);
     });
+
+    this.socket.on("error", (error) => {
+      console.log("Socket error:", error);
+      this.emit("error", error);
+    });
   }
 
+  private attemptReconnect() {
+    if (this.reconnectTimer || this.manuallyDisconnected || !this.token) {
+      return;
+    }
+
+    this.reconnectAttempts++;
+
+    if (this.reconnectAttempts > this.maxReconnectAttempts) {
+      console.log(
+        `Max reconnection attempts (${this.maxReconnectAttempts}) reached`
+      );
+      this.emit(
+        "connect_error",
+        new Error("Max reconnection attempts reached")
+      );
+      // Reset reconnect attempts after a longer timeout to allow future reconnections
+      setTimeout(() => {
+        this.reconnectAttempts = 0;
+      }, 60000); // Reset after 1 minute
+      return;
+    }
+
+    const delay = Math.min(1000 * Math.pow(1.5, this.reconnectAttempts), 30000);
+    console.log(
+      `Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`
+    );
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnect();
+      this.reconnectTimer = null;
+    }, delay);
+  }
+
+  private reconnect() {
+    if (this.manuallyDisconnected || !this.token) return;
+    if (this.isConnecting) return;
+    console.log("Attempting to reconnect...");
+    this.initialize(this.token);
+  }
+
+  private disconnectForVisibility() {
+    this.isConnecting = false;
+
+    this.connectionHealthy = false;
+
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    if (this.socket) {
+      console.log("Disconnecting socket due to page hidden");
+      this.socket.disconnect();
+    }
+
+    if (this.cleanupTimer) {
+      clearTimeout(this.cleanupTimer);
+      this.cleanupTimer = null;
+    }
+  }
+
+  private handleVisibilityChange() {
+    if (document.visibilityState === "hidden") {
+      console.log(
+        "Page hidden, disconnecting socket without removing listeners"
+      );
+      this.disconnectForVisibility();
+    } else if (document.visibilityState === "visible") {
+      console.log("Page visible, attempting to reconnect");
+
+      if (this.cleanupTimer) {
+        clearTimeout(this.cleanupTimer);
+        this.cleanupTimer = null;
+      }
+
+      // If we have a token, try to reconnect
+      if (this.token && this.socket) {
+        // We don't need to reset manuallyDisconnected because
+        // disconnectForVisibility doesn't set it to true
+        console.log("Reconnecting socket after page became visible");
+
+        // Use connect() directly if the socket instance still exists with listeners
+        if (this.socket && !this.socket.connected && !this.isConnecting) {
+          this.isConnecting = true;
+          this.socket.connect();
+        } else {
+          this.reconnect();
+        }
+      }
+    }
+  }
   private setupCleanup() {
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer);
+      this.cleanupTimer = null;
     }
 
     if (typeof window !== "undefined") {
+      window.removeEventListener("beforeunload", this.disconnect);
+      window.removeEventListener("pagehide", this.disconnect);
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange
+      );
       window.addEventListener("beforeunload", this.disconnect);
       window.addEventListener("pagehide", this.disconnect);
+      document.addEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange
+      );
 
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") {
-          this.cleanupTimer = setTimeout(() => {
-            this.disconnect();
-          }, 30000);
-        } else {
-          if (this.cleanupTimer) {
-            clearTimeout(this.cleanupTimer);
-          }
-
-          if (!this.socket?.connected) {
-            // const { accessToken } = useAuthStore();
-            // if (!accessToken) return;
-            this.initialize("");
-          }
+      window.addEventListener("online", () => {
+        console.log("Browser went online");
+        if (
+          !this.socket?.connected &&
+          !this.isConnecting &&
+          !this.manuallyDisconnected
+        ) {
+          console.log("Reconnecting after coming online");
+          this.reconnect();
         }
+      });
+
+      window.addEventListener("offline", () => {
+        console.log("Browser went offline");
+        this.connectionHealthy = false;
       });
     }
   }
@@ -184,6 +400,7 @@ export class SocketService extends EventEmitter {
       content,
     });
   }
+
   deleteMessage(messageId: string) {
     if (!this.socket?.connected) {
       throw new Error("Socket not connected");
@@ -272,8 +489,32 @@ export class SocketService extends EventEmitter {
     });
   }
 
+  isConnected(): boolean {
+    return !!this.socket?.connected && this.connectionHealthy;
+  }
+
+  getConnectionState() {
+    return {
+      connected: !!this.socket?.connected,
+      connecting: this.isConnecting,
+      healthy: this.connectionHealthy,
+      reconnectAttempts: this.reconnectAttempts,
+    };
+  }
+
   disconnect() {
+    this.isConnecting = false;
+    this.manuallyDisconnected = true;
+    this.connectionHealthy = false;
+
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
     if (this.socket) {
+      console.log("Manually disconnecting socket");
+      this.socket.removeAllListeners();
       this.socket.disconnect();
       this.socket = null;
     }
@@ -281,11 +522,19 @@ export class SocketService extends EventEmitter {
     if (typeof window !== "undefined") {
       window.removeEventListener("beforeunload", this.disconnect);
       window.removeEventListener("pagehide", this.disconnect);
-      document.removeEventListener("visibilitychange", this.setupCleanup);
+      document.removeEventListener(
+        "visibilitychange",
+        this.handleVisibilityChange
+      );
+      window.removeEventListener("online", this.reconnect);
+      window.removeEventListener("offline", () => {
+        this.connectionHealthy = false;
+      });
     }
 
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer);
+      this.cleanupTimer = null;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Paperclip, SendHorizonal, Smile } from "lucide-react";
+import { Paperclip, Send, SendHorizonal, Smile } from "lucide-react";
 import EmojiPicker from "./EmojiPicker";
 import AttachmentPicker from "./AttachmentPicker";
 import { AnimatePresence } from "framer-motion";
@@ -124,10 +124,10 @@ export default function MessageInput() {
 
           <button
             onClick={handleSendMessage}
-            className="h-9 w-9 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors flex-shrink-0 min-w-[36px]"
+            className="h-9 w-9 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 text-secondary transition-colors flex-shrink-0 min-w-[36px]"
             aria-label="Send message"
           >
-            <SendHorizonal className="h-4 w-4 text-white" />
+            <Send className="h-4 w-4" />
           </button>
         </div>
 

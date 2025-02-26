@@ -15,10 +15,10 @@ export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
     <div
       className={cn(
         "flex flex-col h-full",
-        "bg-background",
+        "bg-secondary/30",
         "transition-transform duration-300",
         {
-          "fixed inset-0 z-50": isMobile,
+          "fixed inset-0": isMobile,
           "relative flex-1": !isMobile,
           "translate-x-full": isMobile && !activeChatId,
           "translate-x-0": !isMobile || activeChatId,

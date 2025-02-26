@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { useChats } from "@/hooks/useChats";
 import { toast } from "sonner";
 import { useState } from "react";
 

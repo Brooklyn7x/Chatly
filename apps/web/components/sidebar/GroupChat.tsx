@@ -3,16 +3,16 @@
 import { useCallback, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { ActionButton } from "../shared/ActionButton";
 import { GroupDetailsForm } from "../form/GroupDetailsForm";
 import { StepContainer } from "../modal/StepContainer";
 import { UserList } from "../user/UserList";
 import { SelectUserList } from "../user/SelectedUserList";
 import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
-import { useSearchUser } from "@/hooks/useSearchUser";
+import { useSearchUsers } from "@/hooks/useSearchUser";
 import { useChats } from "@/hooks/useChats";
 import FloatinButton from "../shared/FloatinButton";
+import { Loading } from "../ui/loading";
 
 interface GroupFormData {
   name: string;
@@ -35,8 +35,8 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { users, isLoading, error } = useSearchUsers(searchQuery);
   const { createChat } = useChats();
-  const { users } = useSearchUser(searchQuery);
 
   const selectedUsers = useMemo(
     () => users.filter((user) => formData.selectedUserIds.has(user._id)),
@@ -90,7 +90,6 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
 
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) return;
-
     setIsSubmitting(true);
     try {
       if (formData.selectedUserIds.size === 0) {
@@ -101,7 +100,6 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
         toast.error("Please enter a group name");
         return;
       }
-
       const selectedUserIds = Array.from(formData.selectedUserIds);
       await createChat(selectedUserIds, formData.name.trim());
       toast.success("Group created successfully");
@@ -109,7 +107,6 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
       onClose();
     } catch (error) {
       toast.error("Failed to create group");
-      console.error("Failed to create group:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -151,11 +148,17 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
               />
               <SelectUserList users={selectedUsers} />
             </div>
-            <UserList
-              users={users}
-              selectedUserIds={formData.selectedUserIds}
-              onUserToggle={handleUserToggle}
-            />
+            {isLoading ? (
+              <div className="my-4">
+                <Loading />
+              </div>
+            ) : (
+              <UserList
+                users={users}
+                selectedUserIds={formData.selectedUserIds}
+                onUserToggle={handleUserToggle}
+              />
+            )}
           </div>
         </StepContainer>
 

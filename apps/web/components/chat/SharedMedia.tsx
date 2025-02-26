@@ -34,9 +34,9 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
           <div className="space-y-2">
             {chat?.participants.map((participant: any) => (
               <UserItem
-                key={participant.userId._id}
+                key={participant.userId.id}
                 user={participant.userId}
-                className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
+                // className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
               />
             ))}
           </div>

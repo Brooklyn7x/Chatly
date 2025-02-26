@@ -14,9 +14,9 @@ export const handleApiError = (error: unknown) => {
 
   if (axios.isAxiosError(error)) {
     return new AppError(
-      error.response?.data?.message || "An error occurred",
+      error.response?.data?.error || "An error occurred",
       error.response?.data?.code || "UNKNOWN_ERROR",
-      error.response?.status || 500,
+      error.response?.status || 500
     );
   }
 

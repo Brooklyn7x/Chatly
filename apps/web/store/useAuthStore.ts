@@ -7,15 +7,12 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  error: Error | null;
 }
 
 interface AuthActions {
   login: (accessToken: string, user: User) => void;
   logout: () => void;
-  setError: (error: Error | null) => void;
-  setLoading: (isLoading: boolean) => void;
+  updateUser: (user: User) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -26,16 +23,12 @@ const useAuthStore = create<AuthStore>()(
       user: null,
       accessToken: null,
       isAuthenticated: false,
-      isLoading: false,
-      error: null,
 
       login: (accessToken, user) => {
         set({
           accessToken,
           user,
           isAuthenticated: true,
-          error: null,
-          isLoading: false,
         });
       },
 
@@ -44,15 +37,17 @@ const useAuthStore = create<AuthStore>()(
           accessToken: null,
           user: null,
           isAuthenticated: false,
-          error: null,
-          isLoading: false,
         });
 
         resetAllStores();
       },
 
-      setError: (error) => set({ error }),
-      setLoading: (isLoading) => set({ isLoading }),
+      updateUser: (user) => {
+        set((state) => ({
+          ...state,
+          user: { ...state.user, ...user },
+        }));
+      },
     }),
     {
       name: "auth-storage",

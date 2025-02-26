@@ -75,6 +75,7 @@ export class SocketService {
       this.setupGroupHandlers(socket);
       this.setupNotificationHandlers(socket);
       this.setupTypingHandlers(socket);
+      this.setupPingHandler(socket);
     } catch (error) {
       socket.disconnect(true);
     }
@@ -624,9 +625,17 @@ export class SocketService {
     });
   }
 
+  private setupPingHandler(socket: Socket) {
+    socket.on("ping", () => {
+      // Respond immediately with a pong
+      socket.emit("pong");
+    });
+  }
+
   private async handleDisconnect(socket: Socket) {
     const { userId } = socket.data;
     this.onlineUsers.delete(userId);
+    this.logger.info(`user disconneted ${userId}`);
     await this.userService.updateUserStatus(userId, UserStatus.OFFLINE);
     this.broadcastUserStatus(userId, UserStatus.OFFLINE);
   }

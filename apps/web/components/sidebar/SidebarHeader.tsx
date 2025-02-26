@@ -3,6 +3,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  Palette,
   Search,
   Settings,
   Sun,
@@ -30,7 +31,8 @@ type ViewType =
   | "new_message"
   | "new_group"
   | "new_channel"
-  | "setting";
+  | "setting"
+  | "theme_setting";
 interface SidebarHeaderProps {
   view: ViewType;
   searchQuery: string;
@@ -121,6 +123,16 @@ export default function SidebarHeader({
                   )}
 
                   <p className="text-muted-foreground">App Theme</p>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onViewChange("theme_setting")}>
+                <div className="flex gap-4 items-center">
+                  <Palette
+                    size={16}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
+                  <p className="text-muted-foreground">Theme Settings</p>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>

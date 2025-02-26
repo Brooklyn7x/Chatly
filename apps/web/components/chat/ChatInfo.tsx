@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { X, Pencil, Trash, PlusCircle, User2, UserPlus } from "lucide-react";
+import { X, Pencil, Trash, User2, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useChatStore } from "@/store/useChatStore";
@@ -20,9 +20,10 @@ export function ChatInfo() {
   const [addMember, setAddMember] = useState(false);
   const [removingUser, setRemovingUser] = useState(false);
   const [deleteChat, setDeleteChat] = useState(false);
+  const [removingUserId, setRemovingUserId] = useState<string | null>(null);
   const { chats, activeChatId } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
-  const { updateCht, deleteCht } = useChats();
+  const { updateChatInfo, deleteCht, isLoading, error } = useChats();
 
   const chat = chats.find((chat) => chat._id === activeChatId);
   const onEdit = () => {
@@ -42,23 +43,16 @@ export function ChatInfo() {
     ? `${memberCount} members`
     : "last seen recently";
 
-  const slideAnimation = {
-    initial: { translateX: "100%" },
-    animate: { translateX: 0 },
-    exit: { translateX: "100%" },
-    transition: { duration: 0.3, ease: [0.32, 0.72, 0, 1] },
-  };
-
   const handleUpdateTitle = async (data: any) => {
     try {
-      await updateCht(activeChatId || "", {
+      await updateChatInfo(activeChatId || "", {
         metadata: {
           title: data.groupTitle,
           description: data.groupDescription,
         },
       });
       setEditing(false);
-      //update store here
+      toast.success("Chat updated successfully");
     } catch (error: any) {
       toast.error("Failed to update group data. Try again!");
     }
@@ -70,30 +64,28 @@ export function ChatInfo() {
         toast.error("No active chat selected");
         return;
       }
-
       if (userIds.length === 0) {
         toast.error("Select at least one member to add");
         return;
       }
-
-      await updateCht(activeChatId, {
+      await updateChatInfo(activeChatId, {
         participants: userIds.map((userId) => ({
           action: "add",
           userId,
           role: ParticipantRole.MEMBER,
         })),
       });
-      //update store after adding user
-      setAddMember(false);
-      toast.success("Members added successfully");
+      toast.success("Members added");
     } catch (error) {
+      console.log(error);
       toast.error("Failed to add members. Please try again.");
     }
   };
 
   const handleRemoveMemeber = async (userId: string) => {
     try {
-      await updateCht(activeChatId || "", {
+      setRemovingUserId(userId);
+      await updateChatInfo(activeChatId || "", {
         participants: [
           {
             action: "remove",
@@ -101,10 +93,12 @@ export function ChatInfo() {
           },
         ],
       });
-      setRemovingUser(false);
-      //update store after removing user
+
+      toast.success("Member removed successfully");
     } catch (error: any) {
-      toast.error("Failed to update group data. Try again!");
+      toast.error("Failed to remove member. Try again!");
+    } finally {
+      setRemovingUserId(null);
     }
   };
 
@@ -212,12 +206,6 @@ export function ChatInfo() {
       </section>
 
       {isGroupChat && (
-        // <button
-        //   onClick={() => setAddMember(true)}
-        //   className="h-14 w-14 flex items-center justify-center bg-primary/90 rounded-full absolute bottom-5 right-5 shadow-lg hover:bg-primary transition-all duration-200 active:scale-95 focus:outline-none"
-        // >
-        //   <UserPlus className="h-5 w-5" />
-        // </button>
         <div className="absolute right-5 bottom-5">
           <FloatinButton onClick={() => setAddMember(true)}>
             <UserPlus className="h-5 w-5" />
@@ -231,6 +219,7 @@ export function ChatInfo() {
         open={editing}
         onOpenChange={setEditing}
         onSubmit={handleUpdateTitle}
+        isLoading={isLoading}
       />
 
       <AddMemberDailog
@@ -238,6 +227,7 @@ export function ChatInfo() {
         onOpenChange={setAddMember}
         participants={chat?.participants || []}
         onAdd={handleAddMember}
+        isAdding={isLoading}
       />
 
       <RemoveMemberDialog
@@ -245,6 +235,7 @@ export function ChatInfo() {
         onOpenChange={setRemovingUser}
         participants={chat?.participants || []}
         onRemove={handleRemoveMemeber}
+        removingUserId={removingUserId}
       />
 
       <DeleteChatDailog
