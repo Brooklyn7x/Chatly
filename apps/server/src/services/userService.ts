@@ -148,6 +148,19 @@ export class UserService {
         }
       }
 
+      if (data.username) {
+        const existingUser = await UserModel.findOne({
+          username: data.username,
+        });
+
+        if (existingUser && existingUser.id !== id) {
+          return {
+            success: false,
+            error: "Username already taken.",
+          };
+        }
+      }
+
       if (data.password) {
         data.password = await bcrypt.hash(data.password, 12);
       }
@@ -178,7 +191,7 @@ export class UserService {
       this.logger.error("Error updating user:", error);
       return {
         success: false,
-        error: "Failed to update user",
+        error: "Failed to update user. Try Again",
       };
     }
   }

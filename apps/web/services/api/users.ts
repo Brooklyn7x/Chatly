@@ -1,7 +1,7 @@
 import { handleApiError } from "@/lib/error";
 import { apiClient } from "./client";
 
-export const UserApi = {
+export const userApi = {
   searchUsers: async (query: string) => {
     try {
       const { data } = await apiClient.get("/user/search", {
@@ -10,6 +10,7 @@ export const UserApi = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -24,6 +25,7 @@ export const UserApi = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 };

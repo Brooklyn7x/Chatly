@@ -536,7 +536,6 @@ export class ConversationService {
     }
   ): Promise<ServiceResponse<any>> {
     try {
-      // 1. Verify conversation exists and user has permission
       const conversation = await ConversationModel.findOne({
         _id: conversationId,
         "participants.userId": userId,
@@ -552,13 +551,11 @@ export class ConversationService {
         };
       }
 
-      // 2. Prepare update operations
       const updateOperations: Record<string, any> = {
         $set: { updatedAt: new Date() },
         $inc: { __v: 1 },
       };
 
-      // 3. Handle metadata updates
       if (updateData.metadata) {
         if (conversation.type === ConversationType.DIRECT) {
           if (updateData.metadata.title || updateData.metadata.avatar) {
@@ -623,7 +620,6 @@ export class ConversationService {
         }
       }
 
-      // 5. Perform update
       const options = {
         new: true,
         arrayFilters: updateData.participants?.some(
@@ -652,7 +648,6 @@ export class ConversationService {
         };
       }
 
-      // 6. Update cache
       await this.cacheConversation(updatedConversation);
 
       return {

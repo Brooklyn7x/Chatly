@@ -1,12 +1,12 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 import { useState } from "react";
 import { Input } from "../ui/input";
@@ -19,6 +19,7 @@ interface EditChatProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: any) => void;
+  isLoading?: boolean;
 }
 
 export function EditChatDailog({
@@ -27,12 +28,13 @@ export function EditChatDailog({
   open,
   onOpenChange,
   onSubmit,
+  isLoading,
 }: EditChatProps) {
   const [data, setData] = useState({
     groupTitle: title,
     groupDescription: description,
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = () => {
     onSubmit(data);
   };
@@ -68,7 +70,11 @@ export function EditChatDailog({
             disabled={isLoading}
             className="text-sm"
           >
-            {isLoading ? <Loading /> : "Save changes"}
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

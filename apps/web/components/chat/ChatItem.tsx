@@ -11,8 +11,8 @@ interface ChatItemProps {
 }
 
 export function ChatItem({ chat, onClick }: ChatItemProps) {
-  const { activeChat } = useChatStore();
-  const isActive = activeChat === chat._id;
+  const { activeChatId } = useChatStore();
+  const isActive = activeChatId === chat._id;
 
   const formattedDate = useMemo(() => {
     if (!chat.updatedAt) return "";

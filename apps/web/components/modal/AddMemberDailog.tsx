@@ -11,17 +11,19 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { useSearchUser } from "@/hooks/useSearchUser";
+import { useSearchUsers } from "@/hooks/useSearchUser";
 import { UserAvatar } from "../shared/UserAvatar";
 import useAuthStore from "@/store/useAuthStore";
 import { Participant } from "@/types";
 import { toast } from "sonner";
+import { Loading } from "../ui/loading";
 
 interface AddMemberProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (userId: string[]) => void;
   participants: Participant[];
+  isAdding: boolean;
 }
 
 export const AddMemberDailog = ({
@@ -29,10 +31,11 @@ export const AddMemberDailog = ({
   onOpenChange,
   onAdd,
   participants,
+  isAdding,
 }: AddMemberProps) => {
   const { user: current } = useAuthStore();
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
-  const { users } = useSearchUser("");
+  const { users } = useSearchUsers("");
   const availableUsers = users.filter((user) => {
     const isNotCurrentUser = user._id !== current?._id;
     const isNotParticipant = !participants.some(
@@ -51,7 +54,6 @@ export const AddMemberDailog = ({
     try {
       onAdd(selectedMember);
       setSelectedMember([]);
-      onOpenChange(false);
     } catch (error) {
       toast.error("Failed to add members");
     }
@@ -59,7 +61,7 @@ export const AddMemberDailog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
           <DialogDescription>Add Member to Group</DialogDescription>
@@ -96,8 +98,8 @@ export const AddMemberDailog = ({
                   onClick={() =>
                     setSelectedMember((prev) =>
                       prev.includes(user._id)
-                        ? prev.filter((id) => id !== user._id)
-                        : [...prev, user._id]
+                        ? prev.filter((id) => id !== user.id)
+                        : [...prev, user.id]
                     )
                   }
                   className={cn(
@@ -118,7 +120,8 @@ export const AddMemberDailog = ({
         </div>
         <DialogFooter>
           <Button type="submit" onClick={handleAddMember}>
-            Add member
+            {isAdding ? <Loading /> : null}
+            Add Member
           </Button>
         </DialogFooter>
       </DialogContent>

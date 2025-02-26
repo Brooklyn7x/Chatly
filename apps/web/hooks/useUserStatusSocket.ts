@@ -8,7 +8,6 @@ export function useUserStatusSocket() {
   const { isConnected } = useSocket();
 
   useEffect(() => {
-    // Only set up event listeners if the socket is connected
     if (!isConnected) return;
 
     const handleStatusChange = (data: {

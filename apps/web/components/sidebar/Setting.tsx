@@ -1,36 +1,23 @@
 import useAuthStore from "@/store/useAuthStore";
-
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
-import { UserApi } from "@/services/api/users";
 import { toast } from "sonner";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { userApi } from "@/services/api/users";
 
 const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user } = useAuthStore();
-  const [initialData] = useState({
+  const { user, updateUser } = useAuthStore();
+  const [data, setData] = useState({
     name: user?.name || "",
     username: user?.username || "",
     email: user?.email || "",
     avatar: user?.profilePicture || "",
   });
-  const [data, setData] = useState({
-    name: user?.name,
-    username: user?.username,
-    email: user?.email,
-    avatar: user?.profilePicture,
-  });
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -40,37 +27,30 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    const payload: Record<string, any> = {};
 
-    const payload: Record<string, string> = {};
-    Object.keys(data).forEach((key) => {
-      const currentValue = data[key as keyof typeof data];
-      if (currentValue !== initialData[key as keyof typeof initialData]) {
-        payload[key] = currentValue || "";
-      }
-    });
+    if (data.name !== user?.name) payload.name = data.name;
+    if (data.username !== user?.username) payload.username = data.username;
+    if (data.email !== user?.email) payload.email = data.email;
+    if (profileImage) payload.profilePicture = profileImage;
 
+    if (Object.keys(payload).length === 0) {
+      toast.info("No changes made.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
-      const formData = new FormData();
-
-      Object.entries(payload).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-
-      // Append profile image if changed
-      if (profileImage) {
-        formData.append("avatar", profileImage);
-      }
-
-      const response = await UserApi.updateUserData(formData as any);
+      const updatedData = await userApi.updateUserData(payload);
+      updateUser(updatedData.data);
       toast.success("Profile updated successfully");
       onClose();
-      //update user store with changes
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to update profile";
-      toast.error(errorMessage);
+      const message = error.response.data.error;
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,17 +67,25 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
           ✕
         </Button>
       </div>
+
       <Card className="border-none shadow-lg">
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="flex flex-col items-center gap-4 p-4">
-              <UserAvatar size="xl" url={data.avatar} />
+              <UserAvatar size="xl" url={previewImage || data.avatar} />
               <Input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="hidden"
+                id="profile-image"
               />
+              <label
+                htmlFor="profile-image"
+                className="text-sm text-blue-500 cursor-pointer"
+              >
+                Change profile picture
+              </label>
             </div>
 
             <div className="space-y-2">
@@ -142,9 +130,16 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit">Save Changes</Button>
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className={isLoading ? "opacity-70" : ""}
+              >
+                {isLoading ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>

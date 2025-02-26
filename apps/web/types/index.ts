@@ -71,7 +71,6 @@ export interface Chat {
   metadata: ChatMetadata;
   groupName: string | null;
   lastMessage: any;
-  // unreadCount: { [key: string]: number };
   updatedAt: Date;
   createdAt: Date;
 }

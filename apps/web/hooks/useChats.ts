@@ -1,25 +1,13 @@
 import { chatApi } from "@/services/api/chat";
 import { useChatStore } from "@/store/useChatStore";
 import { ChatUpdatePayload } from "@/types/chat";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
 export const useChats = () => {
-  const { setChats, addChats, deleteChat } = useChatStore();
+  const { addChats, deleteChat, setActiveChat, updateChat } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchChats = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await chatApi.getChats();
-      setChats(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch chats");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [setChats]);
 
   const createChat = async (participantIds: any[], title?: string) => {
     try {
@@ -53,17 +41,21 @@ export const useChats = () => {
     try {
       await chatApi.deleteChat(chatId);
       deleteChat(chatId);
+      setActiveChat(null);
     } catch (error) {
       throw new Error("Failed to delete chat. Please try again.");
     }
   };
 
-  const updateCht = async (chatId: string, updateData: ChatUpdatePayload) => {
+  const updateChatInfo = async (
+    chatId: string,
+    updateData: ChatUpdatePayload
+  ) => {
     try {
       setIsLoading(true);
       const { data } = await chatApi.updateChat(chatId, updateData);
+      // console.log(data)
       // updateChat(chatId, data);
-      return data;
     } catch (error) {
       const message = error instanceof Error ? error.message : "Update failed";
       toast.error(message);
@@ -74,10 +66,9 @@ export const useChats = () => {
   };
 
   return {
-    fetchChats,
     createChat,
     deleteCht,
-    updateCht,
+    updateChatInfo,
     isLoading,
     error,
   };
@@ -85,10 +76,13 @@ export const useChats = () => {
 
 export const getChats = () => {
   const { setChats } = useChatStore();
-  const { data, isLoading, error } = useSWR("/api/chats", chatApi.getChats, {
+  const { data, isLoading, error } = useSWR("chats", chatApi.getChats, {
     onSuccess: (response) => {
       setChats(response.data);
     },
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+    revalidateOnReconnect: true,
   });
 
   return {

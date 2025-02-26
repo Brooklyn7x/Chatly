@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { NavigationButton } from "../shared/NavigationButton";
@@ -22,12 +22,15 @@ import useAuthStore from "@/store/useAuthStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/UserAvatar";
 import { useChats } from "@/hooks/useChats";
+import { Chat } from "@/types";
 
-export default function ChatHeader() {
+interface ChatHeaderProps {
+  chat: Chat;
+}
+export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { user } = useAuthStore();
   const { setIsOpen } = useChatPanelStore();
-  const { activeChatId, chats, setActiveChat } = useChatStore();
-  const chat = chats.find((chat) => chat._id === activeChatId);
+  const { activeChatId, setActiveChat } = useChatStore();
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
   const { getStatusText } = useUserStatus(otherUserId || "");

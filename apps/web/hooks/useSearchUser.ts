@@ -1,30 +1,19 @@
-import { UserApi } from "@/services/api/users";
-import { User } from "@/types";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { userApi } from "@/services/api/users";
 
-export const useSearchUser = (query: string) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const response = await UserApi.searchUsers(query);
-        setUsers(response.data.results);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch users");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, [query]);
+export function useSearchUsers(query: string) {
+  const { data, isLoading, error } = useSWR(
+    `/search${query}`,
+    () => userApi.searchUsers(query),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+    }
+  );
 
   return {
-    users,
-    loading,
+    users: data?.data?.results || [],
+    isLoading,
     error,
   };
-};
+}

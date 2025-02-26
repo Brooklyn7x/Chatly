@@ -62,8 +62,9 @@ export default function MainPage() {
   useMessageSocket();
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden">
-      {showConnectionAlert && (
+    <AuthGuard requireAuth>
+      <div className="flex flex-col h-dvh overflow-hidden">
+        {/* {showConnectionAlert && (
         <Alert
           variant={
             isConnecting ? "default" : reconnecting ? "default" : "destructive"
@@ -107,11 +108,12 @@ export default function MainPage() {
                     "Unable to connect to chat server. Please check your internet connection."}
           </AlertDescription>
         </Alert>
-      )}
-      <div className="flex flex-1 overflow-hidden">
-        <SideBar isMobile={isMobile} />
-        <ChatContainer isMobile={isMobile} />
+      )} */}
+        <div className="flex flex-1 overflow-hidden">
+          <SideBar isMobile={isMobile} />
+          <ChatContainer isMobile={isMobile} />
+        </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 }

@@ -54,7 +54,7 @@ export default function SidebarContent({
 
     switch (selectedFilter) {
       case "favorites":
-        baseChats = baseChats.filter((chat) => chat.isFavorite);
+        // baseChats = baseChats.filter((chat) => chat.isFavorite);
         break;
       case "groups":
         baseChats = baseChats.filter((chat) => chat.type === "group");
@@ -116,7 +116,7 @@ export default function SidebarContent({
               ))}
               {filteredChats.length === 0 && (
                 <div className="text-center text-muted-foreground p-4">
-                  No chats found
+                  No chats found.
                   {debouncedQuery ? ` for "${debouncedQuery}"` : ""}
                 </div>
               )}
@@ -132,7 +132,9 @@ export default function SidebarContent({
         {view === "setting" && <Setting onClose={() => onViewChange("main")} />}
       </div>
 
-      {view === "theme_setting" && <ThemeSettingsPage onClose={() => onViewChange("main")} />}
+      {view === "theme_setting" && (
+        <ThemeSettingsPage onClose={() => onViewChange("main")} />
+      )}
     </div>
   );
 }

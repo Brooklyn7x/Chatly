@@ -6,9 +6,10 @@ import { SearchInput } from "../shared/SearchInput";
 import { UserList } from "../user/UserList";
 import { toast } from "sonner";
 import { useState } from "react";
-import { useSearchUser } from "@/hooks/useSearchUser";
+import { useSearchUsers } from "@/hooks/useSearchUser";
 import { useChats } from "@/hooks/useChats";
 import FloatinButton from "../shared/FloatinButton";
+import { Loading } from "../ui/loading";
 
 interface PrivateChatProps {
   onClose: () => void;
@@ -17,7 +18,7 @@ interface PrivateChatProps {
 export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { users } = useSearchUser("");
+  const { users, isLoading, error } = useSearchUsers(searchQuery.trim());
   const { createChat } = useChats();
 
   const handleUserSelect = (userId: string) => {
@@ -27,14 +28,12 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const handleCreateChat = async () => {
     if (!selectedUserId) return;
     try {
-      const selectedUser = users.find((user) => user.id === selectedUserId);
+      const selectedUser = users?.find((user) => user.id === selectedUserId);
       if (!selectedUser) {
         toast.error("Please select user");
         return;
       }
-
       await createChat([selectedUserId]);
-
       onClose();
     } catch (error: any) {
       toast.error("Failed to create chat:", error);
@@ -54,13 +53,19 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
           />
         </div>
         <main className="flex-1 overflow-y-auto">
-          <UserList
-            users={users}
-            onUserToggle={handleUserSelect}
-            selectedUserIds={
-              selectedUserId ? new Set([selectedUserId]) : new Set()
-            }
-          />
+          {isLoading ? (
+            <div className="my-4">
+              <Loading />
+            </div>
+          ) : (
+            <UserList
+              users={users}
+              onUserToggle={handleUserSelect}
+              selectedUserIds={
+                selectedUserId ? new Set([selectedUserId]) : new Set()
+              }
+            />
+          )}
         </main>
         <div className="absolute right-6 bottom-6">
           <FloatinButton onClick={handleCreateChat} disabled={!selectedUserId}>

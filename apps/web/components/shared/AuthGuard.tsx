@@ -26,7 +26,7 @@ export default function AuthGuard({
     if (isLoading) return;
 
     const isPublicPath = PUBLIC_PATHS.includes(pathname);
-    const isRootPath = pathname === "/";
+    const isRootPath = pathname === "/chat";
 
     if (isRootPath) {
       if (isAuthenticated) {
