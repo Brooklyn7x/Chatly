@@ -31,22 +31,17 @@ export default function MainPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  // Show connection status alert
   useEffect(() => {
     let timer: NodeJS.Timeout;
-
     if (isConnecting) {
-      // Show connecting status immediately
       setShowConnectionAlert(true);
       setReconnecting(false);
     } else if (!isConnected) {
-      // Show disconnected status after a short delay
       setReconnecting(reconnectCount > 0);
       timer = setTimeout(() => {
         setShowConnectionAlert(true);
-      }, 2000); // Show alert after 2 seconds of no connection
+      }, 2000);
     } else {
-      // Hide alert after a delay when connected
       timer = setTimeout(() => {
         setShowConnectionAlert(false);
       }, 1500);
@@ -64,51 +59,42 @@ export default function MainPage() {
   return (
     <AuthGuard requireAuth>
       <div className="flex flex-col h-dvh overflow-hidden">
-        {/* {showConnectionAlert && (
-        <Alert
-          variant={
-            isConnecting ? "default" : reconnecting ? "default" : "destructive"
-          }
-          className={`m-2 w-[500px] mx-auto bg-transparent transition-all duration-300 ${
-            isConnecting
-              ? "bg-blue-500 border-blue-200 "
-              : reconnecting
-                ? "bg-amber-500 border-amber-200 "
-                : isConnected
-                  ? "bg-green-500"
-                  : "bg-red-400"
+        <div
+          className={`fixed top-0 left-0 right-0 h-1 transition-all duration-300 z-50 ${
+            showConnectionAlert
+              ? isConnecting
+                ? "bg-blue-500"
+                : reconnecting
+                  ? "bg-amber-500"
+                  : isConnected
+                    ? "bg-green-500"
+                    : "bg-red-500"
+              : "opacity-0"
+          }`}
+        />
+
+        <div
+          className={`fixed top-1 left-0 right-0 text-center text-sm py-1 transition-all duration-300 ${
+            showConnectionAlert
+              ? isConnecting
+                ? "text-blue-500 opacity-100"
+                : reconnecting
+                  ? "text-amber-500 opacity-100"
+                  : isConnected
+                    ? "text-green-500 opacity-100"
+                    : "text-red-500 opacity-100"
+              : "opacity-0"
           }`}
         >
-          {isConnecting ? (
-            <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
-          ) : reconnecting ? (
-            <Wifi className="h-4 w-4 text-amber-500" />
-          ) : isConnected ? (
-            <></>
-          ) : (
-            <WifiOff className="h-4 w-4" />
-          )}
-          <AlertTitle>
-            {isConnecting
-              ? "Connecting..."
-              : reconnecting
-                ? "Reconnecting..."
-                : isConnected
-                  ? "Connected"
-                  : "Connection Error"}
-          </AlertTitle>
-          <AlertDescription>
-            {isConnecting
-              ? "Establishing connection to the chat server..."
-              : reconnecting
-                ? `Attempting to reconnect to the chat server (attempt ${reconnectCount})...`
-                : isConnected
-                  ? "Connected"
-                  : connectionError ||
-                    "Unable to connect to chat server. Please check your internet connection."}
-          </AlertDescription>
-        </Alert>
-      )} */}
+          {isConnecting
+            ? "Connecting to chat server..."
+            : reconnecting
+              ? `Reconnecting to chat server (attempt ${reconnectCount})...`
+              : isConnected
+                ? "Connected to chat server"
+                : connectionError || "Connection error"}
+        </div>
+
         <div className="flex flex-1 overflow-hidden">
           <SideBar isMobile={isMobile} />
           <ChatContainer isMobile={isMobile} />

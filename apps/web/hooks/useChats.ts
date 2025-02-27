@@ -82,7 +82,7 @@ export const getChats = () => {
     },
     revalidateOnFocus: false,
     revalidateIfStale: false,
-    revalidateOnReconnect: true,
+    revalidateOnMount: true,
   });
 
   return {

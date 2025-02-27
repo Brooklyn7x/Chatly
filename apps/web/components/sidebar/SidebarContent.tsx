@@ -38,11 +38,7 @@ export default function SidebarContent({
   onViewChange,
 }: SidebarContentProps) {
   const { setActiveChat, chats } = useChatStore();
-  const { isLoading, error } = getChats();
-
-  if (error) {
-    console.log(error);
-  }
+  const { error } = getChats();
 
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
@@ -90,38 +86,23 @@ export default function SidebarContent({
       )}
 
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20">
-        {view === "main" &&
-          (isLoading ? (
-            <div className="space-y-4 p-4">
-              {Array(6)
-                .fill(0)
-                .map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2 flex-1">
-                      <Skeleton className="h-4 w-[200px]" />
-                      <Skeleton className="h-3 w-[150px]" />
-                    </div>
-                  </div>
-                ))}
-            </div>
-          ) : (
-            <div className="space-y-1 p-2">
-              {filteredChats?.map((chat) => (
-                <ChatItem
-                  key={chat._id}
-                  chat={chat}
-                  onClick={() => setActiveChat(chat._id)}
-                />
-              ))}
-              {filteredChats.length === 0 && (
-                <div className="text-center text-muted-foreground p-4">
-                  No chats found.
-                  {debouncedQuery ? ` for "${debouncedQuery}"` : ""}
-                </div>
-              )}
-            </div>
-          ))}
+        {view === "main" && (
+          <div className="space-y-1 p-2">
+            {filteredChats?.map((chat) => (
+              <ChatItem
+                key={chat._id}
+                chat={chat}
+                onClick={() => setActiveChat(chat._id)}
+              />
+            ))}
+            {filteredChats.length === 0 && (
+              <div className="text-center text-muted-foreground p-4">
+                No chats found.
+                {debouncedQuery ? ` for "${debouncedQuery}"` : ""}
+              </div>
+            )}
+          </div>
+        )}
         {view === "new_message" && (
           <PrivateChat onClose={() => onViewChange("main")} />
         )}

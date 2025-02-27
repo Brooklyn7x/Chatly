@@ -54,7 +54,6 @@ export function useSocket() {
     }));
   }, []);
 
-  // Update connection state periodically
   useEffect(() => {
     if (!accessToken) return;
 
@@ -83,14 +82,23 @@ export function useSocket() {
   useEffect(() => {
     if (!accessToken) return;
 
+    // If we have a token but haven't initialized, do it now
+    if (!hasInitializedRef.current) {
+      console.log("Initial socket connection after login");
+      socketRef.current = socketService.initialize(accessToken);
+      hasInitializedRef.current = true;
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
     // Prevent multiple initializations with the same token
     if (hasInitializedRef.current && socketService.isConnected()) {
       console.log("Socket already initialized and connected, skipping");
       return;
     }
-
     console.log("Setting up socket connection in hook");
-
     // Add event listeners
     socketService.on("connected", handleConnect);
     socketService.on("disconnected", handleDisconnect);

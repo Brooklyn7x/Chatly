@@ -68,7 +68,7 @@ export default function SidebarHeader({
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} className="h-10 w-10">
                 <Menu />
               </Button>
             </DropdownMenuTrigger>
@@ -151,7 +151,7 @@ export default function SidebarHeader({
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               placeholder="Search chats"
-              className="pl-12 py-5 text-base rounded-full bg-background"
+              className="pl-12 h-10 text-base rounded-full bg-background"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />

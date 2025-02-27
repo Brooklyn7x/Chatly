@@ -4,6 +4,7 @@ import MessageList from "../message/MessageList";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "../message/MessageInput";
 import { EmptyState } from "./EmptyChat";
+import { Suspense } from "react";
 
 export const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
@@ -19,7 +20,9 @@ export const ChatArea = () => {
           </div>
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-2xl mx-auto">
-              <MessageList />
+              <Suspense fallback={<p>MessageList...</p>}>
+                <MessageList />
+              </Suspense>
             </div>
           </div>
           <div className="flex-shrink-0 pb-4">

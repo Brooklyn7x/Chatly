@@ -15,7 +15,7 @@ export class SocketService extends EventEmitter {
   private lastPingTime: number = 0;
   private connectionHealthy: boolean = true;
   private lastConnectionAttempt: number = 0;
-  private connectionAttemptThrottleMs: number = 5000;
+  private connectionAttemptThrottleMs: number = 1000;
 
   constructor() {
     super();
@@ -29,23 +29,26 @@ export class SocketService extends EventEmitter {
   }
 
   initialize(token: string) {
-    // Prevent rapid reconnection attempts
     const now = Date.now();
     if (now - this.lastConnectionAttempt < this.connectionAttemptThrottleMs) {
       console.log(
         "Connection attempt throttled, too many attempts in short period"
       );
+      setTimeout(
+        () => this.initialize(token),
+        this.connectionAttemptThrottleMs
+      );
       return this.socket;
     }
     this.lastConnectionAttempt = now;
 
-    if (this.socket?.connected) {
-      console.log("Socket already connected, reusing existing connection");
+    if (this.socket?.connected && this.token === token) {
+      console.log("Socket already connected with same token, reusing");
       return this.socket;
     }
 
-    if (this.isConnecting) {
-      console.log("Socket connection already in progress");
+    if (this.isConnecting && this.token === token) {
+      console.log("Socket connection already in progress with same token");
       return this.socket;
     }
 
@@ -61,7 +64,9 @@ export class SocketService extends EventEmitter {
     this.connectionHealthy = true;
 
     try {
-      this.cleanupSocket();
+      if (this.token !== token) {
+        this.cleanupSocket();
+      }
       console.log("Initializing socket connection...");
       this.socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
         auth: { token },
@@ -259,10 +264,9 @@ export class SocketService extends EventEmitter {
         "connect_error",
         new Error("Max reconnection attempts reached")
       );
-      // Reset reconnect attempts after a longer timeout to allow future reconnections
       setTimeout(() => {
         this.reconnectAttempts = 0;
-      }, 60000); // Reset after 1 minute
+      }, 60000);
       return;
     }
 
@@ -319,13 +323,9 @@ export class SocketService extends EventEmitter {
         this.cleanupTimer = null;
       }
 
-      // If we have a token, try to reconnect
       if (this.token && this.socket) {
-        // We don't need to reset manuallyDisconnected because
-        // disconnectForVisibility doesn't set it to true
         console.log("Reconnecting socket after page became visible");
 
-        // Use connect() directly if the socket instance still exists with listeners
         if (this.socket && !this.socket.connected && !this.isConnecting) {
           this.isConnecting = true;
           this.socket.connect();

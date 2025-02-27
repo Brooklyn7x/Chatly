@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { cn } from "@/lib/utils";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { useChatStore } from "@/store/useChatStore";
 import FloatingActionButton from "./FloatingActionButton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ViewType =
   | "main"
@@ -18,14 +19,11 @@ type ViewType =
 interface SidebarProps {
   isMobile: Boolean;
 }
+
 export default function Sidebar({ isMobile }: SidebarProps) {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
-  // const { fetchChats } = useChats();
-  // useEffect(() => {
-  //   fetchChats();
-  // }, []);
 
   return (
     <div
@@ -44,12 +42,29 @@ export default function Sidebar({ isMobile }: SidebarProps) {
           onViewChange={setView}
         />
       )}
-
-      <SidebarContent
-        view={view}
-        searchQuery={searchQuery}
-        onViewChange={setView}
-      />
+      <Suspense
+        fallback={
+          <div className="space-y-4 p-4">
+            {Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-3 w-[150px]" />
+                  </div>
+                </div>
+              ))}
+          </div>
+        }
+      >
+        <SidebarContent
+          view={view}
+          searchQuery={searchQuery}
+          onViewChange={setView}
+        />
+      </Suspense>
 
       {view === "main" && <FloatingActionButton onViewChange={setView} />}
     </div>

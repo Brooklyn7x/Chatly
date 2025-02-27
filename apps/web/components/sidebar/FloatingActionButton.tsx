@@ -19,7 +19,7 @@ const FloatingActionButton = ({ onViewChange }: FBProps) => {
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button className="rounded-full h-14 w-14">
-            {open ? <X size={28} /> : <Pencil size={28} />}
+            {open ? <X size={32} /> : <Pencil size={32} />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 mb-1" alignOffset={20}>
