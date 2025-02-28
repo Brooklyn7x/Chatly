@@ -1,3 +1,4 @@
+"use client";
 import useAuthStore from "@/store/useAuthStore";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -7,37 +8,82 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { userApi } from "@/services/api/users";
 
+import { X, CheckCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useUploadThing } from "@/utils/uploathings";
+
 const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user, updateUser } = useAuthStore();
-  const [data, setData] = useState({
-    name: user?.name || "",
-    username: user?.username || "",
-    email: user?.email || "",
-    avatar: user?.profilePicture || "",
+  const { user, updateUser, accessToken } = useAuthStore();
+  const form = useForm({
+    defaultValues: {
+      name: user?.name || "",
+      username: user?.username || "",
+      email: user?.email || "",
+      avatar: user?.profilePicture || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
-  const [profileImage, setProfileImage] = useState<File | null>(null);
+
   const [previewImage, setPreviewImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      const file = e.target.files[0];
-      setProfileImage(file);
-      setPreviewImage(URL.createObjectURL(file));
+  const { startUpload, isUploading } = useUploadThing("profilePicture", {
+    onClientUploadComplete: (res) => {
+      if (res && res[0]?.url) {
+        setPreviewImage(res[0].url);
+        form.setValue("avatar", res[0].url, { shouldDirty: true });
+        toast.success("Profile picture uploaded successfully");
+      }
+    },
+    onUploadError: (error) => {
+      toast.error("Failed to upload profile picture");
+    },
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploading(true);
+      await startUpload([file]);
+    } catch (error) {
+      toast.error("Failed to upload file");
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleSubmit = async () => {
+  const onSubmit = async (data: any) => {
     const payload: Record<string, any> = {};
 
     if (data.name !== user?.name) payload.name = data.name;
     if (data.username !== user?.username) payload.username = data.username;
     if (data.email !== user?.email) payload.email = data.email;
-    if (profileImage) payload.profilePicture = profileImage;
+    if (data.avatar !== user?.profilePicture)
+      payload.profilePicture = data.avatar;
 
-    if (Object.keys(payload).length === 0) {
-      toast.info("No changes made.");
-      return;
+    if (data.newPassword) {
+      if (data.newPassword !== data.confirmPassword) {
+        toast.error("New passwords do not match");
+        return;
+      }
+      payload.currentPassword = data.currentPassword;
+      payload.newPassword = data.newPassword;
     }
 
     setIsLoading(true);
@@ -47,8 +93,11 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
       toast.success("Profile updated successfully");
       onClose();
     } catch (error: any) {
-      const message = error.response.data.error;
+      const message = error.response?.data?.error || "Failed to update profile";
       toast.error(message);
+      if (payload.profilePicture) {
+        setPreviewImage(user?.profilePicture || "");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -70,76 +119,191 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
 
       <Card className="border-none shadow-lg">
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex flex-col items-center gap-4 p-4">
-              <UserAvatar size="xl" url={previewImage || data.avatar} />
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-                id="profile-image"
-              />
-              <label
-                htmlFor="profile-image"
-                className="text-sm text-blue-500 cursor-pointer"
-              >
-                Change profile picture
-              </label>
-            </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="flex flex-col items-center gap-4 p-4">
+                <div className="relative overflow-hidden">
+                  <UserAvatar
+                    size="xl"
+                    url={previewImage || form.watch("avatar")}
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                      <div className="relative w-14 h-14">
+                        <svg className="w-full h-full" viewBox="0 0 100 100">
+                          <circle
+                            className="text-gray-200 stroke-current"
+                            strokeWidth="10"
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            fill="transparent"
+                          ></circle>
+                          <circle
+                            className="text-secondary stroke-current"
+                            strokeWidth="10"
+                            strokeLinecap="round"
+                            cx="50"
+                            cy="50"
+                            r="40"
+                            fill="transparent"
+                            strokeDasharray="251.2"
+                            strokeDashoffset={
+                              251.2 - (251.2 * uploadProgress) / 100
+                            }
+                          ></circle>
+                        </svg>
+                        <button
+                          onClick={() => setUploading(false)}
+                          className="absolute inset-0 flex items-center justify-center text-white text-sm hover:bg-black/20 rounded-full"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-            <div className="space-y-2">
-              <label>Name</label>
-              <Input
-                value={data.name}
-                onChange={(e) => setData({ ...data, name: e.target.value })}
-                placeholder="Name"
-              />
-            </div>
+                <label
+                  htmlFor="avatar-upload"
+                  className={cn(
+                    "text-sm text-blue-500 cursor-pointer bg-transparent border-none p-0",
+                    previewImage && "text-green-500"
+                  )}
+                >
+                  {previewImage ? (
+                    <div className="flex items-center gap-1">
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Uploaded!</span>
+                    </div>
+                  ) : (
+                    "Change profile picture"
+                  )}
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={isUploading}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <label>Username</label>
-              <Input
-                value={data.username}
-                onChange={(e) => setData({ ...data, username: e.target.value })}
-                placeholder="Username"
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <label>Email</label>
-              <Input
-                type="email"
-                value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-                placeholder="Email"
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Username" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="space-y-2">
-              <label>Password</label>
-              <Input
-                type="password"
-                value={""}
-                onChange={() => {}}
-                placeholder="Password"
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} placeholder="Email" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="flex gap-2 justify-end">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button
-                type="button"
-                onClick={handleSubmit}
-                disabled={isLoading}
-                className={isLoading ? "opacity-70" : ""}
-              >
-                {isLoading ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          </div>
+              <div className="space-y-4 border-t pt-4">
+                <h3 className="text-lg font-semibold">Change Password</h3>
+
+                <FormField
+                  control={form.control}
+                  name="currentPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          {...field}
+                          placeholder="Current Password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          {...field}
+                          placeholder="New Password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm New Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          {...field}
+                          placeholder="Confirm New Password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex gap-2 justify-end">
+                <Button type="button" variant="outline" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading || !form.formState.isDirty}
+                  className={isLoading ? "opacity-70" : ""}
+                >
+                  {isLoading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

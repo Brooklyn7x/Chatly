@@ -80,9 +80,6 @@ export const getChats = () => {
     onSuccess: (response) => {
       setChats(response.data);
     },
-    revalidateOnFocus: false,
-    revalidateIfStale: false,
-    revalidateOnMount: true,
   });
 
   return {

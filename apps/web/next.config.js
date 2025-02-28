@@ -9,6 +9,12 @@ const nextConfig = {
         port: "",
         pathname: "/9.x/**",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        port: "",
+        pathname: "/f/**",
+      },
     ],
   },
   async rewrites() {

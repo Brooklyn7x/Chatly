@@ -32,7 +32,7 @@ export class UserController extends BaseController {
   public updateProfile = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.user._id;
-
+      console.log(req.body)
       const validationResult = UpdateUser.safeParse(req.body);
       if (!validationResult.success) {
         res.status(400).json({

@@ -1,4 +1,5 @@
 "use client";
+
 import { ChatContainer } from "@/components/chat/ChatContainer";
 import AuthGuard from "@/components/shared/AuthGuard";
 import SideBar from "@/components/sidebar/Sidebar";
@@ -6,18 +7,11 @@ import { useSocket } from "@/hooks/useSocket";
 import { useMessageSocket } from "@/hooks/useMessageSocket";
 import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
 import { useCallback, useEffect, useState } from "react";
-import { Wifi, WifiOff, Loader2 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function MainPage() {
   const [isMobile, setIsMobile] = useState(false);
-  const {
-    isConnected,
-    isConnecting,
-    connectionError,
-    reconnectCount,
-    connectionState,
-  } = useSocket();
+  const { isConnected, isConnecting, connectionError, reconnectCount } =
+    useSocket();
   const [showConnectionAlert, setShowConnectionAlert] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
 

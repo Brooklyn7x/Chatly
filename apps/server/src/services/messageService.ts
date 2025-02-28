@@ -7,7 +7,7 @@ import { Logger } from "../utils/logger";
 
 interface MessageData {
   conversationId: string;
-  content: string;
+  content?: string;
   type?: MessageType;
   metadata?: Record<string, any>;
   replyTo?: string | null;
@@ -23,7 +23,6 @@ interface MessageData {
 
 export class MessageService {
   private redis: Redis;
-
   private logger: Logger;
   constructor() {
     this.logger = new Logger();
@@ -35,6 +34,7 @@ export class MessageService {
     messageData: MessageData
   ): Promise<ServiceResponse<any>> {
     try {
+      // console.log(messageData, "messageData");
       // const conversation = await MessageModel.findOne({
       //   _id: new mongoose.Types.ObjectId(messageData.conversationId),
       // });
@@ -53,6 +53,7 @@ export class MessageService {
         type: messageData.type || MessageType.TEXT,
         status: MessageStatus.SENDING,
         metadata: messageData.metadata || {},
+        attachments: messageData.attachments,
         replyTo: messageData.replyTo
           ? new mongoose.Types.ObjectId(messageData.replyTo)
           : null,

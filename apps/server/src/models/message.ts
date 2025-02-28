@@ -25,7 +25,6 @@ const MessageSchema = new Schema(
     },
     content: {
       type: String,
-      required: true,
     },
     type: {
       type: String,
@@ -169,5 +168,3 @@ export const MessageModel = mongoose.model<MessageDocument>(
   "Message",
   MessageSchema
 );
-
-

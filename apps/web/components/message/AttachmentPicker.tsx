@@ -99,13 +99,13 @@ export default function AttachmentPicker({
       >
         <div className="p-1">
           <label className="flex items-center gap-4 px-4 py-1.5 text-muted-foreground rounded-lg hover:bg-muted/60 cursor-pointer">
-            <input
+            {/* <input
               type="file"
               multiple
               accept="image/*,video/*"
               className="hidden"
               onChange={handleFileChange}
-            />
+            /> */}
             <Camera className="h-4 w-4" />
             <span className="text-sm">Photo or Video</span>
           </label>

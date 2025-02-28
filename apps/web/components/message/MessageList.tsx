@@ -1,21 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowDownIcon, Loader2 } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
-import { getMessages } from "@/hooks/useMessages";
+import { getMessages } from "@/hooks/useMessage";
 import { useChatStore } from "@/store/useChatStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { useMessage } from "@/hooks/useMessage";
 import { useMessageStore } from "@/store/useMessageStore";
+import { useUploadThing } from "@/utils/uploathings";
 
 export default function MessageList() {
+  const { user, accessToken } = useAuthStore();
+  const { activeChatId } = useChatStore();
+
   const [isNearBottom, setIsNearBottom] = useState(true);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuthStore();
-  const { activeChatId } = useChatStore();
+
   if (!activeChatId) return null;
+
   const { markAsRead } = useMessage(activeChatId);
   const { isTyping } = useTypingIndicator(activeChatId);
   const scrollToBottom = () => {

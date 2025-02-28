@@ -375,20 +375,25 @@ export class SocketService extends EventEmitter {
   }
 
   sendMessage(
-    chatId: string,
-    content: string,
-    tempId?: string,
-    recipientId?: string
+    // chatId: string,
+    // content: string,
+    // type: string,
+    // tempId?: string,
+    // recipientId?: string
+    data: any
   ) {
     if (!this.socket?.connected) {
       throw new Error("Socket not connected");
     }
-    this.socket.emit("message:send", {
-      conversationId: chatId,
-      content,
-      tempId,
-      recipientId,
-    });
+    this.socket.emit(
+      "message:send",
+      // conversationId: chatId,
+      // type,
+      // content,
+      // tempId,
+      // recipientId,
+      data
+    );
   }
 
   editMessage(messageId: string, content: string) {

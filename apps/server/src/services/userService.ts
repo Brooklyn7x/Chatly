@@ -161,8 +161,27 @@ export class UserService {
         }
       }
 
-      if (data.password) {
-        data.password = await bcrypt.hash(data.password, 12);
+      if (data.newPassword) {
+        const user = await UserModel.findById(id);
+        if (!user) {
+          return {
+            success: false,
+            error: "User not found",
+          };
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          data.currentPassword,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          return {
+            success: false,
+            error: "Current password is incorrect",
+          };
+        }
+        data.newPassword = await bcrypt.hash(data.newPassword, 12);
       }
 
       const updatedUser = await UserModel.findByIdAndUpdate(
@@ -305,6 +324,7 @@ export class UserService {
     return {
       id: user.id,
       username: user.username,
+      profilePicture: user.profilePicture,
       status: user.status,
       lastSeen: user.lastSeen,
     };

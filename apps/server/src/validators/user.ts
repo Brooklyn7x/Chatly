@@ -34,7 +34,16 @@ export const UpdateUser = z
 
     email: z.string().email("Invalid email address").optional(),
 
-    password: z
+    currentPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+        "Password must contain at least one uppercase, lowercase, number and special character"
+      )
+      .optional(),
+
+    newPassword: z
       .string()
       .min(8, "Password must be at least 8 characters")
       .regex(
@@ -49,7 +58,7 @@ export const UpdateUser = z
       .max(50, "Name cannot exceed 50 characters")
       .optional(),
 
-    avatar: z.string().url("Invalid avatar URL").optional(),
+    profilePicture: z.string().url("Invalid avatar URL").optional(),
   })
   .refine((data) => {
     return Object.keys(data).length > 0;

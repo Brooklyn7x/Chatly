@@ -1,5 +1,5 @@
 import { LoginInput, RegisterInput } from "@/types/auth";
-import { apiClient, handleAuthError } from "./client";
+import { apiClient, handleAuthError } from "./apiClient";
 
 export const authApi = {
   login: async (data: LoginInput) => {
@@ -7,7 +7,6 @@ export const authApi = {
       const response = await apiClient.post("/auth/login", data);
       return response.data;
     } catch (error) {
-      console.log(error);
       throw handleAuthError(error);
     }
   },

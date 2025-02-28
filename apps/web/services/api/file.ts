@@ -1,5 +1,5 @@
 import { handleApiError } from "@/lib/error";
-import { apiClient } from "./client";
+import { apiClient } from "./apiClient";
 
 export const FileApi = {
   uplodFile: async (file: any) => {

@@ -20,7 +20,8 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const { _id, content, type, status, timestamp, senderId } = message;
+  const { _id, content, type, status, timestamp, senderId, attachments } =
+    message;
 
   const handleEdit = () => {
     if (editedContent.trim() && editedContent !== content) {
@@ -127,7 +128,11 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-1">
-                  <MessageContent content={content} type={type} />
+                  <MessageContent
+                    content={content}
+                    type={type}
+                    attachments={attachments}
+                  />
                   {reactions.length > 0 && (
                     <div className="flex gap-1 bg-white/40 border rounded-full px-2 py-1 w-fit mt-1 backdrop-blur-sm">
                       {reactions.map((reaction, idx) => (

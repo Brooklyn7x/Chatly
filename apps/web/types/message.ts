@@ -29,3 +29,28 @@ export interface MessageResponse {
   status: string;
   timestamp: string;
 }
+
+export enum MessageType {
+  TEXT = "text",
+  IMAGE = "image",
+  VIDEO = "video",
+  FILE = "file",
+}
+
+export interface MessageData {
+  _id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  type?: string;
+  metadata?: Record<string, any>;
+  replyTo?: string | null;
+  attachments?: Array<{
+    url: string;
+    type: string;
+    name?: string;
+    size?: number;
+    mimeType?: string;
+  }>;
+  tempId?: string;
+}

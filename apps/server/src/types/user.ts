@@ -49,10 +49,11 @@ export interface CreateUserDTO {
 export interface UpdateUserDTO {
   username?: string;
   email?: string;
-  password?: string;
+  currentPassword?: string;
+  newPassword?: string;
+  profilePicture?: string;
   status?: UserStatus;
 }
-
 
 // export interface User {
 //   _id: Types.ObjectId;
@@ -60,5 +61,5 @@ export interface UpdateUserDTO {
 //   password: string;
 //   status: 'online' | 'offline';
 //   lastSeen?: Date;
-  
+
 // }
