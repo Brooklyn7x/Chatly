@@ -279,3 +279,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .motion {
+    transition: none !important;
+    transform: none !important;
+  }
+}
