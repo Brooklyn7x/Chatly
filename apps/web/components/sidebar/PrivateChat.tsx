@@ -18,7 +18,7 @@ interface PrivateChatProps {
 export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { users, isLoading, error } = useSearchUsers(searchQuery.trim());
+  const { users, isLoading } = useSearchUsers(searchQuery.trim());
   const { createChat } = useChats();
 
   const handleUserSelect = (userId: string) => {

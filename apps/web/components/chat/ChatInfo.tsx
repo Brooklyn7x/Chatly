@@ -1,19 +1,20 @@
-import { cn } from "@/lib/utils";
-import { X, Pencil, Trash, User2, UserPlus } from "lucide-react";
 import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useChatStore } from "@/store/useChatStore";
-import { useChatPanelStore } from "@/store/useChatPanelStore";
+import { toast } from "sonner";
+import { X, Pencil, Trash, User2, UserPlus } from "lucide-react";
 import { RemoveMemberDialog } from "../modal/RemoveMemberDailog";
-import { AddMemberDailog } from "../modal/AddMemberDailog";
 import { EditChatDailog } from "../modal/EditChatDailog";
-import { useChats } from "@/hooks/useChats";
+import { Button } from "../ui/button";
 import { SharedMedia } from "./SharedMedia";
 import { UserAvatar } from "../shared/UserAvatar";
-import { toast } from "sonner";
-import { ParticipantRole } from "@/types/chat";
 import { DeleteChatDailog } from "../modal/DeleteChatDailog";
 import FloatinButton from "../shared/FloatinButton";
+import { useChats } from "@/hooks/useChats";
+import { useChatStore } from "@/store/useChatStore";
+import { useChatPanelStore } from "@/store/useChatPanelStore";
+import { ParticipantRole } from "@/types/chat";
+import AddMemberDailog from "../modal/AddMemberDailog";
 
 export function ChatInfo() {
   const [editing, setEditing] = useState(false);
@@ -21,16 +22,19 @@ export function ChatInfo() {
   const [removingUser, setRemovingUser] = useState(false);
   const [deleteChat, setDeleteChat] = useState(false);
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isAddingMembers, setIsAddingMembers] = useState(false);
+
   const { chats, activeChatId } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
   const { updateChatInfo, deleteCht, isLoading, error } = useChats();
 
   const chat = chats.find((chat) => chat._id === activeChatId);
-  const onEdit = () => {
+  const handleOpenEdit = () => {
     setEditing((prev) => !prev);
   };
-  const isGroupChat = chat?.type === "group";
 
+  const isGroupChat = chat?.type === "group";
   const displayName = useMemo(() => {
     if (chat?.type === "direct") {
       return chat?.participants[1]?.userId.username || "Direct Message";
@@ -44,6 +48,7 @@ export function ChatInfo() {
     : "last seen recently";
 
   const handleUpdateTitle = async (data: any) => {
+    setIsUpdating(true);
     try {
       await updateChatInfo(activeChatId || "", {
         metadata: {
@@ -55,6 +60,8 @@ export function ChatInfo() {
       toast.success("Chat updated successfully");
     } catch (error: any) {
       toast.error("Failed to update group data. Try again!");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -132,73 +139,21 @@ export function ChatInfo() {
         "flex flex-col"
       )}
     >
-      <div className="border-b h-16 flex items-center px-4">
-        <div className="w-full flex items-center">
-          <button
-            onClick={() => setIsOpen(false)}
-            className={cn(
-              "p-2 flex items-center justify-center rounded-full text-muted-foreground",
-              "hover:bg-muted/90 transition-colors duration-200"
-            )}
-          >
-            <X className="h-6 w-6" />
-          </button>
-          <div className="flex-1 pl-4">
-            <h1 className="text-lg font-medium truncate">{displayName}</h1>
-          </div>
-
-          {isGroupChat && (
-            <button
-              onClick={onEdit}
-              className={cn(
-                "h-10 w-10 p-2 flex items-center justify-center rounded-full text-muted-foreground",
-                "hover:bg-muted/90 transition-colors duration-200"
-              )}
-            >
-              <Pencil size={18} />
-            </button>
-          )}
-        </div>
-      </div>
+      <ChatHeader
+        displayName={displayName}
+        onEdit={handleOpenEdit}
+        isGroupChat={isGroupChat}
+        onClose={() => setIsOpen(false)}
+      />
 
       <div className="flex flex-col overflow-hidden">
-        <section className="flex flex-col items-center justify-center gap-4 p-4">
-          <UserAvatar size="xl" className="ring-2 ring-primary/50" />
-          <div className="mt-2 text-center">
-            <h1 className="text-xl font-semibold">{displayName}</h1>
-            <p className="text-center text-sm text-muted-foreground mt-1">
-              {statusText}
-            </p>
-          </div>
-        </section>
+        <ChatProfileSection displayName={displayName} statusText={statusText} />
 
-        <section className="p-2 space-y-2">
-          <div
-            onClick={() => setDeleteChat(true)}
-            className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer active:scale-[0.98]"
-          >
-            <div className="flex items-center gap-6">
-              <Trash className="h-5 w-5 text-red-500" />
-              <div className="flex-1">
-                <p className="text-sm">Delete this chat</p>
-              </div>
-            </div>
-          </div>
-
-          {isGroupChat && (
-            <div
-              onClick={() => setRemovingUser(true)}
-              className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-6">
-                <User2 className="h-5 w-5 text-primary" />
-                <div className="flex-1">
-                  <p className="text-sm">Manage Members</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
+        <ChatActions
+          isGroupChat={isGroupChat}
+          onDeleteChat={() => setDeleteChat(true)}
+          onManageMembers={() => setRemovingUser(true)}
+        />
       </div>
 
       <section className="flex-1 border-t overflow-y-auto">
@@ -219,7 +174,7 @@ export function ChatInfo() {
         open={editing}
         onOpenChange={setEditing}
         onSubmit={handleUpdateTitle}
-        isLoading={isLoading}
+        isLoading={isUpdating}
       />
 
       <AddMemberDailog
@@ -227,7 +182,7 @@ export function ChatInfo() {
         onOpenChange={setAddMember}
         participants={chat?.participants || []}
         onAdd={handleAddMember}
-        isAdding={isLoading}
+        isAdding={isAddingMembers}
       />
 
       <RemoveMemberDialog
@@ -244,5 +199,123 @@ export function ChatInfo() {
         onConfirm={handleDeleteChat}
       />
     </motion.div>
+  );
+}
+
+interface CustomButtomProps {
+  onClick: () => void;
+  icon: React.ReactNode;
+}
+
+const CustomButton = ({ icon, onClick }: CustomButtomProps) => {
+  return (
+    <Button onClick={onClick} variant={"ghost"} size={"icon"}>
+      {icon}
+    </Button>
+  );
+};
+
+interface ChatHeaderProps {
+  displayName: string;
+  isGroupChat: boolean;
+  onClose: () => void;
+  onEdit: () => void;
+}
+
+export function ChatHeader({
+  displayName,
+  isGroupChat,
+  onClose,
+  onEdit,
+}: ChatHeaderProps) {
+  return (
+    <div className="border-b h-16 flex items-center px-4">
+      <div className="w-full flex items-center">
+        <CustomButton onClick={onClose} icon={<X className="h-6 w-6" />} />
+        <div className="flex-1 pl-4">
+          <h1 className="text-lg font-medium truncate">{displayName}</h1>
+        </div>
+        {isGroupChat && (
+          <CustomButton onClick={onEdit} icon={<Pencil size={18} />} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+interface ChatProfileSectionProps {
+  displayName: string;
+  statusText: string;
+}
+
+export function ChatProfileSection({
+  displayName,
+  statusText,
+}: ChatProfileSectionProps) {
+  return (
+    <section className="flex flex-col items-center justify-center gap-4 p-4">
+      <UserAvatar size="xl" className="ring-2 ring-primary/50" />
+      <div className="mt-2 text-center">
+        <h1 className="text-xl font-semibold">{displayName}</h1>
+        <p className="text-center text-sm text-muted-foreground mt-1">
+          {statusText}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+interface ChatActionsProps {
+  isGroupChat: boolean;
+  onDeleteChat: () => void;
+  onManageMembers: () => void;
+}
+
+export function ChatActions({
+  isGroupChat,
+  onDeleteChat,
+  onManageMembers,
+}: ChatActionsProps) {
+  return (
+    <section className="p-2 space-y-2">
+      <ActionButton
+        icon={<Trash className="h-5 w-5 text-red-500" />}
+        label="Delete this chat"
+        onClick={onDeleteChat}
+      />
+      {isGroupChat && (
+        <ActionButton
+          icon={<User2 className="h-5 w-5 text-primary" />}
+          label="Manage Members"
+          onClick={onManageMembers}
+        />
+      )}
+    </section>
+  );
+}
+
+interface ActionButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+function ActionButton({ icon, label, onClick }: ActionButtonProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={label}
+      onClick={onClick}
+      onKeyPress={(e) => e.key === "Enter" && onClick()}
+      className="p-4 border rounded-lg group hover:bg-muted/70 transition-colors duration-200 cursor-pointer active:scale-[0.98]"
+    >
+      <div className="flex items-center gap-6">
+        {icon}
+        <div className="flex-1">
+          <p className="text-sm">{label}</p>
+        </div>
+      </div>
+    </div>
   );
 }

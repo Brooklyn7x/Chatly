@@ -5,12 +5,15 @@ import ChatHeader from "./ChatHeader";
 import MessageInput from "../message/MessageInput";
 import { EmptyState } from "./EmptyChat";
 import { Suspense } from "react";
+import { useMessageSocket } from "@/hooks/useMessageSocket";
 
 export const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
+
   const chat = chats?.find((chat) => chat._id === activeChatId);
   useChatSocket(activeChatId || "");
-  if (!activeChatId) return null;
+  useMessageSocket();
+
   return (
     <div className="flex flex-col h-full">
       {activeChatId ? (

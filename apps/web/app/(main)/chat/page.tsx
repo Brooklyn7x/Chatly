@@ -4,7 +4,6 @@ import { ChatContainer } from "@/components/chat/ChatContainer";
 import AuthGuard from "@/components/shared/AuthGuard";
 import SideBar from "@/components/sidebar/Sidebar";
 import { useSocket } from "@/hooks/useSocket";
-import { useMessageSocket } from "@/hooks/useMessageSocket";
 import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
 import { useCallback, useEffect, useState } from "react";
 
@@ -48,7 +47,6 @@ export default function MainPage() {
   }, [isConnected, isConnecting, reconnectCount]);
 
   useUserStatusSocket();
-  useMessageSocket();
 
   return (
     <AuthGuard requireAuth>

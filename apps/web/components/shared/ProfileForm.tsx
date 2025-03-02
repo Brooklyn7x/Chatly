@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ArrowLeft, Trash } from "lucide-react";
 import { Input } from "../ui/input";
 import { NavigationButton } from "./NavigationButton";
-import { UserAvatar } from "../user/UserAvatar";
+import { UserAvatar } from "./UserAvatar";
 
 interface EditProfileFormProps {
   isOpen: boolean;

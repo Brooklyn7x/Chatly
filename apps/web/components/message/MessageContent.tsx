@@ -1,3 +1,4 @@
+import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 type Attachment = {
@@ -77,14 +78,7 @@ export const MessageContent = ({
     case "image":
       return (
         <div className="relative w-48 h-48">
-          {/* <Image
-            src={content}
-            alt="Message image"
-            className="rounded-md object-cover"
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={false}
-          /> */}
+          <ImageIcon />
         </div>
       );
     case "video":

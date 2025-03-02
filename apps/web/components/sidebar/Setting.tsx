@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useUploadThing } from "@/utils/uploathings";
+import { UploadProgressIndicator } from "../shared/UpladingIndicator";
 
 const Setting = ({ onClose }: { onClose: () => void }) => {
   const { user, updateUser, accessToken } = useAuthStore();
@@ -38,6 +39,7 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
   const [previewImage, setPreviewImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { startUpload, isUploading } = useUploadThing("profilePicture", {
     onClientUploadComplete: (res) => {
@@ -46,9 +48,14 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
         form.setValue("avatar", res[0].url, { shouldDirty: true });
         toast.success("Profile picture uploaded successfully");
       }
+      setUploadProgress(0);
+    },
+    onUploadProgress: (progress) => {
+      setUploadProgress(progress);
     },
     onUploadError: (error) => {
       toast.error("Failed to upload profile picture");
+      setUploadProgress(0);
     },
     headers: {
       authorization: `Bearer ${accessToken}`,
@@ -125,42 +132,11 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
                 <div className="relative overflow-hidden">
                   <UserAvatar
                     size="xl"
+                    className="object-cover"
                     url={previewImage || form.watch("avatar")}
                   />
                   {isUploading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
-                      <div className="relative w-14 h-14">
-                        <svg className="w-full h-full" viewBox="0 0 100 100">
-                          <circle
-                            className="text-gray-200 stroke-current"
-                            strokeWidth="10"
-                            cx="50"
-                            cy="50"
-                            r="40"
-                            fill="transparent"
-                          ></circle>
-                          <circle
-                            className="text-secondary stroke-current"
-                            strokeWidth="10"
-                            strokeLinecap="round"
-                            cx="50"
-                            cy="50"
-                            r="40"
-                            fill="transparent"
-                            strokeDasharray="251.2"
-                            strokeDashoffset={
-                              251.2 - (251.2 * uploadProgress) / 100
-                            }
-                          ></circle>
-                        </svg>
-                        <button
-                          onClick={() => setUploading(false)}
-                          className="absolute inset-0 flex items-center justify-center text-white text-sm hover:bg-black/20 rounded-full"
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
+                    <UploadProgressIndicator progress={uploadProgress} />
                   )}
                 </div>
 
@@ -177,7 +153,7 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
                       <span>Uploaded!</span>
                     </div>
                   ) : (
-                    "Change profile picture"
+                    <span>Change profile picture</span>
                   )}
                 </label>
                 <input

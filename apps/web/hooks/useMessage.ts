@@ -29,17 +29,7 @@ export const useMessage = (chatId: string) => {
       })),
     };
 
-    addMessage(messageData);
-
-    // const socketData: MessageData = {
-    //   conversationId: chatId,
-    //   content: content.message,
-    //   type: contentType,
-    //   attachments: messageData.attachments,
-    //   tempId,
-    //   recipientId: recipient?.userId._id,
-    // };
-
+    addMessage(messageData as any);
     socketService.sendMessage(messageData);
   };
 

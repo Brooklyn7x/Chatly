@@ -4,6 +4,7 @@ import { ChatUpdatePayload } from "@/types/chat";
 import { useState } from "react";
 import { toast } from "sonner";
 import useSWR from "swr";
+
 export const useChats = () => {
   const { addChats, deleteChat, setActiveChat, updateChat } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);

@@ -1,45 +1,63 @@
+import { useUploadThing } from "@/utils/uploathings";
 import { useState } from "react";
-import { FileApi } from "@/services/api/file";
 
-export function useFileUpload() {
-  const [isLoading, setIsLoading] = useState(false);
+interface UseFileUploadOptions {
+  endpoint: "profilePicture" | "attachments";
+  accessToken: string;
+}
+
+interface UploadResult {
+  url: string;
+}
+
+export const useFileUpload = (options: UseFileUploadOptions) => {
+  const { endpoint, accessToken } = options;
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
 
-  const uploadFile = async (file: File) => {
-    setIsLoading(true);
+  const { startUpload } = useUploadThing(endpoint, {
+    headers: { authorization: `Bearer ${accessToken}` },
+    onClientUploadComplete: (res) => {
+      setIsUploading(false);
+    },
+    onUploadProgress: (progress) => {
+      setUploadProgress(progress);
+    },
+    onUploadError: (error) => {
+      setError("Failed to upload files");
+      setIsUploading(false);
+    },
+  });
+
+  const fileUpload = async (files: File[]) => {
+    if (!files || files.length === 0) {
+      setError("No files selected");
+      return null;
+    }
+    setIsUploading(true);
     setError(null);
-    setIsSuccess(false);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await FileApi.uplodFile(formData);
-      setIsSuccess(true);
-      return response;
-    } catch (err) {
-      setError("File upload failed. Please try again.");
+      const result = await startUpload(files);
+      if (result) {
+        return result.map((file) => ({
+          url: file.url,
+        })) as UploadResult[];
+      }
+      return null;
+    } catch (error) {
+      setError("Failed to upload files");
       return null;
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   };
 
-  const getFile = async (fileId: string) => {
-    // ... similar loading/error handling for get operation ...
-  };
-
-  const deleteFile = async (fileId: string) => {
-    // ... similar loading/error handling for delete operation ...
-  };
-
   return {
-    uploadFile,
-    getFile,
-    deleteFile,
-    isLoading,
+    fileUpload,
+    uploadProgress,
+    isUploading,
     error,
-    isSuccess,
   };
-}
+};

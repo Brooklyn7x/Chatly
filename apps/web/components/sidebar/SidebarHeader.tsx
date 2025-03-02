@@ -1,3 +1,5 @@
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
 import {
   Bookmark,
   LogOut,
@@ -22,8 +24,6 @@ import {
 import { Button } from "../ui/button";
 import useAuthStore from "@/store/useAuthStore";
 import { useAuth } from "@/hooks/useAuth";
-import { useTheme } from "next-themes";
-import { toast } from "sonner";
 
 type ViewType =
   | "main"

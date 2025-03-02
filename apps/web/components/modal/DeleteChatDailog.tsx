@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { toast } from "sonner";
-import { useState } from "react";
 
 interface DeleteChatProps {
   open: boolean;

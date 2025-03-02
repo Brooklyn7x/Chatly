@@ -1,18 +1,18 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { GroupDetailsForm } from "../form/GroupDetailsForm";
 import { StepContainer } from "../modal/StepContainer";
 import { UserList } from "../user/UserList";
 import { SelectUserList } from "../user/SelectedUserList";
 import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
-import { useSearchUsers } from "@/hooks/useSearchUser";
-import { useChats } from "@/hooks/useChats";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
+import { useSearchUsers } from "@/hooks/useSearchUser";
+import { useChats } from "@/hooks/useChats";
 
 interface GroupFormData {
   name: string;
@@ -34,7 +34,6 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
     selectedUserIds: new Set(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const { users, isLoading, error } = useSearchUsers(searchQuery);
   const { createChat } = useChats();
 
@@ -134,12 +133,10 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
       <div className="relative h-full w-full flex flex-col p-4 ">
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
-            <header className="flex items-center gap-4 mb-4">
-              <NavigationButton onClick={onClose} icon={ArrowLeft} />
-              <h1 className="text-lg font-medium">
-                Add Members ({formData.selectedUserIds.size})
-              </h1>
-            </header>
+            <ContainerHeader
+              title={`Add Members (${formData.selectedUserIds.size})`}
+              onBack={onClose}
+            />
             <div className="mb-4">
               <SearchInput
                 value={searchQuery}
