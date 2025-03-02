@@ -5,7 +5,7 @@ export interface Message {
   content: string;
   type: "text" | "image" | "video" | "audio" | "file";
   receiverId: string;
-  timestamp: string;
+  timestamp: Date;
   status: "sent" | "delivered" | "read";
   replyTo: any;
   edited: boolean;
@@ -27,7 +27,7 @@ export interface MessageResponse {
   tempId?: string;
   messageId: string;
   status: string;
-  timestamp: string;
+  timestamp: Date;
 }
 
 export enum MessageType {

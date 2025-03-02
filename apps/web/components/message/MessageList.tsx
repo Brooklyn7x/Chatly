@@ -20,16 +20,16 @@ function MessageList() {
   const { messages } = useMessageStore();
 
   const unReadMessages = useMemo(() => {
-    return messages[activeChatId]?.filter(
+    return messages[activeChatId || ""]?.filter(
       (message: any) =>
         message.status !== "read" &&
-        message.senderId._id !== user?._id &&
+        message.senderId?._id !== user?._id &&
         !message._id.startsWith("temp-")
     );
   }, [messages, activeChatId, user?._id]);
 
   const messageIds = useMemo(() => {
-    return unReadMessages?.map((message) => message._id) || [];
+    return unReadMessages?.map((message: any) => message._id) || [];
   }, [unReadMessages]);
 
   useEffect(() => {

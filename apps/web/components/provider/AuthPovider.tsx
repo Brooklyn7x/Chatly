@@ -8,7 +8,7 @@ import { AuthError, AUTH_ERROR_CODES } from "@/utils/errors";
 import { Loading } from "@/components/ui/loading";
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { accessToken, isAuthenticated, logout, setLoading } = useAuthStore();
+  const { accessToken, isAuthenticated, logout } = useAuthStore();
   const [isVerifying, setIsVerifying] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const verificationTimer = useRef<NodeJS.Timeout>();
@@ -36,7 +36,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const verifyToken = async () => {
     if (!accessToken || !isAuthenticated) {
       setIsVerifying(false);
-      setLoading(false);
       return;
     }
 
@@ -48,7 +47,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       handleVerificationError(error);
     } finally {
       setIsVerifying(false);
-      setLoading(false);
     }
   };
 
@@ -57,7 +55,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(verificationTimer.current);
     }
 
-    setLoading(true);
     verifyToken();
 
     return () => {

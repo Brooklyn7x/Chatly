@@ -20,10 +20,10 @@ export default function AuthGuard({
 }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    if (isLoading) return;
+    // if (isLoading) return;
 
     const isPublicPath = PUBLIC_PATHS.includes(pathname);
     const isRootPath = pathname === "/chat";
@@ -42,11 +42,11 @@ export default function AuthGuard({
     } else if (isAuthenticated && isPublicPath) {
       router.replace(DEFAULT_PRIVATE_PATH);
     }
-  }, [isAuthenticated, isLoading, pathname, requireAuth, router]);
+  }, [isAuthenticated, pathname, requireAuth, router]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  // if (isLoading) {
+  //   return <Loading />;
+  // }
 
   if (requireAuth && !isAuthenticated) {
     return null;

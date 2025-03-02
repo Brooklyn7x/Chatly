@@ -38,9 +38,8 @@ const AddMemberDialog = ({
   const debounceQuery = useDebounce(query, 100);
   const { users } = useSearchUsers(debounceQuery);
 
-  // Memoized filtered users to prevent unnecessary re-renders
   const availableUsers = useMemo(() => {
-    return users.filter((user) => {
+    return users.filter((user: any) => {
       const isNotCurrentUser = user._id !== current?._id;
       const isNotParticipant = !participants.some(
         (participant) => participant.userId === user._id
@@ -93,7 +92,7 @@ const AddMemberDialog = ({
 
   const renderAvailableUsers = () => (
     <div className="space-y-1">
-      {availableUsers.map((user) => (
+      {availableUsers.map((user: any) => (
         <div
           key={user.id}
           onClick={() => handleUserSelection(user._id)}

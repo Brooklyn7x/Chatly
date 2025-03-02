@@ -1,4 +1,5 @@
 import { useUserStatusStore } from "@/store/useUserStatusStore";
+import { formatLastSeen } from "@/utils/dateUtils";
 
 export const useUserStatus = (userId: string) => {
   const status = useUserStatusStore((state) =>
@@ -11,7 +12,7 @@ export const useUserStatus = (userId: string) => {
     getStatusText: () => {
       if (!status) return "Offline";
       if (status.status === "online") return "Online";
-      return `Last seen ${new Date(status.timestamp).toTimeString()}`;
+      return `Last seen ${formatLastSeen(status.timestamp)}`;
     },
   };
 };

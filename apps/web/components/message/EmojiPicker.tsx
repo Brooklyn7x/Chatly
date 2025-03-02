@@ -8,8 +8,7 @@ interface EmojiPickerProps {
   onEmojiSelect: (emoji: string) => void;
   containerRef: React.RefObject<HTMLDivElement>;
 }
-
-export default function EmojiPicker({
+function EmojiPicker({
   show,
   onClose,
   onEmojiSelect,
@@ -57,3 +56,5 @@ export default function EmojiPicker({
     </div>
   );
 }
+
+export default EmojiPicker;

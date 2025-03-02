@@ -38,7 +38,7 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
   const { createChat } = useChats();
 
   const selectedUsers = useMemo(
-    () => users.filter((user) => formData.selectedUserIds.has(user._id)),
+    () => users.filter((user: any) => formData.selectedUserIds.has(user._id)),
     [users, formData.selectedUserIds]
   );
 
@@ -133,10 +133,9 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
       <div className="relative h-full w-full flex flex-col p-4 ">
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
-            <ContainerHeader
-              title={`Add Members (${formData.selectedUserIds.size})`}
-              onBack={onClose}
-            />
+            <h2 className="text-2xl font-semibold mb-4">
+              Add Members ({formData.selectedUserIds.size})
+            </h2>
             <div className="mb-4">
               <SearchInput
                 value={searchQuery}
@@ -168,9 +167,9 @@ export const GroupChat = ({ onClose }: GroupChatProps) => {
               />
             </header>
             <GroupDetailsForm
-              name={formData.name}
+              name={formData.name || ""}
               onNameChange={handleGroupNameChange}
-              previewImage={previewImage}
+              previewImage={previewImage || undefined}
               onImageChange={handleImageChange}
             />
           </div>

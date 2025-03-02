@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { useUserStatus } from "@/hooks/useUserStatus";
 import useAuthStore from "@/store/useAuthStore";
-
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/UserAvatar";
 import { useChats } from "@/hooks/useChats";
@@ -31,8 +30,11 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { user } = useAuthStore();
   const { setIsOpen } = useChatPanelStore();
   const { activeChatId, setActiveChat } = useChatStore();
+
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
+
+
   const { getStatusText } = useUserStatus(otherUserId || "");
   const { deleteCht } = useChats();
   const displayName = useMemo(() => {

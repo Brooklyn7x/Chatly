@@ -16,7 +16,7 @@ export interface FilePreview {
   type: "image" | "video" | "document";
 }
 
-export default function AttachmentPicker({
+function AttachmentPicker({
   show,
   onClose,
   onAttach,
@@ -60,8 +60,10 @@ export default function AttachmentPicker({
   const removeFile = useCallback((index: number) => {
     setSelectedFiles((prev) => {
       const newFiles = [...prev];
-      URL.revokeObjectURL(newFiles[index].preview);
-      newFiles.splice(index, 1);
+      if (newFiles[index]) {
+        URL.revokeObjectURL(newFiles[index].preview);
+        newFiles.splice(index, 1);
+      }
       return newFiles;
     });
   }, []);
@@ -70,7 +72,7 @@ export default function AttachmentPicker({
       file: fp.file,
       type: fp.type,
     }));
-    onAttach(files);
+    onAttach(files as any);
     selectedFiles.forEach((fp) => URL.revokeObjectURL(fp.preview));
     setSelectedFiles([]);
     setShowPreview(false);
@@ -131,3 +133,5 @@ export default function AttachmentPicker({
     </>
   );
 }
+
+export default AttachmentPicker;

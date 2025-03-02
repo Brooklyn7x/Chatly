@@ -45,7 +45,7 @@ export const RemoveMemberDialog = ({
               className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md transition-colors"
             >
               <div className="flex items-center gap-3">
-                <UserAvatar user={participant.userId} size="sm" />
+                <UserAvatar {...{ user: participant.userId, size: "sm" }} />
                 <span className="text-sm">{participant.userId.username}</span>
               </div>
               <Button

@@ -10,11 +10,11 @@ import { SharedMedia } from "./SharedMedia";
 import { UserAvatar } from "../shared/UserAvatar";
 import { DeleteChatDailog } from "../modal/DeleteChatDailog";
 import FloatinButton from "../shared/FloatinButton";
+import AddMemberDailog from "../modal/AddMemberDailog";
 import { useChats } from "@/hooks/useChats";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { ParticipantRole } from "@/types/chat";
-import AddMemberDailog from "../modal/AddMemberDailog";
 
 export function ChatInfo() {
   const [editing, setEditing] = useState(false);

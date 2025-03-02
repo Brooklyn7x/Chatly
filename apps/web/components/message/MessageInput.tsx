@@ -1,15 +1,16 @@
 import { useCallback, useRef, useState } from "react";
-
-import EmojiPicker from "./EmojiPicker";
+import { toast } from "sonner";
 import { AnimatePresence } from "framer-motion";
+
 import { useChatStore } from "@/store/useChatStore";
 import { useMessage } from "@/hooks/useMessage";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useUploadThing } from "@/utils/uploathings";
 import useAuthStore from "@/store/useAuthStore";
-import { toast } from "sonner";
+
 import { InputArea } from "./InputArea";
 import { FilePreview } from "./FilePreview";
+import EmojiPicker from "./EmojiPicker";
 
 export default function MessageInput() {
   const { activeChatId } = useChatStore();
@@ -17,7 +18,7 @@ export default function MessageInput() {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachment, setShowAttachment] = useState(false);
-  const [attachments, setAttachments] = useState<[]>([]);
+  const [attachments, setAttachments] = useState<(File | string)[]>([]);
   const [previewFiles, setPreviewFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ export default function MessageInput() {
 
   const handleSendMessage = () => {
     if (message.trim() || attachments.length > 0) {
-      sendMessage({ attachments, message });
+      sendMessage({ attachments: attachments.map(attachment => typeof attachment === 'string' ? attachment : attachment.name), message });
       setMessage("");
       setAttachments([]);
       setPreviewFiles([]);
@@ -89,8 +90,8 @@ export default function MessageInput() {
     if (!files || files.length === 0) return;
 
     const acceptedFiles = Array.from(files).filter((file) => {
-      const fileType = file.type.split("/")[0];
-      return ["image", "video", "pdf"].includes(fileType);
+      const fileType = file.type ? file.type.split("/")[0] : "";
+      return ["image", "video", "pdf"].includes(fileType || "");
     });
 
     if (acceptedFiles.length === 0) {

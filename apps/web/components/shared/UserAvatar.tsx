@@ -5,7 +5,7 @@ interface UserAvatarProps {
   url?: string;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
-  userId?: string;
+  userId?: any;
 }
 
 export const UserAvatar = ({

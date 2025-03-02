@@ -13,7 +13,7 @@ export const ChatArea = () => {
   const chat = chats?.find((chat) => chat._id === activeChatId);
   useChatSocket(activeChatId || "");
   useMessageSocket();
-
+  if (!chat) return null;
   return (
     <div className="flex flex-col h-full">
       {activeChatId ? (

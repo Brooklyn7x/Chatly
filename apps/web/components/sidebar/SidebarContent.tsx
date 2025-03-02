@@ -8,7 +8,6 @@ import { GroupChat } from "./GroupChat";
 import ChatFilters from "./ChatFilter";
 import Setting from "./Setting";
 import { getChats } from "@/hooks/useChats";
-import { Skeleton } from "../ui/skeleton";
 import ThemeSettingsPage from "../theme/ThemeSettings";
 
 type ViewType =

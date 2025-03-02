@@ -28,7 +28,7 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const handleCreateChat = async () => {
     if (!selectedUserId) return;
     try {
-      const selectedUser = users?.find((user) => user.id === selectedUserId);
+      const selectedUser = users?.find((user : any) => user.id === selectedUserId);
       if (!selectedUser) {
         toast.error("Please select user");
         return;

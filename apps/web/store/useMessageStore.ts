@@ -57,8 +57,8 @@ export const useMessageStore = create<MessageStore>()(
         set((state) => ({
           messages: {
             ...state.messages,
-            [chatId]: state.messages[chatId].filter(
-              (message) => message.id !== messageId
+            [chatId]: (state.messages[chatId] || []).filter(
+              (message) => message._id !== messageId
             ),
           },
         }));

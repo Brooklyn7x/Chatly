@@ -7,19 +7,19 @@ export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black to-grey-800 text-grey-200 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 flex flex-col items-center justify-center p-4">
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-12 px-4"
+        className="text-center mb-16 px-4"
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-grey-200">
+        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
           Chat in Real Time, Simply
         </h1>
-        <p className="text-lg md:text-xl text-grey-400 mt-4 max-w-2xl">
+        <p className="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl leading-relaxed">
           A minimalist chat app with instant messaging and seamless
-          connectivity.
+          connectivity. Experience the future of communication today.
         </p>
       </motion.header>
 
@@ -27,7 +27,7 @@ export default function LandingPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mb-12 px-4"
+        className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mb-16 px-4"
       >
         <FeatureCard
           title="Instant Messaging"
@@ -49,15 +49,15 @@ export default function LandingPage() {
         transition={{ delay: 0.4, duration: 0.6 }}
       >
         <button
-          onClick={() => router.push("/chat")}
-          className="px-8 py-4 bg-grey-600 border text-grey-200 text-lg font-semibold rounded-lg hover:bg-muted/50 transition-all duration-200 transform hover:scale-105 shadow-lg"
+          onClick={() => router.push("/login")}
+          className="px-10 py-5 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xl font-semibold rounded-xl hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
         >
           Get Started
         </button>
       </motion.div>
 
-      <footer className="mt-12 text-grey-400 text-sm">
-        © {new Date().getFullYear()} ChatApp. All rights reserved.
+      <footer className="mt-16 text-gray-400 text-sm">
+        © {new Date().getFullYear()} All rights reserved.
       </footer>
     </div>
   );
@@ -70,8 +70,11 @@ const FeatureCard = ({
   title: string;
   description: string;
 }) => (
-  <motion.div className="p-6 bg-grey-800 border rounded-lg shadow-md text-center hover:bg-muted/50">
-    <h3 className="text-xl font-semibold mb-2 text-grey-200">{title}</h3>
-    <p className="text-grey-400">{description}</p>
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    className="p-8 bg-gray-800/50 border border-gray-700 rounded-2xl shadow-lg text-center hover:bg-gray-800/70 transition-all duration-200"
+  >
+    <h3 className="text-2xl font-bold mb-4 text-gray-100">{title}</h3>
+    <p className="text-gray-300 leading-relaxed">{description}</p>
   </motion.div>
 );

@@ -1,21 +1,8 @@
-// "use client";
-
-// import * as React from "react";
-// import { ThemeProvider as NextThemesProvider } from "next-themes";
-
-// export function ThemeProvider({
-//   children,
-//   ...props
-// }: React.ComponentProps<typeof NextThemesProvider>) {
-//   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
-// }
-
-// components/theme-provider.tsx
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-// Define available themes and modes
+
 type ThemeMode = "light" | "dark" | "system";
 type ThemeColor = "default" | "blue" | "green" | "purple" | "orange" | "pink";
 
@@ -47,7 +34,6 @@ export function ThemeProvider({
   defaultColor = "default",
   ...props
 }: ThemeProviderProps) {
-  // Initialize state from localStorage if available, otherwise use defaults
   const [theme, setTheme] = useState<ThemeMode>(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme-mode") as ThemeMode;
@@ -64,14 +50,11 @@ export function ThemeProvider({
     return defaultColor;
   });
 
-  // Effect for handling theme mode (light/dark)
   useEffect(() => {
     const root = window.document.documentElement;
 
-    // Remove all theme modes
     root.classList.remove("light", "dark");
 
-    // Save to localStorage
     localStorage.setItem("theme-mode", theme);
 
     if (theme === "system") {
@@ -101,10 +84,10 @@ export function ThemeProvider({
       "theme-pink"
     );
 
-    // Save to localStorage
+  
     localStorage.setItem("theme-color", themeColor);
 
-    // Add current theme color
+  
     root.classList.add(`theme-${themeColor}`);
   }, [themeColor]);
 

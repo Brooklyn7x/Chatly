@@ -10,11 +10,6 @@ interface ChatStore {
   setActiveChat: (chatId: string | null) => void;
   updateChat: (chatId: string, updates: Partial<Chat>) => void;
   deleteChat: (chatId: string) => void;
-  // markAsRead: (chatId: string) => void;
-  // pinChat: (chatId: string) => void;
-  // unpinChat: (chatId: string) => void;
-  // muteChat: (chatId: string, duration?: number) => void;
-  // unmuteChat: (chatId: string) => void;
 }
 
 export const useChatStore = create<ChatStore>()(

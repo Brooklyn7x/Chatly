@@ -51,7 +51,7 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
               >
                 <img
                   alt="user"
-                  src="/user.png"
+                  src="/user.jpeg"
                   className="object-cover w-full h-full"
                 />
                 <div

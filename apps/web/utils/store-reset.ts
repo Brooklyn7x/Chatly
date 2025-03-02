@@ -6,8 +6,6 @@ export const resetAllStores = () => {
   useChatStore.setState({
     chats: [],
     activeChatId: null,
-    isLoading: false,
-    error: null,
   });
 
   useMessageStore.setState({

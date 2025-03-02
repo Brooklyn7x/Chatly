@@ -1,4 +1,3 @@
-// app/signup/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -9,10 +8,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -21,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -32,7 +28,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-// import { Checkbox } from "@/components/ui/checkbox";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -235,7 +230,6 @@ export default function SignupPage() {
                       )}
                     />
 
-                    {/* Password strength meter */}
                     <div className="mt-2">
                       <div className="flex space-x-1 mb-1">
                         <div
@@ -260,40 +254,6 @@ export default function SignupPage() {
                         {passwordStrength === 4 && "Strong - Great password!"}
                       </p>
                     </div>
-
-                    <FormField
-                      control={form.control}
-                      name="agreeTerms"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <div className="flex items-center space-x-2">
-                              {/* <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              /> */}
-                              <FormLabel className="!mt-0">
-                                I agree to the{" "}
-                                <Link
-                                  href="/terms"
-                                  className="text-primary hover:underline"
-                                >
-                                  Terms of Service
-                                </Link>{" "}
-                                and{" "}
-                                <Link
-                                  href="/privacy"
-                                  className="text-primary hover:underline"
-                                >
-                                  Privacy Policy
-                                </Link>
-                              </FormLabel>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
                     <Button
                       type="submit"

@@ -18,7 +18,7 @@ import { ThemeSelector } from "./ThemeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useTheme } from "../provider/ThemeProvider";
 
-export default function ThemeSettings({ onClose }) {
+export default function ThemeSettings({ onClose }: { onClose: () => void }) {
   const { theme, setTheme } = useTheme();
   const [saved, setSaved] = useState(false);
 

@@ -1,5 +1,3 @@
-import { Button } from "../ui/button";
-
 const REACTIONS = ["👍", "❤️", "😂", "😮", "👏"];
 
 interface MessageReactionPickerProps {

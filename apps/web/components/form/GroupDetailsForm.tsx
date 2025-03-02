@@ -4,8 +4,8 @@ import { Camera } from "lucide-react";
 interface GroupDetailsFormProps {
   name: string;
   previewImage?: string;
-  onNameChange?: () => void;
-  onImageChange?: () => void;
+  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const GroupDetailsForm = ({

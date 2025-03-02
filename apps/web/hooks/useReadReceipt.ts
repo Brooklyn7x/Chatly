@@ -27,7 +27,7 @@ export const useReadReceipts = (
     const processMessages = () => {
       const unreadMessages = messages.filter(
         (message) =>
-          message.senderId !== userId &&
+          message.senderId._id !== userId &&
           message.status !== "read" &&
           !processedMessagesRef.current.has(message._id)
       );
