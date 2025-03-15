@@ -16,7 +16,7 @@ interface DeleteChatProps {
   onConfirm: () => void;
 }
 
-export const DeleteChatDailog = ({
+const DeleteChatDailog = ({
   open,
   onOpenChange,
   onConfirm,
@@ -69,3 +69,5 @@ export const DeleteChatDailog = ({
     </Dialog>
   );
 };
+
+export default DeleteChatDailog;

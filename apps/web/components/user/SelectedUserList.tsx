@@ -2,7 +2,7 @@ import { User } from "@/types";
 import { SelectedUser } from "./SelectedUser";
 
 interface SelectUserListProps {
-  users: User[];
+  users: any[];
 }
 
 export const SelectUserList = ({ users }: SelectUserListProps) => {

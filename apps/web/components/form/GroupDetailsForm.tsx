@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Camera } from "lucide-react";
+import Image from "next/image";
 
 interface GroupDetailsFormProps {
   name: string;
   previewImage?: string;
-  onNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onNameChange: (name: string) => void;
+  onImageChange: (file: any) => void;
 }
 
 export const GroupDetailsForm = ({
@@ -27,9 +28,10 @@ export const GroupDetailsForm = ({
           )}
         >
           {previewImage ? (
-            <img
+            <Image
               src={previewImage}
               alt="Group"
+              fill
               className="h-full w-full object-cover"
             />
           ) : (
@@ -47,7 +49,7 @@ export const GroupDetailsForm = ({
       <div className="w-full px-6">
         <input
           value={name}
-          onChange={onNameChange}
+          onChange={(e) => onNameChange(e.target.value)}
           className="w-full h-12 px-4 rounded-lg border bg-muted/50 
                 outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Group Name"

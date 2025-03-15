@@ -1,23 +1,16 @@
-import { useMemo, useState } from "react";
-
+import { useMemo, useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useChatStore } from "@/store/useChatStore";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ChatItem } from "../chat/ChatItem";
-import { PrivateChat } from "./PrivateChat";
-import { GroupChat } from "./GroupChat";
 import ChatFilters from "./ChatFilter";
-import Setting from "./Setting";
 import { getChats } from "@/hooks/useChats";
-import ThemeSettingsPage from "../theme/ThemeSettings";
+import { ViewType } from "@/types";
 
-type ViewType =
-  | "main"
-  | "search"
-  | "new_message"
-  | "new_group"
-  | "new_channel"
-  | "setting"
-  | "theme_setting";
+const PrivateChat = dynamic(() => import("./PrivateChat"));
+const GroupChat = dynamic(() => import("./GroupChat"));
+const Setting = dynamic(() => import("./Setting"));
+const ThemeSettingsPage = dynamic(() => import("../theme/ThemeSettings"));
 
 type FilterOption = {
   label: string;
@@ -37,7 +30,6 @@ export default function SidebarContent({
   onViewChange,
 }: SidebarContentProps) {
   const { setActiveChat, chats } = useChatStore();
-  const { error } = getChats();
 
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
@@ -86,7 +78,7 @@ export default function SidebarContent({
 
       <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20">
         {view === "main" && (
-          <div className="space-y-1 p-2">
+          <div className="space-y-1 px-2">
             {filteredChats?.map((chat) => (
               <ChatItem
                 key={chat._id}
@@ -103,17 +95,27 @@ export default function SidebarContent({
           </div>
         )}
         {view === "new_message" && (
-          <PrivateChat onClose={() => onViewChange("main")} />
+          <Suspense fallback={<div>Loading private chat...</div>}>
+            <PrivateChat onClose={() => onViewChange("main")} />
+          </Suspense>
         )}
         {view === "new_group" && (
-          <GroupChat onClose={() => onViewChange("main")} />
+          <Suspense fallback={<div>Loading group chat...</div>}>
+            <GroupChat onClose={() => onViewChange("main")} />
+          </Suspense>
         )}
 
-        {view === "setting" && <Setting onClose={() => onViewChange("main")} />}
+        {view === "setting" && (
+          <Suspense fallback={<div>Loading settings...</div>}>
+            <Setting onClose={() => onViewChange("main")} />
+          </Suspense>
+        )}
       </div>
 
       {view === "theme_setting" && (
-        <ThemeSettingsPage onClose={() => onViewChange("main")} />
+        <Suspense fallback={<div>Loading theme settings...</div>}>
+          <ThemeSettingsPage onClose={() => onViewChange("main")} />
+        </Suspense>
       )}
     </div>
   );

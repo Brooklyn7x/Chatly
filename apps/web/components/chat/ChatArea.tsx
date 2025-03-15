@@ -7,7 +7,7 @@ import { EmptyState } from "./EmptyChat";
 import { Suspense } from "react";
 import { useMessageSocket } from "@/hooks/useMessageSocket";
 
-export const ChatArea = () => {
+const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
 
   const chat = chats?.find((chat) => chat._id === activeChatId);
@@ -38,3 +38,5 @@ export const ChatArea = () => {
     </div>
   );
 };
+
+export default ChatArea;

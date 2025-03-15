@@ -9,6 +9,7 @@ import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { getMessages } from "@/hooks/useMessage";
 import { useMessage } from "@/hooks/useMessage";
 import { useScrollBehavior } from "@/hooks/useScroll";
+
 function MessageList() {
   const { user } = useAuthStore();
   const { activeChatId } = useChatStore();

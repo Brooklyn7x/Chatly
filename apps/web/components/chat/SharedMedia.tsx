@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { UserItem } from "../sidebar/UserItem";
+import Image from "next/image";
 
 interface SharedMediaProps {
   chat: any;
 }
 type tabs = "members" | "media" | "link" | "links";
-export const SharedMedia = ({ chat }: SharedMediaProps) => {
+
+const SharedMedia = ({ chat }: SharedMediaProps) => {
   const [activeTab, setActiveTab] = useState<tabs>("members");
 
   return (
@@ -34,7 +36,7 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
           <div className="space-y-2">
             {chat?.participants.map((participant: any) => (
               <UserItem
-                key={participant.userId.id}
+                key={participant.userId}
                 user={participant.userId}
                 // className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
               />
@@ -49,10 +51,12 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
                 key={index}
                 className="aspect-square relative cursor-pointer group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <img
+                <Image
                   alt="user"
+                  fill
                   src="/user.jpeg"
                   className="object-cover w-full h-full"
+                  loading="lazy"
                 />
                 <div
                   className="absolute inset-0 bg-black/50 opacity-0 
@@ -65,3 +69,5 @@ export const SharedMedia = ({ chat }: SharedMediaProps) => {
     </div>
   );
 };
+
+export default SharedMedia;

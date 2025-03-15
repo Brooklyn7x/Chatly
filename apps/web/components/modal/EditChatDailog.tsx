@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-
-import { useState } from "react";
 import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
 
@@ -80,3 +79,5 @@ export function EditChatDailog({
     </Dialog>
   );
 }
+
+export default EditChatDailog;

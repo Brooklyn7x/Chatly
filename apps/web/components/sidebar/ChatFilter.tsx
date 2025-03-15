@@ -56,7 +56,7 @@ export default function ChatFilters({
         <button
           key={options.value}
           onClick={() => handleFilterChange(options.value)}
-          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 border rounded-md transition-colors ${
+          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 border rounded-2xl transition-colors ${
             selectedFilter === options.value
               ? "bg-primary text-primary-foreground"
               : "hover:bg-accent"

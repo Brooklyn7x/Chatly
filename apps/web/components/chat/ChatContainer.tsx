@@ -1,13 +1,16 @@
-import { useChatStore } from "@/store/useChatStore";
-import { ChatArea } from "./ChatArea";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
-import { ChatInfo } from "./ChatInfo";
+import { EmptyState } from "./EmptyChat";
+import { Suspense } from "react";
+
+const ChatArea = dynamic(() => import("./ChatArea"));
+const ChatInfo = dynamic(() => import("./ChatInfo"));
 
 interface ChatContainerProps {
   isMobile: boolean;
 }
-
 export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
   const { activeChatId } = useChatStore();
   const { isOpen } = useChatPanelStore();
@@ -25,8 +28,15 @@ export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
         }
       )}
     >
-      <ChatArea />
-      {isOpen && <ChatInfo />}
+      <Suspense fallback={<div>Loading chat...</div>}>
+        <ChatArea />
+      </Suspense>
+      {isOpen && (
+        <Suspense fallback={<div>Loading chat info...</div>}>
+          <ChatInfo />
+        </Suspense>
+      )}
+      {!activeChatId && <EmptyState />}
     </div>
   );
 };

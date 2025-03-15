@@ -8,7 +8,7 @@ interface FilePreviewProps {
   uploadProgress?: number;
 }
 
-export const FilePreview = ({
+const FilePreview = ({
   file,
   onRemove,
   isUploading,
@@ -32,9 +32,10 @@ export const FilePreview = ({
               className="rounded-lg object-cover w-24 h-24 border"
             />
           ) : (
-            <img
+            <Image
               src={URL.createObjectURL(file)}
               alt="Preview"
+              fill
               className="rounded-lg object-cover w-24 h-24 border"
             />
           )}
@@ -89,3 +90,5 @@ const RemoveButton = ({ onClick }: { onClick: () => void }) => (
     <X className="h-3 w-3 text-white" />
   </button>
 );
+
+export default FilePreview;

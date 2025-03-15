@@ -39,6 +39,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     setIsEditing,
     handleEdit,
   } = useMessageEdit(content, _id);
+
   const { reactions, addReaction, removeReaction } = useReactions(message._id);
 
   const handleEditMessage = () => {
@@ -65,7 +66,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     >
       {!isOwn && (
         <div className="flex-shrink-0">
-          <UserAvatar url="https://api.dicebear.com/9.x/avataaars/svg?seed=Ryker" />
+          <UserAvatar />
         </div>
       )}
       <div
@@ -138,5 +139,3 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     </motion.div>
   );
 };
-
-

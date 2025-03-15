@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import { Moon, Sun, Monitor, X } from "lucide-react";
 import {
   Card,
@@ -18,7 +17,7 @@ import { ThemeSelector } from "./ThemeSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useTheme } from "../provider/ThemeProvider";
 
-export default function ThemeSettings({ onClose }: { onClose: () => void }) {
+function ThemeSettings({ onClose }: { onClose: () => void }) {
   const { theme, setTheme } = useTheme();
   const [saved, setSaved] = useState(false);
 
@@ -160,3 +159,5 @@ export default function ThemeSettings({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
+
+export default ThemeSettings;

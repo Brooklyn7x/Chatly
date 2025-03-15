@@ -15,9 +15,9 @@ interface PrivateChatProps {
   onClose: () => void;
 }
 
-export const PrivateChat = ({ onClose }: PrivateChatProps) => {
+const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const { users, isLoading } = useSearchUsers(searchQuery.trim());
   const { createChat } = useChats();
 
@@ -28,7 +28,9 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const handleCreateChat = async () => {
     if (!selectedUserId) return;
     try {
-      const selectedUser = users?.find((user : any) => user.id === selectedUserId);
+      const selectedUser = users?.find(
+        (user: any) => user.id === selectedUserId
+      );
       if (!selectedUser) {
         toast.error("Please select user");
         return;
@@ -76,3 +78,5 @@ export const PrivateChat = ({ onClose }: PrivateChatProps) => {
     </div>
   );
 };
+
+export default PrivateChat;

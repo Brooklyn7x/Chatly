@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { AnimatePresence } from "framer-motion";
 
@@ -9,8 +10,9 @@ import { useUploadThing } from "@/utils/uploathings";
 import useAuthStore from "@/store/useAuthStore";
 
 import { InputArea } from "./InputArea";
-import { FilePreview } from "./FilePreview";
-import EmojiPicker from "./EmojiPicker";
+
+const EmojiPicker = dynamic(() => import("./EmojiPicker"));
+const FilePreview = dynamic(() => import("./FilePreview"));
 
 export default function MessageInput() {
   const { activeChatId } = useChatStore();
@@ -73,7 +75,12 @@ export default function MessageInput() {
 
   const handleSendMessage = () => {
     if (message.trim() || attachments.length > 0) {
-      sendMessage({ attachments: attachments.map(attachment => typeof attachment === 'string' ? attachment : attachment.name), message });
+      sendMessage({
+        attachments: attachments.map((attachment) =>
+          typeof attachment === "string" ? attachment : attachment.name
+        ),
+        message,
+      });
       setMessage("");
       setAttachments([]);
       setPreviewFiles([]);
@@ -81,9 +88,9 @@ export default function MessageInput() {
   };
 
   const handleEmojiPicker = useCallback(() => {
-    setShowEmojiPicker(!showEmojiPicker);
+    setShowEmojiPicker((prev) => !prev);
     setShowAttachment(false);
-  }, []);
+  }, [showEmojiPicker]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -107,7 +114,7 @@ export default function MessageInput() {
       toast.error("Failed to upload files");
     }
   };
-  console.log(attachments);
+
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm">

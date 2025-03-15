@@ -1,4 +1,5 @@
 import { User } from "@/types";
+import Image from "next/image";
 
 interface SelectedUserProps {
   user: User;
@@ -11,10 +12,11 @@ export const SelectedUser = ({ user }: SelectedUserProps) => {
       className="border bg-white/10 rounded-full overflow-hidden flex items-center"
     >
       <div className="relative flex-shrink-0 h-10 w-10">
-        <img
+        <Image
           src={user.profilePicture || "/user.jpeg"}
           className="h-full w-full rounded-full object-cover"
           alt={user.name}
+          fill
         />
       </div>
 

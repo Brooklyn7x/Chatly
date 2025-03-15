@@ -18,7 +18,7 @@ interface RemoveMemberDialogProps {
   removingUserId?: string | null;
 }
 
-export const RemoveMemberDialog = ({
+const RemoveMemberDialog = ({
   open,
   onOpenChange,
   participants,
@@ -67,3 +67,5 @@ export const RemoveMemberDialog = ({
     </Dialog>
   );
 };
+
+export default RemoveMemberDialog;

@@ -92,3 +92,12 @@ export interface Message {
   timestamp: string;
   sender?: MessageSender;
 }
+
+export type ViewType =
+  | "main"
+  | "search"
+  | "new_message"
+  | "new_group"
+  | "new_channel"
+  | "setting"
+  | "theme_setting";

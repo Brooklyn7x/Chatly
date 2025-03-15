@@ -1,22 +1,24 @@
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { X, Pencil, Trash, User2, UserPlus } from "lucide-react";
-import { RemoveMemberDialog } from "../modal/RemoveMemberDailog";
-import { EditChatDailog } from "../modal/EditChatDailog";
 import { Button } from "../ui/button";
-import { SharedMedia } from "./SharedMedia";
 import { UserAvatar } from "../shared/UserAvatar";
-import { DeleteChatDailog } from "../modal/DeleteChatDailog";
 import FloatinButton from "../shared/FloatinButton";
-import AddMemberDailog from "../modal/AddMemberDailog";
 import { useChats } from "@/hooks/useChats";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { ParticipantRole } from "@/types/chat";
+import dynamic from "next/dynamic";
 
-export function ChatInfo() {
+const SharedMedia = dynamic(() => import("./SharedMedia"));
+const RemoveMemberDialog = dynamic(() => import("../modal/RemoveMemberDailog"));
+const EditChatDailog = dynamic(() => import("../modal/EditChatDailog"));
+const DeleteChatDailog = dynamic(() => import("../modal/DeleteChatDailog"));
+const AddMemberDailog = dynamic(() => import("../modal/AddMemberDailog"));
+
+function ChatInfo() {
   const [editing, setEditing] = useState(false);
   const [addMember, setAddMember] = useState(false);
   const [removingUser, setRemovingUser] = useState(false);
@@ -24,10 +26,9 @@ export function ChatInfo() {
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isAddingMembers, setIsAddingMembers] = useState(false);
-
   const { chats, activeChatId } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
-  const { updateChatInfo, deleteCht, isLoading, error } = useChats();
+  const { updateChatInfo, deleteCht } = useChats();
 
   const chat = chats.find((chat) => chat._id === activeChatId);
   const handleOpenEdit = () => {
@@ -168,36 +169,44 @@ export function ChatInfo() {
         </div>
       )}
 
-      <EditChatDailog
-        title={chat?.metadata.title || ""}
-        description={chat?.metadata.description || ""}
-        open={editing}
-        onOpenChange={setEditing}
-        onSubmit={handleUpdateTitle}
-        isLoading={isUpdating}
-      />
+      <Suspense fallback={null}>
+        <EditChatDailog
+          title={chat?.metadata.title || ""}
+          description={chat?.metadata.description || ""}
+          open={editing}
+          onOpenChange={setEditing}
+          onSubmit={handleUpdateTitle}
+          isLoading={isUpdating}
+        />
+      </Suspense>
 
-      <AddMemberDailog
-        open={addMember}
-        onOpenChange={setAddMember}
-        participants={chat?.participants || []}
-        onAdd={handleAddMember}
-        isAdding={isAddingMembers}
-      />
+      <Suspense fallback={null}>
+        <AddMemberDailog
+          open={addMember}
+          onOpenChange={setAddMember}
+          participants={chat?.participants || []}
+          onAdd={handleAddMember}
+          isAdding={isAddingMembers}
+        />
+      </Suspense>
 
-      <RemoveMemberDialog
-        open={removingUser}
-        onOpenChange={setRemovingUser}
-        participants={chat?.participants || []}
-        onRemove={handleRemoveMemeber}
-        removingUserId={removingUserId}
-      />
+      <Suspense fallback={null}>
+        <RemoveMemberDialog
+          open={removingUser}
+          onOpenChange={setRemovingUser}
+          participants={chat?.participants || []}
+          onRemove={handleRemoveMemeber}
+          removingUserId={removingUserId}
+        />
+      </Suspense>
 
-      <DeleteChatDailog
-        open={deleteChat}
-        onOpenChange={setDeleteChat}
-        onConfirm={handleDeleteChat}
-      />
+      <Suspense fallback={null}>
+        <DeleteChatDailog
+          open={deleteChat}
+          onOpenChange={setDeleteChat}
+          onConfirm={handleDeleteChat}
+        />
+      </Suspense>
     </motion.div>
   );
 }
@@ -319,3 +328,5 @@ function ActionButton({ icon, label, onClick }: ActionButtonProps) {
     </div>
   );
 }
+
+export default ChatInfo;

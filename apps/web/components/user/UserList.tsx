@@ -1,8 +1,7 @@
-import { User } from "@/types";
 import { UserItem } from "../sidebar/UserItem";
 
 interface UserListProps {
-  users: User[];
+  users: any[];
   selectedUserIds: Set<string>;
   onUserToggle: (userId: string) => void;
   loading?: boolean;

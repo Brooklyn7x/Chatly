@@ -5,22 +5,14 @@ import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import { useChatStore } from "@/store/useChatStore";
 import FloatingActionButton from "./FloatingActionButton";
-import { Skeleton } from "@/components/ui/skeleton";
-
-type ViewType =
-  | "main"
-  | "search"
-  | "new_message"
-  | "new_group"
-  | "new_channel"
-  | "setting"
-  | "theme_setting";
+import { ViewType } from "@/types";
+import { SidebarSkeleton } from "./SidebarSkeleton";
 
 interface SidebarProps {
   isMobile: Boolean;
 }
 
-export default function Sidebar({ isMobile }: SidebarProps) {
+const Sidebar = ({ isMobile }: SidebarProps) => {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,23 +34,7 @@ export default function Sidebar({ isMobile }: SidebarProps) {
           onViewChange={setView}
         />
       )}
-      <Suspense
-        fallback={
-          <div className="space-y-4 p-4">
-            {Array(6)
-              .fill(0)
-              .map((_, i) => (
-                <div key={i} className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-[200px]" />
-                    <Skeleton className="h-3 w-[150px]" />
-                  </div>
-                </div>
-              ))}
-          </div>
-        }
-      >
+      <Suspense fallback={<SidebarSkeleton />}>
         <SidebarContent
           view={view}
           searchQuery={searchQuery}
@@ -69,4 +45,6 @@ export default function Sidebar({ isMobile }: SidebarProps) {
       {view === "main" && <FloatingActionButton onViewChange={setView} />}
     </div>
   );
-}
+};
+
+export default Sidebar;
