@@ -7,10 +7,12 @@ import ChatFilters from "./ChatFilter";
 import { getChats } from "@/hooks/useChats";
 import { ViewType } from "@/types";
 
-const PrivateChat = dynamic(() => import("./PrivateChat"));
-const GroupChat = dynamic(() => import("./GroupChat"));
-const Setting = dynamic(() => import("./Setting"));
-const ThemeSettingsPage = dynamic(() => import("../theme/ThemeSettings"));
+const PrivateChat = dynamic(() => import("./PrivateChat"), { ssr: false });
+const GroupChat = dynamic(() => import("./GroupChat"), { ssr: false });
+const Setting = dynamic(() => import("./Setting"), { ssr: false });
+const ThemeSettingsPage = dynamic(() => import("../theme/ThemeSettings"), {
+  ssr: false,
+});
 
 type FilterOption = {
   label: string;
@@ -34,6 +36,7 @@ export default function SidebarContent({
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
 
+  getChats();
   const debouncedQuery = useDebounce(searchQuery, 300);
 
   const filteredChats = useMemo(() => {

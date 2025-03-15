@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuthStore from "@/store/useAuthStore";
-import { Loading } from "@/components/ui/loading";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -23,8 +22,6 @@ export default function AuthGuard({
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    // if (isLoading) return;
-
     const isPublicPath = PUBLIC_PATHS.includes(pathname);
     const isRootPath = pathname === "/chat";
 

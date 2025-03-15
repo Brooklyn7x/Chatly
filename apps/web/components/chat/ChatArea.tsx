@@ -1,19 +1,22 @@
-import { useChatStore } from "@/store/useChatStore";
-import { useChatSocket } from "@/hooks/useChatSocket";
-import MessageList from "../message/MessageList";
+import { Suspense, useMemo } from "react";
 import ChatHeader from "./ChatHeader";
+import MessageList from "../message/MessageList";
 import MessageInput from "../message/MessageInput";
 import { EmptyState } from "./EmptyChat";
-import { Suspense } from "react";
+import { useChatStore } from "@/store/useChatStore";
+import { useChatSocket } from "@/hooks/useChatSocket";
 import { useMessageSocket } from "@/hooks/useMessageSocket";
 
 const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
-
-  const chat = chats?.find((chat) => chat._id === activeChatId);
+  const chat = useMemo(() => {
+    return chats?.find((chat) => chat._id === activeChatId);
+  }, [chats, activeChatId]);
   useChatSocket(activeChatId || "");
   useMessageSocket();
+
   if (!chat) return null;
+
   return (
     <div className="flex flex-col h-full">
       {activeChatId ? (

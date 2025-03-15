@@ -6,6 +6,7 @@ import { useSocket } from "./useSocket";
 export function useUserStatusSocket() {
   const updateStatus = useUserStatusStore((state) => state.updateStatus);
   const { isConnected } = useSocket();
+
   useEffect(() => {
     if (!isConnected) return;
     const handleStatusChange = (data: {

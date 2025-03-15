@@ -1,12 +1,16 @@
 "use client";
 import { Suspense, useState } from "react";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
-import { useChatStore } from "@/store/useChatStore";
-import FloatingActionButton from "./FloatingActionButton";
-import { ViewType } from "@/types";
 import { SidebarSkeleton } from "./SidebarSkeleton";
+import { useChatStore } from "@/store/useChatStore";
+import { ViewType } from "@/types";
+
+const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
+  ssr: false,
+});
 
 interface SidebarProps {
   isMobile: Boolean;
@@ -42,7 +46,7 @@ const Sidebar = ({ isMobile }: SidebarProps) => {
         />
       </Suspense>
 
-      {view === "main" && <FloatingActionButton onViewChange={setView} />}
+      {view === "main" && <FBActionButton onViewChange={setView} />}
     </div>
   );
 };

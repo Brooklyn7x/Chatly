@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import { toast } from "sonner";
+
 import {
   Bookmark,
   LogOut,
@@ -12,19 +12,49 @@ import {
   User,
   User2Icon,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import dynamic from "next/dynamic";
 import { Button } from "../ui/button";
-import useAuthStore from "@/store/useAuthStore";
-import { useAuth } from "@/hooks/useAuth";
-import { ViewType } from "@/types";
 import { SearchInput } from "./SearchInput";
+import useAuthStore from "@/store/useAuthStore";
+import { ViewType } from "@/types";
+
+const DropdownMenu = dynamic(
+  () => import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
+  { ssr: false }
+);
+const DropdownMenuContent = dynamic(
+  () =>
+    import("@/components/ui/dropdown-menu").then(
+      (mod) => mod.DropdownMenuContent
+    ),
+  { ssr: false }
+);
+const DropdownMenuItem = dynamic(
+  () =>
+    import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
+  { ssr: false }
+);
+const DropdownMenuLabel = dynamic(
+  () =>
+    import("@/components/ui/dropdown-menu").then(
+      (mod) => mod.DropdownMenuLabel
+    ),
+  { ssr: false }
+);
+const DropdownMenuSeparator = dynamic(
+  () =>
+    import("@/components/ui/dropdown-menu").then(
+      (mod) => mod.DropdownMenuSeparator
+    ),
+  { ssr: false }
+);
+const DropdownMenuTrigger = dynamic(
+  () =>
+    import("@/components/ui/dropdown-menu").then(
+      (mod) => mod.DropdownMenuTrigger
+    ),
+  { ssr: false }
+);
 
 interface SidebarHeaderProps {
   view: ViewType;
@@ -121,17 +151,7 @@ export default function SidebarHeader({
   onViewChange,
 }: SidebarHeaderProps) {
   const { user } = useAuthStore();
-  const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success("Logout !");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
 
   const handleThemeToggle = () => {
     setTheme(theme === "dark" ? "light" : "dark");

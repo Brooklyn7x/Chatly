@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+
 import { ChatContainer } from "@/components/chat/ChatContainer";
 import AuthGuard from "@/components/shared/AuthGuard";
 import Sidebar from "@/components/sidebar/Sidebar";

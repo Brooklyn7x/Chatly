@@ -5,8 +5,8 @@ import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { EmptyState } from "./EmptyChat";
 import { Suspense } from "react";
 
-const ChatArea = dynamic(() => import("./ChatArea"));
-const ChatInfo = dynamic(() => import("./ChatInfo"));
+const ChatArea = dynamic(() => import("./ChatArea"), { ssr: false });
+const ChatInfo = dynamic(() => import("./ChatInfo"), { ssr: false });
 
 interface ChatContainerProps {
   isMobile: boolean;
@@ -14,6 +14,7 @@ interface ChatContainerProps {
 export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
   const { activeChatId } = useChatStore();
   const { isOpen } = useChatPanelStore();
+  
   return (
     <div
       className={cn(

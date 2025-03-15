@@ -1,9 +1,8 @@
-import { cn } from "@/lib/utils";
-
 import { useMemo } from "react";
+import { UserAvatar } from "../shared/UserAvatar";
+import { cn } from "@/lib/utils";
 import { Chat } from "@/types";
 import { useChatStore } from "@/store/useChatStore";
-import { UserAvatar } from "../shared/UserAvatar";
 
 interface ChatItemProps {
   chat: Chat;
