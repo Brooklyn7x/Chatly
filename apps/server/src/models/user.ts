@@ -25,7 +25,6 @@ const userSchema = new Schema<IUserDocument>(
       lowercase: true,
       minlength: 3,
       maxlength: 30,
-      index: true,
     },
     email: {
       type: String,
@@ -33,7 +32,6 @@ const userSchema = new Schema<IUserDocument>(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true,
     },
     password: {
       type: String,

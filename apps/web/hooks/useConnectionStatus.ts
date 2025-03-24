@@ -4,6 +4,7 @@ import { useSocket } from "./useSocket";
 export function useConnectionStatus() {
   const { isConnected, isConnecting, connectionError, reconnectCount } =
     useSocket();
+
   const [showConnectionAlert, setShowConnectionAlert] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
 

@@ -2,9 +2,16 @@ import { handleApiError } from "@/lib/error";
 import { apiClient } from "./apiClient";
 
 export const MessageApi = {
-  getMessages: async (chatId: string): Promise<any> => {
+  getMessages: async (
+    chatId: string,
+    params?: { before?: string; limit?: number }
+  ): Promise<any> => {
     try {
-      const { data } = await apiClient.get(`/messages/${chatId}`);
+      const { data } = await apiClient.get(`/messages/${chatId}`, {
+        params: {
+          ...params,
+        },
+      });
       return data;
     } catch (error) {
       handleApiError(error);

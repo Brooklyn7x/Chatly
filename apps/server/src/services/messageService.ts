@@ -77,32 +77,56 @@ export class MessageService {
 
   async getMessages(
     conversationId: string,
-    limit: number = 20,
-    before?: Date
+    limit: number,
+    before?: Date | string
   ): Promise<ServiceResponse<any[]>> {
     try {
+      if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+        return {
+          success: false,
+          error: "Invalid conversation ID",
+        };
+      }
+
       const query: any = {
         conversationId: new mongoose.Types.ObjectId(conversationId),
         deleted: false,
       };
 
       if (before) {
-        query.createdAt = { $lt: before };
+        const beforeDate = new Date(before);
+        if (isNaN(beforeDate.getTime())) {
+          return {
+            success: false,
+            error: "Invalid cursor value",
+          };
+        }
+        query.createdAt = { $lt: beforeDate };
       }
 
       const messages = await MessageModel.find(query)
         .sort({ createdAt: -1 })
-        .limit(limit)
+        .limit(limit + 1)
         .populate("senderId", "username profilePicture")
         .lean();
 
+      const hasMore = messages.length > limit;
+      const resultMessages = hasMore ? messages.slice(0, -1) : messages;
+
+      const nextCursor =
+        resultMessages.length > 0
+          ? resultMessages[resultMessages.length - 1].createdAt
+          : null;
       return {
         success: true,
-        data: messages.map((msg) => this.formatMessage(msg)),
+        data: resultMessages,
       };
     } catch (error) {
       this.logger.error("Error fetching messages:", error);
-      return { success: false, error: "Failed to fetch messages" };
+      return {
+        success: false,
+        error: "Failed to fetch messages",
+      };
     }
   }
 

@@ -7,6 +7,8 @@ import SidebarContent from "./SidebarContent";
 import { SidebarSkeleton } from "./SidebarSkeleton";
 import { useChatStore } from "@/store/useChatStore";
 import { ViewType } from "@/types";
+import { fetchChats } from "@/hooks/useChats";
+import { LoaderIcon } from "lucide-react";
 
 const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
   ssr: false,
@@ -20,6 +22,9 @@ const Sidebar = ({ isMobile }: SidebarProps) => {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
   const [searchQuery, setSearchQuery] = useState("");
+  const { isLoading } = fetchChats();
+
+  if (isLoading) return <LoaderIcon />;
 
   return (
     <div

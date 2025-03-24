@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Loading } from "../ui/loading";
-import { useSearchUsers } from "@/hooks/useSearchUser";
+import { useSearch } from "@/hooks/useSearch";
 import { UserAvatar } from "../shared/UserAvatar";
 import useAuthStore from "@/store/useAuthStore";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -36,7 +36,7 @@ const AddMemberDialog = ({
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
   const debounceQuery = useDebounce(query, 100);
-  const { users } = useSearchUsers(debounceQuery);
+  const { users } = useSearch(debounceQuery);
 
   const availableUsers = useMemo(() => {
     return users.filter((user: any) => {

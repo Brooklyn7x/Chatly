@@ -1,7 +1,9 @@
 import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import { cn } from "@/lib/utils";
 
+import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+
+const Picker = dynamic(() => import("@emoji-mart/react"), { ssr: false });
 interface EmojiPickerProps {
   show: boolean;
   onClose: () => void;

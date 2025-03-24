@@ -4,7 +4,7 @@ import { useChatStore } from "@/store/useChatStore";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ChatItem } from "../chat/ChatItem";
 import ChatFilters from "./ChatFilter";
-import { getChats } from "@/hooks/useChats";
+import { fetchChats } from "@/hooks/useChats";
 import { ViewType } from "@/types";
 
 const PrivateChat = dynamic(() => import("./PrivateChat"), { ssr: false });
@@ -36,9 +36,7 @@ export default function SidebarContent({
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
 
-  getChats();
   const debouncedQuery = useDebounce(searchQuery, 300);
-
   const filteredChats = useMemo(() => {
     let baseChats = Array.isArray(chats) ? chats : [];
 

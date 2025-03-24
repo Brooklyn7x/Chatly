@@ -5,7 +5,12 @@ export function useScrollBehavior() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
-    scrollContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -13,17 +18,20 @@ export function useScrollBehavior() {
       if (scrollContainerRef.current) {
         const { scrollHeight, scrollTop, clientHeight } =
           scrollContainerRef.current;
-        setIsNearBottom(scrollHeight - scrollTop - clientHeight < 100);
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+
+        console.log(distanceFromBottom);
+        setIsNearBottom(distanceFromBottom < 100);
       }
     };
 
     const container = scrollContainerRef.current;
-
     if (container) {
       container.addEventListener("scroll", handleScroll);
+      handleScroll();
       return () => container.removeEventListener("scroll", handleScroll);
     }
-  });
+  }, []);
 
   return { isNearBottom, scrollContainerRef, scrollToBottom };
 }

@@ -53,12 +53,13 @@ export class MessageController extends BaseController {
 
   async getMessages(req: Request, res: Response): Promise<void> {
     try {
-      const conversationId = req.params.id;
+      console.log(req.params);
+      const chatId = req.params.id;
       const limit = parseInt(req.query.limit as string) || 10;
       const before = req.query.before as string;
 
       const result = await this.messageService.getMessages(
-        conversationId,
+        chatId,
         limit,
         before ? new Date(before) : undefined
       );

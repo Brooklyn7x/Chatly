@@ -36,8 +36,8 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
           <div className="space-y-2">
             {chat?.participants.map((participant: any) => (
               <UserItem
-                key={participant.userId}
-                user={participant.userId}
+                key={participant.userId._id}
+                user={participant.userId._id}
                 // className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
               />
             ))}
@@ -46,7 +46,7 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
 
         <div className="grid grid-cols-3 gap-2 ">
           {activeTab === "media" &&
-            Array.from({ length: 10 }).map((item, index) => (
+            Array.from({ length: 10 }).map((i, index) => (
               <div
                 key={index}
                 className="aspect-square relative cursor-pointer group rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
@@ -56,7 +56,7 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
                   fill
                   src="/user.jpeg"
                   className="object-cover w-full h-full"
-                  loading="lazy"
+                  loading="eager"
                 />
                 <div
                   className="absolute inset-0 bg-black/50 opacity-0 

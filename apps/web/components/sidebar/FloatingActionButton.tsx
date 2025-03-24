@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MessageCircle, Pencil, Users, Volume, X } from "lucide-react";
-import { useState } from "react";
+
 type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
 interface FBProps {
   onViewChange: (view: ViewType) => void;

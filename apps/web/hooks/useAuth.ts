@@ -51,6 +51,7 @@ export const useAuth = () => {
       setIsLoading(true);
       setError(null);
       clearAuth();
+
       router.replace("/login");
     } catch (error) {
       if (error instanceof Error) {

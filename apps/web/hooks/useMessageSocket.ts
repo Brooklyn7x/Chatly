@@ -6,6 +6,7 @@ import { useSocket } from "./useSocket";
 
 export const useMessageSocket = () => {
   const { addMessage, updateMessageStatus } = useMessageStore();
+
   const { isConnected } = useSocket();
 
   useEffect(() => {
@@ -86,6 +87,4 @@ export const useMessageSocket = () => {
       socketService.off("message:deleted", handleMessageDeleted);
     };
   }, [addMessage, updateMessageStatus, isConnected]);
-
-  return socketService;
 };

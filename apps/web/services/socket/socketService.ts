@@ -520,6 +520,7 @@ export class SocketService extends EventEmitter {
     if (this.socket) {
       console.log("Manually disconnecting socket");
       this.socket.removeAllListeners();
+      this.socket.close();
       this.socket.disconnect();
       this.socket = null;
     }
@@ -537,10 +538,14 @@ export class SocketService extends EventEmitter {
       });
     }
 
+    // Clear any cleanup timer
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer);
       this.cleanupTimer = null;
     }
+
+    // Emit disconnected event
+    this.emit("disconnected", "Manual disconnect");
   }
 }
 

@@ -2,20 +2,23 @@ import { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { AnimatePresence } from "framer-motion";
-
+import { InputArea } from "./InputArea";
 import { useChatStore } from "@/store/useChatStore";
-import { useMessage } from "@/hooks/useMessage";
-import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useUploadThing } from "@/utils/uploathings";
 import useAuthStore from "@/store/useAuthStore";
 
-import { InputArea } from "./InputArea";
+import { useTyping } from "@/hooks/useTyping";
+import { useMessage } from "@/hooks/useMessage";
 
-const EmojiPicker = dynamic(() => import("./EmojiPicker"));
-const FilePreview = dynamic(() => import("./FilePreview"));
+const EmojiPicker = dynamic(() => import("./EmojiPicker"), { ssr: false });
+const FilePreview = dynamic(() => import("./FilePreview"), { ssr: false });
 
 export default function MessageInput() {
+  const { user } = useAuthStore();
   const { activeChatId } = useChatStore();
+  const userId = user?._id;
+  if (!activeChatId || !userId) return;
+
   const { accessToken } = useAuthStore();
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -25,8 +28,9 @@ export default function MessageInput() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useMessage(activeChatId || "");
-  const { handleTypingStart } = useTypingIndicator(activeChatId || "");
+  const { sendMessage } = useMessage(activeChatId || "", userId);
+  const { startTyping } = useTyping(userId, activeChatId);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [totalFilesUploading, setTotalFilesUploading] = useState(0);
 
@@ -53,9 +57,9 @@ export default function MessageInput() {
   });
 
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    startTyping();
     const content = event.target.value;
     setMessage(content);
-    handleTypingStart();
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -114,6 +118,16 @@ export default function MessageInput() {
       toast.error("Failed to upload files");
     }
   };
+
+  // const handleTypingStart = useCallback(() => {
+  //   socketService.sendTypingStart(activeChatId, userId);
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //   }
+  //   timerRef.current = setTimeout(() => {
+  //     socketService.sendTypingStop(activeChatId, userId);
+  //   }, 2000);
+  // }, [activeChatId]);
 
   return (
     <>

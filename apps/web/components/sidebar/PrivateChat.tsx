@@ -6,7 +6,7 @@ import { SearchInput } from "../shared/SearchInput";
 import { UserList } from "../user/UserList";
 import { toast } from "sonner";
 import { useState } from "react";
-import { useSearchUsers } from "@/hooks/useSearchUser";
+import { useSearch } from "@/hooks/useSearch";
 import { useChats } from "@/hooks/useChats";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
@@ -18,7 +18,7 @@ interface PrivateChatProps {
 const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { users, isLoading } = useSearchUsers(searchQuery.trim());
+  const { users, isLoading } = useSearch(searchQuery.trim());
   const { createChat } = useChats();
 
   const handleUserSelect = (userId: string) => {

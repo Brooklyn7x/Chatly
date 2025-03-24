@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import useSWR from "swr";
 
 export const useChats = () => {
-  const { addChats, deleteChat, setActiveChat, updateChat } = useChatStore();
+  const { addChats, deleteChat, setActiveChat } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +75,7 @@ export const useChats = () => {
   };
 };
 
-export const getChats = () => {
+export const fetchChats = () => {
   const { setChats } = useChatStore();
   const { data, isLoading, error } = useSWR("chats", chatApi.getChats, {
     onSuccess: (response) => {

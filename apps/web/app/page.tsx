@@ -2,79 +2,132 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 flex flex-col items-center justify-center p-4">
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16 px-4"
-      >
-        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight">
-          Chat in Real Time, Simply
-        </h1>
-        <p className="text-xl md:text-2xl text-gray-300 mt-6 max-w-3xl leading-relaxed">
-          A minimalist chat app with instant messaging and seamless
-          connectivity. Experience the future of communication today.
-        </p>
-      </motion.header>
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]"
+          style={{
+            animation: "glow 6s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[150px]"
+          style={{
+            animation: "glow 6s ease-in-out infinite 2s",
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[150px]"
+          style={{
+            animation: "glow 6s ease-in-out infinite 4s",
+          }}
+        />
+      </div>
 
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mb-16 px-4"
-      >
-        <FeatureCard
-          title="Instant Messaging"
-          description="Messages sent and received instantly."
+      <div className="fixed top-4 right-4 flex items-center space-x-2">
+        <Switch
+          id="theme-mode"
+          checked={theme === "dark"}
+          onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
         />
-        <FeatureCard
-          title="User-Friendly Interface"
-          description="Clean, intuitive, and easy to use."
-        />
-        <FeatureCard
-          title="Real-Time Connectivity"
-          description="Stay connected with live updates."
-        />
-      </motion.section>
+        <Label htmlFor="theme-mode">
+          {theme === "dark" ? "Dark" : "Light"}
+        </Label>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
-      >
-        <button
-          onClick={() => router.push("/login")}
-          className="px-10 py-5 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xl font-semibold rounded-xl hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95"
+      {/* Hero Section */}
+      <div className="h-screen flex flex-col justify-center items-center text-center px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-3xl space-y-8"
         >
-          Get Started
-        </button>
-      </motion.div>
+          <h1 className="text-5xl md:text-7xl font-bold">Chat Reimagined</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            A new era of communication. Fast, secure, and beautifully simple.
+          </p>
+          <Button onClick={() => router.push("/login")} size="lg">
+            Get Started
+          </Button>
+        </motion.div>
+      </div>
 
-      <footer className="mt-16 text-gray-400 text-sm">
-        © {new Date().getFullYear()} All rights reserved.
+      <div className="py-20 px-4 relative">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4">Why Choose Us?</h2>
+            <p className="text-xl text-muted-foreground">
+              We're redefining what a chat experience can be
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <FeatureCard
+              title="Instant"
+              description="Messages delivered in real-time"
+              icon="⚡"
+            />
+            <FeatureCard
+              title="Secure"
+              description="End-to-end encryption for all chats"
+              icon="🔒"
+            />
+            <FeatureCard
+              title="Reliable"
+              description="24/7 uptime guaranteed"
+              icon="🌐"
+            />
+          </div>
+        </div>
+      </div>
+
+      <footer className="py-8 text-center text-sm text-muted-foreground relative">
+        © {new Date().getFullYear()} Chatly. All rights reserved.
       </footer>
     </div>
   );
 }
 
-const FeatureCard = ({
-  title,
-  description,
-}: {
+interface FeatureCardProps {
   title: string;
   description: string;
-}) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    className="p-8 bg-gray-800/50 border border-gray-700 rounded-2xl shadow-lg text-center hover:bg-gray-800/70 transition-all duration-200"
-  >
-    <h3 className="text-2xl font-bold mb-4 text-gray-100">{title}</h3>
-    <p className="text-gray-300 leading-relaxed">{description}</p>
-  </motion.div>
+  icon: string;
+}
+
+const FeatureCard = ({ title, description, icon }: FeatureCardProps) => (
+  <Card className="hover:shadow-lg transition-shadow backdrop-blur-sm bg-background/50">
+    <CardHeader className="text-center">
+      <div className="w-12 h-12 rounded-full mb-6 flex items-center justify-center mx-auto bg-primary text-primary-foreground">
+        <span className="text-2xl">{icon}</span>
+      </div>
+      <CardTitle>{title}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+    </CardHeader>
+  </Card>
 );

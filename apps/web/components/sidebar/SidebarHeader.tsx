@@ -151,11 +151,6 @@ export default function SidebarHeader({
   onViewChange,
 }: SidebarHeaderProps) {
   const { user } = useAuthStore();
-  const { theme, setTheme } = useTheme();
-
-  const handleThemeToggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   return (
     <div className="relative h-16 flex items-center px-4 border-b gap-3">
@@ -182,11 +177,6 @@ export default function SidebarHeader({
                   }
                 />
               ))}
-
-              <ThemeToggle
-                theme={theme}
-                handleThemeToggle={handleThemeToggle}
-              />
             </DropdownMenuContent>
           </DropdownMenu>
           <SearchInput value={searchQuery} onChange={onSearchChange} />

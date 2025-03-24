@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowDownIcon, Loader2 } from "lucide-react";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { MessageBubble } from "./MessageBubble";
@@ -6,38 +6,50 @@ import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { getMessages } from "@/hooks/useMessage";
-import { useMessage } from "@/hooks/useMessage";
-import { useScrollBehavior } from "@/hooks/useScroll";
+import { useMessageSocket } from "@/hooks/useMessageSocket";
+import { fetchMessages } from "@/hooks/useMessage";
+import { useReadMessages } from "@/hooks/useReadMessage";
 
 function MessageList() {
-  const { user } = useAuthStore();
-  const { activeChatId } = useChatStore();
-  const { isNearBottom, scrollContainerRef, scrollToBottom } =
-    useScrollBehavior();
-  const { markAsRead } = useMessage(activeChatId || "");
-  const { isTyping } = useTypingIndicator(activeChatId || "");
-  const { isLoading, error } = getMessages(activeChatId || "");
-  const { messages } = useMessageStore();
-
-  const unReadMessages = useMemo(() => {
-    return messages[activeChatId || ""]?.filter(
-      (message: any) =>
-        message.status !== "read" &&
-        message.senderId?._id !== user?._id &&
-        !message._id.startsWith("temp-")
-    );
-  }, [messages, activeChatId, user?._id]);
-
-  const messageIds = useMemo(() => {
-    return unReadMessages?.map((message: any) => message._id) || [];
-  }, [unReadMessages]);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (messageIds?.length > 0) {
-      markAsRead(messageIds);
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+        setShowScrollButton(scrollTop + clientHeight < scrollHeight - 100);
+      }
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
     }
-  }, [messages]);
+  }, []);
+
+  const handleScrollToBottom = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const { user } = useAuthStore();
+  const { activeChatId } = useChatStore();
+  if (!activeChatId) return;
+
+  const { messages } = useMessageStore();
+  const { isLoading, error, hasMore, isLoadingMore, loadMore } =
+    fetchMessages(activeChatId);
+
+  const { isTyping } = useTypingIndicator(activeChatId);
+
+  useMessageSocket();
+  useReadMessages(activeChatId);
 
   const isOwnMessage = useCallback(
     (message: any) => {
@@ -46,20 +58,9 @@ function MessageList() {
     [user]
   );
 
-  const handleScrollToBottom = useCallback(() => {
-    if (isNearBottom) {
-      scrollToBottom();
-    }
-  }, [isNearBottom, scrollToBottom]);
-
-  if (!activeChatId) return null;
-
   return (
     <div className="flex flex-col h-full">
-      <div
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto p-4 pb-20"
-      >
+      <div className="flex-1 overflow-y-auto pb-20" ref={containerRef}>
         <div className="space-y-4">
           {isLoading ? (
             <MessageLoader />
@@ -72,11 +73,12 @@ function MessageList() {
             />
           )}
         </div>
-        <div ref={scrollContainerRef} />
       </div>
 
       {isTyping && <TypingIndicator />}
-      {!isNearBottom && <ScrollToBottomButton onClick={handleScrollToBottom} />}
+      {showScrollButton && (
+        <ScrollToBottomButton onClick={handleScrollToBottom} />
+      )}
     </div>
   );
 }
@@ -128,11 +130,12 @@ export function MessagesContainer({
 interface ScrollToBottomButtonProps {
   onClick: () => void;
 }
+
 function ScrollToBottomButton({ onClick }: ScrollToBottomButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-4 right-4 p-2 bg-primary rounded-full border shadow-lg hover:bg-muted transition-colors duration-200"
+      className="fixed bottom-[68px] right-4 p-2 bg-primary rounded-full border shadow-lg hover:bg-muted transition-colors duration-200"
     >
       <ArrowDownIcon className="h-6 w-6" />
     </button>

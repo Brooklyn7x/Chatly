@@ -34,7 +34,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
 
-
   const { getStatusText } = useUserStatus(otherUserId || "");
   const { deleteCht } = useChats();
   const displayName = useMemo(() => {

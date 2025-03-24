@@ -6,14 +6,18 @@ import { EmptyState } from "./EmptyChat";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { useMessageSocket } from "@/hooks/useMessageSocket";
+import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 
 const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
+
   const chat = useMemo(() => {
     return chats?.find((chat) => chat._id === activeChatId);
   }, [chats, activeChatId]);
+
   useChatSocket(activeChatId || "");
   useMessageSocket();
+  useTypingIndicator(activeChatId || "");
 
   if (!chat) return null;
 

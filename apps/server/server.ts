@@ -19,8 +19,9 @@ const io = new Server(server, {
 SocketService.getInstance();
 connectDB();
 //redis()
-const PORT = parseInt(process.env.PORT || "8000", 10);
-server.listen(PORT, "0.0.0.0", () => {
+
+const PORT = parseInt(process.env.PORT || "8002", 10);
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 

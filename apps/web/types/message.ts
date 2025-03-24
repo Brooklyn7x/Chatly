@@ -37,6 +37,12 @@ export enum MessageType {
   FILE = "file",
 }
 
+export enum MessageStatus {
+  SENT = "sending",
+  DELIVERED = "delivered",
+  READ = "read",
+}
+
 export interface MessageData {
   _id: string;
   conversationId: string;

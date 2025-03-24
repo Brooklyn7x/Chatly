@@ -58,6 +58,15 @@ module.exports = {
           5: "hsl(var(--chart-5))",
         },
       },
+      animation: {
+        "glow-slow": "glow 6s ease-in-out infinite",
+      },
+      keyframes: {
+        glow: {
+          "0%, 100%": { transform: "scale(1)", opacity: "0.5" },
+          "50%": { transform: "scale(1.1)", opacity: "0.7" },
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar-hide")],

@@ -11,9 +11,10 @@ interface ConnectionState {
 }
 
 export function useSocket() {
-  const socketRef = useRef<any>();
   const { accessToken } = useAuthStore();
+  const socketRef = useRef<any>();
   const hasInitializedRef = useRef<boolean>(false);
+
   const [connectionState, setConnectionState] = useState<ConnectionState>({
     isConnected: false,
     isConnecting: false,
@@ -55,81 +56,36 @@ export function useSocket() {
   }, []);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken) {
+      console.log("No access token, disconnecting socket");
+      socketService.disconnect();
+      return;
+    }
 
-    const updateConnectionState = () => {
-      if (socketService) {
-        const state = socketService.getConnectionState();
-        setConnectionState((prev) => ({
-          ...prev,
-          isConnected: state.connected,
-          isConnecting: state.connecting,
-          isHealthy: state.healthy,
-          reconnectCount: state.reconnectAttempts,
-        }));
-      }
-    };
-
-    // Update state immediately and then every 2 seconds
-    updateConnectionState();
-    const interval = setInterval(updateConnectionState, 2000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (!accessToken) return;
-
-    // If we have a token but haven't initialized, do it now
     if (!hasInitializedRef.current) {
-      console.log("Initial socket connection after login");
+      console.log("Initializing new socket connection");
       socketRef.current = socketService.initialize(accessToken);
       hasInitializedRef.current = true;
     }
-  }, [accessToken]);
 
-  useEffect(() => {
-    if (!accessToken) return;
-
-    // Prevent multiple initializations with the same token
-    if (hasInitializedRef.current && socketService.isConnected()) {
-      console.log("Socket already initialized and connected, skipping");
-      return;
-    }
-    console.log("Setting up socket connection in hook");
-    // Add event listeners
     socketService.on("connected", handleConnect);
     socketService.on("disconnected", handleDisconnect);
     socketService.on("connect_error", handleError);
 
-    // Initialize socket
-    socketRef.current = socketService.initialize(accessToken);
-    hasInitializedRef.current = true;
-
-    // Update connection state
-    setConnectionState((prev) => ({
-      ...prev,
-      isConnecting: true,
-    }));
-
     return () => {
-      console.log("Cleaning up socket listeners in hook");
+      console.log("Cleaning up socket connection (unmount or HMR)");
+
       socketService.off("connected", handleConnect);
       socketService.off("disconnected", handleDisconnect);
       socketService.off("connect_error", handleError);
-      // Don't disconnect here, only remove listeners
-    };
-  }, [accessToken]); // Remove callback dependencies to prevent unnecessary re-runs
 
-  useEffect(() => {
-    return () => {
-      console.log("Component unmounting, disconnecting socket");
-      hasInitializedRef.current = false;
-      socketService.disconnect();
+      if (!accessToken) {
+        console.log("Logging out, disconnecting socket");
+        socketService.disconnect();
+        hasInitializedRef.current = false;
+      }
     };
-  }, []);
+  }, [accessToken]);
 
   return {
     socket: socketRef.current,

@@ -10,7 +10,7 @@ import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
-import { useSearchUsers } from "@/hooks/useSearchUser";
+import { useSearch } from "@/hooks/useSearch";
 import { useChats } from "@/hooks/useChats";
 import { useGroupChatForm } from "@/hooks/useGroupChat";
 
@@ -36,7 +36,7 @@ const GroupChat = ({ onClose }: GroupChatProps) => {
     handleUserToggle,
   } = useGroupChatForm();
 
-  const { users, isLoading } = useSearchUsers(searchQuery);
+  const { users, isLoading } = useSearch(searchQuery);
   const { createChat } = useChats();
 
   const selectedUsers = useMemo<User[]>(
