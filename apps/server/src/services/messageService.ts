@@ -4,6 +4,7 @@ import { ServiceResponse } from "../types/service-respone";
 import mongoose from "mongoose";
 import { MessageModel } from "../models/message";
 import { Logger } from "../utils/logger";
+import redisClient from "../config/redis";
 
 interface MessageData {
   conversationId: string;
@@ -22,11 +23,9 @@ interface MessageData {
 }
 
 export class MessageService {
-  private redis: Redis;
   private logger: Logger;
   constructor() {
     this.logger = new Logger();
-    this.redis = new Redis(process.env.REDIS_URL as string);
   }
 
   async sendMessage(
@@ -164,7 +163,7 @@ export class MessageService {
           error: "Failed to delete message",
         };
       }
-      // await this.redis.del(`message:${messageId}`);
+      // await redisClient.del(`message:${messageId}`);
 
       return {
         success: true,
@@ -236,7 +235,7 @@ export class MessageService {
         return { success: false, error: "Failed to update message" };
       }
 
-      await this.redis.set(
+      await redisClient.set(
         `message:${messageId}`,
         JSON.stringify(this.formatMessage(updatedMessage)),
         "EX",
@@ -393,7 +392,7 @@ export class MessageService {
   }
 
   // private async cacheMessage(message: any): Promise<void> {
-  //   const pipeline = this.redis.pipeline();
+  //   const pipeline = redisClient.pipeline();
   //   pipeline.hset(`message:${message.id}`, this.serializeMessage(message));
   //   pipeline.zadd(
   //     `message:${message.conversationId}`,
@@ -409,14 +408,14 @@ export class MessageService {
   //   conversationId: string,
   //   limit: number
   // ): Promise<Message[]> {
-  //   const messageIds = await this.redis.zrevrange(
+  //   const messageIds = await redisClient.zrevrange(
   //     `message:${conversationId}`,
   //     0,
   //     limit - 1
   //   );
   //   const message = await Promise.all(
   //     messageIds.map(async (id) => {
-  //       const messageData = await this.redis.hgetall(`message:${id}`);
+  //       const messageData = await redisClient.hgetall(`message:${id}`);
   //       return this.deserializeMessage(messageData);
   //     })
   //   );

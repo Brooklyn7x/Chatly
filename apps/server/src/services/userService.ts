@@ -8,14 +8,13 @@ import {
 import { Logger } from "../utils/logger";
 import { ServiceResponse } from "../types/service-respone";
 import { UserModel } from "../models/user";
+import redisClient from "../config/redis";
 const bcrypt = require("bcrypt");
 
 export class UserService {
-  private redis: Redis;
   private logger: Logger;
 
   constructor() {
-    this.redis = new Redis(process.env.REDIS_URL as string);
     this.logger = new Logger("UserService");
   }
 
@@ -76,7 +75,7 @@ export class UserService {
 
   async getUserById(id: string): Promise<ServiceResponse<UserProfile>> {
     try {
-      const cacheUser = await this.redis.hgetall(`user${id}`);
+      const cacheUser = await redisClient.hgetall(`user${id}`);
       if (Object.keys(cacheUser).length > 0) {
         return {
           success: true,
@@ -225,7 +224,7 @@ export class UserService {
           updatedAt: new Date(),
         }),
 
-        this.redis.hset(`user:${userId}`, {
+        redisClient.hset(`user:${userId}`, {
           status,
           lastSeen: new Date().toISOString(),
         }),
@@ -295,14 +294,14 @@ export class UserService {
   }
 
   private async cacheUserData(user: any): Promise<any> {
-    await this.redis.hset(`user:${user.id}`, {
+    await redisClient.hset(`user:${user.id}`, {
       id: user.id,
       username: user.username,
       status: user.status,
       lastSeen: user.lastSeen.toISOString(),
     });
 
-    await this.redis.expire(`user:${user.id}`, 3600);
+    await redisClient.expire(`user:${user.id}`, 3600);
   }
 
   private parseCacheUser(data: Record<string, string>): UserProfile {
@@ -316,8 +315,8 @@ export class UserService {
 
   private async cacheUserProfile(user: any): Promise<void> {
     const profile = this.formatUserProfile(user);
-    await this.redis.hmset(`user:${user.id}`, this.flattenObject(profile));
-    await this.redis.expire(`user:${user.id}`, 3600);
+    await redisClient.hmset(`user:${user.id}`, this.flattenObject(profile));
+    await redisClient.expire(`user:${user.id}`, 3600);
   }
 
   private formatUserProfile(user: any): UserProfile {

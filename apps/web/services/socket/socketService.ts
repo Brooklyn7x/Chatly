@@ -22,7 +22,7 @@ export class SocketService extends EventEmitter {
     this.initialize = this.initialize.bind(this);
     this.disconnect = this.disconnect.bind(this);
     this.setupCleanup = this.setupCleanup.bind(this);
-    this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
+    // this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
     this.reconnect = this.reconnect.bind(this);
     // this.ping = this.ping.bind(this);
     // this.resetPingTimeout = this.resetPingTimeout.bind(this);
@@ -309,32 +309,32 @@ export class SocketService extends EventEmitter {
     }
   }
 
-  private handleVisibilityChange() {
-    if (document.visibilityState === "hidden") {
-      console.log(
-        "Page hidden, disconnecting socket without removing listeners"
-      );
-      this.disconnectForVisibility();
-    } else if (document.visibilityState === "visible") {
-      console.log("Page visible, attempting to reconnect");
+  // private handleVisibilityChange() {
+  //   if (document.visibilityState === "hidden") {
+  //     console.log(
+  //       "Page hidden, disconnecting socket without removing listeners"
+  //     );
+  //     this.disconnectForVisibility();
+  //   } else if (document.visibilityState === "visible") {
+  //     console.log("Page visible, attempting to reconnect");
 
-      if (this.cleanupTimer) {
-        clearTimeout(this.cleanupTimer);
-        this.cleanupTimer = null;
-      }
+  //     if (this.cleanupTimer) {
+  //       clearTimeout(this.cleanupTimer);
+  //       this.cleanupTimer = null;
+  //     }
 
-      if (this.token && this.socket) {
-        console.log("Reconnecting socket after page became visible");
+  //     if (this.token && this.socket) {
+  //       console.log("Reconnecting socket after page became visible");
 
-        if (this.socket && !this.socket.connected && !this.isConnecting) {
-          this.isConnecting = true;
-          this.socket.connect();
-        } else {
-          this.reconnect();
-        }
-      }
-    }
-  }
+  //       if (this.socket && !this.socket.connected && !this.isConnecting) {
+  //         this.isConnecting = true;
+  //         this.socket.connect();
+  //       } else {
+  //         this.reconnect();
+  //       }
+  //     }
+  //   }
+  // }
   private setupCleanup() {
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer);
@@ -344,33 +344,33 @@ export class SocketService extends EventEmitter {
     if (typeof window !== "undefined") {
       window.removeEventListener("beforeunload", this.disconnect);
       window.removeEventListener("pagehide", this.disconnect);
-      document.removeEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange
-      );
+      // document.removeEventListener(
+      //   "visibilitychange",
+      //   this.handleVisibilityChange
+      // );
       window.addEventListener("beforeunload", this.disconnect);
       window.addEventListener("pagehide", this.disconnect);
-      document.addEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange
-      );
+      // document.addEventListener(
+      //   "visibilitychange",
+      //   this.handleVisibilityChange
+      // );
 
-      window.addEventListener("online", () => {
-        console.log("Browser went online");
-        if (
-          !this.socket?.connected &&
-          !this.isConnecting &&
-          !this.manuallyDisconnected
-        ) {
-          console.log("Reconnecting after coming online");
-          this.reconnect();
-        }
-      });
+      // window.addEventListener("online", () => {
+      //   console.log("Browser went online");
+      //   if (
+      //     !this.socket?.connected &&
+      //     !this.isConnecting &&
+      //     !this.manuallyDisconnected
+      //   ) {
+      //     console.log("Reconnecting after coming online");
+      //     this.reconnect();
+      //   }
+      // });
 
-      window.addEventListener("offline", () => {
-        console.log("Browser went offline");
-        this.connectionHealthy = false;
-      });
+      // window.addEventListener("offline", () => {
+      //   console.log("Browser went offline");
+      //   this.connectionHealthy = false;
+      // });
     }
   }
 
@@ -528,10 +528,10 @@ export class SocketService extends EventEmitter {
     if (typeof window !== "undefined") {
       window.removeEventListener("beforeunload", this.disconnect);
       window.removeEventListener("pagehide", this.disconnect);
-      document.removeEventListener(
-        "visibilitychange",
-        this.handleVisibilityChange
-      );
+      // document.removeEventListener(
+      //   "visibilitychange",
+      //   this.handleVisibilityChange
+      // );
       window.removeEventListener("online", this.reconnect);
       window.removeEventListener("offline", () => {
         this.connectionHealthy = false;

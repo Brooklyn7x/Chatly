@@ -11,6 +11,7 @@ import {
 } from "../types/conversation";
 import { ServiceResponse } from "../types/service-respone";
 import { ConversationModel } from "../models/conversation";
+import redisClient from "../config/redis";
 
 interface ParticipantUpdate {
   action: "add" | "remove" | "updateRole";
@@ -19,14 +20,10 @@ interface ParticipantUpdate {
 }
 
 export class ConversationService {
-  private redis: Redis;
-
   private userService: UserService;
   private logger: Logger;
 
   constructor() {
-    this.redis = new Redis(process.env.REDIS_URL as string);
-
     this.userService = new UserService();
     this.logger = new Logger("ConversationService");
   }
@@ -137,7 +134,7 @@ export class ConversationService {
 
       if (result) {
         const cacheKey = `conversation:${conversationId}`;
-        await this.redis.del(cacheKey);
+        await redisClient.del(cacheKey);
 
         return {
           success: true,
@@ -292,7 +289,7 @@ export class ConversationService {
 
   //     if (result) {
   //       const cacheKey = `conversation:${conversationId}`;
-  //       await this.redis.del(cacheKey);
+  //       await redisClient.del(cacheKey);
 
   //       return {
   //         success: true,
@@ -420,7 +417,7 @@ export class ConversationService {
   }
 
   private async cacheConversation(conversation: any): Promise<void> {
-    const pipeline = this.redis.pipeline();
+    const pipeline = redisClient.pipeline();
     const cacheKey = `conversations:${conversation.id}`;
 
     pipeline.hset(cacheKey, {
@@ -446,17 +443,17 @@ export class ConversationService {
     conversationId: string
   ): Promise<Conversation | null> {
     const cacheKey = `conversation:${conversationId}`;
-    const conversationData = await this.redis.hgetall(cacheKey);
+    const conversationData = await redisClient.hgetall(cacheKey);
 
     if (!Object.keys(conversationData).length) {
       return null;
     }
-    const participantKey = await this.redis.keys(`${cacheKey}:participant:*`);
+    const participantKey = await redisClient.keys(`${cacheKey}:participant:*`);
 
     const participants = await Promise.all(
       participantKey.map(async (key) => {
         const userId = key.split(":").pop()!;
-        const data = await this.redis.hgetall(key);
+        const data = await redisClient.hgetall(key);
         return {
           userId,
           role: data.role as ParticipantRole,

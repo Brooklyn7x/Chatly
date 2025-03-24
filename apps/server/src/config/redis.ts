@@ -1,80 +1,10 @@
-// // import { Redis } from "ioredis";
-// // import { Logger } from "../utils/logger";
-// // import { config } from "./config";
+import Redis from "ioredis";
+import logger from "./logger";
+import "dotenv/config";
 
-// // export class RedisService {
-// //   private static instance: Redis | null = null;
-// //   private static logger: Logger = new Logger("RedisService");
-// //   private static reconnectAttempts = 0;
-// //   private static maxReconnectAttempts = 20;
+const redisClient = new Redis(process.env.REDIS_URL as string);
 
-// //   static getInstance(): Redis {
-// //     if (!RedisService.instance) {
-// //       RedisService.instance = new Redis({
-// //         host: config.redis.host,
-// //         port: config.redis.port,
-// //         retryStrategy: (times: number) => {
-// //           if (
-// //             RedisService.reconnectAttempts >= RedisService.maxReconnectAttempts
-// //           ) {
-// //             RedisService.logger.error("Max reconnection attempts reached");
-// //             return null; // Stop retrying
-// //           }
-// //           RedisService.reconnectAttempts++;
-// //           return config.redis.retryStrategy(times);
-// //         },
-// //         maxRetriesPerRequest: config.redis.maxRetriesPerRequest,
-// //         enableReadyCheck: true,
-// //         lazyConnect: true, // Only connect when needed
-// //         connectTimeout: config.redis.connectTimeout,
-// //         enableAutoPipelining: config.redis.enableAutoPipelining,
-// //       });
+redisClient.on("connect", () => logger.info("Connected to Redis"));
+redisClient.on("error", (err) => logger.error(`Redis Client Error: ${err}`));
 
-// //       RedisService.instance.on("connect", () => {
-// //         RedisService.logger.info("Redis connected successfully");
-// //         RedisService.reconnectAttempts = 0; // Reset counter on successful connection
-// //       });
-
-// //       RedisService.instance.on("error", (error) => {
-// //         RedisService.logger.error("Redis connection error:", error);
-// //       });
-
-// //       RedisService.instance.on("close", () => {
-// //         RedisService.logger.info("Redis connection closed");
-// //       });
-
-// //       RedisService.instance.on("reconnecting", (delay: number) => {
-// //         RedisService.logger.info(`Reconnecting to Redis in ${delay}ms...`);
-// //       });
-// //     }
-
-// //     return RedisService.instance;
-// //   }
-
-// //   static async closeConnection(): Promise<void> {
-// //     if (RedisService.instance) {
-// //       await RedisService.instance.quit();
-// //       RedisService.instance = null;
-// //       RedisService.logger.info("Redis connection closed gracefully");
-// //     }
-// //   }
-// // }
-
-// import { Redis } from "ioredis";
-// import "dotenv/config";
-// import logger from "../utils/loggers";
-
-// export const redisClient = new Redis(
-//   process.env.REDIS_URL || "redis://localhost:6379"
-// );
-
-// export const connectRedis = async (): Promise<void> => {
-//   try {
-//     await redisClient.connect();
-//     logger.info("Redis connected");
-//   } catch (error) {
-//     console.log(error);
-//     logger.error("Redis connection error:", error);
-//     process.exit(1);
-//   }
-// };
+export default redisClient;

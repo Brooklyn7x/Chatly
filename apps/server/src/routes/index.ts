@@ -1,4 +1,4 @@
-import { authenticate } from "../middleware/auth";
+import { authenticate } from "../middlewares/authMiddleware";
 import { Router } from "express";
 import authRoutes from "./authRoutes";
 import userRoutes from "./userRoutes";

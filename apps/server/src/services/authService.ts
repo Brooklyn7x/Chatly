@@ -5,21 +5,19 @@ import { Logger } from "../utils/logger";
 import { UserService } from "./userService";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user";
+import redisClient from "../config/redis";
 
 const bcrypt = require("bcrypt");
 
 export class AuthService {
-  private redis: Redis;
   private user: UserService;
   private logger: Logger;
-
   private readonly ACCESS_TOKEN_EXPIRY = "1h";
   private readonly REFRESH_TOKEN_EXPIRY = "7d";
   private readonly MAX_LOGIN_ATTEMPTS = 5;
   private readonly LOGIN_BLOCK_DURATION = 15 * 60;
 
   constructor() {
-    this.redis = new Redis(process.env.REDIS_URL as string);
     this.user = new UserService();
     this.logger = new Logger("AuthService");
   }
@@ -135,7 +133,7 @@ export class AuthService {
         process.env.JWT_REFRESH_SECRET!
       ) as TokenPayload;
 
-      const storedToken = await this.redis.get(decoded.userId);
+      const storedToken = await redisClient.get(decoded.userId);
       if (!storedToken || storedToken !== refreshToken) {
         return {
           success: false,
@@ -225,7 +223,7 @@ export class AuthService {
         };
       }
 
-      const sessionExists = await this.redis.exists(`session:${userId}`);
+      const sessionExists = await redisClient.exists(`session:${userId}`);
       if (!sessionExists) {
         return {
           success: false,
@@ -233,7 +231,7 @@ export class AuthService {
         };
       }
 
-      await this.redis.hset(
+      await redisClient.hset(
         `session:${userId}`,
         "lastActive",
         new Date().toISOString()
@@ -259,7 +257,7 @@ export class AuthService {
     token: string
   ): Promise<void> {
     const session = { userId, lastActive: new Date() };
-    const pipeline = this.redis.pipeline();
+    const pipeline = redisClient.pipeline();
     pipeline.hset(`session:${userId}`, {
       ...session,
       lastActive: session.lastActive.toISOString(),
@@ -287,16 +285,16 @@ export class AuthService {
 
   private async incrementLoginAttempts(email: string): Promise<void> {
     const key = `login_attempts:${email}`;
-    await this.redis.incr(key);
-    await this.redis.expire(key, this.LOGIN_BLOCK_DURATION);
+    await redisClient.incr(key);
+    await redisClient.expire(key, this.LOGIN_BLOCK_DURATION);
   }
 
   private async getLoginAttempts(email: string): Promise<number> {
-    const attempts = await this.redis.get(`login_attempts:${email}`);
+    const attempts = await redisClient.get(`login_attempts:${email}`);
     return attempts ? parseInt(attempts) : 0;
   }
 
   private async clearLoginAttempts(email: string): Promise<void> {
-    await this.redis.del(`login_attempts:${email}`);
+    await redisClient.del(`login_attempts:${email}`);
   }
 }

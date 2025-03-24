@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import { ConversationService } from "../services/conversationService";
 import { MessageService } from "../services/messageService";
-import { SocketService } from "../services/socketService";
 import { BaseController } from "./baseController";
 
 export class MessageController extends BaseController {

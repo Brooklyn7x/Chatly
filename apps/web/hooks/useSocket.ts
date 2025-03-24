@@ -58,7 +58,6 @@ export function useSocket() {
   useEffect(() => {
     if (!accessToken) {
       console.log("No access token, disconnecting socket");
-      socketService.disconnect();
       return;
     }
 
@@ -74,7 +73,6 @@ export function useSocket() {
 
     return () => {
       console.log("Cleaning up socket connection (unmount or HMR)");
-
       socketService.off("connected", handleConnect);
       socketService.off("disconnected", handleDisconnect);
       socketService.off("connect_error", handleError);

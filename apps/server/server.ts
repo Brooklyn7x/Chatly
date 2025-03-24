@@ -1,32 +1,22 @@
 import { createServer } from "http";
-import { Server } from "socket.io";
-import app from "./src/app";
-import logger from "./src/utils/loggers";
+import app from "./app";
 import mongoose from "mongoose";
 import connectDB from "./src/config/db.js";
-import { SocketService } from "./src/services/socketService";
+import { setupSocket } from "./src/sockets";
+
+const PORT = parseInt(process.env.PORT || "8000");
+
+connectDB();
 
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: ["http://localhost:3000", "http://192.168.31.197:3000"],
-    methods: ["GET", "POST"],
-    credentials: true,
-    allowedHeaders: ["Authorization", "Content-Type"],
-  },
-});
+setupSocket(server);
 
-SocketService.getInstance();
-connectDB();
-//redis()
-
-const PORT = parseInt(process.env.PORT || "8002", 10);
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
 async function shutdown() {
-  logger.info("Shutting down...");
+  console.log("Shutting down...");
   server.close();
   await mongoose.connection.close();
   // await redisClient.quit();
@@ -35,9 +25,17 @@ async function shutdown() {
 
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
-
 process.on("unhandledRejection", (reason, promise) => {
-  logger.error("Unhandled Rejection:", reason);
+  console.error("Unhandled Rejection:", reason);
 });
 
-export { io };
+//  export { io };
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: ["http://localhost:3000", "http://192.168.31.197:3000"],
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//     allowedHeaders: ["Authorization", "Content-Type"],
+//   },
+// });

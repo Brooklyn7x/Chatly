@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
-import { NextFunction } from "express";
 import { Socket } from "socket.io";
-import logger from "../utils/loggers";
+import logger from "../config/logger";
 
 export function authSocket(socket: Socket, next: (err?: Error) => void) {
   const token = socket.handshake.auth.token;

@@ -1,22 +1,21 @@
 import mongoose from "mongoose";
+import logger from "./logger";
 import "dotenv/config";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.DB_URI || "", {});
-
-    console.log("Database connected");
+    const conn = await mongoose.connect(process.env.DB_URI as string);
+    logger.info("MongoDB Connected");
 
     mongoose.connection.on("disconnected", () => {
-      console.log("MongoDB disconnected");
+      logger.info("MongoDB disconnected");
     });
-
     mongoose.connection.on("error", (err) => {
-      console.error("MongoDB connection error:", err);
+      logger.error("MongoDB connection error:", err);
       process.exit(1);
     });
   } catch (error) {
-    console.error("Database connection error:", error);
+    logger.error("Database connection error:", error);
     process.exit(1);
   }
 };

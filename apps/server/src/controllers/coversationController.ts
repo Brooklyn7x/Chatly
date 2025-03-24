@@ -3,7 +3,7 @@ import { ConversationService } from "../services/conversationService";
 import { BaseController } from "./baseController";
 import { CreateConversationDTO } from "../types/conversation";
 import { UpdateConversationSchema } from "../validators/conversation";
-import { ParticipantRole, ConversationType } from "../types/conversation";
+
 
 export class ConversationController extends BaseController {
   private readonly conversationService: ConversationService;
