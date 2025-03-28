@@ -4,7 +4,7 @@ import { ServiceResponse } from "../types/service-respone";
 import { Logger } from "../utils/logger";
 import { UserService } from "./userService";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../models/user";
+import User from "../models/user";
 import redisClient from "../config/redis";
 
 const bcrypt = require("bcrypt");
@@ -69,7 +69,7 @@ export class AuthService {
         };
       }
 
-      const user = await UserModel.findOne({ email: data.email });
+      const user = await User.findOne({ email: data.email });
 
       if (!user) {
         await this.incrementLoginAttempts(data.email);

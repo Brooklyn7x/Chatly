@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   ArrowLeft,
+  BoxSelectIcon,
   EllipsisVertical,
   LucideIcon,
   Phone,
@@ -25,8 +26,9 @@ import { Chat } from "@/types";
 
 interface ChatHeaderProps {
   chat: Chat;
+  selectMessage?: () => void;
 }
-export default function ChatHeader({ chat }: ChatHeaderProps) {
+export default function ChatHeader({ chat, selectMessage }: ChatHeaderProps) {
   const { user } = useAuthStore();
   const { setIsOpen } = useChatPanelStore();
   const { activeChatId, setActiveChat } = useChatStore();
@@ -87,11 +89,17 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
               <EllipsisVertical className="h-5 w-5" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" alignOffset={10} className="w-36">
+          <DropdownMenuContent align="end" alignOffset={10} className="w-44">
             <DropdownMenuItem onClick={handleDelete}>
               <div className="flex items-center gap-4 text-muted-foreground">
                 <Trash size={16} />
                 <p>Delete</p>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>
+              <div className="flex items-center gap-4 text-muted-foreground">
+                <BoxSelectIcon size={16} />
+                <p>Select messages</p>
               </div>
             </DropdownMenuItem>
           </DropdownMenuContent>

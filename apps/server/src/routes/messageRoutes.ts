@@ -1,12 +1,8 @@
 import { Router } from "express";
-import { MessageController } from "../controllers/messageController";
+import * as MessageController from "../controllers/messageControllers";
 
 const router = Router();
-const controller = new MessageController();
 
-router.get("/:id", controller.getMessages);
-router.delete("/:messageId", controller.deleteMessage);
-router.put("/:id", controller.updateMessage)
-
+router.get("/:conversationId", MessageController.getMessages);
 
 export default router;

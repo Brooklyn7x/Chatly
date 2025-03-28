@@ -7,7 +7,7 @@ import {
 } from "../types/user";
 import { Logger } from "../utils/logger";
 import { ServiceResponse } from "../types/service-respone";
-import { UserModel } from "../models/user";
+import User from "../models/user";
 import redisClient from "../config/redis";
 const bcrypt = require("bcrypt");
 
@@ -34,7 +34,7 @@ export class UserService {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      const user = await UserModel.create(userData);
+      const user = await User.create(userData);
       await this.cacheUserProfile(user);
 
       return {
@@ -52,7 +52,7 @@ export class UserService {
 
   async getUserStatus(userId: string): Promise<ServiceResponse<any>> {
     try {
-      const user = await UserModel.findById(userId);
+      const user = await User.findById(userId);
       if (!user) {
         return {
           success: false,
@@ -83,7 +83,7 @@ export class UserService {
         };
       }
 
-      const user = await UserModel.findById(id);
+      const user = await User.findById(id);
       if (!user) {
         return {
           success: false,
@@ -108,7 +108,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<ServiceResponse<any>> {
     try {
-      const user = await UserModel.findOne({ email });
+      const user = await User.findOne({ email });
       if (!user) {
         return {
           success: false,
@@ -135,7 +135,7 @@ export class UserService {
   ): Promise<ServiceResponse<UserProfile>> {
     try {
       if (data.email) {
-        const existingUser = await UserModel.findOne({
+        const existingUser = await User.findOne({
           email: data.email,
         });
 
@@ -148,7 +148,7 @@ export class UserService {
       }
 
       if (data.username) {
-        const existingUser = await UserModel.findOne({
+        const existingUser = await User.findOne({
           username: data.username,
         });
 
@@ -161,7 +161,7 @@ export class UserService {
       }
 
       if (data.newPassword) {
-        const user = await UserModel.findById(id);
+        const user = await User.findById(id);
         if (!user) {
           return {
             success: false,
@@ -183,7 +183,7 @@ export class UserService {
         data.newPassword = await bcrypt.hash(data.newPassword, 12);
       }
 
-      const updatedUser = await UserModel.findByIdAndUpdate(
+      const updatedUser = await User.findByIdAndUpdate(
         id,
         {
           ...data,
@@ -217,7 +217,7 @@ export class UserService {
   async updateUserStatus(userId: string, status: UserStatus) {
     try {
       await Promise.all([
-        UserModel.findByIdAndUpdate({
+        User.findByIdAndUpdate({
           _id: userId,
           status,
           lastSeen: new Date(),
@@ -257,12 +257,12 @@ export class UserService {
       };
 
       const [users, total] = await Promise.all([
-        UserModel.find(searchQuery)
+        User.find(searchQuery)
           .select("-password -__v -createdAt -updatedAt")
           .skip(offset)
           .limit(limit)
           .lean(),
-        UserModel.countDocuments(searchQuery),
+        User.countDocuments(searchQuery),
       ]);
 
       return {

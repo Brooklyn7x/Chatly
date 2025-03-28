@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ArrowDownIcon, Loader2 } from "lucide-react";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { MessageBubble } from "./MessageBubble";
@@ -6,7 +7,6 @@ import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { useMessageSocket } from "@/hooks/useMessageSocket";
 import { fetchMessages } from "@/hooks/useMessage";
 import { useReadMessages } from "@/hooks/useReadMessage";
 
@@ -40,6 +40,7 @@ function MessageList() {
 
   const { user } = useAuthStore();
   const { activeChatId } = useChatStore();
+
   if (!activeChatId) return;
 
   const { messages } = useMessageStore();
@@ -48,7 +49,6 @@ function MessageList() {
 
   const { isTyping } = useTypingIndicator(activeChatId);
 
-  useMessageSocket();
   useReadMessages(activeChatId);
 
   const isOwnMessage = useCallback(
@@ -60,8 +60,8 @@ function MessageList() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto pb-20" ref={containerRef}>
-        <div className="space-y-4">
+      <ScrollArea className="h-[calc(100vh-160px)]" ref={containerRef}>
+        <div className="space-y-4 p-4">
           {isLoading ? (
             <MessageLoader />
           ) : error ? (
@@ -73,7 +73,8 @@ function MessageList() {
             />
           )}
         </div>
-      </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
 
       {isTyping && <TypingIndicator />}
       {showScrollButton && (
@@ -97,7 +98,7 @@ interface MessageErrorProps {
 
 export function MessageError({ error }: MessageErrorProps) {
   return (
-    <div className="text-red-500 text-sm p-4 text-center">
+    <div className="text-red-500 text-sm text-center">
       {typeof error === "string"
         ? error
         : error.message || "Something went wrong."}
@@ -115,7 +116,7 @@ export function MessagesContainer({
   isOwnMessage,
 }: MessagesContainerProps) {
   return (
-    <div className="space-y-4">
+    <>
       {messages.map((message) => (
         <MessageBubble
           key={message._id}
@@ -123,7 +124,7 @@ export function MessagesContainer({
           isOwn={isOwnMessage(message)}
         />
       ))}
-    </div>
+    </>
   );
 }
 

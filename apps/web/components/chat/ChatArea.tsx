@@ -11,13 +11,13 @@ import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 const ChatArea = () => {
   const { activeChatId, chats } = useChatStore();
 
-  const chat = useMemo(() => {
-    return chats?.find((chat) => chat._id === activeChatId);
-  }, [chats, activeChatId]);
-
   useChatSocket(activeChatId || "");
   useMessageSocket();
   useTypingIndicator(activeChatId || "");
+
+  const chat = useMemo(() => {
+    return chats?.find((chat) => chat._id === activeChatId);
+  }, [chats, activeChatId]);
 
   if (!chat) return null;
 
@@ -28,6 +28,7 @@ const ChatArea = () => {
           <div className="flex-shrink-0">
             <ChatHeader chat={chat} />
           </div>
+
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-2xl mx-auto">
               <Suspense fallback={<p>MessageList...</p>}>

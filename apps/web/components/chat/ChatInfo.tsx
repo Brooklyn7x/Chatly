@@ -11,6 +11,7 @@ import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { ParticipantRole } from "@/types/chat";
 import dynamic from "next/dynamic";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const SharedMedia = dynamic(() => import("./SharedMedia"));
 const RemoveMemberDialog = dynamic(() => import("../modal/RemoveMemberDailog"));
@@ -121,93 +122,81 @@ function ChatInfo() {
   };
 
   return (
-    <motion.div
-      initial={{
-        translateX: "100%",
-      }}
-      animate={{
-        translateX: 0,
-      }}
-      exit={{
-        translateX: "100%",
-      }}
-      transition={{
-        duration: 0.3,
-        ease: "easeOut",
-      }}
-      className={cn(
-        "fixed inset-y-0 right-0 w-full sm:w-[400px] bg-background/90 backdrop-blur-md  sm:border-l shadow-md",
-        "flex flex-col"
-      )}
-    >
-      <ChatHeader
-        displayName={displayName}
-        onEdit={handleOpenEdit}
-        isGroupChat={isGroupChat}
-        onClose={() => setIsOpen(false)}
-      />
-
-      <div className="flex flex-col overflow-hidden">
-        <ChatProfileSection displayName={displayName} statusText={statusText} />
-
-        <ChatActions
+    <Sheet open={true} onOpenChange={() => setIsOpen(false)}>
+      <SheetContent side="right" className="w-full sm:w-[400px] p-0" hideClose>
+        <SheetTitle className="sr-only">Chat info</SheetTitle>
+        <ChatHeader
+          displayName={displayName}
+          onEdit={handleOpenEdit}
           isGroupChat={isGroupChat}
-          onDeleteChat={() => setDeleteChat(true)}
-          onManageMembers={() => setRemovingUser(true)}
+          onClose={() => setIsOpen(false)}
         />
-      </div>
 
-      <section className="flex-1 border-t overflow-y-auto">
-        <SharedMedia chat={chat} />
-      </section>
+        <div className="flex flex-col overflow-hidden h-full">
+          <ChatProfileSection
+            displayName={displayName}
+            statusText={statusText}
+          />
 
-      {isGroupChat && (
-        <div className="absolute right-5 bottom-5">
-          <FloatinButton onClick={() => setAddMember(true)}>
-            <UserPlus className="h-5 w-5" />
-          </FloatinButton>
+          <ChatActions
+            isGroupChat={isGroupChat}
+            onDeleteChat={() => setDeleteChat(true)}
+            onManageMembers={() => setRemovingUser(true)}
+          />
+
+          <section className="flex-1 border-t overflow-y-auto">
+            <SharedMedia chat={chat} />
+          </section>
         </div>
-      )}
 
-      <Suspense fallback={null}>
-        <EditChatDailog
-          title={chat?.metadata.title || ""}
-          description={chat?.metadata.description || ""}
-          open={editing}
-          onOpenChange={setEditing}
-          onSubmit={handleUpdateTitle}
-          isLoading={isUpdating}
-        />
-      </Suspense>
+        {isGroupChat && (
+          <div className="absolute right-5 bottom-5">
+            <FloatinButton onClick={() => setAddMember(true)}>
+              <UserPlus className="h-5 w-5" />
+            </FloatinButton>
+          </div>
+        )}
 
-      <Suspense fallback={null}>
-        <AddMemberDailog
-          open={addMember}
-          onOpenChange={setAddMember}
-          participants={chat?.participants || []}
-          onAdd={handleAddMember}
-          isAdding={isAddingMembers}
-        />
-      </Suspense>
+        <Suspense fallback={null}>
+          <EditChatDailog
+            title={chat?.metadata.title || ""}
+            description={chat?.metadata.description || ""}
+            open={editing}
+            onOpenChange={setEditing}
+            onSubmit={handleUpdateTitle}
+            isLoading={isUpdating}
+          />
+        </Suspense>
 
-      <Suspense fallback={null}>
-        <RemoveMemberDialog
-          open={removingUser}
-          onOpenChange={setRemovingUser}
-          participants={chat?.participants || []}
-          onRemove={handleRemoveMemeber}
-          removingUserId={removingUserId}
-        />
-      </Suspense>
+        <Suspense fallback={null}>
+          <AddMemberDailog
+            open={addMember}
+            onOpenChange={setAddMember}
+            participants={chat?.participants || []}
+            onAdd={handleAddMember}
+            isAdding={isAddingMembers}
+          />
+        </Suspense>
 
-      <Suspense fallback={null}>
-        <DeleteChatDailog
-          open={deleteChat}
-          onOpenChange={setDeleteChat}
-          onConfirm={handleDeleteChat}
-        />
-      </Suspense>
-    </motion.div>
+        <Suspense fallback={null}>
+          <RemoveMemberDialog
+            open={removingUser}
+            onOpenChange={setRemovingUser}
+            participants={chat?.participants || []}
+            onRemove={handleRemoveMemeber}
+            removingUserId={removingUserId}
+          />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <DeleteChatDailog
+            open={deleteChat}
+            onOpenChange={setDeleteChat}
+            onConfirm={handleDeleteChat}
+          />
+        </Suspense>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -263,7 +252,7 @@ export function ChatProfileSection({
 }: ChatProfileSectionProps) {
   return (
     <section className="flex flex-col items-center justify-center gap-4 p-4">
-      <UserAvatar size="xl" className="ring-2 ring-primary/50" />
+      <UserAvatar size="xl" />
       <div className="mt-2 text-center">
         <h1 className="text-xl font-semibold">{displayName}</h1>
         <p className="text-center text-sm text-muted-foreground mt-1">

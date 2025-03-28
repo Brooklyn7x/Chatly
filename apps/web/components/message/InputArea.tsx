@@ -49,6 +49,7 @@ export const InputArea = ({
       >
         <Paperclip className="h-5 w-5" />
       </button>
+
       <input
         ref={fileInputRef}
         type="file"

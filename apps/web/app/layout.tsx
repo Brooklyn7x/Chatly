@@ -6,6 +6,8 @@ import { SWRConfig } from "swr";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/shared/AppSidebar";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",
@@ -31,7 +33,8 @@ export default function RootLayout({
             }}
           >
             <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-            {children}
+
+            <main>{children}</main>
           </SWRConfig>
         </ThemeProvider>
       </body>

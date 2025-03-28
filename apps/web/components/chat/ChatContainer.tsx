@@ -32,6 +32,7 @@ export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
       <Suspense fallback={<div>Loading chat...</div>}>
         <ChatArea />
       </Suspense>
+      
       {isOpen && (
         <Suspense fallback={<div>Loading chat info...</div>}>
           <ChatInfo />

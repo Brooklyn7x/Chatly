@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
-import { chatSocket } from "./chatSocket";
-import jwt from "jsonwebtoken";
-import { userSocket } from "./userSocket";
-import { messageSocket } from "./messageSocket";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { userHandler, userSocket } from "./userHandler";
+import { messageHandler, messageSocket } from "./messageHandler";
+import { chatHandler } from "./chatHandler";
 
 export const setupSocket = (server: any): void => {
   const io = new Server(server, {
@@ -21,8 +21,11 @@ export const setupSocket = (server: any): void => {
       if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not defined");
       }
-      const user = jwt.verify(token, process.env.JWT_SECRET);
-      socket.data.user = user;
+      const decode = jwt.verify(
+        token,
+        process.env.JWT_ACCESS_SECRET as string
+      ) as JwtPayload;
+      socket.data.userId = decode.id;
       next();
     } catch (error) {
       next(new Error("Authentication error"));
@@ -30,8 +33,13 @@ export const setupSocket = (server: any): void => {
   });
 
   io.on("connection", (socket) => {
-    chatSocket(io, socket);
-    userSocket(io, socket);
-    messageSocket(io, socket);
+    console.log(`User connected: ${socket.id}`);
+    userHandler(io, socket);
+    chatHandler(io, socket);
+    messageHandler(io, socket);
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
   });
 };

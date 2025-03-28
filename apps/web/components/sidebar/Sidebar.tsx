@@ -1,14 +1,12 @@
 "use client";
+
 import { Suspense, useState } from "react";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
-import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
-import { SidebarSkeleton } from "./SidebarSkeleton";
 import { useChatStore } from "@/store/useChatStore";
 import { ViewType } from "@/types";
 import { fetchChats } from "@/hooks/useChats";
-import { LoaderIcon } from "lucide-react";
 
 const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
   ssr: false,
@@ -21,10 +19,8 @@ interface SidebarProps {
 const Sidebar = ({ isMobile }: SidebarProps) => {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
-  const [searchQuery, setSearchQuery] = useState("");
-  const { isLoading } = fetchChats();
 
-  if (isLoading) return <LoaderIcon />;
+  fetchChats();
 
   return (
     <div
@@ -35,18 +31,11 @@ const Sidebar = ({ isMobile }: SidebarProps) => {
         !isMobile ? "" : "absolute inset-y-0 left-0 z-10"
       )}
     >
-      {view === "main" && (
-        <SidebarHeader
-          view={view}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onViewChange={setView}
-        />
-      )}
-      <Suspense fallback={<SidebarSkeleton />}>
+      <Suspense
+        fallback={<div className="p-4 text-center">Loading chats...</div>}
+      >
         <SidebarContent
           view={view}
-          searchQuery={searchQuery}
           onViewChange={setView}
         />
       </Suspense>

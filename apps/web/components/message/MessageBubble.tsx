@@ -11,7 +11,6 @@ import { MessageEditor } from "./MessageEditor";
 import { MessageReactionPicker } from "./MessageReactionPicker";
 import { MessageReactions } from "./MessageReactions";
 import { useReactions } from "@/hooks/useReactions";
-import { useMessageEdit } from "@/hooks/useMessageEditing";
 
 interface MessageBubbleProps {
   message: Message;
@@ -19,8 +18,11 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
-  const [showMenu, setShowMenu] = useState(false);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showreaction, setShowReaction] = useState(false);
+  const [editedContent, setEditedContent] = useState(message.content);
+
   const {
     _id,
     content,
@@ -32,14 +34,6 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     attachments,
   } = message;
 
-  const {
-    isEditing,
-    editedContent,
-    setEditedContent,
-    setIsEditing,
-    handleEdit,
-  } = useMessageEdit(content, _id);
-
   const { reactions, addReaction, removeReaction } = useReactions(message._id);
 
   const handleEditMessage = () => {
@@ -50,8 +44,9 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   };
 
   const handleDeleteMessage = () => {
-    socketService.deleteMessage(_id);
-    setShowMenu(false);
+    if (confirm("Are you sure you want to delete this message?")) {
+      socketService.deleteMessage(_id);
+    }
   };
 
   return (
@@ -74,14 +69,14 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         ref={bubbleRef}
         onContextMenu={(e) => {
           e.preventDefault();
-          setShowMenu(true);
         }}
       >
         <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
           <div className="flex items-center gap-2">
             {isOwn && (
               <MessageActions
-                onEdit={handleEditMessage}
+                onReaction={() => setShowReaction((prev) => !prev)}
+                onEdit={() => setIsEditing(true)}
                 onDelete={handleDeleteMessage}
               />
             )}
@@ -103,7 +98,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 <MessageEditor
                   content={editedContent}
                   onChange={setEditedContent}
-                  onSave={handleEdit}
+                  onSave={handleEditMessage}
                   onCancel={() => setIsEditing(false)}
                 />
               ) : (
@@ -113,6 +108,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                     type={type}
                     attachments={attachments}
                   />
+
                   {reactions.length > 0 && (
                     <MessageReactions
                       reactions={reactions}
@@ -132,10 +128,13 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
           </div>
         </div>
       </div>
-      <MessageReactionPicker
-        onSelect={addReaction}
-        position={isOwn ? "right" : "left"}
-      />
+
+      {showreaction && (
+        <MessageReactionPicker
+          onSelect={addReaction}
+          position={isOwn ? "right" : "left"}
+        />
+      )}
     </motion.div>
   );
 };

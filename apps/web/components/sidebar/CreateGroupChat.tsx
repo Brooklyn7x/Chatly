@@ -14,7 +14,7 @@ import { useSearch } from "@/hooks/useSearch";
 import { useChats } from "@/hooks/useChats";
 import { useGroupChatForm } from "@/hooks/useGroupChat";
 
-interface GroupChatProps {
+interface CreateGroupChatProps {
   onClose: () => void;
 }
 
@@ -22,7 +22,7 @@ interface User {
   _id: string;
 }
 
-const GroupChat = ({ onClose }: GroupChatProps) => {
+const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   const [step, setStep] = useState<"members" | "details">("members");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -208,4 +208,4 @@ const DetailsStep = ({
   </div>
 );
 
-export default GroupChat;
+export default CreateGroupChat;

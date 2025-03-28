@@ -1,65 +1,61 @@
 import mongoose, { Schema, Document } from "mongoose";
-import {
-  Conversation,
-  ConversationType,
-  ParticipantRole,
-} from "../types/conversation";
 
-export interface IConversationDocument extends Conversation, Document {}
+export interface ConversationDocument extends Document {
+  type: "private" | "group" | "channel";
+  name?: string;
+  descriptions?: string;
+  image?: string;
+  participants: Array<{
+    userId: mongoose.Types.ObjectId;
+    role: "admin" | "moderator" | "member";
+    joinedAt: Date;
+  }>;
+  lastMessage?: {
+    messageId: mongoose.Types.ObjectId;
+    content: string;
+    senderId: mongoose.Types.ObjectId;
+    timestamp: Date;
+  };
+  createdBy: any;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-const ParticipantSchema = new Schema(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    role: {
-      type: String,
-      enum: Object.values(ParticipantRole),
-      default: ParticipantRole.MEMBER,
-    },
-    joinedAt: {
-      type: Date,
-      default: Date.now,
-    },
-    lastReadAt: {
-      type: Date,
-    },
-  },
-  { _id: false }
-);
-
-const ConversationSchema = new Schema(
+const conversationSchema = new Schema<ConversationDocument>(
   {
     type: {
       type: String,
-      enum: Object.values(ConversationType),
+      enum: ["private", "group", "channel"],
       required: true,
     },
-    participants: [ParticipantSchema],
+    name: {
+      type: String,
+      trim: true,
+    },
+    descriptions: {
+      type: String,
+      trim: true,
+    },
+    participants: [
+      {
+        userId: {
+          type: mongoose.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        role: {
+          type: String,
+          enum: ["admin", "moderator", "member"],
+          default: "member",
+        },
+        joinedAt: { type: Date, default: Date.now },
+      },
+    ],
     lastMessage: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: "Message",
     },
-    metadata: {
-      title: String,
-      description: String,
-      avatar: String,
-      isArchived: {
-        type: Boolean,
-        default: false,
-      },
-      isPinned: {
-        type: Boolean,
-        default: false,
-      },
-    },
-    unreadCount: {
-      type: Map,
-      of: Number,
-      default: () => new Map(),
-    },
+    createdBy: { type: mongoose.Types.ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,
@@ -68,35 +64,9 @@ const ConversationSchema = new Schema(
   }
 );
 
-ConversationSchema.virtual("recentMessages", {
-  ref: "Message",
-  localField: "_id",
-  foreignField: "conversationId",
-  options: {
-    sort: { createdAt: -1 },
-    limit: 20,
-  },
-});
+conversationSchema.index({ participants: 1, updatedAt: -1 });
 
-ConversationSchema.virtual("participantsDetails", {
-  ref: "User",
-  localField: "participants.userId",
-  foreignField: "_id",
-  justOne: false,
-  options: {
-    select: "-password -__v -createdAt -updatedAt",
-  },
-});
-
-ConversationSchema.index({ participants: 1 });
-ConversationSchema.index({ "participants.userId": 1 });
-ConversationSchema.index({ updatedAt: -1 });
-ConversationSchema.index({
-  "metadata.isArchived": 1,
-  updatedAt: -1,
-});
-
-export const ConversationModel = mongoose.model<IConversationDocument>(
+export default mongoose.model<ConversationDocument>(
   "Conversation",
-  ConversationSchema
+  conversationSchema
 );

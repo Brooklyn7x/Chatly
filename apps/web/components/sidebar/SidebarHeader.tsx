@@ -1,22 +1,19 @@
-import { useTheme } from "next-themes";
-
+import dynamic from "next/dynamic";
 import {
   Bookmark,
   LogOut,
   LucideIcon,
   Menu,
-  Moon,
   Palette,
   Settings,
-  Sun,
   User,
   User2Icon,
 } from "lucide-react";
-import dynamic from "next/dynamic";
 import { Button } from "../ui/button";
 import { SearchInput } from "./SearchInput";
 import useAuthStore from "@/store/useAuthStore";
 import { ViewType } from "@/types";
+import { Suspense } from "react";
 
 const DropdownMenu = dynamic(
   () => import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
@@ -93,27 +90,6 @@ const MENU_ITEMS = [
   },
 ];
 
-function ThemeToggle({
-  theme,
-  handleThemeToggle,
-}: {
-  theme: string | undefined;
-  handleThemeToggle: () => void;
-}) {
-  return (
-    <DropdownMenuItem onClick={handleThemeToggle}>
-      <div className="flex gap-4 items-center">
-        {theme === "light" ? (
-          <Moon size={16} strokeWidth={2} className="text-muted-foreground" />
-        ) : (
-          <Sun size={16} strokeWidth={2} className="text-muted-foreground" />
-        )}
-        <p className="text-muted-foreground">App Theme</p>
-      </div>
-    </DropdownMenuItem>
-  );
-}
-
 function UserProfile({ user }: { user: { username: string } }) {
   return (
     <DropdownMenuLabel>
@@ -156,29 +132,44 @@ export default function SidebarHeader({
     <div className="relative h-16 flex items-center px-4 border-b gap-3">
       {view === "main" && (
         <>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant={"outline"} size={"icon"} className="h-10 w-10">
+          <Suspense
+            fallback={
+              <Button
+                variant={"outline"}
+                size={"icon"}
+                className="h-10 w-10"
+                disabled
+              >
                 <Menu />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-              <UserProfile
-                user={user ? { username: user.username } : { username: "" }}
-              />
-              <DropdownMenuSeparator />
-              {MENU_ITEMS.map((item) => (
-                <MenuItem
-                  key={item.label}
-                  icon={item.icon}
-                  label={item.label}
-                  onClick={
-                    item.onClick ? () => item.onClick(onViewChange) : undefined
-                  }
+            }
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant={"outline"} size={"icon"} className="h-10 w-10">
+                  <Menu />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <UserProfile
+                  user={user ? { username: user.username } : { username: "" }}
                 />
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuSeparator />
+                {MENU_ITEMS.map((item) => (
+                  <MenuItem
+                    key={item.label}
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={
+                      item.onClick
+                        ? () => item.onClick(onViewChange)
+                        : undefined
+                    }
+                  />
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </Suspense>
           <SearchInput value={searchQuery} onChange={onSearchChange} />
         </>
       )}

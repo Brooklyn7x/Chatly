@@ -1,14 +1,12 @@
 import { Router } from "express";
-import { ConversationController } from "../controllers/coversationController";
-
+import * as conversationController from "../controllers/conversationControllerx";
 const router = Router();
-const controller = new ConversationController();
 
-router.post("/", controller.createConversation);
-router.get("/", controller.getConversations);
-router.get("/:id", controller.getConversationById);
-router.put("/:id", controller.updateConversation);
-router.patch("/:id/read", controller.markAsRead);
-router.delete("/:id", controller.deleteConversation);
+router.post("/", conversationController.createConversation);
+router.get("/", conversationController.getConversations);
+router.put("/participants", conversationController.addParticipants);
+router.delete("/participants", conversationController.removeParticipants);
+router.put("/:id", conversationController.updateConversation);
+router.delete("/:id", conversationController.deleteConversation);
 
 export default router;

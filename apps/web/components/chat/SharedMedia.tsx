@@ -56,7 +56,9 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
                   fill
                   src="/user.jpeg"
                   className="object-cover w-full h-full"
-                  loading="eager"
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
                 />
                 <div
                   className="absolute inset-0 bg-black/50 opacity-0 
