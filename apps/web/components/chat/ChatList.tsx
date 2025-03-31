@@ -1,12 +1,12 @@
 import { memo } from "react";
-import { useChatStore } from "@/store/useChatStore";
 import { ChatItem } from "./ChatItem";
+import { Chat } from "@/types";
 
-export const ChatList = memo(() => {
-  const { chats, setActiveChat } = useChatStore();
-  if (chats.length === 0) {
-    return <h1>No Chats. Create New Chat</h1>;
-  }
+interface ChatListProps {
+  chats: Chat[];
+  onSelectChat: (chatId: string) => void;
+}
+export const ChatList = memo(({ chats, onSelectChat }: ChatListProps) => {
   return (
     <nav className="flex flex-col overflow-y-auto overflow-x-hidden">
       <ul className="p-2 space-y-1">
@@ -14,7 +14,7 @@ export const ChatList = memo(() => {
           <ChatItem
             key={chat._id}
             chat={chat}
-            onClick={() => setActiveChat(chat._id)}
+            onClick={() => onSelectChat(chat._id)}
           />
         ))}
       </ul>

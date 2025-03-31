@@ -1,196 +1,329 @@
-import { Request, Response } from "express";
-import { ConversationService } from "../services/conversationService";
-import { BaseController } from "./baseController";
-import { CreateConversationDTO } from "../types/conversation";
-import { UpdateConversationSchema } from "../validators/conversation";
-import { ParticipantRole, ConversationType } from "../types/conversation";
+import { NextFunction, Request, Response } from "express";
+import User from "../models/user";
+import Conversation from "../models/conversation";
 
-export class ConversationController extends BaseController {
-  private readonly conversationService: ConversationService;
+export const createConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { type, participants, name, description } = req.body;
+    const id = req.user?.id;
 
-  constructor() {
-    super("ConversationController");
-    this.conversationService = new ConversationService();
-    this.createConversation = this.createConversation.bind(this);
-    this.getConversations = this.getConversations.bind(this);
-    this.getConversations = this.getConversations.bind(this);
-    this.deleteConversation = this.deleteConversation.bind(this);
-    this.getConversationById = this.getConversationById.bind(this);
-    this.updateConversation = this.updateConversation.bind(this);
-    this.markAsRead = this.markAsRead.bind(this);
-  }
+    if (type === "private") {
+      if (participants.length !== 2) {
+        res
+          .status(404)
+          .json({ message: "Private conversation must have two participants" });
+        return;
+      }
 
-  async createConversation(req: Request, res: Response): Promise<void> {
-    try {
-      const createDTO = req.body as CreateConversationDTO;
+      const userIds = participants.map((p: any) => p.userId);
 
-      if (
-        !createDTO.type ||
-        !createDTO.participantIds ||
-        !Array.isArray(createDTO.participantIds)
-      ) {
-        res.status(400).json({
-          success: false,
-          error:
-            "Invalid request format. Required: type and participantIds array",
+      if (!userIds.includes(id)) {
+        res.status(403).json({
+          message: "You must be one of the participants in the conversation",
         });
         return;
       }
 
-      const result = await this.conversationService.createConversation(
-        req.user._id,
-        createDTO
-      );
-
-      if (!result.success) {
+      if (userIds[0] === userIds[1]) {
         res.status(400).json({
-          success: false,
-          error: result.error,
+          message: "You cannot create a private conversation with yourself",
         });
         return;
       }
 
-      res.status(201).json(result);
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: "Failed to create chats",
-      });
-    }
-  }
-
-  async getConversations(req: Request, res: Response): Promise<void> {
-    try {
-      const limit = parseInt(req.query.limit as string) || 10;
-      const offset = parseInt(req.query.offset as string) || 0;
-      const result = await this.conversationService.getUserConversations(
-        req.user!._id,
-        limit,
-        offset
-      );
-      res.json(result);
-    } catch (error) {
-      this.logger.error("Error fetching conversations:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to fetch chats",
-      });
-    }
-  }
-
-  async getConversationById(req: Request, res: Response): Promise<void> {
-    try {
-      const result = await this.conversationService.getConversationById(
-        req.params.id
-      );
-
-      if (!result.success) {
-        res.status(404).json(result);
+      const users = await User.find({ _id: userIds });
+      if (users.length !== 2) {
+        res
+          .status(404)
+          .json({ message: "One or more participants do not exist" });
         return;
       }
 
-      res.json(result);
-    } catch (error) {
-      this.logger.error("Error fetching conversation:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to fetch conversation",
-      });
-    }
-  }
-
-  async deleteConversation(req: Request, res: Response): Promise<void> {
-    try {
-      const result = await this.conversationService.deleteConversation(
-        req.params.id,
-        req.user!._id
-      );
-
-      if (!result.success) {
-        res.status(404).json(result);
-        return;
-      }
-
-      res.json(result);
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        error: "Failed to delete conversation",
-      });
-    }
-  }
-
-  async updateConversation(req: Request, res: Response): Promise<void> {
-    try {
-      // Validate request body
-      const validationResult = UpdateConversationSchema.safeParse(req.body);
-      if (!validationResult.success) {
-        res.status(400).json({
-          success: false,
-          error: validationResult.error.errors[0].message,
-        });
-        return;
-      }
-
-      // Get validated data
-      const updateData = validationResult.data;
-
-      const result = await this.conversationService.updateConversation(
-        req.params.id,
-        req.user!._id.toString(), // Ensure string ID
-        updateData
-      );
-
-      // Handle service response
-      if (!result.success) {
-        const statusCode = result.error?.includes("not found")
-          ? 404
-          : result.error?.includes("permissions")
-            ? 403
-            : 400;
-        res.status(statusCode).json(result);
-        return;
-      }
-
-      // Return updated conversation
-      res.status(200).json({
-        success: true,
-        data: {
-          ...result.data.toObject(),
-          participants: result.data.participants.map((p: any) => ({
-            ...p,
-            userId: p.userId._id ? p.userId._id : p.userId,
-          })),
+      const existingConversation = await Conversation.findOne({
+        type: "private",
+        participants: {
+          $all: [
+            { $elemMatch: { userId: userIds[0] } },
+            { $elemMatch: { userId: userIds[1] } },
+          ],
         },
       });
-    } catch (error) {
-      this.logger.error("Error updating conversation:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error during conversation update",
-      });
-    }
-  }
-
-  async markAsRead(req: Request, res: Response): Promise<void> {
-    try {
-      const result = await this.conversationService.markAsRead(
-        req.params.id,
-        req.user!._id
-      );
-
-      if (!result.success) {
-        res.status(404).json(result);
+      if (existingConversation) {
+        res.status(400).json({
+          message: "A private conversation between users already exits",
+        });
         return;
       }
 
-      res.json(result);
-    } catch (error) {
-      this.logger.error("Error marking conversation as read:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to mark conversation as read",
+      const newConversation = new Conversation({
+        type: "private",
+        participants: participants.map((p: any) => ({
+          userId: p.userId,
+          role: "member",
+          joinedAt: new Date(),
+        })),
+        createdBy: id,
       });
+
+      await newConversation.save();
+
+      res.status(201).json({
+        message: "Private conversation created successfully",
+        data: newConversation,
+      });
+      return;
     }
+    if (type === "group" || type === "channel") {
+      if (participants.some((p: any) => p.userId === id)) {
+        participants.push({ userId: id, role: "admin" });
+      }
+
+      const newConversation = new Conversation({
+        type,
+        name: type === "group" || type === "channel" ? name : undefined,
+        description:
+          type === "group" || type === "channel" ? description : undefined,
+        participants: participants.map((p: any) => ({
+          userId: p.userId,
+          role: p.role || "member",
+          joinedAt: new Date(),
+        })),
+        createdBy: id,
+      });
+
+      await newConversation.save();
+
+      res.status(201).json({
+        message: "Group/Channel conversation created successfully",
+        data: newConversation,
+      });
+      return;
+    }
+
+    res.status(400).json({ message: "Invalid conversation type" });
+  } catch (error) {
+    next(error);
   }
-}
+};
+
+export const getConversations = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(403).json({ message: "Not authorized" });
+      return;
+    }
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const skip = (page - 1) * limit;
+
+    const conversations = await Conversation.find({
+      "participants.userId": userId,
+    })
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("participants.userId", "username profilePicture");
+
+    const totalConversation = await Conversation.countDocuments(conversations);
+    res.status(200).json({
+      data: conversations,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalConversation / limit),
+        totalConversation,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addParticipants = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { conversationId, participants } = req.body;
+    const userId = req.user?.id;
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
+    }
+
+    const isAdmin = conversation.participants.some(
+      (p: any) => p.userId.toString() === userId && p.role === "admin"
+    );
+    if (!isAdmin) {
+      res.status(400).json({ message: "Only admins can add participants" });
+      return;
+    }
+
+    participants.forEach((user: any) => {
+      const alreadyExits = conversation.participants.some(
+        (p: any) => p.userId.toString() === user.userId
+      );
+
+      if (alreadyExits) {
+        res.status(400).json({ message: "User already add exists" });
+        return;
+      }
+
+      if (!alreadyExits) {
+        conversation.participants.push({
+          userId: user.userId,
+          role: "member",
+          joinedAt: new Date(),
+        });
+      }
+    });
+
+    await conversation.save();
+
+    res
+      .status(200)
+      .json({ message: "Participants added successfully", data: conversation });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeParticipants = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { conversationId, userId: removeUserId } = req.body;
+    const userId = req.user?.id;
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
+    }
+
+    const isAdmin = conversation.participants.some(
+      (p: any) => p.userId.toString() === userId && p.role === "admin"
+    );
+    if (!isAdmin) {
+      res.status(400).json({ message: "Only admins can remove participants" });
+      return;
+    }
+
+    const participant = conversation.participants.find(
+      (p: any) => p.userId.toString() !== removeUserId
+    );
+    if (!participant) {
+      res
+        .status(404)
+        .json({ message: "Participant not found in the conversation" });
+      return;
+    }
+
+    if (participant.role === "admin") {
+      res
+        .status(403)
+        .json({ message: "You cannot remove admins from conversation" });
+      return;
+    }
+
+    conversation.participants.filter(
+      (p: any) => p.userId.toString() !== removeUserId
+    );
+
+    await conversation.save();
+
+    res.status(200).json({
+      message: "Participants removed successfully",
+      data: conversation,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const conversationId = req.params.id;
+    const userId = req.user.id;
+    const { name, description } = req.body;
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
+    }
+
+    const isAdmin = conversation.participants.find(
+      (p) => p.userId.toString() === userId
+    );
+    if (!isAdmin) {
+      res
+        .status(403)
+        .json({ message: "Unauthorized only admins can update conversation" });
+      return;
+    }
+
+    if (name) conversation.name = name;
+    if (description) conversation.descriptions = description;
+
+    await conversation.save();
+    res.status(200).json({
+      message: "Conversation updated successfully",
+      data: conversation,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteConversation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const conversationId = req.params.id;
+    const userId = req.user.id;
+
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
+    }
+
+    const isAuthorized =
+      conversation.createdBy.toString() === userId ||
+      conversation.participants.some(
+        (p) => p.userId.toString() === userId && p.role === "admin"
+      );
+    if (!isAuthorized) {
+      res.status(403).json({
+        message: "You are not authorized to delete this conversation",
+      });
+      return;
+    }
+    await conversation.deleteOne();
+
+    res.status(200).json({ message: "Conversation deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

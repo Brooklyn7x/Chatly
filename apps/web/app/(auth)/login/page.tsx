@@ -27,7 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/hooks/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -37,7 +37,7 @@ const loginSchema = z.object({
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useAuthStore();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -48,12 +48,9 @@ export default function LoginPage() {
     try {
       await login(values);
       router.push("/chat");
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Login failed. Please try again."
-      );
+    } catch (error: any) {
+      console.log(error)
+      toast.error(error.response?.data.message);
     }
   };
 

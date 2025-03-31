@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { ParticipantRole } from "../types/conversation";
-
 export const UpdateConversationSchema = z.object({
   metadata: z
     .object({
@@ -16,7 +14,7 @@ export const UpdateConversationSchema = z.object({
       z.object({
         action: z.enum(["add", "remove", "updateRole"]),
         userId: z.string().min(1),
-        role: z.nativeEnum(ParticipantRole).optional(),
+        // role: z.nativeEnum(["zasas", ""]).optional(),
       })
     )
     .optional(),

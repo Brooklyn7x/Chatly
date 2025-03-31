@@ -3,23 +3,24 @@ import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { EmptyState } from "./EmptyChat";
-import { Suspense } from "react";
-
-const ChatArea = dynamic(() => import("./ChatArea"), { ssr: false });
-const ChatInfo = dynamic(() => import("./ChatInfo"), { ssr: false });
+import { Suspense, useEffect } from "react";
+import ChatArea from "./ChatArea";
+import ChatInfo from "./ChatInfo";
+import { useSocketStore } from "@/store/useSocketStore";
 
 interface ChatContainerProps {
   isMobile: boolean;
 }
-export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
+
+const ChatContainer = ({ isMobile }: ChatContainerProps) => {
   const { activeChatId } = useChatStore();
   const { isOpen } = useChatPanelStore();
-  
+
   return (
     <div
       className={cn(
         "flex flex-col h-full",
-        "bg-secondary/30",
+        "bg-background/90",
         "transition-transform duration-300",
         {
           "fixed inset-0": isMobile,
@@ -29,15 +30,11 @@ export const ChatContainer = ({ isMobile }: ChatContainerProps) => {
         }
       )}
     >
-      <Suspense fallback={<div>Loading chat...</div>}>
-        <ChatArea />
-      </Suspense>
-      {isOpen && (
-        <Suspense fallback={<div>Loading chat info...</div>}>
-          <ChatInfo />
-        </Suspense>
-      )}
+      <ChatArea />
+      {isOpen && <ChatInfo />}
       {!activeChatId && <EmptyState />}
     </div>
   );
 };
+
+export default ChatContainer;

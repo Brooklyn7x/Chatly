@@ -1,164 +1,120 @@
-import { Request, Response } from "express";
-import { BaseController } from "./baseController";
-import { AuthService } from "../services/authService";
-import { LoginDTO } from "../types/auth";
-import { loginSchema, registerSchema } from "../validators/auth";
+import { NextFunction, Request, Response } from "express";
+import User from "../models/user";
+import {
+  comparePassword,
+  generateAccessToken,
+  generateRefreshToken,
+  hashPassword,
+  verifyToken,
+} from "../utils/helper";
 
-export class AuthController extends BaseController {
-  private authService: AuthService;
+import redisClient from "../config/redis";
 
-  constructor() {
-    super("AuthController");
-    this.authService = new AuthService();
+const sanitizeUser = (user: any) => {
+  const { password, __v, contacts, createdAt, updatedAt, ...rest } =
+    user.toObject();
+  return rest;
+};
+
+export const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const user = new User({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    const userResponse = sanitizeUser(user);
+
+    res.status(201).json({
+      success: true,
+      data: userResponse,
+    });
+  } catch (error) {
+    next(error);
   }
+};
 
-  register = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const parseResult = registerSchema.safeParse(req.body);
-      if (!parseResult.success) {
-        res.status(400).json({
-          success: false,
-          error: "Validation failed",
-          details: parseResult.error.format(),
-        });
-        return;
-      }
+export const loginUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
 
-      const result = await this.authService.register(parseResult.data);
-      if (!result.success) {
-        res.status(400).json({ success: false, error: result.error });
-        return;
-      }
-
-      if (result.success) {
-        res.cookie("refreshToken", result.data.refreshToken, {
-          httpOnly: true,
-          sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-
-        res.status(201).json({
-          success: true,
-          accessToken: result.data!.accessToken,
-        });
-      } else {
-        res.status(400).json({ error: result.error });
-      }
-    } catch (error) {
-      this.logger.error("Registration error:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error failed to register user",
-      });
+    const user: any = await User.findOne({ email });
+    if (!user) {
+      res.status(401).json({ message: "Invalid email. Try again" });
+      return;
     }
-  };
 
-  login = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const loginData: LoginDTO = req.body;
-
-      const validateResult = loginSchema.safeParse(loginData);
-      if (!validateResult.success) {
-        res.status(400).json({
-          success: false,
-          error: "Validation failed",
-          details: validateResult.error.format(),
-        });
-        return;
-      }
-
-      const result = await this.authService.login(loginData);
-      if (result.success) {
-        res.cookie("refreshToken", result.data!.refreshToken, {
-          httpOnly: true,
-          sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-
-        res.status(201).json({
-          success: true,
-          accessToken: result.data!.accessToken,
-          user: result.data!.user,
-        });
-      } else {
-        res.status(400).json({ error: result.error });
-      }
-    } catch (error) {
-      this.logger.error("Login error:", error);
-      res.status(500).json({ success: false, error: "Login failed" });
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ message: "Invalid password. Try again" });
+      return;
     }
-  };
 
-  refreshToken = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const refreshToken = req.cookies.refreshToken;
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
 
-      if (!refreshToken) {
-        res.status(401).json({ error: "Refresh token required" });
-      }
+    await redisClient.set(
+      user._id.toString(),
+      refreshToken,
+      "EX",
+      7 * 24 * 60 * 60
+    );
 
-      const result = await this.authService.refreshToken(refreshToken);
+    const userResponse = sanitizeUser(user);
+    res
+      .status(200)
+      .json({ success: true, accessToken, refreshToken, data: userResponse });
+  } catch (error) {
+    next(error);
+  }
+};
 
-      if (result.success) {
-        res.cookie("refreshToken", result.data!.refreshToken, {
-          httpOnly: true,
-          sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { refreshToken } = req.body;
 
-        res.json({ accessToken: result.data!.accessToken });
-      } else {
-        res.status(401).json({ error: result.error });
-      }
-    } catch (error) {
-      this.logger.error("Token refresh error:", error);
-      res.status(500).json({ error: "Token refresh failed" });
+    const decoded: any = verifyToken(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET as string
+    );
+
+    const storedToken = await redisClient.get(decoded.id);
+
+    if (storedToken !== refreshToken) {
+      res.status(401).json({ message: "Invalid refresh token" });
+      return;
     }
-  };
 
-  logout = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const refreshToken = req.cookies.refreshToken;
-      const userId = req.user!._id;
-      await this.authService.logout(userId, refreshToken);
-      res.clearCookie("refreshToken");
-      res.json({ message: "Logged out successfully" });
-    } catch (error) {
-      this.logger.error("Logout error:", error);
-      res.status(500).json({ error: "Logout failed" });
-    }
-  };
+    const newAccessToken = generateRefreshToken(decoded.id);
 
-  verify = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const token = req.headers.authorization?.split(" ")[1];
-      if (!token) {
-        res.status(401).json({
-          success: false,
-          error: "Token not provided",
-        });
-        return;
-      }
-
-      const result = await this.authService.verify(token);
-      if (!result.success) {
-        res.status(401).json({
-          success: false,
-          error: result.error,
-        });
-        return;
-      }
-
-      res.status(200).json({
-        success: true,
-        data: result.data,
-      });
-    } catch (error) {
-      this.logger.error("Verifying  error:", error);
-      res.status(500).json({
-        success: false,
-        error: "Token not found",
-      });
-    }
-  };
-}
+    res.status(200).json({ success: true, accessToken: newAccessToken });
+  } catch (error) {
+    next(error);
+  }
+};

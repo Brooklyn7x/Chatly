@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTheme } from "../provider/ThemeProvider";
+// import { useTheme } from "../provider/ThemeProvider";
 
 interface ThemeOption {
   name: string;
@@ -13,7 +13,7 @@ interface ThemeOption {
 }
 
 export function ThemeSelector() {
-  const { themeColor, setThemeColor } = useTheme();
+  // const { themeColor, setThemeColor } = useTheme();
 
   const themeOptions: ThemeOption[] = [
     {

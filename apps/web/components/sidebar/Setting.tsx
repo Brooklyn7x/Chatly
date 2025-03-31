@@ -6,8 +6,6 @@ import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import { userApi } from "@/services/api/users";
-
 import { X, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -95,8 +93,8 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
 
     setIsLoading(true);
     try {
-      const updatedData = await userApi.updateUserData(payload);
-      updateUser(updatedData.data);
+      // const updatedData = await updateUserData(payload);
+      // updateUser(updatedData.data);
       toast.success("Profile updated successfully");
       onClose();
     } catch (error: any) {
@@ -111,118 +109,73 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="h-dvh p-4 space-y-6 bg-secondary/30">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl text-center font-semibold">Settings</h2>
-        <Button
-          variant="ghost"
-          size={"icon"}
-          onClick={onClose}
-          className="rounded-full border"
-        >
-          ✕
-        </Button>
-      </div>
+    <div className="fixed inset-0 overflow-y-auto bg-secondary/30">
+      <div className="p-4 space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl text-center font-semibold">Settings</h2>
+          <Button
+            variant="ghost"
+            size={"icon"}
+            onClick={onClose}
+            className="rounded-full border"
+          >
+            ✕
+          </Button>
+        </div>
 
-      <Card className="border-none shadow-lg">
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="flex flex-col items-center gap-4 p-4">
-                <div className="relative overflow-hidden">
-                  <UserAvatar
-                    size="xl"
-                    className="object-cover"
-                    url={previewImage || form.watch("avatar")}
+        <Card className="border-none shadow-lg">
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <div className="flex flex-col items-center gap-4 p-4">
+                  <div className="relative overflow-hidden">
+                    <UserAvatar
+                      size="xl"
+                      className="object-cover"
+                      url={previewImage || form.watch("avatar")}
+                    />
+                    {isUploading && (
+                      <UploadProgressIndicator progress={uploadProgress} />
+                    )}
+                  </div>
+
+                  <label
+                    htmlFor="avatar-upload"
+                    className={cn(
+                      "text-sm text-blue-500 cursor-pointer bg-transparent border-none p-0",
+                      previewImage && "text-green-500"
+                    )}
+                  >
+                    {previewImage ? (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Uploaded!</span>
+                      </div>
+                    ) : (
+                      <span>Change profile picture</span>
+                    )}
+                  </label>
+                  <input
+                    id="avatar-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
                   />
-                  {isUploading && (
-                    <UploadProgressIndicator progress={uploadProgress} />
-                  )}
                 </div>
 
-                <label
-                  htmlFor="avatar-upload"
-                  className={cn(
-                    "text-sm text-blue-500 cursor-pointer bg-transparent border-none p-0",
-                    previewImage && "text-green-500"
-                  )}
-                >
-                  {previewImage ? (
-                    <div className="flex items-center gap-1">
-                      <CheckCircle className="w-4 h-4" />
-                      <span>Uploaded!</span>
-                    </div>
-                  ) : (
-                    <span>Change profile picture</span>
-                  )}
-                </label>
-                <input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  disabled={isUploading}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Username" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} placeholder="Email" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4 border-t pt-4">
-                <h3 className="text-lg font-semibold">Change Password</h3>
-
                 <FormField
                   control={form.control}
-                  name="currentPassword"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Current Password</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          placeholder="Current Password"
-                        />
+                        <Input {...field} placeholder="Name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -231,16 +184,12 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
 
                 <FormField
                   control={form.control}
-                  name="newPassword"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>New Password</FormLabel>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          placeholder="New Password"
-                        />
+                        <Input {...field} placeholder="Username" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -249,39 +198,93 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
 
                 <FormField
                   control={form.control}
-                  name="confirmPassword"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm New Password</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          placeholder="Confirm New Password"
-                        />
+                        <Input type="email" {...field} placeholder="Email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              <div className="flex gap-2 justify-end">
-                <Button type="button" variant="outline" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isLoading || !form.formState.isDirty}
-                  className={isLoading ? "opacity-70" : ""}
-                >
-                  {isLoading ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="text-lg font-semibold">Change Password</h3>
+
+                  <FormField
+                    control={form.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Current Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            {...field}
+                            placeholder="Current Password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>New Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            {...field}
+                            placeholder="New Password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm New Password</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            {...field}
+                            placeholder="Confirm New Password"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end">
+                  <Button type="button" variant="outline" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !form.formState.isDirty}
+                    className={isLoading ? "opacity-70" : ""}
+                  >
+                    {isLoading ? "Saving..." : "Save Changes"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

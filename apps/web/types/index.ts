@@ -1,3 +1,13 @@
+export type ViewType =
+  | "main"
+  | "search"
+  | "new_message"
+  | "new_group"
+  | "new_channel"
+  | "setting"
+  | "theme_setting"
+  | "contacts";
+
 export interface User {
   _id: string;
   id: string;
@@ -6,98 +16,72 @@ export interface User {
   email: string;
   profilePicture: string;
   status: "offline" | "online";
-  lastSeen: string;
-}
-
-export interface Message {
-  id: string;
-  content: string;
-  senderId: string;
-  timestamp: string;
-  status: "sent" | "delivered" | "read";
-}
-
-// export interface Chat {
-//   id: string;
-//   participants: User[];
-//   messages: Message[];
-//   unreadCount: number;
-//   type: "direct" | "group";
-//   groupName?: string;
-//   lastMessage?: Message;
-//   metadata: ConversationMetadata;
-//   createdAt: string;
-// }
-
-interface ConversationMetadata {
-  avatar?: string;
-  title?: string;
-  description?: string;
-  isArchived?: boolean;
-  isPinned?: boolean;
-}
-
-export interface Conversation {
-  id: string;
-  participants: User[];
-  isGroup: boolean;
-  groupName: string | null;
-  lastMessage: any;
-  unreadCount: number;
 }
 
 export interface Participant {
-  role: "owner" | "admin" | "member";
-  joinedAt: Date;
   userId: {
     id: string;
-    _id: string;
     username: string;
-    email: string;
+    profilePicture: string;
+    _id: string;
   };
-}
-export interface ChatMetadata {
-  title: string | null;
-  description: string | null;
-  avatar: string | null;
-  isArchived: boolean;
-  isPinned: boolean;
+  role: "member" | "admin";
+  id: string;
+  _id: string;
 }
 
 export interface Chat {
   _id: string;
-  type: "direct" | "group";
+  id: string;
+  type: "private" | "group" | "channel";
   participants: Participant[];
-  metadata: ChatMetadata;
-  groupName: string | null;
-  lastMessage: any;
+  name: string;
+  description: string;
+  createdBy: string;
   updatedAt: Date;
   createdAt: Date;
 }
 
-interface MessageSender {
-  userId: string;
-  timestamp: string;
-}
-
 export interface Message {
   _id: string;
-  chatId: string;
-  conversationType: "direct" | "group";
+  id: string;
+  conversationId: string;
   content: string;
-  type: "text" | "image" | "video" | "audio";
-  status: "sent" | "delivered" | "read";
-  senderId: string;
+  type: MessageType;
+  status: MessageStatus;
+  senderId: {
+    _id: string;
+    username: string;
+    profilePicture?: string;
+    id: string;
+  };
+  reactions: [];
+  attachments: Attachment[];
   receiverId: string;
-  timestamp: string;
-  sender?: MessageSender;
+  isEdited: boolean;
+  isDeleted: boolean;
+  editedAt: Date;
+  updatedAt: string;
+  deletedAt: Date;
+  createdAt: Date;
+  timestamp: Date;
 }
 
-export type ViewType =
-  | "main"
-  | "search"
-  | "new_message"
-  | "new_group"
-  | "new_channel"
-  | "setting"
-  | "theme_setting";
+export interface Attachment {
+  type: ["image", "video", "audio", "file"];
+  url?: string;
+  fileName: string;
+  fileSize: string;
+}
+
+export type MessageType = "text" | "image" | "video" | "audio" | "file";
+
+export type MessageStatus = "sent" | "delivered" | "read" | "failed";
+
+export interface Contact {
+  id: string;
+  _id: string;
+  username: string;
+  profilePicture: string;
+  email: string;
+}

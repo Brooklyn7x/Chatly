@@ -1,5 +1,3 @@
-import { Types } from "mongoose";
-
 export interface IUser {
   name: string;
   username: string;
@@ -54,12 +52,3 @@ export interface UpdateUserDTO {
   profilePicture?: string;
   status?: UserStatus;
 }
-
-// export interface User {
-//   _id: Types.ObjectId;
-//   username: string;
-//   password: string;
-//   status: 'online' | 'offline';
-//   lastSeen?: Date;
-
-// }

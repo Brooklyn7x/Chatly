@@ -3,15 +3,16 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { MessageContent } from "./MessageContent";
 import { UserAvatar } from "../shared/UserAvatar";
-import { Message } from "@/types/message";
-import { socketService } from "@/services/socket/socketService";
 import { MessageActions } from "./MessageActions";
 import { MessageMetadata } from "./MessageMetadata";
 import { MessageEditor } from "./MessageEditor";
 import { MessageReactionPicker } from "./MessageReactionPicker";
 import { MessageReactions } from "./MessageReactions";
 import { useReactions } from "@/hooks/useReactions";
-import { useMessageEdit } from "@/hooks/useMessageEditing";
+import MessageActionDrop from "./MessageActionDrop";
+import { Message } from "@/types";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useMessageStore } from "@/store/useMessageStore";
 
 interface MessageBubbleProps {
   message: Message;
@@ -19,39 +20,49 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
-  const [showMenu, setShowMenu] = useState(false);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showreaction, setShowReaction] = useState(false);
+  const [editedContent, setEditedContent] = useState(message.content);
+  const { socket } = useSocketStore();
+  const { deleteMessage, updateMessage } = useMessageStore();
+
   const {
+    id,
     _id,
     content,
     type,
     status,
     timestamp,
     senderId,
-    edited,
+    isEdited,
     attachments,
+    isDeleted,
   } = message;
-
-  const {
-    isEditing,
-    editedContent,
-    setEditedContent,
-    setIsEditing,
-    handleEdit,
-  } = useMessageEdit(content, _id);
 
   const { reactions, addReaction, removeReaction } = useReactions(message._id);
 
   const handleEditMessage = () => {
+    if (!socket) return;
     if (editedContent.trim() && editedContent !== content) {
-      socketService.editMessage(_id, editedContent);
+      socket.emit("editMessage", { messageId: id, content: editedContent });
+      updateMessage(message.conversationId, {
+        ...message,
+        content: editedContent,
+        isEdited: true,
+      });
     }
     setIsEditing(false);
   };
 
   const handleDeleteMessage = () => {
-    socketService.deleteMessage(_id);
-    setShowMenu(false);
+    if (!socket) return;
+    socket.emit("deleteMessage", id);
+
+    updateMessage(message.conversationId, {
+      ...message,
+      isDeleted: true,
+    });
   };
 
   return (
@@ -74,14 +85,19 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         ref={bubbleRef}
         onContextMenu={(e) => {
           e.preventDefault();
-          setShowMenu(true);
         }}
       >
-        <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
+        <div
+          className={`flex flex-col relative  ${isOwn ? "items-end" : "items-start"}`}
+        >
           <div className="flex items-center gap-2">
-            {isOwn && (
+            <div className="absolute -right-2 -top-1 z-20">
+              <MessageActionDrop />
+            </div>
+            {isOwn && !message.isDeleted && (
               <MessageActions
-                onEdit={handleEditMessage}
+                onReaction={() => setShowReaction((prev) => !prev)}
+                onEdit={() => setIsEditing(true)}
                 onDelete={handleDeleteMessage}
               />
             )}
@@ -90,29 +106,34 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
               className={cn(
                 "max-w-md rounded-2xl p-3 relative shadow-sm transition-all",
                 isOwn
-                  ? "bg-primary rounded-br-none hover:shadow-md"
-                  : "bg-secondary text-primary rounded-bl-none hover:shadow-md"
+                  ? "bg-primary/90 rounded-br-none hover:shadow-md"
+                  : "bg-secondary/90 text-white rounded-bl-none hover:shadow-md",
+                message.isDeleted && "opacity-50"
               )}
             >
               {!isOwn && (
                 <span className="text-xs font-medium mb-1 block">
-                  {senderId.username || "User"}
+                  {senderId?.username || "User"}
                 </span>
               )}
               {isEditing ? (
                 <MessageEditor
                   content={editedContent}
                   onChange={setEditedContent}
-                  onSave={handleEdit}
+                  onSave={handleEditMessage}
                   onCancel={() => setIsEditing(false)}
                 />
               ) : (
                 <div className="flex flex-col gap-1">
                   <MessageContent
-                    content={content}
+                    isOwn={isOwn}
+                    content={
+                      message.isDeleted ? "You deleted this message" : content
+                    }
                     type={type}
                     attachments={attachments}
                   />
+
                   {reactions.length > 0 && (
                     <MessageReactions
                       reactions={reactions}
@@ -126,16 +147,20 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 timestamp={timestamp}
                 status={status}
                 isOwn={isOwn}
-                isEdited={edited}
+                isEdited={isEdited}
+                isDeleted={isDeleted}
               />
             </div>
           </div>
         </div>
       </div>
-      <MessageReactionPicker
-        onSelect={addReaction}
-        position={isOwn ? "right" : "left"}
-      />
+
+      {showreaction && (
+        <MessageReactionPicker
+          onSelect={addReaction}
+          position={isOwn ? "right" : "left"}
+        />
+      )}
     </motion.div>
   );
 };

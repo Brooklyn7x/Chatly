@@ -1,27 +1,54 @@
 "use client";
 
-import { ChatContainer } from "@/components/chat/ChatContainer";
-import AuthGuard from "@/components/shared/AuthGuard";
+import ChatContainer from "@/components/chat/ChatContainer";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
-import { useConnectionStatus } from "@/hooks/useConnectionStatus";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
-import ConnectionStatusBar from "@/components/ConnectionStatusBar";
+import { useChatStore } from "@/store/useChatStore";
+import { useEffect } from "react";
+import useAuthStore from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
 
 export default function MainPage() {
-  const { connectionStatus } = useConnectionStatus();
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuthStore();
+  const { connect, disconnect } = useSocketStore();
   const { isMobile } = useMobileDetection();
+  const { activeChatId } = useChatStore();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push("/login");
+      } else if (isAuthenticated) {
+        router.push("/chat");
+      }
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      connect();
+    }
+    return () => {
+      disconnect();
+    };
+  }, [isAuthenticated, connect, disconnect]);
+
   useUserStatusSocket();
 
+  if (isLoading) return null;
+  if (!isAuthenticated) return null;
+
   return (
-    <AuthGuard requireAuth>
-      <div className="flex flex-col h-dvh overflow-hidden">
-        <ConnectionStatusBar status={connectionStatus} />
-        <div className="flex flex-1 overflow-hidden">
+    <div className="max-w-9xl mx-auto bg-black/80">
+      <div className="flex flex-col h-dvh border">
+        <div className="flex flex-1 overflow-hidden w-full">
           <Sidebar isMobile={isMobile} />
-          <ChatContainer isMobile={isMobile} />
+          {(!isMobile || activeChatId) && <ChatContainer isMobile={isMobile} />}
         </div>
       </div>
-    </AuthGuard>
+    </div>
   );
 }

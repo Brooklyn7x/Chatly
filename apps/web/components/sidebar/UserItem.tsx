@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
-import { useUserStatus } from "@/hooks/useUserStatus";
+import useUserStatusStore from "@/store/useUserStatusStore";
 
 interface UserItemProps {
   user: User;
@@ -9,8 +9,9 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ user, selected }: UserItemProps) => {
-  const { id, username, email, profilePicture } = user;
-  const { getStatusText } = useUserStatus(id);
+  const { id, username, profilePicture } = user;
+  const { getUserStatus } = useUserStatusStore();
+  const isOnline = getUserStatus(id);
   return (
     <div
       className={cn(
@@ -21,17 +22,12 @@ export const UserItem = ({ user, selected }: UserItemProps) => {
       )}
     >
       <div className="relative flex-shrink-0 h-12 w-12">
-        <UserAvatar size={"md"} url={profilePicture} />
+        <UserAvatar size={"md"} url={profilePicture}  />
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between font-semibold truncate">
-          <span >{username || "User"}</span>{" "}
-          <span className="text-sm text-muted-foreground">{getStatusText()}</span>
-        </div>
-
-        <div className="text-muted-foreground text-sm truncate">
-          {email || "email"}
+          <span>{username || "User"}</span> {isOnline && <span className="text-sm text-muted-foreground">Online</span>}
         </div>
       </div>
     </div>

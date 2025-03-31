@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { UserController } from "../controllers/userController";
+import * as userController from "../controllers/userController";
 
 const router = Router();
-const userController = new UserController();
 
-router.get("/profile", userController.getUserProfile);
+router.get("/profile", userController.getProfile);
 router.put("/profile", userController.updateProfile);
-router.get("/search", userController.searchUsers)
-
+router.get("/contact", userController.getContacts);
+router.post("/contact", userController.addContact);
+router.get("/search", userController.searchUsers);
 
 export default router;

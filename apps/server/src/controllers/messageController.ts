@@ -1,114 +1,60 @@
-import { Request, Response } from "express";
-import { ConversationService } from "../services/conversationService";
-import { MessageService } from "../services/messageService";
-import { SocketService } from "../services/socketService";
-import { BaseController } from "./baseController";
+import { NextFunction, Request, Response } from "express";
+import Message from "../models/message";
+import Conversation from "../models/conversation";
 
-export class MessageController extends BaseController {
-  private messageService: MessageService;
+export const getMessages = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user?.id;
+    const { page = 1, limit = 20 } = req.query;
 
-  constructor() {
-    super("MessageController");
-
-    this.messageService = new MessageService();
-    this.sendMessage = this.sendMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
-    this.getMessages = this.getMessages.bind(this);
-  }
-
-  async sendMessage(req: Request, res: Response): Promise<void> {
-    try {
-      // const validationResult = validateRequest(
-      //     req.body,
-      //     'createMessage'
-      // );
-      // if (!validationResult.success) {
-      //     res.status(400).json({
-      //         success: false,
-      //         error: validationResult.error
-      //     });
-      //     return;
-      // }
-      console.log("Creating message:", req.body);
-      const result = await this.messageService.sendMessage(
-        req.user!._id,
-        req.body
-      );
-
-      if (!result.success) {
-        res.status(400).json(result);
-        return;
-      }
-
-      // await this.socket.broadcastMessage("newMessage", result.data);
-      res.status(201).json(result);
-    } catch (error) {
-      this.logger.error("Error sending message:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to send message",
-      });
+    if (!userId) {
+      res.status(403).json({ message: "Not authorized" });
+      return;
     }
-  }
 
-  async getMessages(req: Request, res: Response): Promise<void> {
-    try {
-      console.log(req.params);
-      const chatId = req.params.id;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const before = req.query.before as string;
-
-      const result = await this.messageService.getMessages(
-        chatId,
-        limit,
-        before ? new Date(before) : undefined
-      );
-
-      if (!result.success) {
-        res.status(400).json(result);
-        return;
-      }
-      res.status(200).json(result);
-    } catch (error) {
-      this.logger.error("Failed to fetch messages:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to fetch messages",
-      });
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
     }
-  }
 
-  async deleteMessage(req: Request, res: Response): Promise<void> {
-    try {
-      const result = await this.messageService.deleteMessage(
-        req.params.messageId,
-        req.user!._id
-      );
-
-      if (!result.success) {
-        res.status(400).json(result);
-        return;
-      }
-      res.json(result);
-    } catch (error) {
-      this.logger.error("Error deleting message:", error);
-      res.status(500).json({
-        success: false,
-        error: "Failed to delete message",
-      });
+    const isParticipant = conversation.participants.find(
+      (p) => p.userId.toString() === userId
+    );
+    if (!isParticipant) {
+      res
+        .status(403)
+        .json({ message: "You are not part of this conversation" });
+      return;
     }
+
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const messages = await Message.find({ conversationId })
+      .populate("senderId", "username, profilePicture")
+      .sort({
+        timestamp: -1,
+      })
+      .skip(skip)
+      .limit(limitNumber);
+
+    const totalMessages = await Message.countDocuments({ conversationId });
+    res.status(200).json({
+      messages,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalMessages / limitNumber),
+        totalMessages,
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-
-  async updateMessage(req: Request, res: Response): Promise<void> {}
-
-  async markAsRead(req: Request, res: Response): Promise<void> {
-    try {
-      const messageIds = req.body.messageIds as string[];
-
-      // const result = await this.conversationService.markConversationAsRead(
-      //   messageIds,
-      //   req.user!.id
-      // );
-    } catch (error) {}
-  }
-}
+};

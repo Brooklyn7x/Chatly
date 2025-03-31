@@ -22,7 +22,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Toaster />
-        <ThemeProvider defaultColor="default" defaultTheme="system">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <SWRConfig
             value={{
               revalidateOnFocus: false,
@@ -31,7 +36,8 @@ export default function RootLayout({
             }}
           >
             <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-            {children}
+
+            <main>{children}</main>
           </SWRConfig>
         </ThemeProvider>
       </body>

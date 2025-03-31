@@ -1,38 +1,56 @@
 import { useMemo, useState, Suspense } from "react";
 import dynamic from "next/dynamic";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useChatStore } from "@/store/useChatStore";
 import { useDebounce } from "@/hooks/useDebounce";
-import { ChatItem } from "../chat/ChatItem";
 import ChatFilters from "./ChatFilter";
-import { fetchChats } from "@/hooks/useChats";
 import { ViewType } from "@/types";
+import SidebarHeader from "./SidebarHeader";
+import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
+import { useFetchChats } from "@/hooks/useChats";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { ChatList } from "../chat/ChatList";
+import ContactPage from "./Contacts";
+import ChatSidebar from "./ChatSidebar";
 
-const PrivateChat = dynamic(() => import("./PrivateChat"), { ssr: false });
-const GroupChat = dynamic(() => import("./GroupChat"), { ssr: false });
-const Setting = dynamic(() => import("./Setting"), { ssr: false });
-const ThemeSettingsPage = dynamic(() => import("../theme/ThemeSettings"), {
+
+const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
+  ssr: false,
+  loading: () => (
+    <Button className="h-14 w-14">
+      <Pencil className="h-6 w-6" />
+    </Button>
+  ),
+});
+const CreatePrivateChat = dynamic(() => import("./CreatePrivateChat"), {
   ssr: false,
 });
+const CreateGroupChat = dynamic(() => import("./CreateGroupChat"), {
+  ssr: false,
+});
+const Setting = dynamic(() => import("./Setting"), { ssr: false });
 
 type FilterOption = {
   label: string;
   value: "all" | "favorites" | "groups" | "direct" | "channel";
-
   icon: React.ReactNode;
 };
+
 interface SidebarContentProps {
   view: ViewType;
-  searchQuery: string;
   onViewChange: (view: ViewType) => void;
 }
 
 export default function SidebarContent({
   view,
-  searchQuery,
   onViewChange,
 }: SidebarContentProps) {
+  const { isLoading, error } = useFetchChats();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const { setActiveChat, chats } = useChatStore();
-
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
 
@@ -48,16 +66,17 @@ export default function SidebarContent({
         baseChats = baseChats.filter((chat) => chat.type === "group");
         break;
       case "direct":
-        baseChats = baseChats.filter((chat) => chat.type === "direct");
+        baseChats = baseChats.filter((chat) => chat.type === "private");
+        break;
+      case "channel":
+        baseChats = baseChats.filter((chat) => chat.type === "channel");
         break;
     }
 
-    if (debouncedQuery.trim()) {
+    if (debouncedQuery?.trim()) {
       const searchLower = debouncedQuery.toLowerCase().trim();
       baseChats = baseChats.filter((chat) => {
-        const titleMatch = chat.metadata.title
-          ?.toLowerCase()
-          .includes(searchLower);
+        const titleMatch = chat.name?.toLowerCase().includes(searchLower);
         const participantMatch = chat.participants?.some((p) =>
           p.userId.username?.toLowerCase().includes(searchLower)
         );
@@ -68,56 +87,104 @@ export default function SidebarContent({
     return baseChats;
   }, [chats, debouncedQuery, selectedFilter]);
 
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {view === "main" && (
+  const renderMainView = () => {
+    if (error) {
+      return (
+        <div className="flex flex-col h-full">
+          <SidebarHeader
+            view={view}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onViewChange={onViewChange}
+          />
+          <div className="pt-4 px-2">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Failed to load chats. Please try again later.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <SidebarHeader
+          view={view}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onViewChange={onViewChange}
+        />
         <ChatFilters
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
         />
-      )}
-
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20">
-        {view === "main" && (
-          <div className="space-y-1 px-2">
-            {filteredChats?.map((chat) => (
-              <ChatItem
-                key={chat._id}
-                chat={chat}
-                onClick={() => setActiveChat(chat._id)}
-              />
-            ))}
-            {filteredChats.length === 0 && (
-              <div className="text-center text-muted-foreground p-4">
-                No chats found.
-                {debouncedQuery ? ` for "${debouncedQuery}"` : ""}
-              </div>
+        <ScrollArea className="h-[calc(100vh-130px)]">
+          <div className="space-y-1">
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="flex items-center space-x-4 p-2">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-[150px]" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <>
+                {filteredChats.length === 0 && (
+                  <div className="p-4 text-center text-muted-foreground">
+                    {searchQuery
+                      ? "No chats match your search"
+                      : "No chats available"}
+                  </div>
+                )}
+                <ChatList
+                  chats={filteredChats}
+                  onSelectChat={(chatId) => setActiveChat(chatId)}
+                />
+              </>
             )}
           </div>
-        )}
-        {view === "new_message" && (
-          <Suspense fallback={<div>Loading private chat...</div>}>
-            <PrivateChat onClose={() => onViewChange("main")} />
-          </Suspense>
-        )}
-        {view === "new_group" && (
-          <Suspense fallback={<div>Loading group chat...</div>}>
-            <GroupChat onClose={() => onViewChange("main")} />
-          </Suspense>
-        )}
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+        <FBActionButton onViewChange={onViewChange} />
+      </>
+    );
+  };
 
-        {view === "setting" && (
+  const renderView = () => {
+    switch (view) {
+      case "new_message":
+        return (
+          <Suspense fallback={<div>Loading private chat...</div>}>
+            <CreatePrivateChat onClose={() => onViewChange("main")} />
+          </Suspense>
+        );
+      case "new_group":
+        return (
+          <Suspense fallback={<div>Loading group chat...</div>}>
+            <CreateGroupChat onClose={() => onViewChange("main")} />
+          </Suspense>
+        );
+      case "setting":
+        return (
           <Suspense fallback={<div>Loading settings...</div>}>
             <Setting onClose={() => onViewChange("main")} />
           </Suspense>
-        )}
-      </div>
+        );
+      case "contacts":
+        // return <ContactPage onClose={() => onViewChange("main")} />;
+        return <ChatSidebar />;
+      default:
+        return renderMainView();
+    }
+  };
 
-      {view === "theme_setting" && (
-        <Suspense fallback={<div>Loading theme settings...</div>}>
-          <ThemeSettingsPage onClose={() => onViewChange("main")} />
-        </Suspense>
-      )}
-    </div>
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">{renderView()}</div>
   );
 }

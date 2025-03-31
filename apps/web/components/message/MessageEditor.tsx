@@ -18,7 +18,7 @@ export function MessageEditor({
       <textarea
         value={content}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-2 rounded-lg border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none scrollbar-thin scrollbar-thumb-primary/50 scrollbar-track-transparent text-neutral-900 transition-all"
+        className="w-full p-2 rounded-lg border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none scrollbar-thin scrollbar-thumb-primary/50 scrollbar-track-transparent text-white transition-all"
         autoFocus
         rows={Math.min(Math.max(content.split("\n").length, 1), 5)}
       />
@@ -30,7 +30,7 @@ export function MessageEditor({
           size="sm"
           variant={"outline"}
           onClick={onSave}
-          className="bg-primary transition-colors"
+          className="transition-colors"
         >
           Save
         </Button>

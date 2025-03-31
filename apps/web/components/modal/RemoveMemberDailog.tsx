@@ -4,29 +4,38 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Participant } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 interface RemoveMemberDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: () => void;
   participants: Participant[];
-  onRemove: (userId: string) => Promise<void>;
-  removingUserId?: string | null;
 }
 
 const RemoveMemberDialog = ({
   open,
   onOpenChange,
   participants,
-  onRemove,
-  removingUserId,
 }: RemoveMemberDialogProps) => {
-  const handleRemove = (userId: string) => {
-    onRemove(userId);
+  const [loading, setLoading] = useState(false);
+  const [removingUserId, setRemovingUserId] = useState<string | null>(null);
+
+  const handleRemove = async (userId: string) => {
+    setLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

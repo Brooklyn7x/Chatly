@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/hooks/useAuth";
+
 import {
   Form,
   FormControl,
@@ -28,6 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import useAuthStore from "@/store/useAuthStore";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -43,7 +44,7 @@ const registerSchema = z.object({
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const { register, isLoading } = useAuth();
+  const { register, isLoading } = useAuthStore();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -60,13 +61,11 @@ export default function SignupPage() {
   const handleSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
       await register({
-        name: `${values.firstName} ${values.lastName}`,
         username: values.username,
         email: values.email,
         password: values.password,
       });
       router.push("/chat");
-      // router.push("/verify-email");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Registration failed"

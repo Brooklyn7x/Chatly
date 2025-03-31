@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { socketService } from "@/services/socket/socketService";
 
 export function useReactions(messageId: string) {
   const [reactions, setReactions] = useState<string[]>([]);

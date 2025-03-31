@@ -1,9 +1,8 @@
+import { useSocketStore } from "@/store/useSocketStore";
 import { useState, useEffect } from "react";
-import { useSocket } from "./useSocket";
 
 export function useConnectionStatus() {
-  const { isConnected, isConnecting, connectionError, reconnectCount } =
-    useSocket();
+  const { isConnected } = useSocketStore();
 
   const [showConnectionAlert, setShowConnectionAlert] = useState(false);
   const [reconnecting, setReconnecting] = useState(false);
