@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 export interface MessageDocument extends Document {
   conversationId: mongoose.Types.ObjectId;
   senderId: mongoose.Types.ObjectId;
+  type: "text" | "image" | "video" | "file" | "system";
   content: string;
   status: string;
   attachments?: Array<{
@@ -37,10 +38,14 @@ const messageSchema = new Schema<MessageDocument>(
       required: true,
       index: true,
     },
+    type: {
+      type: String,
+      enum: ["text", "image", "video", "audio", "file"],
+      required: true,
+    },
     content: {
       type: String,
       trim: true,
-      required: true,
     },
     status: {
       type: String,
@@ -49,15 +54,14 @@ const messageSchema = new Schema<MessageDocument>(
     },
     attachments: [
       {
-        url: {
-          type: String,
-        },
         type: {
           type: String,
           enum: ["image", "video", "audio", "file"],
           required: true,
         },
-
+        url: {
+          type: String,
+        },
         fileName: { type: String },
         fileSize: { type: Number },
       },

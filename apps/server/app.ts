@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import routes from "./src/routes";
-import authRoutes from "./src/routes/authRoutess";
+import authRoutes from "./src/routes/authRoutes";
 import userRoutes from "./src/routes/userRoutes";
 import conversationRoutes from "./src/routes/conversationRoutes";
 import messageRoutes from "./src/routes/messageRoutes";
@@ -25,11 +25,11 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-app.use("/api", routes);
-app.use("/auth", authRoutes);
-app.use("/user", authenticate, userRoutes);
-app.use("/conversations", authenticate, conversationRoutes);
-app.use("/messages", authenticate, messageRoutes);
+ app.use("/api", routes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", authenticate, userRoutes);
+app.use("/api/conversations", authenticate, conversationRoutes);
+app.use("/api/messages", authenticate, messageRoutes);
 app.use(errorHandler);
 
 export default app;

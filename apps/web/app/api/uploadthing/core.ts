@@ -1,4 +1,3 @@
-import { authApi } from "@/services/api/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -13,9 +12,9 @@ export const ourFileRouter = {
       if (!authToken) throw new UploadThingError("Unauthorized");
 
       try {
-        const user = await authApi.verify(authToken);
-        if (!user) throw new UploadThingError("Unauthorized");
-        return { userId: user.id };
+        // const user = await authApi.verify(authToken);
+        // if (!user) throw new UploadThingError("Unauthorized");
+        // return { userId: user.id };
       } catch (error) {
         throw new UploadThingError("Unauthorized");
       }
@@ -35,9 +34,9 @@ export const ourFileRouter = {
       if (!authToken) throw new UploadThingError("Unauthorized");
 
       try {
-        const user = await authApi.verify(authToken);
-        if (!user) throw new UploadThingError("Unauthorized");
-        return { userId: user.id };
+        // const user = await authApi.verify(authToken);
+        // if (!user) throw new UploadThingError("Unauthorized");
+        // return { userId: user.id };
       } catch (error) {
         throw new UploadThingError("Unauthorized");
       }

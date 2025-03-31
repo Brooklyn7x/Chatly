@@ -1,43 +1,33 @@
+import { useSocketStore } from "@/store/useSocketStore";
 import { useEffect, useState } from "react";
-import { socketService } from "@/services/socket/socketService";
 
 export function useTypingIndicator(chatId: string) {
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
-
+  const { socket } = useSocketStore();
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !socket) return;
 
-    const handleStartTyping = (data: {
-      conversationId: string;
-      userIds: [];
-    }) => {
-      if (data.conversationId === chatId) {
+    const handleStartTyping = (data: { chatId: string; userId: string }) => {
+      if (data.chatId === chatId) {
+        setTypingUsers((prev) => new Set(prev).add(data.userId));
+      }
+    };
+
+    const handleStopTyping = (data: { chatId: string; userId: string }) => {
+      if (data.chatId === chatId) {
         setTypingUsers((prev) => {
           const next = new Set(prev);
-          data.userIds.forEach((userId) => next.add(userId));
+          next.delete(data.userId);
           return next;
         });
       }
     };
 
-    const handleStopTyping = (data: {
-      conversationId: string;
-      userIds: [];
-    }) => {
-      if (data.conversationId === chatId) {
-        setTypingUsers((prev) => {
-          const next = new Set(prev);
-          data.userIds.forEach((userId) => next.delete(userId));
-          return next;
-        });
-      }
-    };
-
-    socketService.on("typing:start", handleStartTyping);
-    socketService.on("typing:stop", handleStopTyping);
+    socket.on("typing_start", handleStartTyping);
+    socket.on("typing_stop", handleStopTyping);
     return () => {
-      socketService.off("typing:start", handleStartTyping);
-      socketService.off("typing:stop", handleStopTyping);
+      socket.off("typing_start", handleStartTyping);
+      socket.off("typing_stop", handleStopTyping);
     };
   }, [chatId]);
 

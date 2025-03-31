@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserItem } from "../sidebar/UserItem";
 import Image from "next/image";
+import { Participant } from "@/types";
 
 interface SharedMediaProps {
   chat: any;
@@ -34,12 +35,8 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
       <div className="p-2 pt-4">
         {activeTab === "members" && (
           <div className="space-y-2">
-            {chat?.participants.map((participant: any) => (
-              <UserItem
-                key={participant.userId._id}
-                user={participant.userId._id}
-                // className="hover:bg-muted/50 rounded-lg transition-colors duration-200"
-              />
+            {chat?.participants.map((participant: Participant, index) => (
+              <UserItem key={index} user={participant.userId} />
             ))}
           </div>
         )}

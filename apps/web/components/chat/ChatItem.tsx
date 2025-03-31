@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { UserAvatar } from "../shared/UserAvatar";
-import { cn } from "@/lib/utils";
+import { cn, formatName } from "@/lib/utils";
 import { Chat } from "@/types";
 import { useChatStore } from "@/store/useChatStore";
 
@@ -33,13 +33,7 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
     });
   }, [chat.updatedAt]);
 
-  const displayName = useMemo(() => {
-    if (chat.type === "direct") {
-      return chat.participants[1]?.userId.username || "Direct Message";
-    }
-    return chat.metadata?.title || "Group Chat";
-  }, [chat]);
-
+  const displayName = formatName(chat);
   return (
     <div
       onClick={onClick}
@@ -52,7 +46,7 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
     >
       <div className="flex items-center gap-3">
         <div className="relative flex-shrink-0">
-          <UserAvatar url={chat.metadata.avatar || ""} />
+          <UserAvatar url={chat.participants[0]?.userId.profilePicture || ""} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="mb-1 flex justify-between items-baseline">

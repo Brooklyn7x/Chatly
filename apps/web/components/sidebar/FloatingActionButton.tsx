@@ -5,10 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Pencil, User, Users, Volume, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { MessageCircle, Pencil, Users, Volume, X } from "lucide-react";
+import { ViewType } from "@/types";
 
-type ViewType = "main" | "search" | "new_message" | "new_group" | "new_channel";
 interface FBProps {
   onViewChange: (view: ViewType) => void;
 }
@@ -19,15 +19,15 @@ const FloatingActionButton = ({ onViewChange }: FBProps) => {
     <div className="absolute bottom-6 right-6">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button className="rounded-full h-14 w-14">
-            {open ? <X size={32} /> : <Pencil size={32} />}
+          <Button className="h-14 w-14 flex items-center justify-center bg-primary border rounded-full">
+            {open ? <X className="h-6 w-6" /> : <Pencil className="h-6 w-6" />}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 mb-1" alignOffset={20}>
           <DropdownMenuItem onClick={() => onViewChange("new_message")}>
             <div className="flex items-center gap-4 px-2">
-              <MessageCircle size={16} />
-              <p>New Chat</p>
+              <User size={16} />
+              <p>New Private Chat</p>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onViewChange("new_group")}>
@@ -36,12 +36,12 @@ const FloatingActionButton = ({ onViewChange }: FBProps) => {
               <p>New Group</p>
             </div>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem>
-            <div className="flex items-center gap-4 px-1">
+          <DropdownMenuItem>
+            <div className="flex items-center gap-4 px-2">
               <Volume size={16} />
               <p>New Channel</p>
             </div>
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

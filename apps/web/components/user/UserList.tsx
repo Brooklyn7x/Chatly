@@ -14,12 +14,12 @@ export const UserList = ({
 }: UserListProps) => {
   return (
     <div className="h-full w-full">
-      <div className="border-t p-2 space-y-1">
+      <div className="p-2 space-y-1">
         {users
           .filter((user) => user.id)
-          .map((user) => (
+          .map((user, index) => (
             <div
-              key={user.id}
+              key={index}
               onClick={() => onUserToggle(user.id)}
               className="cursor-pointer"
             >

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as conversationController from "../controllers/conversationControllerx";
+import * as conversationController from "../controllers/conversationController";
 const router = Router();
 
 router.post("/", conversationController.createConversation);

@@ -1,33 +1,23 @@
-import { socketService } from "@/services/socket/socketService";
-import { UserStatus, useUserStatusStore } from "@/store/useUserStatusStore";
+import { useSocketStore } from "@/store/useSocketStore";
+import useUserStatusStore from "@/store/useUserStatusStore";
 import { useEffect } from "react";
-import { useSocket } from "./useSocket";
 
 export function useUserStatusSocket() {
-  const updateStatus = useUserStatusStore((state) => state.updateStatus);
-
-  const { isConnected } = useSocket();
+  const { isConnected, socket } = useSocketStore();
+  const { updateUserStatus } = useUserStatusStore();
 
   useEffect(() => {
-    if (!isConnected) return;
+    if (!socket || !isConnected) return;
 
-    const handleStatusChange = (data: {
-      status: string;
-      userId: string;
-      timestamp: Date;
-    }) => {
-      updateStatus({
-        userId: data.userId,
-        status: data.status as UserStatus,
-        timestamp: data.timestamp
-          ? data.timestamp.toString()
-          : new Date().toISOString(),
-      });
+    const handleStatusChange = (data: { userId: string; status: string }) => {
+      const { userId, status } = data;
+      updateUserStatus(userId, status);
+      console.log(`User ${userId} is now ${status}`);
     };
-    
-    socketService.on("user:status_change", handleStatusChange);
+
+    socket.on("user_status_changes", handleStatusChange);
     return () => {
-      socketService.off("user:status_change", handleStatusChange);
+      socket.off("user_status_changes", handleStatusChange);
     };
-  }, [updateStatus, isConnected]);
+  }, [socket]);
 }

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ImageModal } from "./ImageModal";
+import { MessageType } from "@/types";
 
 type Attachment = {
   url: string;
@@ -10,17 +11,19 @@ type Attachment = {
   mimeType?: string;
 };
 
-type MessageType = "text" | "image" | "video" | "audio" | "file";
-
-export const MessageContent = ({
-  content,
-  type,
-  attachments = [],
-}: {
+interface MessageContentProp {
+  isOwn: boolean;
   content: string;
   type: MessageType;
   attachments?: Attachment[];
-}) => {
+}
+
+export const MessageContent = ({
+  isOwn,
+  content,
+  type,
+  attachments = [],
+}: MessageContentProp) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const openImage = (url: string) => setSelectedImage(url);
   const closeImage = () => setSelectedImage(null);
@@ -84,7 +87,9 @@ export const MessageContent = ({
           }
         })}
 
-        {content && <p className="text-sm mt-2">{content}</p>}
+        {content && (
+          <p className={`${isOwn ? "text-black" : "text-white"}`}>{content}</p>
+        )}
       </div>
 
       {selectedImage && (

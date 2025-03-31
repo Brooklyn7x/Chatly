@@ -1,33 +1,33 @@
 import { create } from "zustand";
 
-export type UserStatus = "online" | "offline";
-
-interface UserStatusState {
+interface UserStatus {
   userId: string;
-  status: UserStatus;
-  timestamp: string;
+  status: string;
+  lastUpdated: Date;
 }
 
 interface UserStatusStore {
-  statusMap: Record<string, UserStatusState>;
-  getStatus: (userId: string) => UserStatusState | string;
-  updateStatus: (data: UserStatusState) => void;
+  userStatuses: Record<string, UserStatus>;
+  updateUserStatus: (userId: string, status: string) => void;
+  getUserStatus: (userId: string) => UserStatus | undefined;
 }
 
 export const useUserStatusStore = create<UserStatusStore>((set, get) => ({
-  statusMap: {},
-  getStatus: (userId) => get().statusMap[userId] || "offline",
-  updateStatus: (data) =>
+  userStatuses: {},
+
+  updateUserStatus: (userId, status) =>
     set((state) => ({
-      statusMap: {
-        ...state.statusMap,
-        [data.userId]: {
-          userId: data.userId,
-          status: data.status,
-          timestamp: data.timestamp,
+      userStatuses: {
+        ...state.userStatuses,
+        [userId]: {
+          userId,
+          status,
+          lastUpdated: new Date(),
         },
       },
     })),
+
+  getUserStatus: (userId) => get().userStatuses[userId],
 }));
 
 export default useUserStatusStore;

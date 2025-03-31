@@ -6,8 +6,6 @@ import { SWRConfig } from "swr";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/shared/AppSidebar";
 
 export const metadata: Metadata = {
   icons: "/logo.svg",
@@ -24,7 +22,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <Toaster />
-        <ThemeProvider defaultColor="default" defaultTheme="system">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <SWRConfig
             value={{
               revalidateOnFocus: false,

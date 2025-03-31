@@ -1,62 +1,91 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { ArrowDownIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { MessageBubble } from "./MessageBubble";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
 import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { fetchMessages } from "@/hooks/useMessage";
-import { useReadMessages } from "@/hooks/useReadMessage";
+import { useFetchMessages } from "@/hooks/useMessage";
+import { Message } from "@/types";
 
 function MessageList() {
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const user = useAuthStore((state) => state.user);
+  const activeChatId = useChatStore((state) => state.activeChatId);
+  const messages = useMessageStore((state) => state.messages);
+  const { isLoading, error } = useFetchMessages(activeChatId || "");
+  const { isTyping } = useTypingIndicator(activeChatId || "");
+  const prevMessagesLengthRef = useRef(0);
+  const currentMessages = messages[activeChatId || ""] || [];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-        setShowScrollButton(scrollTop + clientHeight < scrollHeight - 100);
-      }
-    };
+  const lastMessage =
+    currentMessages.length > 0
+      ? currentMessages[currentMessages.length - 1]
+      : null;
+  const isLastMessageMine = lastMessage
+    ? lastMessage.senderId._id === user?.id
+    : false;
 
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
-    }
+  const getScrollableElement = useCallback(() => {
+    const scrollAreaViewport = document.querySelector(
+      "[data-radix-scroll-area-viewport]"
+    );
+    if (scrollAreaViewport) return scrollAreaViewport as HTMLElement;
+
+    if (containerRef.current) return containerRef.current;
+
+    return null;
   }, []);
 
-  const handleScrollToBottom = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        top: containerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+  useEffect(() => {
+    if (activeChatId) {
+      setIsAtBottom(true);
+      prevMessagesLengthRef.current = 0;
+      setTimeout(scrollToBottom, 100);
     }
-  };
+  }, [activeChatId]);
 
-  const { user } = useAuthStore();
-  const { activeChatId } = useChatStore();
+  useEffect(() => {
+    if (!currentMessages.length) return;
 
-  if (!activeChatId) return;
+    const messagesLength = currentMessages.length;
+    const isNewMessage = messagesLength > prevMessagesLengthRef.current;
 
-  const { messages } = useMessageStore();
-  const { isLoading, error, hasMore, isLoadingMore, loadMore } =
-    fetchMessages(activeChatId);
+    if (isNewMessage) {
+      if (isLastMessageMine || isAtBottom) {
+        setTimeout(scrollToBottom, 50);
+      }
+    }
 
-  const { isTyping } = useTypingIndicator(activeChatId);
+    prevMessagesLengthRef.current = messagesLength;
+  }, [currentMessages.length, isLastMessageMine, isAtBottom]);
 
-  useReadMessages(activeChatId);
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      setIsAtBottom(true);
+      return;
+    }
+
+    const scrollableElement = getScrollableElement();
+    if (scrollableElement) {
+      scrollableElement.scrollTop = scrollableElement.scrollHeight;
+      setIsAtBottom(true);
+    }
+  }, [getScrollableElement]);
 
   const isOwnMessage = useCallback(
-    (message: any) => {
-      return (message.senderId?._id || message.senderId) === user?._id;
+    (message: Message) => {
+      return message.senderId._id === user?.id;
     },
     [user]
   );
+
+  if (!activeChatId) return null;
 
   return (
     <div className="flex flex-col h-full">
@@ -67,19 +96,19 @@ function MessageList() {
           ) : error ? (
             <MessageError error={error} />
           ) : (
-            <MessagesContainer
-              messages={messages[activeChatId] || []}
-              isOwnMessage={isOwnMessage}
-            />
+            <>
+              <MessagesContainer
+                messages={currentMessages}
+                isOwnMessage={isOwnMessage}
+              />
+              <div ref={messagesEndRef} style={{ height: "1px" }} />
+            </>
           )}
         </div>
         <ScrollBar orientation="vertical" />
       </ScrollArea>
 
       {isTyping && <TypingIndicator />}
-      {showScrollButton && (
-        <ScrollToBottomButton onClick={handleScrollToBottom} />
-      )}
     </div>
   );
 }
@@ -92,29 +121,23 @@ export function MessageLoader() {
   );
 }
 
-interface MessageErrorProps {
-  error: Error | string;
-}
-
-export function MessageError({ error }: MessageErrorProps) {
-  return (
-    <div className="text-red-500 text-sm text-center">
-      {typeof error === "string"
-        ? error
-        : error.message || "Something went wrong."}
-    </div>
-  );
-}
-
 interface MessagesContainerProps {
-  messages: any[];
-  isOwnMessage: (message: any) => boolean;
+  messages: Message[];
+  isOwnMessage: (message: Message) => boolean;
 }
 
 export function MessagesContainer({
   messages,
   isOwnMessage,
 }: MessagesContainerProps) {
+  if (messages.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-muted-foreground">
+        No messages yet. Start the conversation!
+      </div>
+    );
+  }
+
   return (
     <>
       {messages.map((message) => (
@@ -128,19 +151,18 @@ export function MessagesContainer({
   );
 }
 
-interface ScrollToBottomButtonProps {
-  onClick: () => void;
+export default MessageList;
+
+interface MessageErrorProps {
+  error: Error | string;
 }
 
-function ScrollToBottomButton({ onClick }: ScrollToBottomButtonProps) {
+export function MessageError({ error }: MessageErrorProps) {
   return (
-    <button
-      onClick={onClick}
-      className="fixed bottom-[68px] right-4 p-2 bg-primary rounded-full border shadow-lg hover:bg-muted transition-colors duration-200"
-    >
-      <ArrowDownIcon className="h-6 w-6" />
-    </button>
+    <div className="text-red-500 text-sm text-center">
+      {typeof error === "string"
+        ? error
+        : error.message || "Something went wrong. Failed to fetch messages"}
+    </div>
   );
 }
-
-export default MessageList;

@@ -1,118 +1,186 @@
-import { Request, Response } from "express";
-import { BaseController } from "./baseController";
-import { UserService } from "../services/userService";
-import { UserStatus } from "../types/user";
-import { UpdateUser } from "../validators/user";
+import { NextFunction, Request, Response } from "express";
+import User from "../models/user";
 
-export class UserController extends BaseController {
-  private userService: UserService;
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
 
-  constructor() {
-    super("UserController");
-    this.userService = new UserService();
-  }
-
-  public getUserProfile = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    const userId = req.params.id;
-
-    await this.handleRequest(req, res, async () => {
-      const result = await this.userService.getUserById(userId);
-
-      if (result.success) {
-        res.json(result.data);
-      } else {
-        this.sendError(res, 404, result.error!);
-      }
-    });
-  };
-
-  public updateProfile = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const userId = req.user._id;
-      console.log(req.body)
-      const validationResult = UpdateUser.safeParse(req.body);
-      if (!validationResult.success) {
-        res.status(400).json({
-          success: false,
-          error: validationResult.error.errors[0].message,
-        });
-        return;
-      }
-      const updateData = validationResult.data;
-
-      await this.handleRequest(req, res, async () => {
-        const result = await this.userService.updateUser(userId, updateData);
-
-        if (!result.success) {
-          this.sendError(res, 400, result.error!);
-          return;
-        }
-
-        res.status(200).json({
-          success: true,
-          data: result.data,
-        });
-      });
-    } catch (error) {
-      this.logger.error("Error updating user data :", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error during conversation update",
-      });
-    }
-  };
-
-  public updateStatus = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user!._id;
-    const { status } = req.body;
-
-    if (!Object.values(UserStatus).includes(status)) {
-      this.sendError(res, 400, "Invalid status value");
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
       return;
     }
 
-    await this.handleRequest(req, res, async () => {
-      const result = await this.userService.updateUserStatus(userId, status);
+    res.status(200).json({ data: user });
+  } catch (error) {
+    next(Error);
+  }
+};
 
-      if (!result.success) {
-        this.sendError(res, 400, result.error!);
-        return;
-      }
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+    const { username, email } = req.body;
 
-      res.json({
-        success: true,
-        data: result.data,
+    if (username || email) {
+      const existingUser = await User.findOne({
+        $or: [{ username: username }, { email: email }],
+        _id: { $ne: userId },
       });
-    });
-  };
 
-  public searchUsers = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const currentUserId = req.user!._id;
-      const { query = "", limit, offset } = req.query;
-      const result = await this.userService.searchUsers(
-        query as string,
-        currentUserId,
-        {
-          limit: limit ? parseInt(limit as string) : undefined,
-          offset: offset ? parseInt(offset as string) : undefined,
+      if (existingUser) {
+        if (existingUser.username === username) {
+          res.status(400).json({ message: "Username is already taken" });
+          return;
         }
-      );
+        if (existingUser.email === email) {
+          res.status(400).json({ message: "Username is already taken" });
+          return;
+        }
+      }
 
-      if (!result.success) {
-        res.status(400).json(result);
+      const updateUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            ...(username && { username }),
+            ...(email && { email }),
+          },
+        },
+        { new: true }
+      ).select("-password");
+
+      if (!updateUser) {
+        res.status(404).json({ message: "User not found" });
         return;
       }
-      res.json(result);
-    } catch (error) {
-      this.logger.error(error as any);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
+
+      res.status(200).json({
+        success: true,
+        data: updateUser,
       });
     }
-  };
-}
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getContacts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+
+    const user = await User.findById(userId)
+      .select("contacts")
+      .populate("contacts", "username email profilePicture");
+
+    if (!user) {
+      res.status(404).json({
+        message: "User not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user.contacts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.body;
+
+    const contactUser = await User.findById(id);
+    if (!contactUser) {
+      res.status(404).json({
+        message: "User not found",
+      });
+      return;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    const existingContact = user.contacts?.find(
+      (contact) => contact.toString() === id
+    );
+
+    if (existingContact) {
+      res.status(400).json({ message: "Contact already exists" });
+      return;
+    }
+    const newContact = id;
+    user.contacts.push(newContact);
+    await user.save();
+
+    res.status(201).json({
+      message: "Contact added successfully",
+      data: newContact,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const searchUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { search } = req.query;
+    const currentUserId = req.user?.id;
+
+    if (!search || typeof search !== "string") {
+      res.status(400).json({ message: "Please provide a search query" });
+      return;
+    }
+
+    const users = await User.find({
+      $and: [
+        {
+          $or: [
+            { email: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+          ],
+        },
+        { _id: { $ne: currentUserId } },
+      ],
+    }).select("id username email profilePicture");
+
+    if (!users.length) {
+      res.status(404).json({ message: "No users found" });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

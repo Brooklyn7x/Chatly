@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { useUserStatus } from "@/hooks/useUserStatus";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface UserAvatarProps {
@@ -7,6 +5,7 @@ interface UserAvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
   userId?: any;
+  alt?: string;
 }
 
 const sizeConfig = {
@@ -21,9 +20,8 @@ export const UserAvatar = ({
   url,
   size = "md",
   className,
-  userId,
+  alt,
 }: UserAvatarProps) => {
-  const { isOnline } = useUserStatus(userId || "");
   const { class: sizeClass, size: imageSize } = sizeConfig[size];
   const defaultAvatar = "https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka";
 
@@ -32,7 +30,7 @@ export const UserAvatar = ({
       <Avatar className="h-full w-full">
         <AvatarImage
           src={url || defaultAvatar}
-          alt="Default Avatar"
+          alt={alt || "user-avatar"}
           className="border rounded-full object-cover"
           loading="lazy"
           sizes="50"
@@ -41,9 +39,6 @@ export const UserAvatar = ({
           U
         </AvatarFallback>
       </Avatar>
-      {isOnline && (
-        <span className="absolute bottom-1.5 right-0 h-2 w-2 bg-green-500 rounded-full border border-white" />
-      )}
     </div>
   );
 };

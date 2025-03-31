@@ -13,7 +13,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "../provider/ThemeProvider";
+// import { useTheme } from "../provider/ThemeProvider";
 
 export function ThemeToggle() {
   const { setTheme, themeColor, setThemeColor } = useTheme();

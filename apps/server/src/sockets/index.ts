@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { userHandler, userSocket } from "./userHandler";
-import { messageHandler, messageSocket } from "./messageHandler";
+import { userHandler } from "./userHandler";
+import { messageHandler } from "./messageHandler";
 import { chatHandler } from "./chatHandler";
 
 export const setupSocket = (server: any): void => {
@@ -18,7 +18,7 @@ export const setupSocket = (server: any): void => {
     }
 
     try {
-      if (!process.env.JWT_SECRET) {
+      if (!process.env.JWT_ACCESS_SECRET) {
         throw new Error("JWT_SECRET is not defined");
       }
       const decode = jwt.verify(
@@ -34,12 +34,23 @@ export const setupSocket = (server: any): void => {
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
+
+    socket.broadcast.emit("user_status_changes", {
+      userId: socket.data.userId,
+      status: "online",
+    });
+
     userHandler(io, socket);
     chatHandler(io, socket);
     messageHandler(io, socket);
 
     socket.on("disconnect", () => {
       console.log("User disconnected");
+
+      socket.broadcast.emit("user_status_changes", {
+        userId: socket.data.userId,
+        status: "offline",
+      });
     });
   });
 };

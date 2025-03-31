@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -9,45 +9,34 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Loading } from "../ui/loading";
-import { useSearch } from "@/hooks/useSearch";
 import { UserAvatar } from "../shared/UserAvatar";
 import useAuthStore from "@/store/useAuthStore";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Participant } from "@/types";
+import { useSearchUser } from "@/hooks/useContact";
 
-interface AddMemberProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onAdd: (userId: string[]) => void;
-  participants: Participant[];
-  isAdding: boolean;
-}
-const AddMemberDialog = ({
-  open,
-  onOpenChange,
-  onAdd,
-  participants,
-  isAdding,
-}: AddMemberProps) => {
+const AddMemberDialog = () => {
+  const [open, setOpen] = useState(false);
+  const [loading, setloading] = useState(false);
   const { user: current } = useAuthStore();
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const [query, setQuery] = useState<string>("");
   const debounceQuery = useDebounce(query, 100);
-  const { users } = useSearch(debounceQuery);
+  const { users, isLoading } = useSearchUser(debounceQuery);
 
   const availableUsers = useMemo(() => {
     return users.filter((user: any) => {
       const isNotCurrentUser = user._id !== current?._id;
-      const isNotParticipant = !participants.some(
-        (participant) => participant.userId === user._id
-      );
-      const isNotSelected = !selectedMember.includes(user._id);
-      return isNotCurrentUser && isNotParticipant && isNotSelected;
+      // const isNotParticipant = !participants?.some(
+      //   (participant: any) => participant.userId === user._id
+      // );
+      // const isNotSelected = !selectedMember.includes(user._id);
+      // return isNotCurrentUser && isNotParticipant && isNotSelected;
     });
-  }, [users, current, participants, selectedMember]);
+  }, [users, current, selectedMember]);
 
   const handleUserSelection = (userId: string) => {
     setSelectedMember((prev) =>
@@ -64,12 +53,12 @@ const AddMemberDialog = ({
     }
 
     try {
-      onAdd(selectedMember);
+      // onAdd(selectedMember);
       setSelectedMember([]);
     } catch (error) {
       toast.error("Failed to add members");
     }
-  }, [selectedMember, onAdd]);
+  }, [selectedMember]);
 
   const renderSelectedUsers = () => (
     <div className="flex flex-wrap gap-2">
@@ -111,8 +100,13 @@ const AddMemberDialog = ({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px]">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="border h-14 w-14">
+          <UserPlus />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-[500px]">
         <DialogHeader>
           <DialogTitle>Add Member</DialogTitle>
           <DialogDescription>Add Member to Group</DialogDescription>
@@ -129,13 +123,11 @@ const AddMemberDialog = ({
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleAddMember} disabled={isAdding}>
-            {isAdding ? <Loading /> : "Add Member"}
+          <Button type="submit" onClick={handleAddMember} disabled={loading}>
+            {loading ? <Loading /> : "Add Member"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default AddMemberDialog;

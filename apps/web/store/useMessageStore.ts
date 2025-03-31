@@ -1,31 +1,20 @@
-import { Message } from "@/types/message";
+import { Message } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface MessageStore {
   messages: Record<string, Message[]>;
-  isLoading: boolean;
-  error: string | null;
-
   setMessages: (chatId: string, messages: Message[]) => void;
   addMessage: (message: Message) => void;
-  updateMessage: (
-    chatId: string,
-    tempId: string,
-    updates: Partial<Message>
-  ) => void;
-  deleteMessage: (chatId: string, messageId: string) => void;
-  updateMessageStatus: (messageId: string, updates: Partial<Message>) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
+  updateMessage: (chatId: string, message: Message) => void;
+  deleteMessage: (chatId: string, messageId: string, message: Message) => void;
+  updateMessageStatus: (messageId: string, update: Partial<Message>) => void;
 }
 
 export const useMessageStore = create<MessageStore>()(
   persist(
     (set) => ({
       messages: {},
-      isLoading: false,
-      error: null,
 
       setMessages: (chatId, messages) =>
         set((state) => ({
@@ -43,12 +32,12 @@ export const useMessageStore = create<MessageStore>()(
           },
         })),
 
-      updateMessage: (chatId, tempId, updates) =>
+      updateMessage: (chatId, message) =>
         set((state) => ({
           messages: {
             ...state.messages,
-            [chatId]: (state.messages[chatId] || []).map((message) =>
-              message._id === tempId ? { ...message, ...updates } : message
+            [chatId]: (state.messages[chatId] || []).map((msg) =>
+              msg._id === message._id ? { ...msg, ...message } : msg
             ),
           },
         })),
@@ -64,25 +53,17 @@ export const useMessageStore = create<MessageStore>()(
         }));
       },
 
-      updateMessageStatus: (messageId, updates) =>
+      updateMessageStatus: (messageId, update) =>
         set((state) => ({
-          messages: {
-            ...state.messages,
-            ...Object.fromEntries(
-              Object.entries(state.messages).map(([chatId, messages]) => [
-                chatId,
-                messages.map((message) =>
-                  message._id === messageId
-                    ? { ...message, ...updates }
-                    : message
-                ),
-              ])
-            ),
-          },
+          messages: Object.fromEntries(
+            Object.entries(state.messages).map(([chatId, messages]) => [
+              chatId,
+              messages.map((message) =>
+                message._id === messageId ? { ...message, ...update } : message
+              ),
+            ])
+          ),
         })),
-
-      setLoading: (loading: boolean) => set({ isLoading: loading }),
-      setError: (error) => set({ error }),
     }),
     {
       name: "message-store",
