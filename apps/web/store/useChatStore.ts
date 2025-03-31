@@ -1,12 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Chat } from "@/types";
-import { getAllConversations } from "@/services/chatService";
+
 
 interface ChatStore {
   chats: Chat[];
   activeChatId: string | null;
-
   setChats: (chats: Chat[]) => void;
   addChats: (chat: Chat) => void;
   setActiveChat: (chatId: string | null) => void;

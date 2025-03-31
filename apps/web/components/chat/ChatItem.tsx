@@ -74,7 +74,7 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
 
           <div className="flex justify-between items-baseline">
             <p className="text-sm text-muted-foreground truncate">
-              {chat?.lastMessage?.content || "No messages yet"}
+              {"No messages yet"}
             </p>
             <span className="ml-2 bg-primary text-primary-foreground rounded-full text-xs h-5 w-5 flex items-center justify-center ">
               10

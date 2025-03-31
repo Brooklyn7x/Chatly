@@ -50,7 +50,7 @@ const useAuthStore = create<AuthStore>()(
           set({
             error:
               error instanceof Error
-                ? error.response.data.message
+                ? error.message
                 : "Login failed",
             isLoading: false,
           });

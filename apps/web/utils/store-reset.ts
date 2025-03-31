@@ -10,8 +10,6 @@ export const resetAllStores = () => {
 
   useMessageStore.setState({
     messages: {},
-    isLoading: false,
-    error: null,
   });
 
   useUIStore.setState({

@@ -79,7 +79,7 @@ export const useFetchChats = () => {
     onSuccess: (response) => {
       setChats(response.data);
     },
-    // refreshInterval: 5000,
+    refreshInterval: 10000,
     revalidateIfStale: true,
   });
 

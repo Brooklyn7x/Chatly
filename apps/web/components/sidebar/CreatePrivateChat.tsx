@@ -32,9 +32,8 @@ interface PrivateChatProps {
 const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const { user } = useAuthStore();
   const { contacts, isLoading, error } = useFetchContacts();
-  const { createChatRoom, isMutating, error: createError } = useCreateChat();
+  const { createChatRoom, isMutating } = useCreateChat();
   const { addNewContact, isLoading: isAdding } = useAddNewContact();
-
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isAddContactDialogOpen, setIsAddContactDialogOpen] = useState(false);
@@ -80,7 +79,6 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const handleDialogClose = () => {
     setIsAddContactDialogOpen(false);
     setDialogSearchQuery("");
-    setDebouncedSearchQuery("");
   };
 
   const handleAddFoundContact = async (userId: string) => {
@@ -89,11 +87,9 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
       if (!user) return;
       await addNewContact(user.id);
       toast.success(`Added ${user.username} as a contact`);
-      setIsAddingContact(false);
       setIsAddContactDialogOpen(false);
     } catch (error) {
       toast.error("Failed to add contact");
-      setIsAddingContact(false);
     }
   };
 
@@ -160,7 +156,7 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
               disabled={!selectedUserId}
               className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-primary/25 transition-all"
             >
-              <Plus className="h-5 w-5" />
+              {isMutating ? <Loading /> : <Plus className="h-5 w-5" />}
             </FloatinButton>
           </div>
         )}

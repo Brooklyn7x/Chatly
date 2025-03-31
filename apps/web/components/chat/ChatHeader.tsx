@@ -35,9 +35,7 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const { getUserStatus } = useUserStatusStore();
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
-  const isOnline = getUserStatus(otherUserId);
-
-  // const { deleteCht } = useChats();
+  const isOnline = getUserStatus(otherUserId || "");
 
   const displayName = formatName(chat);
 

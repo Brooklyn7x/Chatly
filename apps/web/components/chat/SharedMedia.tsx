@@ -35,8 +35,8 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
       <div className="p-2 pt-4">
         {activeTab === "members" && (
           <div className="space-y-2">
-            {chat?.participants.map((participant: Participant, index) => (
-              <UserItem key={index} user={participant.userId} />
+            {chat?.participants.map((participant: Participant) => (
+              <UserItem key={participant.id} user={participant.userId as any} />
             ))}
           </div>
         )}
