@@ -16,46 +16,45 @@ export const useFileUpload = (options: UseFileUploadOptions) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { startUpload } = useUploadThing(endpoint, {
-    headers: { authorization: `Bearer ${accessToken}` },
-    onClientUploadComplete: (res) => {
-      setIsUploading(false);
-    },
-    onUploadProgress: (progress) => {
-      setUploadProgress(progress);
-    },
-    onUploadError: (error) => {
-      setError("Failed to upload files");
-      setIsUploading(false);
-    },
-  });
+  // const { startUpload } = useUploadThing(endpoint, {
+  //   headers: { authorization: `Bearer ${accessToken}` },
+  //   onClientUploadComplete: (res) => {
+  //     setIsUploading(false);
+  //   },
+  //   onUploadProgress: (progress) => {
+  //     setUploadProgress(progress);
+  //   },
+  //   onUploadError: (error) => {
+  //     setError("Failed to upload files");
+  //     setIsUploading(false);
+  //   },
+  // });
 
-  const fileUpload = async (files: File[]) => {
-    if (!files || files.length === 0) {
-      setError("No files selected");
-      return null;
-    }
-    setIsUploading(true);
-    setError(null);
+  // const fileUpload = async (files: File[]) => {
+  //   if (!files || files.length === 0) {
+  //     setError("No files selected");
+  //     return null;
+  //   }
+  //   setIsUploading(true);
+  //   setError(null);
 
-    try {
-      const result = await startUpload(files);
-      if (result) {
-        return result.map((file) => ({
-          url: file.url,
-        })) as UploadResult[];
-      }
-      return null;
-    } catch (error) {
-      setError("Failed to upload files");
-      return null;
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  //   try {
+  //     const result = await startUpload(files);
+  //     if (result) {
+  //       return result.map((file) => ({
+  //         url: file.url,
+  //       })) as UploadResult[];
+  //     }
+  //     return null;
+  //   } catch (error) {
+  //     setError("Failed to upload files");
+  //     return null;
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
 
   return {
-    fileUpload,
     uploadProgress,
     isUploading,
     error,

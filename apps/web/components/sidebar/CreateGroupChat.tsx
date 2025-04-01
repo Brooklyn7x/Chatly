@@ -1,227 +1,253 @@
-"use client";
+// "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
-import { GroupDetailsForm } from "../form/GroupDetailsForm";
-import { StepContainer } from "../modal/StepContainer";
-import { UserList } from "../user/UserList";
-import { SelectUserList } from "../user/SelectedUserList";
-import { SearchInput } from "../shared/SearchInput";
-import { NavigationButton } from "../shared/NavigationButton";
-import FloatinButton from "../shared/FloatinButton";
-import { Loading } from "../ui/loading";
-import { useFetchContacts, useSearchUser } from "@/hooks/useContact";
-import useAuthStore from "@/store/useAuthStore";
-import { User } from "@/types";
-import { useCreateChat } from "@/hooks/useChats";
+// import { useState } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+// import { ArrowLeft, Search, Check, ArrowRight, Camera } from "lucide-react";
 
-interface CreateGroupChatProps {
-  onClose: () => void;
-}
+// export const CreateGroupChat = ({ onBack }: { onBack: () => void }) => {
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [selectedUsers, setSelectedUsers] = useState([]);
+//   const [groupName, setGroupName] = useState("");
+//   const [step, setStep] = useState(1); // Step 1: Select Users, Step 2: Group Details
+//   const [users, setUsers] = useState([
+//     {
+//       id: 1,
+//       name: "Alice",
+//       username: "alice123",
+//       avatar: "https://example.com/avatar1.jpg",
+//     },
+//     {
+//       id: 2,
+//       name: "Bob",
+//       username: "bob456",
+//       avatar: "https://example.com/avatar2.jpg",
+//     },
+//     {
+//       id: 3,
+//       name: "Charlie",
+//       username: "charlie789",
+//       avatar: "https://example.com/avatar3.jpg",
+//     },
+//   ]);
+//   const [groupImage, setGroupImage] = useState("");
+//   const [allowMessages, setAllowMessages] = useState(true);
+//   const [allowMedia, setAllowMedia] = useState(true);
+//   const [allowMentions, setAllowMentions] = useState(true);
 
-const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
-  const [step, setStep] = useState<"members" | "details">("members");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [name, setName] = useState("");
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(
-    new Set()
-  );
-  const [image, setImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { user } = useAuthStore();
-  const { users, isLoading: loading } = useSearchUser(searchQuery);
-  const { contacts, isLoading } = useFetchContacts();
-  const { createChatRoom, isMutating, error } = useCreateChat();
-  const usersData = [...contacts, ...users];
+//   const handleSearch = (e) => {
+//     setSearchQuery(e.target.value);
+//   };
 
-  const selectedUsers = useMemo(() => {
-    return users.filter((user: User) => {
-      const userId = user._id || user.id;
-      return userId && selectedUserIds.has(userId);
-    });
-  }, [users, selectedUserIds]);
+//   const handleSelectUser = (user) => {
+//     if (selectedUsers.some((u) => u.id === user.id)) {
+//       // Deselect user if already selected
+//       setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
+//     } else {
+//       // Select user
+//       setSelectedUsers([...selectedUsers, user]);
+//     }
+//   };
 
-  useEffect(() => {
-    if (image) {
-      const url = URL.createObjectURL(image);
-      setPreviewImage(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [image]);
+//   const handleNextStep = () => {
+//     if (selectedUsers.length > 0) {
+//       setStep(2); // Move to Step 2: Group Details
+//     }
+//   };
 
-  const handleNameChange = (newName: string) => {
-    setName(newName);
-  };
+//   const handleCreateGroupChat = () => {
+//     if (groupName && selectedUsers.length > 0) {
+//       // Add logic to create a group chat (e.g., API call)
+//       console.log("Creating group chat:", {
+//         groupName,
+//         members: selectedUsers,
+//       });
+//       onBack(); // Close the view after creation
+//     }
+//   };
 
-  const handleImageChange = (newImage: File | null) => {
-    setImage(newImage);
-  };
+//   return (
+//     <div className="h-full flex flex-col bg-gradient-to-b from-background/95 to-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+//       {/* Back Button and Header */}
+//       <div className="p-4 border-b flex items-center gap-4 bg-background/95 backdrop-blur">
+//         <Button variant="ghost" size="icon" onClick={onBack}>
+//           <ArrowLeft className="h-4 w-4" />
+//         </Button>
+//         <h2 className="text-xl font-semibold">
+//           {step === 1 ? "Select Users" : "Group Details"}
+//         </h2>
+//       </div>
 
-  const handleUserToggle = (userId: string) => {
-    setSelectedUserIds((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(userId)) {
-        newSet.delete(userId);
-      } else {
-        newSet.add(userId);
-      }
-      return newSet;
-    });
-  };
+//       {/* Step 1: Search and Select Users */}
+//       {step === 1 && (
+//         <div className="flex-1 flex flex-col">
+//           {/* Search Bar */}
+//           <div className="p-4 border-b bg-background/95 backdrop-blur">
+//             <div className="relative">
+//               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+//               <Input
+//                 value={searchQuery}
+//                 onChange={handleSearch}
+//                 placeholder="Search users..."
+//                 className="pl-10"
+//               />
+//             </div>
+//           </div>
 
-  const resetForm = () => {
-    setName("");
-    setSelectedUserIds(new Set());
-    setImage(null);
-    setPreviewImage(null);
-    setSearchQuery("");
-  };
+//           {/* User List */}
+//           <div className="flex-1 overflow-y-auto p-4 space-y-3">
+//             {users
+//               .filter((user) =>
+//                 user.name.toLowerCase().includes(searchQuery.toLowerCase())
+//               )
+//               .map((user) => (
+//                 <div
+//                   key={user.id}
+//                   className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all ${
+//                     selectedUsers.some((u) => u.id === user.id)
+//                       ? "bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-sm"
+//                       : "bg-background hover:bg-secondary/10 border border-muted/20 hover:border-muted/30"
+//                   }`}
+//                   onClick={() => handleSelectUser(user)}
+//                 >
+//                   <Avatar className="h-12 w-12">
+//                     <AvatarImage src={user.avatar} />
+//                     <AvatarFallback>{user.name[0]}</AvatarFallback>
+//                   </Avatar>
+//                   <div className="flex-1">
+//                     <h3 className="font-medium">{user.name}</h3>
+//                     <p className="text-sm text-muted-foreground">
+//                       {user.username}
+//                     </p>
+//                   </div>
+//                   {selectedUsers.some((u) => u.id === user.id) && (
+//                     <div className="flex items-center justify-center h-6 w-6 rounded-full bg-primary text-white">
+//                       <Check className="h-4 w-4" />
+//                     </div>
+//                   )}
+//                 </div>
+//               ))}
+//           </div>
 
-  const validateForm = () => {
-    if (selectedUserIds.size === 0) {
-      throw new Error("Please select at least one user");
-    }
-    if (!name.trim()) {
-      throw new Error("Please enter a group name");
-    }
-  };
+//           {/* Next Button */}
+//           <div className="p-4 border-t bg-background/95 backdrop-blur">
+//             <Button
+//               onClick={handleNextStep}
+//               className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all"
+//               disabled={selectedUsers.length === 0}
+//             >
+//               Next
+//             </Button>
+//           </div>
+//         </div>
+//       )}
 
-  const handleSubmit = useCallback(async () => {
-    try {
-      validateForm();
+//       {/* Step 2: Group Details */}
+//       {step === 2 && (
+//         <div className="flex-1 flex flex-col">
+//           {/* Group Image Upload */}
+//           <div className="p-4 border-b bg-background/95 backdrop-blur">
+//             <div className="flex flex-col items-center gap-4">
+//               <label htmlFor="group-image" className="cursor-pointer">
+//                 <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary/40 transition-all">
+//                   <img
+//                     src={groupImage || "https://via.placeholder.com/96"}
+//                     alt="Group Image"
+//                     className="w-full h-full object-cover"
+//                   />
+//                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+//                     <Camera className="h-6 w-6 text-white" />
+//                   </div>
+//                 </div>
+//               </label>
+//               <input
+//                 id="group-image"
+//                 type="file"
+//                 accept="image/*"
+//                 className="hidden"
+//                 onChange={(e) => {
+//                   const file = e.target.files?.[0];
+//                   if (file) {
+//                     const reader = new FileReader();
+//                     reader.onload = () => {
+//                       setGroupImage(reader.result as string);
+//                     };
+//                     reader.readAsDataURL(file);
+//                   }
+//                 }}
+//               />
+//               <p className="text-sm text-muted-foreground">
+//                 Upload group image
+//               </p>
+//             </div>
+//           </div>
 
-      const participantIds = Array.from(selectedUserIds);
+//           {/* Group Name Input */}
+//           <div className="p-4 border-b bg-background/95 backdrop-blur">
+//             <Input
+//               value={groupName}
+//               onChange={(e) => setGroupName(e.target.value)}
+//               placeholder="Enter group name"
+//               className="w-full"
+//             />
+//           </div>
 
-      const currentUserId = user?.id || user?._id;
-      if (currentUserId && !participantIds.includes(currentUserId)) {
-        participantIds.push(currentUserId);
-      }
+//           {/* Group Permissions */}
+//           <div className="p-4 border-b bg-background/95 backdrop-blur">
+//             <h3 className="text-lg font-semibold mb-4">Group Permissions</h3>
+//             <div className="space-y-3">
+//               <div className="flex items-center gap-3">
+//                 <input
+//                   type="checkbox"
+//                   id="allow-messages"
+//                   checked={allowMessages}
+//                   onChange={(e) => setAllowMessages(e.target.checked)}
+//                   className="h-5 w-5 rounded border-muted/20 focus:ring-primary"
+//                 />
+//                 <label htmlFor="allow-messages" className="text-sm">
+//                   Allow all members to send messages
+//                 </label>
+//               </div>
+//               <div className="flex items-center gap-3">
+//                 <input
+//                   type="checkbox"
+//                   id="allow-media"
+//                   checked={allowMedia}
+//                   onChange={(e) => setAllowMedia(e.target.checked)}
+//                   className="h-5 w-5 rounded border-muted/20 focus:ring-primary"
+//                 />
+//                 <label htmlFor="allow-media" className="text-sm">
+//                   Allow all members to send media
+//                 </label>
+//               </div>
+//               <div className="flex items-center gap-3">
+//                 <input
+//                   type="checkbox"
+//                   id="allow-mentions"
+//                   checked={allowMentions}
+//                   onChange={(e) => setAllowMentions(e.target.checked)}
+//                   className="h-5 w-5 rounded border-muted/20 focus:ring-primary"
+//                 />
+//                 <label htmlFor="allow-mentions" className="text-sm">
+//                   Allow all members to mention others
+//                 </label>
+//               </div>
+//             </div>
+//           </div>
 
-      if (participantIds.length < 2) {
-        throw new Error("A group chat requires at least 2 participants");
-      }
-
-      const formattedParticipants = participantIds.map((userId) => ({
-        userId,
-      }));
-      const type = "group";
-      const description = "Group conversation";
-      await createChatRoom(
-        type,
-        name,
-        description,
-        formattedParticipants as any
-      );
-
-      toast.success("Group created successfully");
-      resetForm();
-      onClose();
-    } catch (error: any) {
-      console.error("Group creation error:", error);
-      toast.error(error.response.data.message);
-    }
-  }, [name, selectedUserIds, user, onClose]);
-
-  const handleNext = useCallback(() => {
-    if (step === "members") {
-      if (selectedUserIds.size > 0) {
-        setStep("details");
-      } else {
-        toast.error("Please select at least one user");
-      }
-    } else if (step === "details") {
-      handleSubmit();
-    }
-  }, [step, selectedUserIds.size, handleSubmit]);
-
-  return (
-    <div className="fixed inset-0">
-      <div onClick={onClose} className="absolute inset-0 bg-black opacity-30" />
-      <div className="relative h-full w-full flex flex-col p-4 bg-background rounded-lg">
-        <StepContainer isActive={step === "members"} step={step}>
-          <div className="flex flex-col h-full">
-            <header className="flex items-center gap-4 mb-8">
-              <NavigationButton onClick={onClose} icon={X} />
-              <h2 className="text-2xl font-semibold">
-                Add Members ({selectedUsers.length})
-              </h2>
-            </header>
-
-            <div className="mb-4">
-              <SearchInput
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search Users"
-              />
-              {selectedUsers.length > 0 && (
-                <SelectUserList users={selectedUsers} />
-              )}
-            </div>
-
-            {isLoading ? (
-              <div className="my-4 flex justify-center">
-                <Loading />
-              </div>
-            ) : usersData.length === 0 ? (
-              <div className="text-center text-muted-foreground mt-8">
-                No users found. Try a different search term.
-              </div>
-            ) : (
-              <UserList
-                users={usersData}
-                selectedUserIds={selectedUserIds}
-                onUserToggle={handleUserToggle}
-              />
-            )}
-          </div>
-        </StepContainer>
-
-        <StepContainer isActive={step === "details"} step={step}>
-          <div className="flex flex-col h-full">
-            <header className="flex items-center gap-4 mb-8">
-              <NavigationButton
-                onClick={() => setStep("members")}
-                icon={ArrowLeft}
-              />
-              <h2 className="text-2xl font-semibold">Group Details</h2>
-            </header>
-
-            <GroupDetailsForm
-              name={name}
-              onNameChange={handleNameChange}
-              previewImage={previewImage || undefined}
-              onImageChange={handleImageChange}
-            />
-
-            {error && (
-              <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-md">
-                {error}
-              </div>
-            )}
-          </div>
-        </StepContainer>
-      </div>
-
-      <div className="absolute right-6 bottom-6">
-        <FloatinButton
-          onClick={handleNext}
-          disabled={
-            (step === "members" && selectedUserIds.size === 0) ||
-            (step === "details" && !name.trim()) ||
-            isMutating
-          }
-          className={isMutating ? "opacity-50" : ""}
-        >
-          {isMutating ? (
-            <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-          ) : (
-            <ArrowRight className="h-5 w-5" />
-          )}
-        </FloatinButton>
-      </div>
-    </div>
-  );
-};
-
-export default CreateGroupChat;
+//           {/* Create Group Chat Button */}
+//           <div className="p-4 border-t bg-background/95 backdrop-blur">
+//             <Button
+//               onClick={handleCreateGroupChat}
+//               className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all"
+//               disabled={!groupName || selectedUsers.length === 0}
+//             >
+//               Create Group Chat
+//             </Button>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };

@@ -14,8 +14,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ChatList } from "../chat/ChatList";
 import ContactPage from "./Contacts";
-import ChatSidebar from "./ChatSidebar";
-
 
 const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
   ssr: false,
@@ -28,7 +26,7 @@ const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
 const CreatePrivateChat = dynamic(() => import("./CreatePrivateChat"), {
   ssr: false,
 });
-const CreateGroupChat = dynamic(() => import("./CreateGroupChat"), {
+const CreateGroupChat = dynamic(() => import("./CreateGroup"), {
   ssr: false,
 });
 const Setting = dynamic(() => import("./Setting"), { ssr: false });
@@ -177,8 +175,7 @@ export default function SidebarContent({
           </Suspense>
         );
       case "contacts":
-        // return <ContactPage onClose={() => onViewChange("main")} />;
-        return <ChatSidebar />;
+        return <ContactPage onClose={() => onViewChange("main")} />;
       default:
         return renderMainView();
     }

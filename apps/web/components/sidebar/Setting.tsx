@@ -39,33 +39,33 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { startUpload, isUploading } = useUploadThing("profilePicture", {
-    onClientUploadComplete: (res) => {
-      if (res && res[0]?.url) {
-        setPreviewImage(res[0].url);
-        form.setValue("avatar", res[0].url, { shouldDirty: true });
-        toast.success("Profile picture uploaded successfully");
-      }
-      setUploadProgress(0);
-    },
-    onUploadProgress: (progress) => {
-      setUploadProgress(progress);
-    },
-    onUploadError: (error) => {
-      toast.error("Failed to upload profile picture");
-      setUploadProgress(0);
-    },
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
+  // const { startUpload, isUploading } = useUploadThing("profilePicture", {
+  //   onClientUploadComplete: (res) => {
+  //     if (res && res[0]?.url) {
+  //       setPreviewImage(res[0].url);
+  //       form.setValue("avatar", res[0].url, { shouldDirty: true });
+  //       toast.success("Profile picture uploaded successfully");
+  //     }
+  //     setUploadProgress(0);
+  //   },
+  //   onUploadProgress: (progress) => {
+  //     setUploadProgress(progress);
+  //   },
+  //   onUploadError: (error) => {
+  //     toast.error("Failed to upload profile picture");
+  //     setUploadProgress(0);
+  //   },
+  //   headers: {
+  //     authorization: `Bearer ${accessToken}`,
+  //   },
+  // });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
       setUploading(true);
-      await startUpload([file]);
+      // await startUpload([file]);
     } catch (error) {
       toast.error("Failed to upload file");
     } finally {
@@ -137,9 +137,6 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
                       className="object-cover"
                       url={previewImage || form.watch("avatar")}
                     />
-                    {isUploading && (
-                      <UploadProgressIndicator progress={uploadProgress} />
-                    )}
                   </div>
 
                   <label
@@ -164,7 +161,6 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
                     accept="image/*"
                     className="hidden"
                     onChange={handleFileChange}
-                    disabled={isUploading}
                   />
                 </div>
 

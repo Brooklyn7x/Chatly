@@ -5,20 +5,8 @@ import { InputArea } from "../message/InputArea";
 import { useChatStore } from "@/store/useChatStore";
 import { useUploadThing } from "@/utils/uploathings";
 import useAuthStore from "@/store/useAuthStore";
-
 import { useTyping } from "@/hooks/useTyping";
 import { useMessage } from "@/hooks/useMessage";
-
-// const EmojiPicker = dynamic(
-//   () => import("../message/EmojiPicker").then((mod) => mod.default),
-//   {
-//     ssr: false,
-//     loading: () => {
-//       console.log("Loading emoji picker...");
-//       return <div>Loading emoji picker...</div>;
-//     },
-//   }
-// );
 
 const FilePreview = dynamic(() => import("../message/FilePreview"), {
   ssr: false,
@@ -28,41 +16,37 @@ export default function ChatInput() {
   const { user } = useAuthStore();
   const { activeChatId } = useChatStore();
   const userId = user?._id;
-  if (!activeChatId) return;
-
-  const { accessToken } = useAuthStore();
   const [message, setMessage] = useState("");
   const [attachments, setAttachments] = useState<(File | string)[]>([]);
   const [previewFiles, setPreviewFiles] = useState<File[]>([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useMessage(activeChatId || "", userId);
-  const { startTyping } = useTyping(activeChatId);
+  const { sendMessage } = useMessage(activeChatId || "", userId || "");
+  const { startTyping } = useTyping(activeChatId || "");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [totalFilesUploading, setTotalFilesUploading] = useState(0);
-
-  const { isUploading, startUpload } = useUploadThing("attachments", {
-    onClientUploadComplete: (res) => {
-      const files = res.map((file) => file.url);
-      setAttachments((prev) => [...prev, ...files]);
-      setPreviewFiles([]);
-      setUploadProgress(0);
-      setTotalFilesUploading(0);
-      toast.success("Files uploaded successfully");
-    },
-    onUploadError: (error: Error) => {
-      toast.error(error.message);
-      setUploadProgress(0);
-      setTotalFilesUploading(0);
-    },
-    onUploadProgress: (progress) => {
-      setUploadProgress(progress);
-    },
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-    },
-  });
+  if (!activeChatId) return;
+  // const { isUploading, startUpload } = useUploadThing("attachments", {
+  //   onClientUploadComplete: (res) => {
+  //     const files = res.map((file) => file.url);
+  //     setAttachments((prev) => [...prev, ...files]);
+  //     setPreviewFiles([]);
+  //     setUploadProgress(0);
+  //     setTotalFilesUploading(0);
+  //     toast.success("Files uploaded successfully");
+  //   },
+  //   onUploadError: (error: Error) => {
+  //     toast.error(error.message);
+  //     setUploadProgress(0);
+  //     setTotalFilesUploading(0);
+  //   },
+  //   onUploadProgress: (progress) => {
+  //     setUploadProgress(progress);
+  //   },
+  //   headers: {
+  //     authorization: `Bearer ${accessToken}`,
+  //   },
+  // });
 
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     startTyping();
@@ -96,8 +80,9 @@ export default function ChatInput() {
       setMessage("");
       setAttachments([]);
       setPreviewFiles([]);
-    }  };
-
+    }
+  };
+  const isUploading = false;
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -112,10 +97,10 @@ export default function ChatInput() {
       return;
     }
 
-    setTotalFilesUploading(acceptedFiles.length);
-    setPreviewFiles(acceptedFiles);
+    // setTotalFilesUploading(acceptedFiles.length);
+    // setPreviewFiles(acceptedFiles);
     try {
-      await startUpload(acceptedFiles);
+      // await startUpload(acceptedFiles);
     } catch (error) {
       toast.error("Failed to upload files");
     }
@@ -138,7 +123,7 @@ export default function ChatInput() {
           <InputArea
             message={message}
             textareaRef={textareaRef}
-            isUploading={isUploading}
+            isUploading={false}
             fileInputRef={fileInputRef}
             handleEmojiSelect={handleEmojiSelect}
             handleTyping={handleTyping}
@@ -167,7 +152,7 @@ export default function ChatInput() {
                     )
                   }
                   isUploading={isUploading}
-                  uploadProgress={uploadProgress}
+                  uploadProgress={0}
                 />
               ))}
               {attachments.map((fileUrl, index) => (

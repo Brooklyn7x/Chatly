@@ -131,7 +131,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                       message.isDeleted ? "You deleted this message" : content
                     }
                     type={type}
-                    attachments={attachments}
+                    attachments={[]}
                   />
 
                   {reactions.length > 0 && (

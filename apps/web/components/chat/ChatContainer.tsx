@@ -1,12 +1,9 @@
-import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { EmptyState } from "./EmptyChat";
-import { Suspense, useEffect } from "react";
 import ChatArea from "./ChatArea";
 import ChatInfo from "./ChatInfo";
-import { useSocketStore } from "@/store/useSocketStore";
 
 interface ChatContainerProps {
   isMobile: boolean;

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/services/api/auth";
 import { AuthError, AUTH_ERROR_CODES } from "@/utils/errors";
 import { Loading } from "@/components/ui/loading";
 
@@ -40,7 +39,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      await authApi.verify(accessToken);
+      // await authApi.verify(accessToken);
       setError(null);
       verificationTimer.current = setTimeout(verifyToken, 4 * 60 * 1000);
     } catch (error) {

@@ -14,7 +14,7 @@ const SharedMedia = dynamic(() => import("./SharedMedia"));
 const RemoveMemberDialog = dynamic(() => import("../modal/RemoveMemberDailog"));
 const EditChatDailog = dynamic(() => import("../modal/EditChatInfo"));
 const DeleteChatDailog = dynamic(() => import("../modal/DeleteChatDailog"));
-const AddMemberDailog = dynamic(() => import("../modal/AddMemberDailog"));
+// const AddMemberDailog = dynamic(() => import("../modal/AddMemberDailog"));
 
 function ChatInfo() {
   const [removingUser, setRemovingUser] = useState(false);
@@ -27,7 +27,7 @@ function ChatInfo() {
 
   const isGroupChat = chat?.type === "group";
 
-  const displayName = formatName(chat);
+  const displayName = formatName(chat!);
 
   const memberCount = chat?.participants.length || 0;
   const statusText = isGroupChat
@@ -99,7 +99,7 @@ function ChatInfo() {
   const handleDeleteChat = async () => {
     try {
       if (!activeChatId) return;
-      await deleteCht(activeChatId);
+      // await deleteCht(activeChatId);
       setIsOpen(false);
     } catch (error) {
       toast.error("Failed to delete chat");
@@ -111,15 +111,15 @@ function ChatInfo() {
       <SheetContent side="right" className="w-full sm:w-[400px] p-0" hideClose>
         <SheetTitle className="sr-only">Chat info</SheetTitle>
         <ChatHeader
-          displayName={displayName}
-          chat={chat}
+          displayName={displayName || "Chat"}
+          chat={chat!}
           isGroup={isGroupChat}
           onClose={() => setIsOpen(false)}
         />
 
         <div className="flex flex-col overflow-hidden h-full">
           <ChatProfileSection
-            displayName={displayName}
+            displayName={displayName || "Chat"}
             statusText={statusText}
           />
 

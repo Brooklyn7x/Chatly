@@ -25,7 +25,7 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
- app.use("/api", routes);
+// app.use("/api", routes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticate, userRoutes);
 app.use("/api/conversations", authenticate, conversationRoutes);
