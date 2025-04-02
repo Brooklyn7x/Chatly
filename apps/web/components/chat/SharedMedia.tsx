@@ -2,6 +2,7 @@ import { useState } from "react";
 import { UserItem } from "../sidebar/UserItem";
 import Image from "next/image";
 import { Participant } from "@/types";
+import { Member } from "./Member";
 
 interface SharedMediaProps {
   chat: any;
@@ -10,6 +11,7 @@ type tabs = "members" | "media" | "link" | "links";
 
 const SharedMedia = ({ chat }: SharedMediaProps) => {
   const [activeTab, setActiveTab] = useState<tabs>("members");
+  console.log(chat);
 
   return (
     <div>
@@ -36,7 +38,7 @@ const SharedMedia = ({ chat }: SharedMediaProps) => {
         {activeTab === "members" && (
           <div className="space-y-2">
             {chat?.participants.map((participant: Participant) => (
-              <UserItem key={participant.id} user={participant.userId as any} />
+              <Member key={participant._id} user={participant}/>
             ))}
           </div>
         )}

@@ -36,7 +36,7 @@ export interface Chat {
   type: "private" | "group" | "channel";
   participants: Participant[];
   name: string;
-  description: string;
+  descriptions: string;
   createdBy: string;
   updatedAt: Date;
   createdAt: Date;
@@ -64,7 +64,7 @@ export interface Message {
   updatedAt: string;
   deletedAt: Date;
   createdAt: Date;
-  timestamp: Date;
+  updateAt: Date;
 }
 
 export interface Attachment {

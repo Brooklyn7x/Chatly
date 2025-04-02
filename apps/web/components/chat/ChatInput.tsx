@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { InputArea } from "../message/InputArea";
 import { useChatStore } from "@/store/useChatStore";
-import { useUploadThing } from "@/utils/uploathings";
 import useAuthStore from "@/store/useAuthStore";
 import { useTyping } from "@/hooks/useTyping";
 import { useMessage } from "@/hooks/useMessage";
@@ -24,8 +23,8 @@ export default function ChatInput() {
   const { startTyping } = useTyping(activeChatId || "");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [totalFilesUploading, setTotalFilesUploading] = useState(0);
-  if (!activeChatId) return;
+  const [totalFilesUploading] = useState(0);
+
   // const { isUploading, startUpload } = useUploadThing("attachments", {
   //   onClientUploadComplete: (res) => {
   //     const files = res.map((file) => file.url);
@@ -82,6 +81,7 @@ export default function ChatInput() {
       setPreviewFiles([]);
     }
   };
+
   const isUploading = false;
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -97,25 +97,13 @@ export default function ChatInput() {
       return;
     }
 
-    // setTotalFilesUploading(acceptedFiles.length);
-    // setPreviewFiles(acceptedFiles);
     try {
-      // await startUpload(acceptedFiles);
     } catch (error) {
       toast.error("Failed to upload files");
     }
   };
 
-  // const handleTypingStart = useCallback(() => {
-  //   socketService.sendTypingStart(activeChatId, userId);
-  //   if (timerRef.current) {
-  //     clearTimeout(timerRef.current);
-  //   }
-  //   timerRef.current = setTimeout(() => {
-  //     socketService.sendTypingStop(activeChatId, userId);
-  //   }, 2000);
-  // }, [activeChatId]);
-
+  if (!activeChatId) return;
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm">

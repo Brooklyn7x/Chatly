@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { UserPlus, X } from "lucide-react";
 import { toast } from "sonner";
@@ -14,29 +14,20 @@ import {
 import { Button } from "../ui/button";
 import { Loading } from "../ui/loading";
 import { UserAvatar } from "../shared/UserAvatar";
-import useAuthStore from "@/store/useAuthStore";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useSearchUser } from "@/hooks/useContact";
+import { useFetchContacts } from "@/hooks/useContact";
+import { Participant } from "@/types";
+import { useSocketStore } from "@/store/useSocketStore";
 
-const AddMemberDialog = () => {
+interface AddMemberDailogProps {
+  chatId: string;
+  participants: Participant;
+}
+const AddMemberDialog = ({ chatId, participants }: AddMemberDailogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setloading] = useState(false);
-  const { user: current } = useAuthStore();
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
-  const [query, setQuery] = useState<string>("");
-  const debounceQuery = useDebounce(query, 100);
-  const { users, isLoading } = useSearchUser(debounceQuery);
-
-  const availableUsers = useMemo(() => {
-    return users.filter((user: any) => {
-      const isNotCurrentUser = user._id !== current?._id;
-      // const isNotParticipant = !participants?.some(
-      //   (participant: any) => participant.userId === user._id
-      // );
-      // const isNotSelected = !selectedMember.includes(user._id);
-      // return isNotCurrentUser && isNotParticipant && isNotSelected;
-    });
-  }, [users, current, selectedMember]);
+  const { contacts } = useFetchContacts();
+  const { socket } = useSocketStore();
 
   const handleUserSelection = (userId: string) => {
     setSelectedMember((prev) =>
@@ -53,8 +44,24 @@ const AddMemberDialog = () => {
     }
 
     try {
-      // onAdd(selectedMember);
-      setSelectedMember([]);
+      const formattedParticipants = selectedMember.map((userId) => ({
+        userId,
+      }));
+      const addMember = {
+        conversationId: chatId,
+        participants: formattedParticipants,
+      };
+      setloading(true);
+      socket?.emit("conversation:addParticipants", addMember, (error: any) => {
+        if (error) {
+          toast.error(error.error || "Failed to delete the conversation");
+          setloading(false);
+        } else {
+          toast.success("Conversation deleted successfully");
+          setOpen(false);
+          setloading(false);
+        }
+      });
     } catch (error) {
       toast.error("Failed to add members");
     }
@@ -62,14 +69,14 @@ const AddMemberDialog = () => {
 
   const renderSelectedUsers = () => (
     <div className="flex flex-wrap gap-2">
-      {selectedMember.map((id) => (
+      {selectedMember.map((user) => (
         <div
-          key={id}
+          key={user}
           className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-sm"
         >
-          <span>{id}</span>
+          <span>{user}</span>
           <button
-            onClick={() => handleUserSelection(id)}
+            onClick={() => handleUserSelection(user)}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-4 w-4" />
@@ -81,7 +88,7 @@ const AddMemberDialog = () => {
 
   const renderAvailableUsers = () => (
     <div className="space-y-1">
-      {availableUsers.map((user: any) => (
+      {contacts.map((user: any) => (
         <div
           key={user.id}
           onClick={() => handleUserSelection(user._id)}
@@ -118,7 +125,7 @@ const AddMemberDialog = () => {
             </h1>
             {renderSelectedUsers()}
           </div>
-          <div className="min-h-64 max-h-64 p-2 border rounded-lg overflow-y-auto">
+          <div className="max-h-80 h-full p-2 rounded-lg overflow-y-auto">
             {renderAvailableUsers()}
           </div>
         </div>
@@ -131,3 +138,5 @@ const AddMemberDialog = () => {
     </Dialog>
   );
 };
+
+export default AddMemberDialog;

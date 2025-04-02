@@ -1,45 +1,32 @@
 "use client";
+import { useEffect } from "react";
 
-import ChatContainer from "@/components/chat/ChatContainer";
-import Sidebar from "@/components/sidebar/Sidebar";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
 import { useChatStore } from "@/store/useChatStore";
-import { useEffect } from "react";
-import useAuthStore from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
+
 import { useSocketStore } from "@/store/useSocketStore";
 import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
+import { useAuth } from "@/hooks/useAuth";
+import ChatContainer from "@/components/chat/ChatContainer";
+import Sidebar from "@/components/sidebar/Sidebar";
 
 export default function MainPage() {
-  const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuthStore();
   const { connect, disconnect } = useSocketStore();
   const { isMobile } = useMobileDetection();
   const { activeChatId } = useChatStore();
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!isAuthenticated) {
-        router.push("/login");
-      } else if (isAuthenticated) {
-        router.push("/chat");
-      }
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      connect();
-    }
+    connect();
     return () => {
       disconnect();
     };
-  }, [isAuthenticated, connect, disconnect]);
+  }, [connect, disconnect]);
 
   useUserStatusSocket();
 
   if (isLoading) return null;
-  if (!isAuthenticated) return null;
+  // if (!isAuthenticated) return null;
 
   return (
     <div className="max-w-9xl mx-auto bg-black/80">

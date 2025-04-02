@@ -28,7 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import useAuthStore from "@/store/useAuthStore";
+import { register } from "@/services/authService";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -42,10 +42,10 @@ const registerSchema = z.object({
 });
 
 export default function SignupPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const { register, isLoading } = useAuthStore();
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -60,16 +60,20 @@ export default function SignupPage() {
 
   const handleSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
-      await register({
+      setIsLoading(true);
+      const resposne = await register({
         username: values.username,
         email: values.email,
         password: values.password,
       });
-      router.push("/chat");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Registration failed"
-      );
+      if (resposne.data) {
+        router.push("/chat");
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      toast.error(error.response?.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -183,7 +187,7 @@ export default function SignupPage() {
                               </span>
                               <Input
                                 placeholder="username"
-                                className="pl-8"
+                                className="pl-8 test-center"
                                 {...field}
                               />
                             </div>

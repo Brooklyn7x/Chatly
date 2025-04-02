@@ -6,18 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// import { format, isToday, isYesterday } from 'date-fns';
-
-// export const formatMessageTime = (date: Date): string => {
-//   if (isToday(date)) {
-//     return format(date, 'HH:mm');
-//   }
-//   if (isYesterday(date)) {
-//     return 'Yesterday';
-//   }
-//   return format(date, 'dd/MM/yyyy');
-// };
-
 export const formatFileSize = (bytes: number): string => {
   const units = ["B", "KB", "MB", "GB"];
   let size = bytes;
@@ -30,6 +18,7 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 export const formatName = (chat: Chat) => {
+  if (!chat) return;
   if (chat.type === "private") {
     return chat.participants[0]?.userId.username;
   }

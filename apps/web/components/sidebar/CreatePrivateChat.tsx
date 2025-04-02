@@ -24,6 +24,7 @@ import {
 import { Input } from "../ui/input";
 import { User } from "@/types";
 import useAuthStore from "@/store/useAuthStore";
+import { useSocketStore } from "@/store/useSocketStore";
 
 interface PrivateChatProps {
   onClose: () => void;
@@ -38,7 +39,7 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isAddContactDialogOpen, setIsAddContactDialogOpen] = useState(false);
   const [dialogSearchQuery, setDialogSearchQuery] = useState("");
-
+  const { socket } = useSocketStore();
   const currentUserId = user?.id || user?._id;
 
   const { users: searchedUsers, isLoading: isSearchLoading } =
@@ -64,7 +65,17 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
         userId,
       }));
 
-      await createChatRoom(type, formattedParticipants);
+      // await createChatRoom(type, formattedParticipants);
+      const data = {
+        type,
+        participants,
+      };
+      socket?.emit("conversation:create", data, (error: any, reposone: any) => {
+        console.error("Error creating conversation:", error.message);
+        console.log(reposone);
+        alert(`Error: ${error.message}`);
+        return;
+      });
       onClose();
     } catch (error: any) {
       console.log(error.response.data.message);

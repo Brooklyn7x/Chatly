@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import SidebarContent from "./SidebarContent";
 import { useChatStore } from "@/store/useChatStore";
 import { ViewType } from "@/types";
+import { useConversationSocket } from "@/hooks/useChatSocket";
 
 interface SidebarProps {
   isMobile: Boolean;
@@ -12,6 +13,7 @@ interface SidebarProps {
 const Sidebar = ({ isMobile }: SidebarProps) => {
   const { activeChatId } = useChatStore();
   const [view, setView] = useState<ViewType>("main");
+  useConversationSocket();
 
   return (
     <div

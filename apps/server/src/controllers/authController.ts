@@ -8,7 +8,7 @@ import {
   verifyToken,
 } from "../utils/helper";
 
-import redisClient from "../config/redis";
+import { AppError } from "../utils/error";
 
 const sanitizeUser = (user: any) => {
   const { password, __v, contacts, createdAt, updatedAt, ...rest } =
@@ -16,7 +16,7 @@ const sanitizeUser = (user: any) => {
   return rest;
 };
 
-export const registerUser = async (
+export const register = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -52,43 +52,49 @@ export const registerUser = async (
   }
 };
 
-export const loginUser = async (
+export const login = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { email, password } = req.body;
-
     const user: any = await User.findOne({ email });
-    if (!user) {
-      res.status(401).json({ message: "Invalid email. Try again" });
-      return;
-    }
 
-    const isPasswordValid = await comparePassword(password, user.password);
-    if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid password. Try again" });
-      return;
+    if (!user || !(await comparePassword(password, user.password))) {
+      throw new AppError(401, "Invalid credentials");
     }
 
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    await redisClient.set(
-      user._id.toString(),
-      refreshToken,
-      "EX",
-      7 * 24 * 60 * 60
-    );
+    const refreshTokenExpirySeconds = 7 * 24 * 60 * 60;
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: refreshTokenExpirySeconds * 100,
+    });
 
     const userResponse = sanitizeUser(user);
-    res
-      .status(200)
-      .json({ success: true, accessToken, refreshToken, data: userResponse });
+    res.status(200).json({ success: true, data: userResponse });
   } catch (error) {
     next(error);
   }
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.status(200).json({ success: true });
 };
 
 export const refreshToken = async (
@@ -97,23 +103,38 @@ export const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     const decoded: any = verifyToken(
       refreshToken,
       process.env.JWT_REFRESH_SECRET as string
     );
 
-    const storedToken = await redisClient.get(decoded.id);
+    const newAccessToken = generateAccessToken(decoded.id);
 
-    if (storedToken !== refreshToken) {
-      res.status(401).json({ message: "Invalid refresh token" });
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const me = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
       return;
     }
-
-    const newAccessToken = generateRefreshToken(decoded.id);
-
-    res.status(200).json({ success: true, accessToken: newAccessToken });
+    const userResponse = sanitizeUser(user);
+    res.status(200).json({ user: userResponse });
   } catch (error) {
     next(error);
   }

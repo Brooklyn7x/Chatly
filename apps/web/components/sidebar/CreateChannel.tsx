@@ -10,7 +10,7 @@ export const CreateChannel = ({ onBack } : { onBack : () => void}) => {
 
   const handleCreateChannel = () => {
     // Add logic to create a channel (e.g., API call)
-    console.log("Creating channel:", channelName);
+    
     onBack(); // Close the view after creation
   };
 

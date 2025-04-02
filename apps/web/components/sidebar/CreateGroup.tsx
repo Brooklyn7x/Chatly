@@ -15,6 +15,7 @@ import { useFetchContacts, useSearchUser } from "@/hooks/useContact";
 import useAuthStore from "@/store/useAuthStore";
 import { User } from "@/types";
 import { useCreateChat } from "@/hooks/useChats";
+import { useSocketStore } from "@/store/useSocketStore";
 
 interface CreateGroupChatProps {
   onClose: () => void;
@@ -30,9 +31,11 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { user } = useAuthStore();
-  const { users, isLoading: loading } = useSearchUser(searchQuery);
+  const { users } = useSearchUser(searchQuery);
   const { contacts, isLoading } = useFetchContacts();
-  const { createChatRoom, isMutating, error } = useCreateChat();
+  const { isMutating, error } = useCreateChat();
+  const { socket } = useSocketStore();
+
   const usersData = [...contacts, ...users];
 
   const selectedUsers = useMemo(() => {
@@ -105,13 +108,24 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
       const formattedParticipants = participantIds.map((userId) => ({
         userId,
       }));
+
       const type = "group";
       const description = "Group conversation";
-      await createChatRoom(
+      const createGroup = {
         type,
+        participants: formattedParticipants,
         name,
         description,
-        formattedParticipants as any
+      };
+      socket?.emit(
+        "conversation:create",
+        createGroup,
+        (error: any, reposone: any) => {
+          toast.error(error);
+          console.log(reposone);
+          alert(`Error: ${error.message}`);
+          return;
+        }
       );
 
       toast.success("Group created successfully");

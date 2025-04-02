@@ -1,70 +1,48 @@
-import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
 import { useSocketStore } from "@/store/useSocketStore";
-import { Message } from "@/types";
+import { useChatStore } from "@/store/useChatStore";
+import { Chat } from "@/types";
 
-export const useChatSocket = (chatId: string) => {
-  const { addMessage, updateMessage, updateMessageStatus } = useMessageStore();
-  const { isConnected, socket } = useSocketStore();
+export const useConversationSocket = () => {
+  const { socket, isConnected } = useSocketStore();
+  const addChats = useChatStore((state) => state.addChats);
+  const updateChat = useChatStore((state) => state.updateChat);
+  const deleteChat = useChatStore((state) => state.deleteChat);
 
   useEffect(() => {
     if (!socket || !isConnected) return;
 
-    const handleNewMessage = (message: any) => {
-      addMessage(message.message);
+    const handleNewConversation = (data: { message: string; data: Chat }) => {
+      console.log("[Socket] New conversation received:", data);
+      addChats(data.data);
     };
 
-    const handleMessageSent = (response: {
-      tempId: string;
-      message: Message;
+    const handleUpdatedConversation = (data: {
+      message: string;
+      data: Chat;
     }) => {
-      const { tempId, message } = response;
-      if (tempId) {
-        updateMessage(response.tempId, message);
-      }
+      console.log("[Socket] Conversation updated:", data);
+      updateChat(data.data._id, data.data);
     };
 
-    const handleMessageEdited = (data: {
+    // When a conversation is deleted, remove it from the store.
+    const handleDeletedConversation = (data: {
+      message: string;
       conversationId: string;
-      message: Message;
-      timestamp: string;
     }) => {
-      const { message } = data;
-      updateMessage(message.conversationId, message);
+      console.log("[Socket] Conversation deleted:", data);
+      deleteChat(data.conversationId);
     };
 
-    const handleMessageDeleted = (data: {
-      conversationId: string;
-      messageId: string;
-      timestamp: string;
-    }) => {
-      const { messageId, timestamp } = data;
-      updateMessageStatus(messageId, {
-        isDeleted: true,
-        deletedAt: new Date(timestamp),
-        content: "[Message deleted]",
-        attachments: [],
-        updatedAt: new Date().toISOString(),
-      });
-    };
+    socket.on("conversation:new", handleNewConversation);
+    socket.on("conversation:updated", handleUpdatedConversation);
+    socket.on("conversation:deleted", handleDeletedConversation);
 
-    socket.on("newMessage", handleNewMessage);
-    socket.on("message:sent", handleMessageSent);
-    socket.on("messageEdited", handleMessageEdited);
-    socket.on("messageDeleted", handleMessageDeleted);
-
+    // Cleanup listeners on unmount
     return () => {
-      socket.off("newMessage", handleNewMessage);
-      socket.off("message:sent", handleMessageSent);
-      socket.off("messageEdited", handleMessageEdited);
-      socket.off("messageDeleted", handleMessageDeleted);
+      socket.off("conversation:new", handleNewConversation);
+      socket.off("conversation:updated", handleUpdatedConversation);
+      socket.off("conversation:deleted", handleDeletedConversation);
     };
-  }, [
-    socket,
-    isConnected,
-    chatId,
-    addMessage,
-    updateMessage,
-    updateMessageStatus,
-  ]);
+  }, [socket, isConnected, addChats, updateChat, deleteChat]);
 };

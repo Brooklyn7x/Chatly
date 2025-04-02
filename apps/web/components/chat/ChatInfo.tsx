@@ -1,110 +1,33 @@
-import { Suspense, useMemo, useState } from "react";
-import { toast } from "sonner";
+import dynamic from "next/dynamic";
+import { Suspense, useState } from "react";
 import { X, Trash, User2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { UserAvatar } from "../shared/UserAvatar";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
-import dynamic from "next/dynamic";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Chat } from "@/types";
 import { formatName } from "@/lib/utils";
+import AddMemberDailog from "../modal/AddMemberDailog";
 
 const SharedMedia = dynamic(() => import("./SharedMedia"));
 const RemoveMemberDialog = dynamic(() => import("../modal/RemoveMemberDailog"));
 const EditChatDailog = dynamic(() => import("../modal/EditChatInfo"));
 const DeleteChatDailog = dynamic(() => import("../modal/DeleteChatDailog"));
-// const AddMemberDailog = dynamic(() => import("../modal/AddMemberDailog"));
 
 function ChatInfo() {
   const [removingUser, setRemovingUser] = useState(false);
   const [deleteChat, setDeleteChat] = useState(false);
   const { chats, activeChatId } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
-  // const { updateChatInfo, deleteCht } = useChats();
-
   const chat = chats.find((chat) => chat._id === activeChatId);
-
   const isGroupChat = chat?.type === "group";
-
   const displayName = formatName(chat!);
 
   const memberCount = chat?.participants.length || 0;
   const statusText = isGroupChat
     ? `${memberCount} members`
     : "last seen recently";
-
-  // const handleUpdateTitle = async (data: any) => {
-  //   setIsUpdating(true);
-  //   try {
-  //     await updateChatInfo(activeChatId || "", {
-  //       metadata: {
-  //         title: data.groupTitle,
-  //         description: data.groupDescription,
-  //       },
-  //     });
-  //     setEditing(false);
-  //     toast.success("Chat updated successfully");
-  //   } catch (error: any) {
-  //     toast.error("Failed to update group data. Try again!");
-  //   } finally {
-  //     setIsUpdating(false);
-  //   }
-  // };
-
-  // const handleAddMember = async (userIds: string[]) => {
-  //   try {
-  //     if (!activeChatId) {
-  //       toast.error("No active chat selected");
-  //       return;
-  //     }
-  //     if (userIds.length === 0) {
-  //       toast.error("Select at least one member to add");
-  //       return;
-  //     }
-  //     await updateChatInfo(activeChatId, {
-  //       participants: userIds.map((userId) => ({
-  //         action: "add",
-  //         userId,
-  //         role: ParticipantRole.MEMBER,
-  //       })),
-  //     });
-  //     toast.success("Members added");
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Failed to add members. Please try again.");
-  //   }
-  // };
-
-  // const handleRemoveMemeber = async (userId: string) => {
-  //   try {
-  //     setRemovingUserId(userId);
-  //     await updateChatInfo(activeChatId || "", {
-  //       participants: [
-  //         {
-  //           action: "remove",
-  //           userId,
-  //         },
-  //       ],
-  //     });
-
-  //     toast.success("Member removed successfully");
-  //   } catch (error: any) {
-  //     toast.error("Failed to remove member. Try again!");
-  //   } finally {
-  //     setRemovingUserId(null);
-  //   }
-  // };
-
-  const handleDeleteChat = async () => {
-    try {
-      if (!activeChatId) return;
-      // await deleteCht(activeChatId);
-      setIsOpen(false);
-    } catch (error) {
-      toast.error("Failed to delete chat");
-    }
-  };
 
   return (
     <Sheet open={true} onOpenChange={() => setIsOpen(false)}>
@@ -119,6 +42,7 @@ function ChatInfo() {
 
         <div className="flex flex-col overflow-hidden h-full">
           <ChatProfileSection
+            descriptions={chat?.descriptions || ""}
             displayName={displayName || "Chat"}
             statusText={statusText}
           />
@@ -136,7 +60,10 @@ function ChatInfo() {
 
         {isGroupChat && (
           <div className="absolute right-5 bottom-5">
-            {/* <AddMemberDailog /> */}
+            <AddMemberDailog
+              chatId={chat._id}
+              participants={chat.participants as any}
+            />
           </div>
         )}
 
@@ -150,9 +77,9 @@ function ChatInfo() {
 
         <Suspense fallback={null}>
           <DeleteChatDailog
+            chatId={activeChatId || ""}
             open={deleteChat}
             onOpenChange={setDeleteChat}
-            onConfirm={handleDeleteChat}
           />
         </Suspense>
       </SheetContent>
@@ -197,7 +124,7 @@ export function ChatHeader({
         {isGroup && (
           <EditChatDailog
             title={chat?.name || ""}
-            description={chat?.description || ""}
+            descriptions={chat?.descriptions || ""}
           />
         )}
       </div>
@@ -208,17 +135,20 @@ export function ChatHeader({
 interface ChatProfileSectionProps {
   displayName: string;
   statusText: string;
+  descriptions: string;
 }
 
 export function ChatProfileSection({
   displayName,
   statusText,
+  descriptions,
 }: ChatProfileSectionProps) {
   return (
     <section className="flex flex-col items-center justify-center gap-4 p-4">
       <UserAvatar size="xl" />
       <div className="mt-2 text-center">
         <h1 className="text-xl font-semibold">{displayName}</h1>
+        <p>{descriptions}</p>
         <p className="text-center text-sm text-muted-foreground mt-1">
           {statusText}
         </p>

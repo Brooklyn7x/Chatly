@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import {
   Card,
   CardContent,
@@ -27,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import useAuthStore from "@/store/useAuthStore";
+import { loginUser } from "@/services/authService";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -35,9 +34,9 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const { login, isLoading } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,11 +45,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
-      await login(values);
-      router.push("/chat");
+      setIsLoading(false);
+      const reposone = await loginUser(values);
+      if (reposone.data) {
+        router.push("/chat");
+      }
     } catch (error: any) {
-      console.log(error)
-      toast.error(error.response?.data.message);
+      setIsLoading(false);
+      toast.error(error.response?.data.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -130,15 +134,6 @@ export default function LoginPage() {
                   )}
                 />
 
-                <div className="flex items-center space-x-2">
-                  <label
-                    htmlFor="remember"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Remember me
-                  </label>
-                </div>
-
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <div className="flex items-center justify-center">
@@ -154,7 +149,7 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              <div className="relative my-6">
+              {/* <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t"></span>
                 </div>
@@ -204,7 +199,7 @@ export default function LoginPage() {
                   </svg>
                   Twitter
                 </Button>
-              </div>
+              </div> */}
             </Form>
           </CardContent>
           <CardFooter className="flex flex-col items-center justify-center space-y-2">

@@ -9,31 +9,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useChatStore } from "@/store/useChatStore";
+import { useChatPanelStore } from "@/store/useChatPanelStore";
 
 interface DeleteChatProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  chatId: string;
 }
 
-const DeleteChatDailog = ({
-  open,
-  onOpenChange,
-  onConfirm,
-}: DeleteChatProps) => {
+const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const { socket } = useSocketStore();
+  const { setActiveChat } = useChatStore();
+  const { setIsOpen } = useChatPanelStore();
 
   const handleDelete = async () => {
-    try {
-      setIsDeleting(true);
-      await onConfirm();
-      onOpenChange(false);
-      toast.success("Chat deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete chat");
-    } finally {
-      setIsDeleting(false);
-    }
+    setIsDeleting(true);
+    socket?.emit(
+      "conversation:delete",
+      { conversationId: chatId },
+      (error: any) => {
+        setIsDeleting(false);
+        if (error) {
+          toast.error(error.error || "Failed to delete the conversation");
+          onOpenChange(false);
+        } else {
+          setActiveChat(null);
+          setIsOpen(false);
+          toast.success("Conversation deleted successfully");
+          onOpenChange(false);
+        }
+      }
+    );
   };
 
   return (

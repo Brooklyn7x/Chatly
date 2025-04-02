@@ -14,8 +14,6 @@ interface RegisterRequest {
 
 interface AuthResponse {
   data: User;
-  accessToken: string;
-  refreshToken: string;
 }
 export const loginUser = async (
   credentials: LoginRequest

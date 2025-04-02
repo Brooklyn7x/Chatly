@@ -14,7 +14,7 @@ import { SearchInput } from "./SearchInput";
 import useAuthStore from "@/store/useAuthStore";
 import { ViewType } from "@/types";
 import { Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const DropdownMenu = dynamic(
   () => import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
@@ -68,13 +68,10 @@ export default function SidebarHeader({
   onViewChange,
 }: SidebarHeaderProps) {
   const { user } = useAuthStore();
-  const router = useRouter();
-
+  const { logout } = useAuth();
   const handleLogout = () => {
-    useAuthStore.getState().logout();
-    router.push("/login");
+    logout();
   };
-
   const MENU_ITEMS = [
     {
       icon: Bookmark,

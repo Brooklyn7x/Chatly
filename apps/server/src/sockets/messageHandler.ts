@@ -39,7 +39,6 @@ export const messageHandler = (io: Server, socket: Socket) => {
         return;
       }
 
-      console.log(socket.data.userId, "useriD");
       const isMember = chat.participants.find(
         (user) => user.userId.toString() === socket.data.userId
       );
@@ -59,6 +58,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         conversationId,
         attachment,
         status: "delivered",
+        updatedAt: new Date(),
       });
 
       const populateMessage = await Message.findById(newMessage._id).populate(
@@ -71,7 +71,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         message: populateMessage,
       });
 
-      io.to(conversationId).emit("newMessage", {
+      socket.to(conversationId).emit("newMessage", {
         message: populateMessage,
       });
     } catch (error) {
@@ -110,7 +110,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       const chatId = message.conversationId.toString();
 
-      io.to(chatId).emit("messageEdited", {
+      socket.to(chatId).emit("messageEdited", {
         conversationId: chatId,
         message: updateMessage,
         timestamp: new Date().toISOString(),
@@ -156,7 +156,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
         const chatId = message.conversationId.toString();
         console.log(chatId);
-        io.to(chatId).emit("messageDeleted", {
+        socket.to(chatId).emit("messageDeleted", {
           conversationId: chatId,
           messageId,
           timestamp: new Date().toISOString(),
@@ -200,7 +200,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       const chatIdx = message.conversationId.toString();
 
-      io.to(chatIdx).emit("messageRead", {
+      socket.to(chatIdx).emit("messageRead", {
         messageId: message._id,
         readBy: socket.data.userId,
         timestamp: new Date(),
@@ -239,7 +239,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         { status: "read" }
       );
 
-      io.to(chatId).emit("allMessagesRead", {
+      socket.to(chatId).emit("allMessagesRead", {
         chatId,
         readBy: socket.data.userId,
         timestamp: new Date(),

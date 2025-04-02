@@ -25,7 +25,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   const [showreaction, setShowReaction] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const { socket } = useSocketStore();
-  const { deleteMessage, updateMessage } = useMessageStore();
+  const { updateMessage } = useMessageStore();
 
   const {
     id,
@@ -33,10 +33,10 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     content,
     type,
     status,
-    timestamp,
+    createdAt,
     senderId,
     isEdited,
-    attachments,
+
     isDeleted,
   } = message;
 
@@ -144,7 +144,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
               )}
 
               <MessageMetadata
-                timestamp={timestamp}
+                timestamp={createdAt}
                 status={status}
                 isOwn={isOwn}
                 isEdited={isEdited}

@@ -21,7 +21,8 @@ export interface MessageDocument extends Document {
   editedAt?: Date;
   isDeleted: boolean;
   deletedAt: Date;
-  timestamp: Date;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 const messageSchema = new Schema<MessageDocument>(

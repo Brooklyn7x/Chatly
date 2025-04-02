@@ -4,13 +4,15 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Participant } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useChatStore } from "@/store/useChatStore";
+import { toast } from "sonner";
 
 interface RemoveMemberDialogProps {
   open: boolean;
@@ -25,10 +27,29 @@ const RemoveMemberDialog = ({
 }: RemoveMemberDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
-
+  const { socket } = useSocketStore();
+  const chatId = useChatStore((state) => state.activeChatId);
   const handleRemove = async (userId: string) => {
     setLoading(true);
     try {
+      if (socket) {
+        setLoading(true);
+        socket.emit(
+          "conversation:removeParticipants",
+          { conversationId: chatId, userId },
+          (error: any) => {
+            if (error) {
+              setLoading(false);
+              if (error) {
+                toast.error(error.error || "Failed to delete the conversation");
+              } else {
+                toast.success("User removed");
+                onOpenChange();
+              }
+            }
+          }
+        );
+      }
       await new Promise((resolve) => setTimeout(resolve, 200));
     } catch (error) {
       console.log(error);
