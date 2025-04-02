@@ -29,7 +29,6 @@ const ChatContainer = ({ isMobile }: ChatContainerProps) => {
     >
       <ChatArea />
       {isOpen && <ChatInfo />}
-      {!activeChatId && <EmptyState />}
     </div>
   );
 };

@@ -21,9 +21,19 @@ interface updateChatData {
   description?: string;
 }
 
-export const getAllChats = async () => {
-  const response = await apiClient.get("/conversations");
-  return response.data;
+export const getAllChats = async (
+  cursor: string | null = null,
+  limit: number = 10
+) => {
+  const params: any = { limit };
+  if (cursor) {
+    params.cursor = cursor;
+  }
+  const response = await apiClient.get("/conversations", { params });
+  return {
+    data: response.data.data,
+    pagination: response.data.pagination,
+  };
 };
 
 export const createChat = async (data: createChatData) => {

@@ -36,7 +36,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);
   const otherUserId = otherUser?.userId?._id;
   const isOnline = getUserStatus(otherUserId || "");
-
   const displayName = formatName(chat);
 
   // const handleDelete = () => {
@@ -62,8 +61,10 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
           <div className="flex flex-col text-left">
             <h2 className="text-sm font-semibold">{displayName}</h2>
             <span className="text-xs text-start text-muted-foreground font-semibold">
-              {chat?.type === "group" && (
-                <span>{chat.participants.length} Memebers</span>
+              {chat?.type === "private" ? (
+                <div>{isOnline && <span>Online</span>}</div>
+              ) : (
+                <span>{chat.participants.length} Members</span>
               )}
             </span>
           </div>
@@ -71,11 +72,10 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <IconButton onClick={() => {}} icon={Phone} isActive={false} />
-        {/* <IconButton onClick={() => {}} icon={Search} isActive={false} /> */}
-
-        <MessageSearch />
-
+        <div className="hidden md:flex">
+          <IconButton onClick={() => {}} icon={Phone} isActive={false} />
+          <MessageSearch />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-accent">

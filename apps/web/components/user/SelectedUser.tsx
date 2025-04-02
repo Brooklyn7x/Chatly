@@ -13,9 +13,9 @@ export const SelectedUser = ({ user }: SelectedUserProps) => {
     >
       <div className="relative flex-shrink-0 h-10 w-10">
         <Image
-          src={user.profilePicture || "/user.jpeg"}
+          src={user.profilePicture || "/user.png"}
           className="h-full w-full rounded-full object-cover"
-          alt={user.name}
+          alt={user.username}
           fill
         />
       </div>

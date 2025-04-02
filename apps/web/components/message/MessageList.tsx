@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
@@ -9,79 +11,99 @@ import useAuthStore from "@/store/useAuthStore";
 import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 import { useFetchMessages } from "@/hooks/useMessage";
 import { Message } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function MessageList() {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const user = useAuthStore((state) => state.user);
   const activeChatId = useChatStore((state) => state.activeChatId);
   const messages = useMessageStore((state) => state.messages);
-  const { isLoading, error } = useFetchMessages(activeChatId || "");
+  const { isLoading, error, hasMore, loadMore } = useFetchMessages(
+    activeChatId || ""
+  );
   const { isTyping } = useTypingIndicator(activeChatId || "");
-  const prevMessagesLengthRef = useRef(0);
+
   const currentMessages = messages[activeChatId || ""] || [];
 
-  const lastMessage =
-    currentMessages.length > 0
-      ? currentMessages[currentMessages.length - 1]
-      : null;
-  const isLastMessageMine = lastMessage
-    ? lastMessage.senderId._id === user?.id
-    : false;
-
-  const getScrollableElement = useCallback(() => {
-    const scrollAreaViewport = document.querySelector(
-      "[data-radix-scroll-area-viewport]"
-    );
-    if (scrollAreaViewport) return scrollAreaViewport as HTMLElement;
-
-    if (containerRef.current) return containerRef.current;
-
+  const getScrollableElement = useCallback((): HTMLElement | null => {
+    if (containerRef.current) {
+      const viewport = containerRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      ) as HTMLElement;
+      return viewport || containerRef.current;
+    }
     return null;
   }, []);
 
-  useEffect(() => {
-    if (activeChatId) {
-      setIsAtBottom(true);
-      prevMessagesLengthRef.current = 0;
-      setTimeout(scrollToBottom, 100);
-    }
-  }, [activeChatId]);
-
-  useEffect(() => {
-    if (!currentMessages.length) return;
-
-    const messagesLength = currentMessages.length;
-    const isNewMessage = messagesLength > prevMessagesLengthRef.current;
-
-    if (isNewMessage) {
-      if (isLastMessageMine || isAtBottom) {
-        setTimeout(scrollToBottom, 50);
-      }
-    }
-
-    prevMessagesLengthRef.current = messagesLength;
-  }, [currentMessages.length, isLastMessageMine, isAtBottom]);
-
   const scrollToBottom = useCallback(() => {
+    const scrollable = getScrollableElement();
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
       setIsAtBottom(true);
-      return;
-    }
-
-    const scrollableElement = getScrollableElement();
-    if (scrollableElement) {
-      scrollableElement.scrollTop = scrollableElement.scrollHeight;
+    } else if (scrollable) {
+      scrollable.scrollTop = scrollable.scrollHeight;
       setIsAtBottom(true);
     }
   }, [getScrollableElement]);
 
+  useEffect(() => {
+    if (activeChatId) {
+      setIsAtBottom(true);
+      setTimeout(scrollToBottom, 100);
+    }
+  }, [activeChatId, scrollToBottom]);
+
+  const prevMessagesLengthRef = useRef(0);
+  useEffect(() => {
+    if (!currentMessages.length) return;
+    const messagesLength = currentMessages.length;
+    const isNewMessage = messagesLength > prevMessagesLengthRef.current;
+    if (isNewMessage && isAtBottom) {
+      setTimeout(scrollToBottom, 50);
+    }
+    prevMessagesLengthRef.current = messagesLength;
+  }, [currentMessages.length, isAtBottom, scrollToBottom]);
+
+  useEffect(() => {
+    const sentinel = topSentinelRef.current;
+    if (!sentinel || !hasMore || isLoading) return;
+
+    const scrollable = getScrollableElement();
+    if (!scrollable) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasMore && !isLoading) {
+            const prevScrollHeight = scrollable.scrollHeight;
+            const prevScrollTop = scrollable.scrollTop;
+
+            (async () => {
+              try {
+                await loadMore();
+                const newScrollHeight = scrollable.scrollHeight;
+                const diff = newScrollHeight - prevScrollHeight;
+
+                scrollable.scrollTop = prevScrollTop + diff;
+              } catch (err) {
+                console.error("Error loading more messages:", err);
+              }
+            })();
+          }
+        });
+      },
+      { root: scrollable, threshold: 0.1 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [getScrollableElement, hasMore, isLoading, loadMore]);
   const isOwnMessage = useCallback(
-    (message: Message) => {
-      return message.senderId._id === user?.id;
-    },
+    (message: Message) => message.senderId._id === user?.id,
     [user]
   );
 
@@ -91,7 +113,8 @@ function MessageList() {
     <div className="flex flex-col h-full">
       <ScrollArea className="h-[calc(100vh-160px)]" ref={containerRef}>
         <div className="space-y-4 p-4">
-          {isLoading ? (
+          <div ref={topSentinelRef} style={{ height: "1px" }} />
+          {isLoading && currentMessages.length === 0 ? (
             <MessageLoader />
           ) : error ? (
             <MessageError error={error} />
@@ -107,7 +130,6 @@ function MessageList() {
         </div>
         <ScrollBar orientation="vertical" />
       </ScrollArea>
-
       {isTyping && <TypingIndicator />}
     </div>
   );
@@ -115,8 +137,16 @@ function MessageList() {
 
 export function MessageLoader() {
   return (
-    <div className="flex items-center justify-center h-20">
-      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+    <div className="space-y-4 p-4">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div key={index} className="flex space-x-3">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -133,7 +163,7 @@ export function MessagesContainer({
   if (messages.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-muted-foreground">
-        No messages yet. Start the conversation!
+        No messages yet. sent new message
       </div>
     );
   }
@@ -151,18 +181,21 @@ export function MessagesContainer({
   );
 }
 
-export default MessageList;
-
 interface MessageErrorProps {
   error: Error | string;
 }
-
 export function MessageError({ error }: MessageErrorProps) {
+  const errorMessage =
+    typeof error === "string"
+      ? error
+      : error && error.message
+        ? error.message
+        : "Something went wrong. Please try again.";
+
   return (
-    <div className="text-red-500 text-sm text-center">
-      {typeof error === "string"
-        ? error
-        : error.message || "Something went wrong. Failed to fetch messages"}
+    <div className="p-4 text-center text-red-600 bg-red-100 border border-red-300 rounded">
+      {errorMessage}
     </div>
   );
 }
+export default MessageList;

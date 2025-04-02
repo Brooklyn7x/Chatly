@@ -1,8 +1,7 @@
 import { getMessages } from "@/services/messageService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useSocketStore } from "@/store/useSocketStore";
-import { useState } from "react";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 
 export const useMessage = (chatId: string, userId: string) => {
   const { addMessage } = useMessageStore();
@@ -46,27 +45,51 @@ export const useMessage = (chatId: string, userId: string) => {
   };
 };
 
-export const useFetchMessages = (chatId: string) => {
-  const { setMessages, addMessage } = useMessageStore();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+export const useFetchMessages = (chatId: string, limit: number = 10) => {
+  const { setMessages } = useMessageStore();
 
-  const { data, isLoading, error } = useSWR(
-    `/api/messages/${chatId}?page=${currentPage}`,
-    () => getMessages(chatId),
-    {
-      onSuccess: (response) => {
-        setMessages(chatId, response.data.messages);
+  const { data, error, isLoading, isValidating, size, setSize } =
+    useSWRInfinite(
+      (pageIndex, previousPageData) => {
+        if (pageIndex !== 0 && !previousPageData?.pagination?.nextCursor) {
+          return null;
+        }
+        const cursor =
+          pageIndex === 0 ? null : previousPageData.pagination.nextCursor;
+        return [`/messages/${chatId}`, cursor, limit];
       },
-      revalidateOnFocus: false,
-      shouldRetryOnError: false,
+
+      async (key) => {
+        const [, cursor, limit] = key as [string, string | null, number];
+        return await getMessages(chatId, cursor, limit);
+      },
+      {
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+        onSuccess: (fetchedPages) => {
+          const allMessages = fetchedPages
+            .flatMap((page) => page.messages)
+            .reverse();
+          setMessages(chatId, allMessages);
+        },
+      }
+    );
+
+  const loadMore = () => {
+    if (data && data[data.length - 1].pagination?.nextCursor) {
+      setSize(size + 1);
     }
-  );
+  };
+
+  const hasMore = data
+    ? data[data.length - 1].pagination?.nextCursor !== null
+    : false;
 
   return {
-    isLoading,
+    isLoading: isLoading || isValidating,
     error,
-    messages: data?.data.messages,
+    messages: data ? data.flatMap((page) => page.messages) : [],
+    loadMore,
+    hasMore,
   };
 };

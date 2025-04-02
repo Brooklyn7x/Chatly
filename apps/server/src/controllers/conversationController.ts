@@ -78,7 +78,7 @@ export const createConversation = async (
       return;
     }
     if (type === "group" || type === "channel") {
-      if (participants.some((p: any) => p.userId === id)) {
+      if (participants.find((p: any) => p.userId === id)) {
         participants.push({ userId: id, role: "admin" });
       }
 
@@ -122,25 +122,34 @@ export const getConversations = async (
       return;
     }
 
-    const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 5;
-    const skip = (page - 1) * limit;
+    const cursor = req.query.cursor as string | undefined;
 
-    const conversations = await Conversation.find({
+    const query: any = {
       "participants.userId": userId,
-    })
+    };
+
+    if (cursor) {
+      query.updatedAt = { $lt: new Date(cursor as string) };
+    }
+
+    const conversations = await Conversation.find(query)
       .sort({ updatedAt: -1 })
-      .skip(skip)
-      .limit(limit)
+      .limit(limit + 1)
       .populate("participants.userId", "username profilePicture");
 
-    const totalConversation = await Conversation.countDocuments(conversations);
+    let nextCursor: string | null = null;
+
+    if (conversations.length > limit) {
+      const extraConversation = conversations.pop();
+      nextCursor = extraConversation?.updatedAt.toISOString() || null;
+    }
+
     res.status(200).json({
       data: conversations,
       pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(totalConversation / limit),
-        totalConversation,
+        nextCursor,
+        limit,
       },
     });
   } catch (error) {

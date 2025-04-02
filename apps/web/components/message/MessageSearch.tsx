@@ -75,7 +75,6 @@ const MessageSearch = () => {
       case "Enter":
         if (selectedIndex >= 0 && selectedIndex < filterMessages.length) {
           const selectedMessage = filterMessages[selectedIndex];
-          // Implement your navigation logic here
           console.log("Navigating to:", selectedMessage);
         }
         break;

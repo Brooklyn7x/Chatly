@@ -1,7 +1,6 @@
 import { create } from "zustand";
-import { initializeSocket, disconnectSocket } from "@/utils/sockets";
+import { initializeSocket } from "@/utils/sockets";
 import { Socket } from "socket.io-client";
-import useAuthStore from "./useAuthStore";
 
 interface SocketStore {
   socket: Socket | null;
@@ -17,14 +16,8 @@ export const useSocketStore = create<SocketStore>((set) => ({
   error: null,
 
   connect: () => {
-    const token = useAuthStore.getState().accessToken;
-
-    if (!token) {
-      set({ error: new Error("No authentication token available") });
-      return;
-    }
     try {
-      const socket = initializeSocket({ token });
+      const socket = initializeSocket({});
 
       socket.on("connect", () => {
         set({ socket, isConnected: true, error: null });

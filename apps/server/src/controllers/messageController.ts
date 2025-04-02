@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Message from "../models/message";
 import Conversation from "../models/conversation";
-
 export const getMessages = async (
   req: Request,
   res: Response,
@@ -10,7 +9,7 @@ export const getMessages = async (
   try {
     const { conversationId } = req.params;
     const userId = req.user?.id;
-    const { page = 1, limit = 20 } = req.query;
+    const { limit, cursor } = req.query;
 
     if (!userId) {
       res.status(403).json({ message: "Not authorized" });
@@ -22,9 +21,8 @@ export const getMessages = async (
       res.status(404).json({ message: "Conversation not found" });
       return;
     }
-
     const isParticipant = conversation.participants.find(
-      (p) => p.userId.toString() === userId
+      (p: any) => p.userId.toString() === userId
     );
     if (!isParticipant) {
       res
@@ -33,25 +31,35 @@ export const getMessages = async (
       return;
     }
 
-    const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
-    const skip = (pageNumber - 1) * limitNumber;
 
-    const messages = await Message.find({ conversationId })
-      .populate("senderId", "username, profilePicture")
-      .sort({
-        timestamp: -1,
-      })
-      .skip(skip)
-      .limit(limitNumber);
+    const query: any = { conversationId };
+    if (cursor) {
+      query.createdAt = { $lt: new Date(cursor as string) };
+    }
 
-    const totalMessages = await Message.countDocuments({ conversationId });
+    const messagesQuery = await Message.find(query)
+      .populate("senderId", "username profilePicture")
+      .sort({ createdAt: - 1 })
+      .limit(limitNumber + 1);
+
+    let nextCursor: string | null = null;
+
+    if (messagesQuery.length > limitNumber) {
+      const extraMessage = messagesQuery.pop();
+      nextCursor =
+        extraMessage && extraMessage.createdAt
+          ? extraMessage.createdAt.toISOString()
+          : null;
+    } else {
+      nextCursor = null;
+    }
+
     res.status(200).json({
-      messages,
+      messages: messagesQuery,
       pagination: {
-        currentPage: pageNumber,
-        totalPages: Math.ceil(totalMessages / limitNumber),
-        totalMessages,
+        nextCursor,
+        limit: limitNumber,
       },
     });
   } catch (error) {

@@ -48,8 +48,7 @@ export const chatHandler = (io: Server, socket: Socket): void => {
     try {
       socket.leave(chatId);
       console.log("chat_left", chatId);
-
-      io.to(chatId).emit("chat:leaved", {
+      socket.to(chatId).emit("chat:leaved", {
         userId: socket.data.userId,
         chatId,
         timestamp: new Date().toISOString(),
@@ -62,7 +61,7 @@ export const chatHandler = (io: Server, socket: Socket): void => {
   socket.on("typing_start", (chatId: string) => {
     try {
       console.log("StartTyping", chatId);
-      io.to(chatId).emit("typing_start", {
+      socket.to(chatId).emit("typing_start", {
         chatId,
         userId: socket.data.userId,
       });
@@ -73,7 +72,7 @@ export const chatHandler = (io: Server, socket: Socket): void => {
 
   socket.on("typing_stop", (chatId: string) => {
     try {
-      io.to(chatId).emit("typing_stop", {
+      socket.to(chatId).emit("typing_stop", {
         chatId,
         userId: socket.data.userId,
       });

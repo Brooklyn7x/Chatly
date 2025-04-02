@@ -1,23 +1,32 @@
 import { Server } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import cookie from "cookie";
 import { userHandler } from "./userHandler";
 import { messageHandler } from "./messageHandler";
 import { chatHandler } from "./chatHandler";
+import { conversationHandler } from "./conversationHandler";
 
 export const setupSocket = (server: any): void => {
   const io = new Server(server, {
     cors: {
       origin: "*",
+      credentials: true,
     },
   });
 
   io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
-    if (!token) {
-      return next(new Error("Authencation error"));
-    }
-
     try {
+      const cookies = socket.request.headers.cookie;
+      if (!cookies) return next(new Error("No cookies found"));
+
+      const parsedCookies = cookie.parse(cookies);
+      const token = parsedCookies.accessToken;
+      console.log(token);
+
+      if (!token) {
+        return next(new Error("Access token not found"));
+      }
+
       if (!process.env.JWT_ACCESS_SECRET) {
         throw new Error("JWT_SECRET is not defined");
       }
@@ -25,21 +34,26 @@ export const setupSocket = (server: any): void => {
         token,
         process.env.JWT_ACCESS_SECRET as string
       ) as JwtPayload;
+
       socket.data.userId = decode.id;
       next();
     } catch (error) {
+      console.error("Authentication error:", error);
       next(new Error("Authentication error"));
     }
   });
 
   io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+    const userId = socket.data.userId;
+    socket.join(userId);
+    console.log(`User connected: ${userId}`);
 
     socket.broadcast.emit("user_status_changes", {
       userId: socket.data.userId,
       status: "online",
     });
 
+    conversationHandler(io, socket);
     userHandler(io, socket);
     chatHandler(io, socket);
     messageHandler(io, socket);

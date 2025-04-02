@@ -17,11 +17,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useUploadThing } from "@/utils/uploathings";
-import { UploadProgressIndicator } from "../shared/UpladingIndicator";
 
 const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user, updateUser, accessToken } = useAuthStore();
+  const { user } = useAuthStore();
   const form = useForm({
     defaultValues: {
       name: user?.name || "",

@@ -10,25 +10,43 @@ import { Button } from "../ui/button";
 import { Loader2, Pencil } from "lucide-react";
 import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useChatStore } from "@/store/useChatStore";
+import { toast } from "sonner";
 
 interface EditChatProps {
   title: string;
-  description: string;
+  descriptions: string;
 }
 
-export function EditChatInfo({ title, description }: EditChatProps) {
+export function EditChatInfo({ title, descriptions }: EditChatProps) {
+  const activeChatId = useChatStore((state) => state.activeChatId);
+  const { socket } = useSocketStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     groupTitle: title,
-    groupDescription: description,
+    groupDescription: descriptions,
   });
 
   const handleSubmit = async () => {
+    if (!socket) return;
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      console.log(data)
+      const updateData = {
+        conversationId: activeChatId,
+        name: data.groupTitle,
+        description: data.groupDescription,
+      };
+      socket?.emit("conversation:update", updateData, (error: any) => {
+        if (error) {
+          toast.error(error.error);
+        } else {
+          toast.success("Updated");
+          setOpen(false);
+        }
+      });
+
       setOpen(false);
     } catch (error) {
       console.error(error);

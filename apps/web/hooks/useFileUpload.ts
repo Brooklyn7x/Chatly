@@ -1,4 +1,3 @@
-import { useUploadThing } from "@/utils/uploathings";
 import { useState } from "react";
 
 interface UseFileUploadOptions {

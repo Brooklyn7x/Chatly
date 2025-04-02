@@ -3,14 +3,12 @@ import { io, Socket } from "socket.io-client";
 let socket: Socket | null = null;
 
 interface SocketInitOptions {
-  token: string;
   reconnectionAttempts?: number;
   reconnectionDelay?: number;
   timeout?: number;
 }
 
 export const initializeSocket = ({
-  token,
   reconnectionAttempts = 5,
   reconnectionDelay = 1000,
   timeout = 20000,
@@ -20,18 +18,30 @@ export const initializeSocket = ({
   }
 
   const socketEndpoint = process.env.NEXT_PUBLIC_WEBSOCKET_URL!;
-
   if (!socketEndpoint) {
     throw new Error("Socket endpoint not defined in environment variables");
   }
 
   socket = io(socketEndpoint, {
-    auth: { token },
+    withCredentials: true,
     transports: ["websocket", "polling"],
     reconnection: true,
     reconnectionAttempts,
     reconnectionDelay,
+    reconnectionDelayMax: 300,
     timeout,
+  });
+
+  socket.on("connect", () => {
+    console.log("Socket connected:", socket?.id);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log("Socket disconnected:", reason);
+  });
+
+  socket.on("error", (err) => {
+    console.log("Socket error:", err);
   });
 
   return socket;
@@ -52,9 +62,11 @@ export const emitEvent = (event: string, data: unknown): void => {
   }
 };
 
-export const onEvent = (event: string, callback: (...args: any[]) => void): void => {
+export const onEvent = (
+  event: string,
+  callback: (...args: any[]) => void
+): void => {
   if (socket) {
     socket.on(event, callback);
   }
 };
-  
