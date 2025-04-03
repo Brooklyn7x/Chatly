@@ -79,7 +79,7 @@ export const login = async (
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: (process.env.NODE_ENV as string) === "production",
       sameSite: "none",
       maxAge: refreshTokenExpirySeconds * 1000,
     });
@@ -114,7 +114,7 @@ export const refreshToken = async (
 
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: (process.env.NODE_ENV as string) === "production",
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
     });
