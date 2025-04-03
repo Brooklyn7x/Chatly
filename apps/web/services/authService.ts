@@ -1,4 +1,3 @@
-import { User } from "@/types";
 import { apiClient } from "./apiClient";
 
 interface LoginRequest {
@@ -12,19 +11,12 @@ interface RegisterRequest {
   password: string;
 }
 
-interface AuthResponse {
-  data: User;
-}
-export const loginUser = async (
-  credentials: LoginRequest
-): Promise<AuthResponse> => {
+export const loginUser = async (credentials: LoginRequest) => {
   const response = await apiClient.post("/auth/login", credentials);
   return response.data;
 };
 
-export const register = async (
-  credentials: RegisterRequest
-): Promise<AuthResponse> => {
+export const register = async (credentials: RegisterRequest): Promise<any> => {
   const response = await apiClient.post("/auth/register", credentials);
   return response.data;
 };

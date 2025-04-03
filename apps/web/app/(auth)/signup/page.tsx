@@ -66,8 +66,10 @@ export default function SignupPage() {
         email: values.email,
         password: values.password,
       });
-      if (resposne.data) {
+      if (resposne && resposne.success) {
         router.push("/chat");
+      } else {
+        toast.error("Failed to sign up");
       }
     } catch (error: any) {
       setIsLoading(false);

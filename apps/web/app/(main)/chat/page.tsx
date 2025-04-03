@@ -14,7 +14,7 @@ export default function MainPage() {
   const { connect, disconnect } = useSocketStore();
   const { isMobile } = useMobileDetection();
   const { activeChatId } = useChatStore();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   useEffect(() => {
     connect();
@@ -24,7 +24,6 @@ export default function MainPage() {
   }, [connect, disconnect]);
 
   useUserStatusSocket();
-
   if (isLoading) return null;
   // if (!isAuthenticated) return null;
 
