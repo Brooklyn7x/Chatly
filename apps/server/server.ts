@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import connectDB from "./src/config/db.js";
 import { setupSocket } from "./src/sockets";
 
+
 const PORT = parseInt(process.env.PORT || "8000");
 
 connectDB();

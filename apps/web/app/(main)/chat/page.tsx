@@ -14,7 +14,7 @@ export default function MainPage() {
   const { connect, disconnect } = useSocketStore();
   const { isMobile } = useMobileDetection();
   const { activeChatId } = useChatStore();
-  const { isLoading } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
 
   useEffect(() => {
     connect();
@@ -22,10 +22,12 @@ export default function MainPage() {
       disconnect();
     };
   }, [connect, disconnect]);
-
+  
   useUserStatusSocket();
+
+
   if (isLoading) return null;
-  // if (!isAuthenticated) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="max-w-9xl mx-auto bg-black/80">

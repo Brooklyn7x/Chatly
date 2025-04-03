@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { toast } from "sonner";
 
 let socket: Socket | null = null;
 
@@ -41,6 +42,9 @@ export const initializeSocket = ({
   });
 
   socket.on("error", (err) => {
+    toast.error(
+      "Unable to connect to the server. Please try again later. Refresh Page"
+    );
     console.log("Socket error:", err);
   });
 

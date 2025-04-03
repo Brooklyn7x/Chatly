@@ -4,11 +4,13 @@ import { toast } from "sonner";
 import { apiClient } from "@/services/apiClient";
 import { resetAllStores } from "@/utils/store-reset";
 import useAuthStore from "@/store/useAuthStore";
+import { useSocketStore } from "@/store/useSocketStore";
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { disconnect } = useSocketStore();
 
   const verifyAuth = async () => {
     try {
@@ -45,8 +47,9 @@ export function useAuth() {
   const logout = async () => {
     try {
       await apiClient.post("/auth/logout");
+      disconnect();
+      router.push("/login");
       setIsAuthenticated(false);
-      router.replace("/login");
       resetAllStores();
     } catch (error) {
       console.log(error);
