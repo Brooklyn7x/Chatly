@@ -75,6 +75,7 @@ export const login = async (
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
+      path: "/",
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -82,6 +83,7 @@ export const login = async (
       secure: (process.env.NODE_ENV as string) === "production",
       sameSite: "none",
       maxAge: refreshTokenExpirySeconds * 1000,
+      path: "/",
     });
 
     const userResponse = sanitizeUser(user);
@@ -117,6 +119,7 @@ export const refreshToken = async (
       secure: (process.env.NODE_ENV as string) === "production",
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
+      path: "/",
     });
 
     res.status(200).json({ success: true });

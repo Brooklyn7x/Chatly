@@ -12,7 +12,9 @@ interface RegisterRequest {
 }
 
 export const loginUser = async (credentials: LoginRequest) => {
-  const response = await apiClient.post("/auth/login", credentials);
+  const response = await apiClient.post("/auth/login", credentials, {
+    withCredentials: true,
+  });
   return response.data;
 };
 

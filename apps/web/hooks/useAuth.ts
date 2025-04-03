@@ -48,9 +48,9 @@ export function useAuth() {
     try {
       await apiClient.post("/auth/logout");
       disconnect();
-      router.push("/login");
       setIsAuthenticated(false);
       resetAllStores();
+      router.replace("/login");
     } catch (error) {
       console.log(error);
       toast.error("Logout failed");
