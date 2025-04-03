@@ -16,19 +16,23 @@ export function useAuth() {
       const response = await apiClient.get("/auth/me", {
         withCredentials: true,
       });
+
       if (response.status === 404 || response.status === 401) {
         setIsAuthenticated(false);
-        router.replace("/login");
+        router.push("/login");
       } else if (response.status === 200) {
         const data = response.data.user;
         useAuthStore.getState().setUser(data);
         setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+        router.push("/login");
       }
     } catch (error) {
       setIsAuthenticated(false);
       setIsLoading(false);
       toast.error("Authentication failed");
-      router.replace("/login");
+      router.push("/login");
     } finally {
       setIsLoading(false);
     }

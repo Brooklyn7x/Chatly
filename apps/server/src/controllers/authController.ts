@@ -81,7 +81,7 @@ export const login = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: refreshTokenExpirySeconds * 100,
+      maxAge: refreshTokenExpirySeconds * 1000,
     });
 
     const userResponse = sanitizeUser(user);
