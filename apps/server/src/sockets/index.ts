@@ -1,15 +1,15 @@
 import { Server } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import cookie from "cookie";
 import { userHandler } from "./userHandler";
 import { messageHandler } from "./messageHandler";
 import { chatHandler } from "./chatHandler";
 import { conversationHandler } from "./conversationHandler";
+import * as cookie from "cookie";
 
 export const setupSocket = (server: any): void => {
   const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin: process.env.FRONTEND_URL as string,
       credentials: true,
     },
   });
@@ -21,7 +21,6 @@ export const setupSocket = (server: any): void => {
 
       const parsedCookies = cookie.parse(cookies);
       const token = parsedCookies.accessToken;
-      console.log(token);
 
       if (!token) {
         return next(new Error("Access token not found"));

@@ -9,14 +9,16 @@ import messageRoutes from "./src/routes/messageRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { RateLimiter } from "./src/middlewares/rateLimiter";
 import { authenticate } from "./src/middlewares/authenticate";
+import "dotenv/config";
 
 const app = express();
 app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL as string,
     credentials: true,
   })
 );

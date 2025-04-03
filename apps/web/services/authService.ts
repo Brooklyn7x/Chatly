@@ -23,6 +23,3 @@ export const register = async (credentials: RegisterRequest): Promise<any> => {
 export const logout = async () => {
   await apiClient.post("/auth/logout");
 };
-
-export const refreshToken = () => {};
-export const validateToken = () => {};
