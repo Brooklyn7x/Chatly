@@ -7,7 +7,6 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "start": "turbo run build && turbo run start --filter=server"
-
   },
   "devDependencies": {
     "prettier": "^3.2.5",
