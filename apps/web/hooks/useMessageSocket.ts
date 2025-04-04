@@ -2,10 +2,11 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useEffect } from "react";
 import { useSocketStore } from "@/store/useSocketStore";
 import { Message } from "@/types";
+import { toast } from "sonner";
 
-export const useChatSocket = (chatId: string) => {
+export const useMessageSocket = () => {
   const { addMessage, updateMessage, updateMessageStatus } = useMessageStore();
-  const { isConnected, socket } = useSocketStore();
+  const { socket, isConnected } = useSocketStore();
 
   useEffect(() => {
     if (!socket || !isConnected) return;
@@ -19,9 +20,7 @@ export const useChatSocket = (chatId: string) => {
       message: Message;
     }) => {
       const { tempId, message } = response;
-      if (tempId) {
-        updateMessage(response.tempId, message);
-      }
+      updateMessage(message.conversationId, message, tempId);
     };
 
     const handleMessageEdited = (data: {
@@ -39,6 +38,7 @@ export const useChatSocket = (chatId: string) => {
       timestamp: string;
     }) => {
       const { messageId, timestamp } = data;
+
       updateMessageStatus(messageId, {
         isDeleted: true,
         deletedAt: new Date(timestamp),
@@ -48,23 +48,35 @@ export const useChatSocket = (chatId: string) => {
       });
     };
 
-    socket.on("newMessage", handleNewMessage);
-    socket.on("message:sent", handleMessageSent);
-    socket.on("messageEdited", handleMessageEdited);
-    socket.on("messageDeleted", handleMessageDeleted);
+    const handleMessageError = (data: { message: string }) => {
+      toast.error(data.message);
+    };
+
+    const handleMessageRead = (data: { messageId: string }) => {
+      const { messageId } = data;
+      updateMessageStatus(messageId, {
+        status: "read",
+      });
+    };
+
+    const handleMessageAllRead = () => {};
+
+    socket.on("message_new", handleNewMessage);
+    socket.on("message_ack", handleMessageSent);
+    socket.on("message_edited", handleMessageEdited);
+    socket.on("message_deleted", handleMessageDeleted);
+    socket.on("message_read", handleMessageRead);
+    socket.on("message_all_read", handleMessageAllRead);
+    socket.on("message_error", handleMessageError);
 
     return () => {
-      socket.off("newMessage", handleNewMessage);
-      socket.off("message:sent", handleMessageSent);
-      socket.off("messageEdited", handleMessageEdited);
-      socket.off("messageDeleted", handleMessageDeleted);
+      socket.off("message_new", handleNewMessage);
+      socket.off("message_ack", handleMessageSent);
+      socket.off("message_edited", handleMessageEdited);
+      socket.off("message_deleted", handleMessageDeleted);
+      socket.off("message_read", handleMessageRead);
+      socket.off("message_all_read", handleMessageAllRead);
+      socket.off("message_error", handleMessageError);
     };
-  }, [
-    socket,
-    isConnected,
-    chatId,
-    addMessage,
-    updateMessage,
-    updateMessageStatus,
-  ]);
+  }, []);
 };

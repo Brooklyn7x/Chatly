@@ -7,22 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import {
-  ArrowLeft,
-  BoxSelectIcon,
-  EllipsisVertical,
-  LucideIcon,
-  Phone,
-  Trash,
-} from "lucide-react";
+import { ArrowLeft, EllipsisVertical, LucideIcon, Phone } from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/UserAvatar";
-
 import { Chat } from "@/types";
 import MessageSearch from "../message/MessageSearch";
 import useUserStatusStore from "@/store/useUserStatusStore";
+import { useMessage } from "@/hooks/useMessage";
 
 interface ChatHeaderProps {
   chat: Chat;
@@ -37,11 +29,14 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
   const otherUserId = otherUser?.userId?._id;
   const isOnline = getUserStatus(otherUserId || "");
   const displayName = formatName(chat);
+  const { markAllRead } = useMessage();
 
-  // const handleDelete = () => {
-  //   if (!activeChatId) return;
-  //   deleteCht(activeChatId);
-  // };
+  const handleMessageAllRead = () => {
+    if (!activeChatId) return;
+    markAllRead({ chatId: activeChatId });
+  };
+
+  if (!chat) return null;
 
   return (
     <header className="h-16 w-full flex-shrink-0 border-b flex items-center justify-between px-6 relative bg-background">
@@ -64,7 +59,7 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
               {chat?.type === "private" ? (
                 <div>{isOnline && <span>Online</span>}</div>
               ) : (
-                <span>{chat.participants.length} Members</span>
+                <span>{chat?.participants?.length} Members</span>
               )}
             </span>
           </div>
@@ -73,7 +68,6 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
 
       <div className="flex items-center gap-2">
         <div className="hidden md:flex">
-          <IconButton onClick={() => {}} icon={Phone} isActive={false} />
           <MessageSearch />
         </div>
         <DropdownMenu>
@@ -83,15 +77,13 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" alignOffset={10} className="w-44">
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem onClick={handleMessageAllRead}>
               <div className="flex items-center gap-4 text-muted-foreground">
-                <Trash size={16} />
-                <p>Delete</p>
+                <p>Mark All Read</p>
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => {}}>
               <div className="flex items-center gap-4 text-muted-foreground">
-                <BoxSelectIcon size={16} />
                 <p>Select messages</p>
               </div>
             </DropdownMenuItem>
@@ -101,35 +93,3 @@ export default function ChatHeader({ chat }: ChatHeaderProps) {
     </header>
   );
 }
-
-interface ButtonProps {
-  onClick: () => void;
-  icon: LucideIcon;
-  isActive?: boolean;
-  className?: string;
-}
-const IconButton = ({
-  onClick,
-  icon: Icon,
-  isActive,
-  className,
-}: ButtonProps) => {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "h-10 w-10",
-        "flex items-center justify-center",
-        "rounded-full",
-        "transition-all duration-200",
-        "hover:bg-muted/70 active:scale-95",
-        isActive && "bg-muted/90",
-        className
-      )}
-    >
-      <Icon
-        className={cn("h-5 w-5 transition-transform", isActive && "scale-105")}
-      />
-    </button>
-  );
-};

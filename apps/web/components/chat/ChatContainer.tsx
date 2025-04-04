@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
-import { EmptyState } from "./EmptyChat";
 import ChatArea from "./ChatArea";
 import ChatInfo from "./ChatInfo";
 

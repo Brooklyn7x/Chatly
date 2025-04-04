@@ -1,10 +1,8 @@
 import dynamic from "next/dynamic";
 import {
-  Bookmark,
   LogOut,
   LucideIcon,
   Menu,
-  Palette,
   Settings,
   User,
   User2Icon,
@@ -74,11 +72,6 @@ export default function SidebarHeader({
   };
   const MENU_ITEMS = [
     {
-      icon: Bookmark,
-      label: "Saved Message",
-      onClick: null,
-    },
-    {
       icon: User,
       label: "Contact",
       onClick: (onViewChange: (view: ViewType) => void) =>
@@ -89,12 +82,6 @@ export default function SidebarHeader({
       label: "Settings",
       onClick: (onViewChange: (view: ViewType) => void) =>
         onViewChange("setting"),
-    },
-    {
-      icon: Palette,
-      label: "Theme Settings",
-      onClick: (onViewChange: (view: ViewType) => void) =>
-        onViewChange("theme_setting"),
     },
     {
       icon: LogOut,
@@ -125,7 +112,7 @@ export default function SidebarHeader({
                   <Menu />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuContent className="w-44" align="start">
                 <UserProfile
                   user={user ? { username: user.username } : { username: "" }}
                 />
@@ -155,7 +142,7 @@ export default function SidebarHeader({
 function UserProfile({ user }: { user: { username: string } }) {
   return (
     <DropdownMenuLabel>
-      <div className="flex items-center gap-4 text-muted-foreground">
+      <div className="flex items-center px-2 gap-4 text-muted-foreground">
         <User2Icon size={16} strokeWidth={2} />
         <p>{user?.username || "user"}</p>
       </div>
@@ -174,7 +161,7 @@ function MenuItem({
 }) {
   return (
     <DropdownMenuItem onClick={onClick}>
-      <div className="flex gap-4 items-center text-muted-foreground">
+      <div className="flex gap-4 px-2 items-center text-muted-foreground">
         <Icon size={16} strokeWidth={2} />
         <p>{label}</p>
       </div>

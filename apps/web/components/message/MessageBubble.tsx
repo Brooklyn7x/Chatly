@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { MessageContent } from "./MessageContent";
@@ -9,10 +9,11 @@ import { MessageEditor } from "./MessageEditor";
 import { MessageReactionPicker } from "./MessageReactionPicker";
 import { MessageReactions } from "./MessageReactions";
 import { useReactions } from "@/hooks/useReactions";
-import MessageActionDrop from "./MessageActionDrop";
 import { Message } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useMessageStore } from "@/store/useMessageStore";
+import { useMessage } from "@/hooks/useMessage";
+import { useChatStore } from "@/store/useChatStore";
 
 interface MessageBubbleProps {
   message: Message;
@@ -21,11 +22,38 @@ interface MessageBubbleProps {
 
 export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const chatId = useChatStore((state) => state.activeChatId);
   const [isEditing, setIsEditing] = useState(false);
   const [showreaction, setShowReaction] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const { socket } = useSocketStore();
   const { updateMessage } = useMessageStore();
+  const { editMessage, deleteMessage, markAsRead } = useMessage();
+  const { reactions, addReaction, removeReaction } = useReactions(message._id);
+
+  useEffect(() => {
+    if (!chatId || isOwn || message?.status === "read") return;
+    const observer = new IntersectionObserver(
+      (entries, observerInstance) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            markAsRead({ chatId, messageId: message._id });
+            console.log(message._id, "unread");
+            observerInstance.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+    };
+  }, [message, isOwn]);
 
   const {
     id,
@@ -36,16 +64,13 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
     createdAt,
     senderId,
     isEdited,
-
     isDeleted,
   } = message;
-
-  const { reactions, addReaction, removeReaction } = useReactions(message._id);
 
   const handleEditMessage = () => {
     if (!socket) return;
     if (editedContent.trim() && editedContent !== content) {
-      socket.emit("editMessage", { messageId: id, content: editedContent });
+      editMessage({ messageId: _id, content: editedContent });
       updateMessage(message.conversationId, {
         ...message,
         content: editedContent,
@@ -57,8 +82,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
 
   const handleDeleteMessage = () => {
     if (!socket) return;
-    socket.emit("deleteMessage", id);
-
+    deleteMessage(id);
     updateMessage(message.conversationId, {
       ...message,
       isDeleted: true,
@@ -90,10 +114,10 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         <div
           className={`flex flex-col relative  ${isOwn ? "items-end" : "items-start"}`}
         >
-          <div className="flex items-center gap-2">
-            <div className="absolute -right-2 -top-1 z-20">
+          <div className="flex items-center gap-2" ref={ref}>
+            {/* <div className="absolute -right-2 -top-1 z-20">
               <MessageActionDrop />
-            </div>
+            </div> */}
             {isOwn && !message.isDeleted && (
               <MessageActions
                 onReaction={() => setShowReaction((prev) => !prev)}
@@ -108,7 +132,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 isOwn
                   ? "bg-primary/90 rounded-br-none hover:shadow-md"
                   : "bg-secondary/90 text-white rounded-bl-none hover:shadow-md",
-                message.isDeleted && "opacity-50"
+                message.isDeleted && "opacity-70"
               )}
             >
               {!isOwn && (
@@ -125,15 +149,18 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
                 />
               ) : (
                 <div className="flex flex-col gap-1">
-                  <MessageContent
-                    isOwn={isOwn}
-                    content={
-                      message.isDeleted ? "You deleted this message" : content
-                    }
-                    type={type}
-                    attachments={[]}
-                  />
-
+                  {isDeleted ? (
+                    <span className="text-muted-foreground italic">
+                      message deleted
+                    </span>
+                  ) : (
+                    <MessageContent
+                      isOwn={isOwn}
+                      content={content}
+                      type={type}
+                      attachments={[]}
+                    />
+                  )}
                   {reactions.length > 0 && (
                     <MessageReactions
                       reactions={reactions}

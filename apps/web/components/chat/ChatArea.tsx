@@ -4,21 +4,20 @@ import ChatInput from "./ChatInput";
 import { useChatStore } from "@/store/useChatStore";
 import MessageList from "../message/MessageList";
 import { useJoinChatSocket } from "@/hooks/useJoinSocket";
-import { useChatSocket } from "@/hooks/useMessageSocket";
-import { EmptyState } from "./EmptyChat";
+import { EmptyChat } from "./EmptyChat";
+import { useMessageSocket } from "@/hooks/useMessageSocket";
 
 const ChatArea = () => {
-  const { activeChatId, chats } = useChatStore();
-
-  useJoinChatSocket(activeChatId || "");
-  useChatSocket(activeChatId || "");
-  // useTypingIndicator(activeChatId || "");
   const activeChat = useChatStore((state) => state.activeChatId);
+  const { activeChatId, chats } = useChatStore();
+  useJoinChatSocket(activeChatId || "");
+  useMessageSocket();
+
   const chat = useMemo(() => {
     return chats?.find((chat) => chat._id === activeChatId);
   }, [chats, activeChatId]);
 
-  if (!chat) return <EmptyState />;
+  if (!chat) return <EmptyChat />;
 
   return (
     <div className="flex flex-col h-full">
@@ -37,7 +36,7 @@ const ChatArea = () => {
           </div>
         </>
       ) : (
-        <EmptyState />
+        <EmptyChat />
       )}
     </div>
   );

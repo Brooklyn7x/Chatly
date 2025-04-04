@@ -21,20 +21,21 @@ interface ReadReceiptData {
 }
 
 export const messageHandler = (io: Server, socket: Socket) => {
-  socket.on("sendMessage", async (data: MessageData) => {
+  socket.on("message_sent", async (data: MessageData) => {
     try {
       const { conversationId, content, tempId, type, attachment } = data;
 
       if (!conversationId || !content) {
-        socket.emit("error", { message: "Chat ID and content are required" });
+        socket.emit("message_error", {
+          message: "Chat ID and content are required",
+        });
         return;
       }
 
       const chat = await Conversation.findById(conversationId);
       if (!chat) {
-        socket.emit("error", {
-          tempId,
-          error: "Chat not found",
+        socket.emit("message_error", {
+          message: "Chat not found",
         });
         return;
       }
@@ -44,9 +45,8 @@ export const messageHandler = (io: Server, socket: Socket) => {
       );
 
       if (!isMember) {
-        socket.emit("error", {
-          tempId,
-          error: "Not authorized to send messages in this chat",
+        socket.emit("message_error", {
+          message: "Not authorized to send messages in this chat",
         });
         return;
       }
@@ -66,37 +66,38 @@ export const messageHandler = (io: Server, socket: Socket) => {
         "username email profilePicture"
       );
 
-      socket.emit("sentMessage", {
+      socket.emit("message_ack", {
         tempId,
         message: populateMessage,
       });
 
-      socket.to(conversationId).emit("newMessage", {
+      socket.to(conversationId).emit("message_new", {
         message: populateMessage,
       });
     } catch (error) {
       console.log("Error sending message:", error);
-      socket.emit("error", error);
+      socket.emit("message_error", {
+        message: "Something went wrong",
+      });
     }
   });
 
-  socket.on("editMessage", async (data: EditMessageData) => {
+  socket.on("message_edit", async (data: EditMessageData) => {
     try {
       const { messageId, content } = data;
 
       const message = await Message.findById(messageId);
       if (!message) {
-        socket.emit("error", { message: "Message not found" });
+        socket.emit("message_error", { message: "Message not found" });
         return;
       }
 
       if (message.senderId.toString() !== socket.data.userId) {
-        socket.emit("error", {
+        socket.emit("message_error", {
           message: "Not authorized to edit this message",
         });
         return;
       }
-      //check 15 min message btw edit-Time
 
       const updateMessage = await Message.findByIdAndUpdate(
         messageId,
@@ -110,27 +111,24 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       const chatId = message.conversationId.toString();
 
-      socket.to(chatId).emit("messageEdited", {
+      socket.to(chatId).emit("message_edited", {
         conversationId: chatId,
         message: updateMessage,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
       console.error("Error editing message:", error);
-      socket.emit("error", {
+      socket.emit("message_error", {
         message: "Failed to edit message",
-        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  socket.on("deleteMessage", async (messageId: string) => {
+  socket.on("message_delete", async (messageId: string) => {
     try {
-      console.log(messageId, "deletemEssage");
-
       const message = await Message.findById(messageId);
       if (!message) {
-        socket.emit("error", { message: "Message not found" });
+        socket.emit("message_error", { message: "Message not found" });
         return;
       }
 
@@ -143,7 +141,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         );
 
         if (!isAdmin) {
-          socket.emit("error", {
+          socket.emit("message_error", {
             message: "Not authorized to delete this message",
           });
           return;
@@ -155,8 +153,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         });
 
         const chatId = message.conversationId.toString();
-        console.log(chatId);
-        socket.to(chatId).emit("messageDeleted", {
+        socket.to(chatId).emit("message_deleted", {
           conversationId: chatId,
           messageId,
           timestamp: new Date().toISOString(),
@@ -164,20 +161,19 @@ export const messageHandler = (io: Server, socket: Socket) => {
       }
     } catch (error) {
       console.error("Error deleting message:", error);
-      socket.emit("error", {
+      socket.emit("message_error", {
         message: "Failed to delete message",
-        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  socket.on("markMessageAsRead", async (data: ReadReceiptData) => {
+  socket.on("mark_as_read", async (data: ReadReceiptData) => {
     try {
       const { chatId, messageId } = data;
 
       const message = await Message.findById(messageId);
       if (!message) {
-        socket.emit("error", { message: "Message not found" });
+        socket.emit("message_error", { message: "Message not found" });
         return;
       }
 
@@ -188,7 +184,9 @@ export const messageHandler = (io: Server, socket: Socket) => {
           (p) => p.userId.toString() === socket.data.userId
         )
       ) {
-        socket.emit("error", { message: "Not authorized to access this chat" });
+        socket.emit("message_error", {
+          message: "Not authorized to access this chat",
+        });
         return;
       }
 
@@ -200,25 +198,25 @@ export const messageHandler = (io: Server, socket: Socket) => {
 
       const chatIdx = message.conversationId.toString();
 
-      socket.to(chatIdx).emit("messageRead", {
+      socket.to(chatIdx).emit("message_read", {
         messageId: message._id,
         readBy: socket.data.userId,
         timestamp: new Date(),
       });
     } catch (error) {
       console.error("Error marking message as read:", error);
-      socket.emit("error", {
+      socket.emit("message_error", {
         message: "Failed to mark message as read",
-        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
 
-  socket.on("markAllRead", async (chatId: string) => {
+  socket.on("mark_all_read", async (data: { chatId: string }) => {
     try {
+      const { chatId } = data;
       const conversation = await Conversation.findById(chatId);
       if (!conversation) {
-        socket.emit("error", { message: "Conversation not found" });
+        socket.emit("messsage_error", { message: "Conversation not found" });
         return;
       }
 
@@ -226,7 +224,9 @@ export const messageHandler = (io: Server, socket: Socket) => {
         (p) => p.userId.toString() === socket.data.userId
       );
       if (!isParticipant) {
-        socket.emit("error", { message: "Not authorized to access this chat" });
+        socket.emit("messsage_error", {
+          message: "Not authorized to access this chat",
+        });
         return;
       }
 
@@ -239,16 +239,15 @@ export const messageHandler = (io: Server, socket: Socket) => {
         { status: "read" }
       );
 
-      socket.to(chatId).emit("allMessagesRead", {
+      socket.to(chatId).emit("message_all_read", {
         chatId,
         readBy: socket.data.userId,
         timestamp: new Date(),
       });
     } catch (error) {
       console.error("Error marking all messages as read:", error);
-      socket.emit("error", {
+      socket.emit("message_error", {
         message: "Failed to mark all messages as read",
-        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });

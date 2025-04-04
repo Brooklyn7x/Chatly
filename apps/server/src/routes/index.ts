@@ -1,6 +1,5 @@
 import { authenticate } from "../middlewares/authenticate";
 import { Router } from "express";
-
 import userRoutes from "./userRoutes";
 import conversationRoutes from "./conversationRoutes";
 import messageRoutes from "./messageRoutes";

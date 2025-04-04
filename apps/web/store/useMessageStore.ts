@@ -6,7 +6,7 @@ interface MessageStore {
   messages: Record<string, Message[]>;
   setMessages: (chatId: string, messages: Message[]) => void;
   addMessage: (message: Message) => void;
-  updateMessage: (chatId: string, message: Message) => void;
+  updateMessage: (chatId: string, message: Message, tempId?: string) => void;
   deleteMessage: (chatId: string, messageId: string, message: Message) => void;
   updateMessageStatus: (messageId: string, update: Partial<Message>) => void;
 }
@@ -32,12 +32,16 @@ export const useMessageStore = create<MessageStore>()(
           },
         })),
 
-      updateMessage: (chatId, message) =>
+      updateMessage: (chatId: string, newMessage: Message, tempId?: string) =>
         set((state) => ({
           messages: {
             ...state.messages,
             [chatId]: (state.messages[chatId] || []).map((msg) =>
-              msg._id === message._id ? { ...msg, ...message } : msg
+              tempId && msg._id === tempId
+                ? { ...msg, ...newMessage }
+                : msg._id === newMessage._id
+                  ? { ...msg, ...newMessage }
+                  : msg
             ),
           },
         })),

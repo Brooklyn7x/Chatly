@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Loader2 } from "lucide-react";
 import { TypingIndicator } from "../shared/TypingIndicator";
 import { MessageBubble } from "./MessageBubble";
 import { useChatStore } from "@/store/useChatStore";
@@ -18,7 +17,6 @@ function MessageList() {
   const containerRef = useRef<HTMLDivElement>(null);
   const topSentinelRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const user = useAuthStore((state) => state.user);
   const activeChatId = useChatStore((state) => state.activeChatId);
   const messages = useMessageStore((state) => state.messages);
@@ -26,8 +24,12 @@ function MessageList() {
     activeChatId || ""
   );
   const { isTyping } = useTypingIndicator(activeChatId || "");
-
   const currentMessages = messages[activeChatId || ""] || [];
+  const unreadMessage = currentMessages.filter(
+    (message) => message.status !== "read"
+  );
+
+  console.log(unreadMessage);
 
   const getScrollableElement = useCallback((): HTMLElement | null => {
     if (containerRef.current) {
@@ -102,6 +104,7 @@ function MessageList() {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [getScrollableElement, hasMore, isLoading, loadMore]);
+
   const isOwnMessage = useCallback(
     (message: Message) => message.senderId._id === user?.id,
     [user]
@@ -160,14 +163,6 @@ export function MessagesContainer({
   messages,
   isOwnMessage,
 }: MessagesContainerProps) {
-  if (messages.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full text-muted-foreground">
-        No messages yet. sent new message
-      </div>
-    );
-  }
-
   return (
     <>
       {messages.map((message) => (

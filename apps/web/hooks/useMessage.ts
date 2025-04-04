@@ -3,21 +3,26 @@ import { useMessageStore } from "@/store/useMessageStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import useSWRInfinite from "swr/infinite";
 
-export const useMessage = (chatId: string, userId: string) => {
+export const useMessage = () => {
   const { addMessage } = useMessageStore();
   const { socket } = useSocketStore();
 
-  const sendMessage = (content: { attachments: string[]; message: string }) => {
-    if (!chatId || !socket) return;
-
+  const sendMessage = (
+    chatId: string,
+    userId: string,
+    content: { attachments: string[]; message: string }
+  ) => {
+    if (!socket) return;
     const tempId = `temp-${Date.now()}`;
     const contentType = content.attachments.length > 0 ? "image" : "text";
-
     const messageData = {
       _id: tempId,
       tempId,
       conversationId: chatId,
-      senderId: userId,
+      senderId: {
+        id: userId,
+        _id: userId,
+      },
       content: content.message,
       type: contentType,
       status: "sent",
@@ -29,19 +34,31 @@ export const useMessage = (chatId: string, userId: string) => {
     };
 
     addMessage(messageData as any);
-    socket.emit("sendMessage", messageData);
+    socket.emit("message_sent", messageData);
   };
 
-  const markAsRead = (messageIds: string[]) => {
-    // socket("markAsRead" ,messageIds, chatId);
+  const editMessage = (data: { messageId: string; content: string }) => {
+    socket?.emit("message_edit", data);
   };
 
-  const markAllRead = () => {};
+  const deleteMessage = (messageId: string) => {
+    socket?.emit("message_delete", messageId);
+  };
+
+  const markAsRead = (data: { chatId: string; messageId: string }) => {
+    socket?.emit("mark_as_read", data);
+  };
+
+  const markAllRead = (data: { chatId: string }) => {
+    socket?.emit("mark_all_read", data);
+  };
 
   return {
     sendMessage,
     markAsRead,
     markAllRead,
+    editMessage,
+    deleteMessage,
   };
 };
 

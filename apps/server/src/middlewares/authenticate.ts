@@ -11,6 +11,7 @@ export const authenticate = async (
     const token =
       req.cookies?.accessToken || req.headers.authorization?.split(" ")[1];
 
+    console.log(token);
     if (!token) {
       throw new AppError(401, "No authentication token provided");
     }
