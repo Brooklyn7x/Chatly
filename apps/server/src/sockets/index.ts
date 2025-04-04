@@ -1,10 +1,9 @@
 import { Server } from "socket.io";
+import * as cookie from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { userHandler } from "./userHandler";
-import { messageHandler } from "./messageHandler";
 import { chatHandler } from "./chatHandler";
 import { conversationHandler } from "./conversationHandler";
-import * as cookie from "cookie";
+import { messageHandler } from "./messageHandler";
 
 export const setupSocket = (server: any): void => {
   const io = new Server(server, {
@@ -53,7 +52,6 @@ export const setupSocket = (server: any): void => {
     });
 
     conversationHandler(io, socket);
-    userHandler(io, socket);
     chatHandler(io, socket);
     messageHandler(io, socket);
 

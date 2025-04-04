@@ -4,6 +4,7 @@ import logger from "../config/logger";
 
 export function authSocket(socket: Socket, next: (err?: Error) => void) {
   const token = socket.handshake.auth.token;
+
   if (!token) {
     logger.warn("No token provided for socket connection");
     return next(new Error("No authentication token"));

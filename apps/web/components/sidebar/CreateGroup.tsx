@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, UserPlus, X } from "lucide-react";
 import { GroupDetailsForm } from "../form/GroupDetailsForm";
 import { StepContainer } from "../modal/StepContainer";
 import { UserList } from "../user/UserList";
@@ -16,6 +16,8 @@ import useAuthStore from "@/store/useAuthStore";
 import { User } from "@/types";
 import { useCreateChat } from "@/hooks/useChats";
 import { useSocketStore } from "@/store/useSocketStore";
+import { Button } from "../ui/button";
+import AddNewContact from "./AddNewContact";
 
 interface CreateGroupChatProps {
   onClose: () => void;
@@ -23,6 +25,7 @@ interface CreateGroupChatProps {
 
 const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   const [step, setStep] = useState<"members" | "details">("members");
+  const [addContact, setAddContact] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [name, setName] = useState("");
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(
@@ -33,7 +36,7 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   const { user } = useAuthStore();
   const { users } = useSearchUser(searchQuery);
   const { contacts, isLoading } = useFetchContacts();
-  const { isMutating, error } = useCreateChat();
+
   const { socket } = useSocketStore();
 
   const usersData = [...contacts, ...users];
@@ -117,25 +120,24 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
         name,
         description,
       };
+
       socket?.emit(
         "conversation:create",
         createGroup,
-        (error: any, reposone: any) => {
-          toast.error(error);
-          console.log(reposone);
-          alert(`Error: ${error.message}`);
-          return;
+        (error: any, response: any) => {
+          if (error) {
+            toast.error(error.message || "Failed to create group.");
+            return;
+          }
+          toast.success("Group created successfully!");
+          resetForm();
+          onClose();
         }
       );
-
-      toast.success("Group created successfully");
-      resetForm();
-      onClose();
     } catch (error: any) {
-      console.error("Group creation error:", error);
-      toast.error(error.response.data.message);
+      toast.error(error.message || "Error creating group.");
     }
-  }, [name, selectedUserIds, user, onClose]);
+  }, [name, selectedUserIds, user, onClose, socket]);
 
   const handleNext = useCallback(() => {
     if (step === "members") {
@@ -155,11 +157,21 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
       <div className="relative h-full w-full flex flex-col p-4 bg-background rounded-lg">
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
-            <header className="flex items-center gap-4 mb-8">
+            <header className="flex items-center justify-between  gap-4 mb-8">
               <NavigationButton onClick={onClose} icon={X} />
               <h2 className="text-2xl font-semibold">
                 Add Members ({selectedUsers.length})
               </h2>
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full p-2 hover:bg-primary/10 hover:text-primary transition-colors"
+                title="Add New Contact"
+                onClick={() => setAddContact(true)}
+              >
+                <UserPlus className="h-5 w-5" />
+              </Button>
             </header>
 
             <div className="mb-4">
@@ -207,12 +219,6 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
               previewImage={previewImage || undefined}
               onImageChange={handleImageChange}
             />
-
-            {error && (
-              <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-md">
-                {error}
-              </div>
-            )}
           </div>
         </StepContainer>
       </div>
@@ -222,18 +228,17 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
           onClick={handleNext}
           disabled={
             (step === "members" && selectedUserIds.size === 0) ||
-            (step === "details" && !name.trim()) ||
-            isMutating
+            (step === "details" && !name.trim())
           }
-          className={isMutating ? "opacity-50" : ""}
         >
-          {isMutating ? (
-            <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-          ) : (
-            <ArrowRight className="h-5 w-5" />
-          )}
+          <ArrowRight className="h-5 w-5" />
         </FloatinButton>
       </div>
+
+      <AddNewContact
+        open={addContact}
+        onOpenChange={() => setAddContact(false)}
+      />
     </div>
   );
 };

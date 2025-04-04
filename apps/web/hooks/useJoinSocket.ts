@@ -6,9 +6,7 @@ export function useJoinChatSocket(chatId: string) {
 
   useEffect(() => {
     if (!isConnected || !socket || !chatId) return;
-    
     socket.emit("chat_join", chatId);
-
     return () => {
       socket.emit("chat_left", chatId);
     };

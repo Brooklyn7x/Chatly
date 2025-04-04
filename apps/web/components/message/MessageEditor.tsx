@@ -23,7 +23,7 @@ export function MessageEditor({
         rows={Math.min(Math.max(content.split("\n").length, 1), 5)}
       />
       <div className="flex gap-2 justify-end">
-        <Button variant="outline" size="sm" onClick={onCancel}>
+        <Button size="sm" onClick={onCancel}>
           Cancel
         </Button>
         <Button

@@ -1,15 +1,6 @@
 import { Server, Socket } from "socket.io";
 import Conversation from "../models/conversation";
 
-interface TypingData {
-  chatId: string;
-}
-
-interface ReadReceiptData {
-  chatId: string;
-  messageId: string;
-}
-
 export const chatHandler = (io: Server, socket: Socket): void => {
   socket.on("chat_join", async (chatId: string) => {
     try {
@@ -60,7 +51,6 @@ export const chatHandler = (io: Server, socket: Socket): void => {
 
   socket.on("typing_start", (chatId: string) => {
     try {
-      console.log("StartTyping", chatId);
       socket.to(chatId).emit("typing_start", {
         chatId,
         userId: socket.data.userId,
@@ -77,6 +67,7 @@ export const chatHandler = (io: Server, socket: Socket): void => {
         userId: socket.data.userId,
       });
     } catch (error) {
+      socket.emit("error", { message: "error with typing" });
       console.log("Error with typing indicator", error);
     }
   });

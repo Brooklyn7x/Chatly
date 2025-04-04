@@ -21,7 +21,7 @@ export const UserList = ({
             <div
               key={index}
               onClick={() => onUserToggle(user.id)}
-              className="cursor-pointer"
+              className="cursor-pointer border rounded-md"
             >
               <UserItem user={user} selected={selectedUserIds.has(user.id)} />
             </div>

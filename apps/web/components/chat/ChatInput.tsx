@@ -14,38 +14,14 @@ const FilePreview = dynamic(() => import("../message/FilePreview"), {
 export default function ChatInput() {
   const { user } = useAuthStore();
   const { activeChatId } = useChatStore();
-  const userId = user?._id;
   const [message, setMessage] = useState("");
   const [attachments, setAttachments] = useState<(File | string)[]>([]);
   const [previewFiles, setPreviewFiles] = useState<File[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useMessage(activeChatId || "", userId || "");
+  const { sendMessage } = useMessage();
   const { startTyping } = useTyping(activeChatId || "");
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [totalFilesUploading] = useState(0);
-
-  // const { isUploading, startUpload } = useUploadThing("attachments", {
-  //   onClientUploadComplete: (res) => {
-  //     const files = res.map((file) => file.url);
-  //     setAttachments((prev) => [...prev, ...files]);
-  //     setPreviewFiles([]);
-  //     setUploadProgress(0);
-  //     setTotalFilesUploading(0);
-  //     toast.success("Files uploaded successfully");
-  //   },
-  //   onUploadError: (error: Error) => {
-  //     toast.error(error.message);
-  //     setUploadProgress(0);
-  //     setTotalFilesUploading(0);
-  //   },
-  //   onUploadProgress: (progress) => {
-  //     setUploadProgress(progress);
-  //   },
-  //   headers: {
-  //     authorization: `Bearer ${accessToken}`,
-  //   },
-  // });
 
   const handleTyping = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     startTyping();
@@ -70,7 +46,9 @@ export default function ChatInput() {
 
   const handleSendMessage = () => {
     if (message.trim() || attachments.length > 0) {
-      sendMessage({
+      if (!user?._id) return;
+
+      sendMessage(activeChatId || "", user._id, {
         attachments: attachments.map((attachment) =>
           typeof attachment === "string" ? attachment : attachment.name
         ),

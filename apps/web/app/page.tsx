@@ -1,7 +1,5 @@
 "use client";
-
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,59 +7,54 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 export default function LandingPage() {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+    <div className="min-h-screen text-foreground relative overflow-hidden">
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div
-          className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]"
+          className="absolute inset-0 bg-gradient-to-br from-primary/50 via-secondary/30 to-accent/50"
+          style={{
+            maskImage:
+              "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+          }}
+        />
+
+        <div
+          className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px]"
           style={{
             animation: "glow 6s ease-in-out infinite",
           }}
         />
         <div
-          className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[150px]"
+          className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-secondary/20 rounded-full blur-[150px]"
           style={{
             animation: "glow 6s ease-in-out infinite 2s",
           }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[150px]"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/20 rounded-full blur-[150px]"
           style={{
             animation: "glow 6s ease-in-out infinite 4s",
           }}
         />
+
+        <div className="absolute inset-0">
+          {[...Array(50)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-primary/30 rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animation: `float ${Math.random() * 5 + 3}s ease-in-out infinite`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
-      <div className="fixed top-4 right-4 flex items-center space-x-2">
-        <Switch
-          id="theme-mode"
-          checked={theme === "dark"}
-          onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-        />
-        <Label htmlFor="theme-mode">
-          {theme === "dark" ? "Dark" : "Light"}
-        </Label>
-      </div>
-
-      {/* Hero Section */}
       <div className="h-screen flex flex-col justify-center items-center text-center px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

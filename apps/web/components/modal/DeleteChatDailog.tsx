@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
+import { Loader2 } from "lucide-react";
 
 interface DeleteChatProps {
   open: boolean;
@@ -34,13 +35,12 @@ const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
         setIsDeleting(false);
         if (error) {
           toast.error(error.error || "Failed to delete the conversation");
-          onOpenChange(false);
         } else {
           setActiveChat(null);
           setIsOpen(false);
-          toast.success("Conversation deleted successfully");
-          onOpenChange(false);
+          toast.success("Chat deleted successfully");
         }
+        onOpenChange(false);
       }
     );
   };
@@ -71,6 +71,9 @@ const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
             disabled={isDeleting}
             className="text-sm"
           >
+            {isDeleting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : null}
             {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>

@@ -36,12 +36,12 @@ const FloatingActionButton = ({ onViewChange }: FBProps) => {
               <p>New Group</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <div className="flex items-center gap-4 px-2">
               <Volume size={16} />
               <p>New Channel</p>
             </div>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

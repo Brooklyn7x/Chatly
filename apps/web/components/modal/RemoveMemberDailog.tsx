@@ -29,50 +29,50 @@ const RemoveMemberDialog = ({
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
   const { socket } = useSocketStore();
   const chatId = useChatStore((state) => state.activeChatId);
+
   const handleRemove = async (userId: string) => {
+    setRemovingUserId(userId);
     setLoading(true);
     try {
       if (socket) {
-        setLoading(true);
         socket.emit(
           "conversation:removeParticipants",
           { conversationId: chatId, userId },
           (error: any) => {
             if (error) {
-              setLoading(false);
-              if (error) {
-                toast.error(error.error || "Failed to delete the conversation");
-              } else {
-                toast.success("User removed");
-                onOpenChange();
-              }
+              toast.error(error.error || "Failed to remove the user");
+            } else {
+              toast.success("User removed successfully");
+              onOpenChange();
             }
+            setLoading(false);
+            setRemovingUserId(null);
           }
         );
       }
-      await new Promise((resolve) => setTimeout(resolve, 200));
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("An unexpected error occurred");
       setLoading(false);
-    } finally {
-      setLoading(false);
+      setRemovingUserId(null);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[500px] h-full flex flex-col">
         <DialogHeader>
           <DialogTitle>Remove User</DialogTitle>
           <DialogDescription>
             Select a user to remove from the group
           </DialogDescription>
         </DialogHeader>
-        <div className="max-h-64 overflow-y-auto space-y-1">
+
+        <div className="overflow-y-auto space-y-1 text-left">
           {participants.map((participant) => (
             <div
               key={participant.userId._id}
-              className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md transition-colors"
+              className="flex items-center justify-between border p-2 hover:bg-muted/50 rounded-md transition-colors"
             >
               <div className="flex items-center gap-3">
                 <UserAvatar {...{ user: participant.userId, size: "sm" }} />
@@ -82,10 +82,10 @@ const RemoveMemberDialog = ({
                 variant="secondary"
                 size="sm"
                 onClick={() => handleRemove(participant.userId._id)}
-                disabled={removingUserId === participant.userId._id}
+                disabled={loading && removingUserId === participant.userId._id}
                 className="text-xs"
               >
-                {removingUserId === participant.userId._id ? (
+                {loading && removingUserId === participant.userId._id ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
                 Remove

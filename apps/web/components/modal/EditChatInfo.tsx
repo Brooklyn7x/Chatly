@@ -21,6 +21,7 @@ interface EditChatProps {
 
 export function EditChatInfo({ title, descriptions }: EditChatProps) {
   const activeChatId = useChatStore((state) => state.activeChatId);
+
   const { socket } = useSocketStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -63,7 +64,7 @@ export function EditChatInfo({ title, descriptions }: EditChatProps) {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <DialogTitle className="sr-only">Chat Info</DialogTitle>
+        <DialogTitle className="">Update Info</DialogTitle>
         <div className="flex flex-col items-center gap-4 py-4">
           <div className="p-4">
             <UserAvatar size="xl" />
