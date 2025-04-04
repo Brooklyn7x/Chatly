@@ -72,7 +72,7 @@ export const login = async (
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: (process.env.NODE_ENV as string) === "production",
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
       path: "/",
@@ -123,21 +123,6 @@ export const refreshToken = async (
     });
 
     res.status(200).json({ success: true });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const me = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user.id;
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-    const userResponse = sanitizeUser(user);
-    res.status(200).json({ user: userResponse });
   } catch (error) {
     next(error);
   }

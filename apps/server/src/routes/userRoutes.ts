@@ -8,5 +8,6 @@ router.put("/profile", userController.updateProfile);
 router.get("/contact", userController.getContacts);
 router.post("/contact", userController.addContact);
 router.get("/search", userController.searchUsers);
+router.get("/me", userController.me);
 
 export default router;

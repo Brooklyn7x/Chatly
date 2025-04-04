@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user";
 
+const sanitizeUser = (user: any) => {
+  const { password, __v, contacts, createdAt, updatedAt, ...rest } =
+    user.toObject();
+  return rest;
+};
+
 export const getProfile = async (
   req: Request,
   res: Response,
@@ -180,6 +186,21 @@ export const searchUsers = async (
       success: true,
       data: users,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const me = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+    const userResponse = sanitizeUser(user);
+    res.status(200).json({ user: userResponse });
   } catch (error) {
     next(error);
   }
