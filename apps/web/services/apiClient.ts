@@ -5,7 +5,6 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000,
   withCredentials: true,
 });
 
@@ -28,14 +27,13 @@ apiClient.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequestWithRetry._retry &&
-      !originalRequest?.url?.includes("/api/auth/")
+      !originalRequest?.url?.includes("/api/auth")
     ) {
       originalRequestWithRetry._retry = true;
 
       try {
         await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
-          {},
+          `${process.env.NEXT_PUBLIC_API_URL}auth/refresh-token`,
           {
             withCredentials: true,
           }

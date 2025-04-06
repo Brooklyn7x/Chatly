@@ -14,11 +14,12 @@ export function useAuth() {
   const router = useRouter();
 
   useEffect(() => {
-
     const verifyAuth = async () => {
       setIsLoading(true);
       try {
-        const response = await apiClient.get("/user/me", {});
+        const response = await apiClient.get("/user/me", {
+          withCredentials: true,
+        });
         const user = response.data?.user || response.data;
         if (response.status === 200 && user) {
           useAuthStore.getState().setUser(user);
@@ -34,8 +35,6 @@ export function useAuth() {
     };
     verifyAuth();
   }, []);
-
-  
 
   const logout = async () => {
     try {

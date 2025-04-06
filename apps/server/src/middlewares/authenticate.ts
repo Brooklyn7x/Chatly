@@ -21,6 +21,7 @@ export const authenticate = async (
     ) as jwt.JwtPayload;
 
     req.user = { id: decoded.id as string };
+
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -34,7 +35,6 @@ export const authenticate = async (
           refreshToken,
           process.env.JWT_REFRESH_SECRET as string
         ) as jwt.JwtPayload;
-
         req.user = { id: decodedRefresh.id as string };
         next();
       } catch (refreshError) {
