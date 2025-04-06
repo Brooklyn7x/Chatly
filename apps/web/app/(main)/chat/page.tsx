@@ -6,7 +6,7 @@ import { useSocketStore } from "@/store/useSocketStore";
 import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
 import ChatContainer from "@/components/chat/ChatContainer";
 import Sidebar from "@/components/sidebar/Sidebar";
-import ProtectedRoute from "@/components/chat/ProtectedRoute";
+
 
 export default function MainPage() {
   const { connect, disconnect } = useSocketStore();
@@ -23,17 +23,13 @@ export default function MainPage() {
   useUserStatusSocket();
 
   return (
-    <ProtectedRoute>
-      <div className="max-w-9xl mx-auto bg-black/80">
-        <div className="flex flex-col h-dvh border">
-          <div className="flex flex-1 overflow-hidden w-full">
-            <Sidebar isMobile={isMobile} />
-            {(!isMobile || activeChatId) && (
-              <ChatContainer isMobile={isMobile} />
-            )}
-          </div>
+    <div className="max-w-9xl mx-auto bg-black/80">
+      <div className="flex flex-col h-dvh border">
+        <div className="flex flex-1 overflow-hidden w-full">
+          <Sidebar isMobile={isMobile} />
+          {(!isMobile || activeChatId) && <ChatContainer isMobile={isMobile} />}
         </div>
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }

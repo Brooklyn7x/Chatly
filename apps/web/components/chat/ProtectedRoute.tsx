@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,16 +10,19 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, hasCheckedAuth } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
-    if (hasCheckedAuth && !isAuthenticated) {
+    setIsClient(true);
+    if (!isAuthenticated && !isLoading) {
       router.push("/login");
     }
-  }, [hasCheckedAuth, isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router]);
 
-  if (!hasCheckedAuth || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-background">
         <div className="space-y-4 w-full max-w-md">
