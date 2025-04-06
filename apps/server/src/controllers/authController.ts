@@ -72,9 +72,10 @@ export const login = async (
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: (process.env.NODE_ENV as string) === "production",
+      secure: true,
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
+      domain: ".railway.app",
       path: "/",
     });
 
