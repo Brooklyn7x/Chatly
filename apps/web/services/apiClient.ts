@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequestWithRetry._retry &&
-      !originalRequest?.url?.includes("/api/auth")
+      !originalRequest?.url?.includes("/api/auth/")
     ) {
       originalRequestWithRetry._retry = true;
 
