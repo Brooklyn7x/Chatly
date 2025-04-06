@@ -74,7 +74,7 @@ export const login = async (
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "strict",
+      sameSite:  "strict",
       maxAge: 60 * 60 * 1000,
       path: "/",
       domain: ".chatlyz.xyz",
@@ -83,7 +83,7 @@ export const login = async (
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "strict",
+      sameSite:  "strict",
       maxAge: refreshTokenExpirySeconds * 1000,
       domain: ".chatlyz.xyz",
       path: "/",
