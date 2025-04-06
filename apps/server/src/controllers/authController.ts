@@ -68,21 +68,25 @@ export const login = async (
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
     const refreshTokenExpirySeconds = 7 * 24 * 60 * 60;
+
     const isProduction = (process.env.NODE_ENV as string) === "production";
-    console.log(isProduction);
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "strict",
+      sameSite: isProduction ? "none" : "strict",
       maxAge: 60 * 60 * 1000,
+      path: "/",
+      domain: ".chatlyz.xyz",
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "strict",
+      sameSite: isProduction ? "none" : "strict",
       maxAge: refreshTokenExpirySeconds * 1000,
+      domain: ".chatlyz.xyz",
+      path: "/",
     });
 
     const userResponse = sanitizeUser(user);
@@ -113,11 +117,13 @@ export const refreshToken = async (
 
     const newAccessToken = generateAccessToken(decoded.id);
     const isProduction = (process.env.NODE_ENV as string) === "production";
+
     res.cookie("accessToken", newAccessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "none" : "strict",
+      sameSite: "strict",
       maxAge: 60 * 60 * 1000,
+      domain: ".chatlyz.xyz",
       path: "/",
     });
 

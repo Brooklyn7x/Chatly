@@ -1,5 +1,4 @@
-"use client";
-import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,9 +6,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+
 export default function LandingPage() {
-  const router = useRouter();
   return (
     <div className="min-h-screen text-foreground relative overflow-hidden">
       <div className="absolute inset-0 -z-10 overflow-hidden">
@@ -56,20 +54,15 @@ export default function LandingPage() {
       </div>
 
       <div className="h-screen flex flex-col justify-center items-center text-center px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-3xl space-y-8"
-        >
+        <div className="max-w-3xl space-y-8">
           <h1 className="text-5xl md:text-7xl font-bold">Chat Reimagined</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             A new era of communication. Fast, secure, and beautifully simple.
           </p>
-          <Button onClick={() => router.push("/login")} size="lg">
-            Get Started
-          </Button>
-        </motion.div>
+          <Link href="/login">
+            <Button size="lg">Get Started</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="py-20 px-4 relative">
