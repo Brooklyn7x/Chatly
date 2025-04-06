@@ -51,11 +51,8 @@ export default function SidebarContent({
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const { isLoading, loadMore, hasMore } = useFetchChats();
-
   const { setActiveChat, chats } = useChatStore();
-
-  const debouncedQuery = useDebounce(searchQuery, 300);
-
+  const debouncedQuery = useDebounce(searchQuery, 300)
   const filteredChats = useMemo(() => {
     let baseChats = Array.isArray(chats) ? chats : [];
 

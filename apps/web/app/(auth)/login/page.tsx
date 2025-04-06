@@ -55,6 +55,7 @@ export default function LoginPage() {
     } catch (error: any) {
       setIsLoading(false);
       console.log(error);
+      console.log(error.response);
       toast.error(error.response?.data.message || "Something went wrong");
     } finally {
       setIsLoading(false);

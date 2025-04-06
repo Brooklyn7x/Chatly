@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import {
   LogOut,
   LucideIcon,
@@ -13,44 +12,14 @@ import useAuthStore from "@/store/useAuthStore";
 import { ViewType } from "@/types";
 import { Suspense } from "react";
 import { useAuth } from "@/hooks/useAuth";
-
-const DropdownMenu = dynamic(
-  () => import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenu),
-  { ssr: false }
-);
-const DropdownMenuContent = dynamic(
-  () =>
-    import("@/components/ui/dropdown-menu").then(
-      (mod) => mod.DropdownMenuContent
-    ),
-  { ssr: false }
-);
-const DropdownMenuItem = dynamic(
-  () =>
-    import("@/components/ui/dropdown-menu").then((mod) => mod.DropdownMenuItem),
-  { ssr: false }
-);
-const DropdownMenuLabel = dynamic(
-  () =>
-    import("@/components/ui/dropdown-menu").then(
-      (mod) => mod.DropdownMenuLabel
-    ),
-  { ssr: false }
-);
-const DropdownMenuSeparator = dynamic(
-  () =>
-    import("@/components/ui/dropdown-menu").then(
-      (mod) => mod.DropdownMenuSeparator
-    ),
-  { ssr: false }
-);
-const DropdownMenuTrigger = dynamic(
-  () =>
-    import("@/components/ui/dropdown-menu").then(
-      (mod) => mod.DropdownMenuTrigger
-    ),
-  { ssr: false }
-);
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuItem
+} from "../ui/dropdown-menu";
 
 interface SidebarHeaderProps {
   view: ViewType;

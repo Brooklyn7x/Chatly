@@ -73,7 +73,8 @@ export default function SignupPage() {
       }
     } catch (error: any) {
       setIsLoading(false);
-      toast.error(error.response?.data.message);
+      console.log(error.response);
+      toast.error(error.response?.data.message || "Failed to create account");
     } finally {
       setIsLoading(false);
     }

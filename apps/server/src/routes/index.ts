@@ -7,8 +7,8 @@ import messageRoutes from "./messageRoutes";
 const routes = Router();
 
 // routes.use("/auth", authRoutes);
-routes.use("/user", authenticate, userRoutes);
-routes.use("/chats", authenticate, conversationRoutes);
-routes.use("/messages", authenticate, messageRoutes);
+// routes.use("/user", authenticate, userRoutes);
+// routes.use("/chats", authenticate, conversationRoutes);
+// routes.use("/messages", authenticate, messageRoutes);
 
 export default routes;

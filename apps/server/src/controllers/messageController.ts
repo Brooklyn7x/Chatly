@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Message from "../models/message";
 import Conversation from "../models/conversation";
+
 export const getMessages = async (
   req: Request,
   res: Response,
@@ -40,7 +41,7 @@ export const getMessages = async (
 
     const messagesQuery = await Message.find(query)
       .populate("senderId", "username profilePicture")
-      .sort({ createdAt: - 1 })
+      .sort({ createdAt: -1 })
       .limit(limitNumber + 1);
 
     let nextCursor: string | null = null;

@@ -23,15 +23,19 @@ const FloatingActionButton = ({ onViewChange }: FBProps) => {
             {open ? <X className="h-6 w-6" /> : <Pencil className="h-6 w-6" />}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 mb-1" alignOffset={20}>
+        <DropdownMenuContent
+          align="end"
+          className="w-48 mb-1 space-y-2"
+          alignOffset={20}
+        >
           <DropdownMenuItem onClick={() => onViewChange("new_message")}>
-            <div className="flex items-center gap-4 px-2">
+            <div className="flex items-center gap-4 px-2 py-1">
               <User size={16} />
               <p>New Private Chat</p>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onViewChange("new_group")}>
-            <div className="flex items-center gap-4 px-2">
+            <div className="flex items-center gap-4 px-2 py-1">
               <Users size={16} />
               <p>New Group</p>
             </div>

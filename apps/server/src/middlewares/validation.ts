@@ -13,16 +13,15 @@ export const validate =
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-         res.status(400).json({
+        const errors = error.errors.map((err) => ({
+          path: err.path.join("."),
+          message: err.message,
+        }));
+        res.status(400).json({
           success: false,
-          error: {
-            message: "Validation failed",
-            details: error.errors.map((err) => ({
-              path: err.path.join("."),
-              message: err.message,
-            })),
-          },
+          errors,
         });
+        return;
       }
       next(error);
     }

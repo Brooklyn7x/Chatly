@@ -25,7 +25,6 @@ export const register = async (
     const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       res.status(400).json({ message: "User already exists" });
       return;
@@ -74,7 +73,7 @@ export const login = async (
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite:  "strict",
+      sameSite: "strict",
       maxAge: 60 * 60 * 1000,
       path: "/",
       domain: ".chatlyz.xyz",
@@ -83,7 +82,7 @@ export const login = async (
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite:  "strict",
+      sameSite: "strict",
       maxAge: refreshTokenExpirySeconds * 1000,
       domain: ".chatlyz.xyz",
       path: "/",

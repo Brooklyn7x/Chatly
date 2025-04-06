@@ -1,7 +1,14 @@
 import { Server, Socket } from "socket.io";
+import { ObjectId } from "mongodb";
 import Conversation from "../models/conversation";
 import User from "../models/user";
-import { ObjectId } from "mongodb";
+import {
+  addParticipantsSchema,
+  createConversationSchema,
+  deleteConversationSchema,
+  removeParticipantsSchema,
+  updateConversationSchema,
+} from "../schemas/conversationSchemas";
 
 interface ConversationCreateData {
   type: string;
@@ -31,11 +38,24 @@ interface DeleteConversationData {
 }
 
 export const conversationHandler = (io: Server, socket: Socket): void => {
+  // conversation:create event
   socket.on(
     "conversation:create",
     async (data: ConversationCreateData, callback: Function) => {
+      // Validate incoming data
+      const parsed = createConversationSchema.safeParse(data);
+      if (!parsed.success) {
+        return callback({
+          error: "Validation error",
+          details: parsed.error.errors.map((err) => ({
+            path: err.path.join("."),
+            message: err.message,
+          })),
+        });
+      }
+
       try {
-        const { type, participants, name, description } = data;
+        const { type, participants, name, description } = parsed.data;
         const createdBy = socket.data.userId;
         let newConversation;
 
@@ -61,7 +81,9 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
 
           const users = await User.find({ _id: { $in: userIds } });
           if (users.length !== 2) {
-            return callback({ error: "One or more participants do not exist" });
+            return callback({
+              error: "One or more participants do not exist",
+            });
           }
 
           const existingConversation = await Conversation.findOne({
@@ -92,15 +114,15 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
 
           await newConversation.save();
         } else if (type === "group" || type === "channel") {
-          if (participants.find((p) => p.userId === createdBy)) {
+          // Ensure the creator is added as admin
+          if (!participants.find((p) => p.userId === createdBy)) {
             participants.push({ userId: createdBy, role: "admin" });
           }
 
           newConversation = new Conversation({
             type,
-            name: type === "group" || type === "channel" ? name : undefined,
-            description:
-              type === "group" || type === "channel" ? description : undefined,
+            name: name || undefined,
+            description: description || undefined,
             participants: participants.map((p) => ({
               userId: p.userId,
               role: p.role || "member",
@@ -134,12 +156,22 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
     }
   );
 
+  // conversation:addParticipants event
   socket.on(
     "conversation:addParticipants",
     async (data: AddParticipantsData, callback: Function) => {
+      const parsed = addParticipantsSchema.safeParse(data);
+      if (!parsed.success) {
+        return callback({
+          error: "Validation error",
+          details: parsed.error.errors.map((err) => ({
+            path: err.path.join("."),
+            message: err.message,
+          })),
+        });
+      }
       try {
-        console.log(data);
-        const { conversationId, participants } = data;
+        const { conversationId, participants } = parsed.data;
         const currentUserId = socket.data.userId;
 
         const conversation = await Conversation.findById(conversationId);
@@ -173,7 +205,6 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
         }
 
         await conversation.save();
-
         conversation.participants.forEach((participant: any) => {
           io.to(participant.userId.toString()).emit("conversation:updated", {
             message: "New participants have been added to the conversation.",
@@ -194,13 +225,24 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
     }
   );
 
+  // conversation:removeParticipants event
   socket.on(
     "conversation:removeParticipants",
     async (data: RemoveParticipantsData, callback: Function) => {
+      const parsed = removeParticipantsSchema.safeParse(data);
+      if (!parsed.success) {
+        return callback({
+          error: "Validation error",
+          details: parsed.error.errors.map((err) => ({
+            path: err.path.join("."),
+            message: err.message,
+          })),
+        });
+      }
       try {
-        const { conversationId, userId: removeUserId } = data;
+        const { conversationId, userId: removeUserId } = parsed.data;
         const currentUserId = socket.data.userId;
-        console.log(conversationId, removeUserId);
+
         const conversation = await Conversation.findById(conversationId);
         if (!conversation) {
           return callback({ error: "Conversation not found" });
@@ -260,11 +302,22 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
     }
   );
 
+  // conversation:update event
   socket.on(
     "conversation:update",
     async (data: UpdateConversationData, callback: Function) => {
+      const parsed = updateConversationSchema.safeParse(data);
+      if (!parsed.success) {
+        return callback({
+          error: "Validation error",
+          details: parsed.error.errors.map((err) => ({
+            path: err.path.join("."),
+            message: err.message,
+          })),
+        });
+      }
       try {
-        const { conversationId, name, description } = data;
+        const { conversationId, name, description } = parsed.data;
         const currentUserId = socket.data.userId;
 
         const conversation = await Conversation.findById(conversationId);
@@ -272,10 +325,11 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
           return callback({ error: "Conversation not found" });
         }
 
-        const isAdmin = conversation.participants.some(
+        // In this example, we require only a member (not strictly admin)
+        const isMember = conversation.participants.some(
           (p: any) => p.userId.toString() === currentUserId
         );
-        if (!isAdmin) {
+        if (!isMember) {
           return callback({
             error: "Unauthorized: only conversation members can update details",
           });
@@ -306,11 +360,22 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
     }
   );
 
+  // conversation:delete event
   socket.on(
     "conversation:delete",
     async (data: DeleteConversationData, callback: Function) => {
+      const parsed = deleteConversationSchema.safeParse(data);
+      if (!parsed.success) {
+        return callback({
+          error: "Validation error",
+          details: parsed.error.errors.map((err) => ({
+            path: err.path.join("."),
+            message: err.message,
+          })),
+        });
+      }
       try {
-        const { conversationId } = data;
+        const { conversationId } = parsed.data;
         const currentUserId = socket.data.userId;
 
         const conversation = await Conversation.findById(conversationId);
@@ -336,8 +401,8 @@ export const conversationHandler = (io: Server, socket: Socket): void => {
 
         await conversation.deleteOne();
 
-        participantIds.forEach((userId) => {
-          io.to(userId).emit("conversation:deleted", {
+        participantIds.forEach((uid) => {
+          io.to(uid).emit("conversation:deleted", {
             message: "A conversation you were part of has been deleted.",
             conversationId,
           });

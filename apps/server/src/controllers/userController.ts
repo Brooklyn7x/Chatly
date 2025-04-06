@@ -7,26 +7,6 @@ const sanitizeUser = (user: any) => {
   return rest;
 };
 
-export const getProfile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = req.user?.id;
-
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.status(200).json({ data: user });
-  } catch (error) {
-    next(Error);
-  }
-};
-
 export const updateProfile = async (
   req: Request,
   res: Response,
