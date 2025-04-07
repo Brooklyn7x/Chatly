@@ -3,9 +3,9 @@ import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import { useChatStore } from "@/store/useChatStore";
 import MessageList from "../message/MessageList";
-import { useJoinChatSocket } from "@/hooks/useJoinSocket";
+import { useJoinChatSocket } from "@/hooks/chat/useJoinSocket";
 import { EmptyChat } from "./EmptyChat";
-import { useMessageSocket } from "@/hooks/useMessageSocket";
+import { useMessageSocket } from "@/hooks/message/useMessageSocket";
 
 const ChatArea = () => {
   const activeChat = useChatStore((state) => state.activeChatId);

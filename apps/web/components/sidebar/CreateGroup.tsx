@@ -11,13 +11,12 @@ import { SearchInput } from "../shared/SearchInput";
 import { NavigationButton } from "../shared/NavigationButton";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
-import { useFetchContacts, useSearchUser } from "@/hooks/useContact";
-import useAuthStore from "@/store/useAuthStore";
+import { useFetchContacts, useSearchUser } from "@/hooks/user/useContact";
 import { User } from "@/types";
-import { useCreateChat } from "@/hooks/useChats";
 import { useSocketStore } from "@/store/useSocketStore";
 import { Button } from "../ui/button";
 import AddNewContact from "./AddNewContact";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 interface CreateGroupChatProps {
   onClose: () => void;
@@ -33,7 +32,7 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   );
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { users } = useSearchUser(searchQuery);
   const { contacts, isLoading } = useFetchContacts();
 

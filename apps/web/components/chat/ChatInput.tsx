@@ -1,18 +1,18 @@
-import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { InputArea } from "../message/InputArea";
 import { useChatStore } from "@/store/useChatStore";
-import useAuthStore from "@/store/useAuthStore";
-import { useTyping } from "@/hooks/useTyping";
-import { useMessage } from "@/hooks/useMessage";
+import { useTyping } from "@/hooks/message/useTyping";
+import { useMessage } from "@/hooks/message/useMessage";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const FilePreview = dynamic(() => import("../message/FilePreview"), {
   ssr: false,
 });
 
 export default function ChatInput() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { activeChatId } = useChatStore();
   const [message, setMessage] = useState("");
   const [attachments, setAttachments] = useState<(File | string)[]>([]);

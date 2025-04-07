@@ -12,7 +12,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loading } from "../ui/loading";
 import { toast } from "sonner";
-import { useAddNewContact, useSearchUser } from "@/hooks/useContact";
+import { useAddNewContact, useSearchUser } from "@/hooks/user/useContact";
 import { User } from "@/types";
 
 interface AddNewContactProps {

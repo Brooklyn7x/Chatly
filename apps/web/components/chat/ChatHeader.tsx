@@ -1,4 +1,4 @@
-import { cn, formatName } from "@/lib/utils";
+import { formatName } from "@/lib/utils";
 import { useChatStore } from "@/store/useChatStore";
 import { NavigationButton } from "../shared/NavigationButton";
 import {
@@ -7,21 +7,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, EllipsisVertical, LucideIcon, Phone } from "lucide-react";
-import useAuthStore from "@/store/useAuthStore";
+import { ArrowLeft, EllipsisVertical } from "lucide-react";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { UserAvatar } from "../shared/UserAvatar";
 import { Chat } from "@/types";
 import MessageSearch from "../message/MessageSearch";
 import useUserStatusStore from "@/store/useUserStatusStore";
-import { useMessage } from "@/hooks/useMessage";
+import { useMessage } from "@/hooks/message/useMessage";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 interface ChatHeaderProps {
   chat: Chat;
   selectMessage?: () => void;
 }
+
 export default function ChatHeader({ chat }: ChatHeaderProps) {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { setIsOpen } = useChatPanelStore();
   const { activeChatId, setActiveChat } = useChatStore();
   const { getUserStatus } = useUserStatusStore();

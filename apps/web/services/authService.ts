@@ -21,6 +21,6 @@ export const register = async (credentials: RegisterRequest): Promise<any> => {
   return response.data;
 };
 
-export const logout = async () => {
+export const logoutUser = async () => {
   await apiClient.post("/auth/logout");
 };

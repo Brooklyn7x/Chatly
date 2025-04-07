@@ -6,18 +6,18 @@ import { TypingIndicator } from "../shared/TypingIndicator";
 import { MessageBubble } from "./MessageBubble";
 import { useChatStore } from "@/store/useChatStore";
 import { useMessageStore } from "@/store/useMessageStore";
-import useAuthStore from "@/store/useAuthStore";
-import { useTypingIndicator } from "@/hooks/useTypingIndicator";
-import { useFetchMessages } from "@/hooks/useMessage";
+import { useTypingIndicator } from "@/hooks/message/useTypingIndicator";
+import { useFetchMessages } from "@/hooks/message/useMessage";
 import { Message } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 function MessageList() {
   const [isAtBottom, setIsAtBottom] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const topSentinelRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
   const activeChatId = useChatStore((state) => state.activeChatId);
   const messages = useMessageStore((state) => state.messages);
   const { isLoading, error, hasMore, loadMore } = useFetchMessages(

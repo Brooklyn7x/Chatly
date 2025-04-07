@@ -1,7 +1,7 @@
 import { addContact, getContacts, searchUsers } from "@/services/userService";
 import { useState } from "react";
 import useSWR from "swr";
-import { useDebounce } from "./useDebounce";
+import { useDebounce } from "../useDebounce";
 
 export const useFetchContacts = () => {
   const { data, error, isLoading, mutate } = useSWR(

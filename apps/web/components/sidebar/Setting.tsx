@@ -1,12 +1,11 @@
 "use client";
-import useAuthStore from "@/store/useAuthStore";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import { X, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import {
@@ -17,9 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const form = useForm({
     defaultValues: {
       name: user?.name || "",

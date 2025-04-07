@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight, User, Mail, Lock, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { register } from "@/services/authService";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const registerSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -42,10 +41,9 @@ const registerSchema = z.object({
 });
 
 export default function SignupPage() {
-  const router = useRouter();
+  const { isLoading, register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -59,35 +57,15 @@ export default function SignupPage() {
   });
 
   const handleSubmit = async (values: z.infer<typeof registerSchema>) => {
-    try {
-      setIsLoading(true);
-      const resposne = await register({
-        username: values.username,
-        email: values.email,
-        password: values.password,
-      });
-      if (resposne && resposne.success) {
-        router.push("/chat");
-      } else {
-        toast.error("Failed to sign up");
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      console.log(error.response);
-      toast.error(error.response?.data.message || "Failed to create account");
-    } finally {
-      setIsLoading(false);
-    }
+    await register(values);
   };
 
   const checkPasswordStrength = (password: string) => {
     let score = 0;
-
     if (password.length > 8) score += 1;
     if (/[A-Z]/.test(password)) score += 1;
     if (/[0-9]/.test(password)) score += 1;
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
-
     setPasswordStrength(score);
   };
 

@@ -3,10 +3,9 @@ import { useEffect } from "react";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
 import { useChatStore } from "@/store/useChatStore";
 import { useSocketStore } from "@/store/useSocketStore";
-import { useUserStatusSocket } from "@/hooks/useUserStatusSocket";
+import { useUserStatusSocket } from "@/hooks/user/useUserStatusSocket";
 import ChatContainer from "@/components/chat/ChatContainer";
 import Sidebar from "@/components/sidebar/Sidebar";
-
 
 export default function MainPage() {
   const { connect, disconnect } = useSocketStore();

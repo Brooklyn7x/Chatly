@@ -7,12 +7,11 @@ import { toast } from "sonner";
 import { useState } from "react";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
-import { useFetchContacts } from "@/hooks/useContact";
+import { useFetchContacts } from "@/hooks/user/useContact";
 import { Button } from "../ui/button";
-
-import useAuthStore from "@/store/useAuthStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import AddNewContact from "./AddNewContact";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 interface PrivateChatProps {
   onClose: () => void;
@@ -22,7 +21,7 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [addContact, setAddContact] = useState(false);
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { contacts, isLoading, error } = useFetchContacts();
   const { socket } = useSocketStore();
   const currentUserId = user?.id || user?._id;

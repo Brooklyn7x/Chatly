@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { UserAvatar } from "../shared/UserAvatar";
-import { useFetchContacts } from "@/hooks/useContact";
+import { useFetchContacts } from "@/hooks/user/useContact";
 import { Participant } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
 

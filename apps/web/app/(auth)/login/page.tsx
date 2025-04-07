@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { Eye, EyeOff, ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
+
 import {
   Form,
   FormControl,
@@ -26,7 +26,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { loginUser } from "@/services/authService";
+
+import { useAuth } from "@/hooks/auth/useAuth";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -35,8 +37,14 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
+  const { user, login, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/login");
+    }
+  }, [user]);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,22 +52,7 @@ export default function LoginPage() {
   });
 
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
-    try {
-      setIsLoading(true);
-      const response = await loginUser(values);
-      if (response && response.success) {
-        router.push("/chat");
-      } else {
-        toast.error("Login failed. Please try again.");
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      console.log(error);
-      console.log(error.response);
-      toast.error(error.response?.data.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    await login(values);
   };
 
   return (

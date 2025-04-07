@@ -8,17 +8,17 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { SearchInput } from "./SearchInput";
-import useAuthStore from "@/store/useAuthStore";
+
 import { ViewType } from "@/types";
 import { Suspense } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/auth/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuItem
+  DropdownMenuItem,
 } from "../ui/dropdown-menu";
 
 interface SidebarHeaderProps {
@@ -34,7 +34,7 @@ export default function SidebarHeader({
   onSearchChange,
   onViewChange,
 }: SidebarHeaderProps) {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { logout } = useAuth();
   const handleLogout = () => {
     logout();

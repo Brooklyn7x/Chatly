@@ -8,11 +8,11 @@ import { MessageMetadata } from "./MessageMetadata";
 import { MessageEditor } from "./MessageEditor";
 import { MessageReactionPicker } from "./MessageReactionPicker";
 import { MessageReactions } from "./MessageReactions";
-import { useReactions } from "@/hooks/useReactions";
+import { useReactions } from "@/hooks/chat/useReactions";
 import { Message } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useMessageStore } from "@/store/useMessageStore";
-import { useMessage } from "@/hooks/useMessage";
+import { useMessage } from "@/hooks/message/useMessage";
 import { useChatStore } from "@/store/useChatStore";
 
 interface MessageBubbleProps {
