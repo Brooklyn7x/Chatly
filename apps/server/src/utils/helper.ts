@@ -16,7 +16,7 @@ export const comparePassword = async (
 
 export const generateAccessToken = (userId: string): string => {
   return jwt.sign({ id: userId }, process.env.JWT_ACCESS_SECRET as string, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
 };
 
@@ -32,4 +32,14 @@ export const verifyToken = (token: string, secret: string) => {
 
 export const generateVerificationToken = (): string => {
   return crypto.randomBytes(32).toString("hex");
+};
+
+export const getCookieDomain = (hostname: string): string | undefined => {
+  if (hostname.includes("localhost")) {
+    return undefined;
+  }
+  if (hostname.includes("vercel.app")) {
+    return ".vercel.app";
+  }
+  return ".chatlyz.xyz";
 };

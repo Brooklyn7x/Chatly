@@ -4,7 +4,9 @@ import "dotenv/config";
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.DB_URI as string);
+    const conn = await mongoose.connect(process.env.DB_URI as string, {
+      maxPoolSize: 5,
+    });
     logger.info("MongoDB Connected");
 
     mongoose.connection.on("disconnected", () => {

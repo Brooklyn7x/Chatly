@@ -1,12 +1,12 @@
 "use client";
-import useAuthStore from "@/store/useAuthStore";
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { UserAvatar } from "../shared/UserAvatar";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import { X, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import {
@@ -17,9 +17,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const Setting = ({ onClose }: { onClose: () => void }) => {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const form = useForm({
     defaultValues: {
       name: user?.name || "",
@@ -107,21 +108,20 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-secondary/30">
-      <div className="p-4 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl text-center font-semibold">Settings</h2>
-          <Button
-            variant="ghost"
-            size={"icon"}
-            onClick={onClose}
-            className="rounded-full border"
-          >
-            ✕
-          </Button>
-        </div>
-
+    <div className="absolute inset-0 overflow-y-auto bg-card">
+      <div className="space-y-6">
         <Card className="border-none shadow-lg">
+          <div className="flex items-center justify-between p-4">
+            <h2 className="text-xl text-center font-semibold">Settings</h2>
+            <Button
+              variant="ghost"
+              size={"icon"}
+              onClick={onClose}
+              className="rounded-full border"
+            >
+              ✕
+            </Button>
+          </div>
           <CardContent>
             <Form {...form}>
               <form

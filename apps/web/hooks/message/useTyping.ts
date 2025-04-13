@@ -3,7 +3,6 @@ import { useCallback, useRef } from "react";
 
 export const useTyping = (chatId?: string) => {
   const { socket } = useSocketStore();
-
   const timerRef = useRef<NodeJS.Timeout>();
 
   const startTyping = useCallback(() => {

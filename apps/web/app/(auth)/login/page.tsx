@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { Eye, EyeOff, ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
+
 import {
   Form,
   FormControl,
@@ -26,7 +26,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { loginUser } from "@/services/authService";
+
+import { useAuth } from "@/hooks/auth/useAuth";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -34,9 +35,8 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -44,34 +44,12 @@ export default function LoginPage() {
   });
 
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
-    try {
-      setIsLoading(true);
-      const response = await loginUser(values);
-      if (response && response.success) {
-        router.push("/chat");
-      } else {
-        toast.error("Login failed. Please try again.");
-      }
-    } catch (error: any) {
-      setIsLoading(false);
-      console.log(error);
-      console.log(error.response);
-      toast.error(error.response?.data.message || "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    await login(values);
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-background to-secondary p-4">
+    <div className="min-h-dvh flex items-center justify-center bg-background to-secondary p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground mt-2">
-            Sign in to your account to continue
-          </p>
-        </div>
-
         <Card className="border-none shadow-lg">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-semibold">Sign In</CardTitle>

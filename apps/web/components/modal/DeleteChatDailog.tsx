@@ -7,6 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { useSocketStore } from "@/store/useSocketStore";
@@ -15,12 +16,11 @@ import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { Loader2 } from "lucide-react";
 
 interface DeleteChatProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   chatId: string;
 }
 
-const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
+const DeleteChatDailog = ({ chatId }: DeleteChatProps) => {
+  const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { socket } = useSocketStore();
   const { setActiveChat } = useChatStore();
@@ -40,13 +40,22 @@ const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
           setIsOpen(false);
           toast.success("Chat deleted successfully");
         }
-        onOpenChange(false);
+        setOpen(false);
       }
     );
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 rounded-md text-xs text-red-500 hover:bg-red-500/10 hover:text-red-600"
+        >
+          Delete
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Chat</DialogTitle>
@@ -59,7 +68,7 @@ const DeleteChatDailog = ({ open, onOpenChange, chatId }: DeleteChatProps) => {
         <DialogFooter className="gap-2">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => setOpen(false)}
             disabled={isDeleting}
             className="text-sm"
           >

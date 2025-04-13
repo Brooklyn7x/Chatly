@@ -4,6 +4,7 @@ import {
   comparePassword,
   generateAccessToken,
   generateRefreshToken,
+  getCookieDomain,
   hashPassword,
   verifyToken,
 } from "../utils/helper";
@@ -15,6 +16,8 @@ const sanitizeUser = (user: any) => {
     user.toObject();
   return rest;
 };
+
+const domain = [];
 
 export const register = async (
   req: Request,
@@ -69,22 +72,23 @@ export const login = async (
     const refreshTokenExpirySeconds = 7 * 24 * 60 * 60;
 
     const isProduction = (process.env.NODE_ENV as string) === "production";
+    const cookieDomain = getCookieDomain(req.hostname);
 
     res.cookie("accessToken", accessToken, {
-      httpOnly: true,
+      httpOnly: isProduction,
       secure: isProduction,
       sameSite: "strict",
-      maxAge: 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
       path: "/",
-      domain: ".chatlyz.xyz",
+      domain: cookieDomain,
     });
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
+      httpOnly: isProduction,
       secure: isProduction,
       sameSite: "strict",
       maxAge: refreshTokenExpirySeconds * 1000,
-      domain: ".chatlyz.xyz",
+      domain: cookieDomain,
       path: "/",
     });
 
@@ -116,13 +120,14 @@ export const refreshToken = async (
 
     const newAccessToken = generateAccessToken(decoded.id);
     const isProduction = (process.env.NODE_ENV as string) === "production";
-
+    const cookieDomain = getCookieDomain(req.hostname);
+    
     res.cookie("accessToken", newAccessToken, {
-      httpOnly: true,
+      httpOnly: isProduction,
       secure: isProduction,
       sameSite: "strict",
-      maxAge: 60 * 60 * 1000,
-      domain: ".chatlyz.xyz",
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: cookieDomain,
       path: "/",
     });
 

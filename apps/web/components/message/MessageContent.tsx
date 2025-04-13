@@ -21,7 +21,7 @@ interface MessageContentProp {
 export const MessageContent = ({
   isOwn,
   content,
-  type,
+
   attachments = [],
 }: MessageContentProp) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

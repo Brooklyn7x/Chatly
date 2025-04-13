@@ -16,7 +16,7 @@ import SidebarHeader from "./SidebarHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChatList } from "../chat/ChatList";
 import ContactPage from "./Contacts";
-import { useFetchChats } from "@/hooks/useChats";
+import { useFetchChats } from "@/hooks/chat/useChats";
 
 const FBActionButton = dynamic(() => import("./FloatingActionButton"), {
   ssr: false,
@@ -35,24 +35,20 @@ type FilterOption = {
   icon: React.ReactNode;
 };
 
-interface SidebarContentProps {
-  view: ViewType;
-  onViewChange: (view: ViewType) => void;
-}
-
-export default function SidebarContent({
-  view,
-  onViewChange,
-}: SidebarContentProps) {
+export default function SidebarContent() {
+  const [view, setView] = useState<ViewType>("main");
   const [selectedFilter, setSelectedFilter] =
     useState<FilterOption["value"]>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const containerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const setActiveChat = useChatStore((state) => state.setActiveChat);
+  const chats = useChatStore((state) => state.chats);
 
   const { isLoading, loadMore, hasMore } = useFetchChats();
-  const { setActiveChat, chats } = useChatStore();
-  const debouncedQuery = useDebounce(searchQuery, 300)
+
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
   const filteredChats = useMemo(() => {
     let baseChats = Array.isArray(chats) ? chats : [];
 
@@ -120,6 +116,7 @@ export default function SidebarContent({
       observer.disconnect();
     };
   }, [getScrollableElement, hasMore, isLoading, loadMore]);
+  
 
   const renderMainView = () => {
     return (
@@ -128,12 +125,13 @@ export default function SidebarContent({
           view={view}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onViewChange={onViewChange}
+          onViewChange={setView}
         />
         <ChatFilters
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
         />
+
         <ScrollArea className="h-[calc(100vh-130px)]" ref={containerRef}>
           <div className="space-y-1">
             {isLoading && chats.length === 0 ? (
@@ -171,7 +169,7 @@ export default function SidebarContent({
           </div>
           <ScrollBar orientation="vertical" />
         </ScrollArea>
-        <FBActionButton onViewChange={onViewChange} />
+        <FBActionButton onViewChange={setView} />
       </>
     );
   };
@@ -181,23 +179,23 @@ export default function SidebarContent({
       case "new_message":
         return (
           <Suspense fallback={<div>Loading private chat...</div>}>
-            <CreatePrivateChat onClose={() => onViewChange("main")} />
+            <CreatePrivateChat onClose={() => setView("main")} />
           </Suspense>
         );
       case "new_group":
         return (
           <Suspense fallback={<div>Loading group chat...</div>}>
-            <CreateGroupChat onClose={() => onViewChange("main")} />
+            <CreateGroupChat onClose={() => setView("main")} />
           </Suspense>
         );
       case "setting":
         return (
           <Suspense fallback={<div>Loading settings...</div>}>
-            <Setting onClose={() => onViewChange("main")} />
+            <Setting onClose={() => setView("main")} />
           </Suspense>
         );
       case "contacts":
-        return <ContactPage onClose={() => onViewChange("main")} />;
+        return <ContactPage onClose={() => setView("main")} />;
       default:
         return renderMainView();
     }

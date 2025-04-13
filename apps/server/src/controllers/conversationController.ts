@@ -136,7 +136,7 @@ export const getConversations = async (
     const conversations = await Conversation.find(query)
       .sort({ updatedAt: -1 })
       .limit(limit + 1)
-      .populate("participants.userId", "username profilePicture");
+      .populate("participants.userId", "profilePicture username");
 
     let nextCursor: string | null = null;
 

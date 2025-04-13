@@ -5,8 +5,8 @@ interface UpdateData {
   email: string;
 }
 
-export const getProfile = async () => {
-  const response = await apiClient.get("/user/profile");
+export const currentUser = async () => {
+  const response = await apiClient.get("/user/me");
   return response;
 };
 

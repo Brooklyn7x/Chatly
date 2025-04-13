@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { UserAvatar } from "../shared/UserAvatar";
-import { cn, formatName } from "@/lib/utils";
-import { Chat } from "@/types";
 import { useChatStore } from "@/store/useChatStore";
+import { UserAvatar } from "../shared/UserAvatar";
+import { Chat } from "@/types";
+import { cn, formatName } from "@/lib/utils";
+
 
 interface ChatItemProps {
   chat: Chat;
@@ -34,6 +35,7 @@ export function ChatItem({ chat, onClick }: ChatItemProps) {
   }, [chat.updatedAt]);
 
   const displayName = formatName(chat);
+
   return (
     <div
       onClick={onClick}

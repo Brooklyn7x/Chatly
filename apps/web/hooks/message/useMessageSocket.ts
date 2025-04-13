@@ -6,12 +6,13 @@ import { toast } from "sonner";
 
 export const useMessageSocket = () => {
   const { addMessage, updateMessage, updateMessageStatus } = useMessageStore();
-  const { socket, isConnected } = useSocketStore();
+  const { socket } = useSocketStore();
 
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    if (!socket) return;
 
     const handleNewMessage = (message: any) => {
+      console.log(message);
       addMessage(message.message);
     };
 
@@ -78,5 +79,5 @@ export const useMessageSocket = () => {
       socket.off("message_all_read", handleMessageAllRead);
       socket.off("message_error", handleMessageError);
     };
-  }, []);
+  }, [socket]);
 };

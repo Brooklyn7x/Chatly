@@ -1,6 +1,6 @@
-import { createChat, getAllChats } from "@/services/chatService";
+import { getAllChats } from "@/services/chatService";
 import { useChatStore } from "@/store/useChatStore";
-import { useState } from "react";
+import { useSocketStore } from "@/store/useSocketStore";
 import useSWRInfinite from "swr/infinite";
 
 export const useFetchChats = (limit: number = 10) => {
@@ -59,40 +59,9 @@ export const useFetchChats = (limit: number = 10) => {
   };
 };
 
-export const useCreateChat = () => {
-  const [isMutating, setIsMutating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const createChatRoom = async (
-    type: string,
-    participants: any,
-    name?: string,
-    description?: string
-  ) => {
-    try {
-      setIsMutating(true);
-      const response = await createChat({
-        type,
-        name,
-        description,
-        participants,
-      });
-      return response.data;
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Create chat failed";
-      setError(message);
-      throw error;
-    } finally {
-      setIsMutating(false);
-    }
-  };
-  return {
-    createChatRoom,
-    isMutating,
-    error,
+export const useChat = () => {
+  const socket = useSocketStore((state) => state.socket);
+  const deleteChat = (chatId: string) => {
+    
   };
 };
-
-export const useDeleteChat = () => {};
-export const useUpdateChat = () => {};

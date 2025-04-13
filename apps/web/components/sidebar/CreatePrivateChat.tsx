@@ -7,22 +7,21 @@ import { toast } from "sonner";
 import { useState } from "react";
 import FloatinButton from "../shared/FloatinButton";
 import { Loading } from "../ui/loading";
-import { useFetchContacts } from "@/hooks/useContact";
+import { useFetchContacts } from "@/hooks/user/useContact";
 import { Button } from "../ui/button";
-
-import useAuthStore from "@/store/useAuthStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import AddNewContact from "./AddNewContact";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 interface PrivateChatProps {
   onClose: () => void;
 }
 
-const PrivateChat = ({ onClose }: PrivateChatProps) => {
+const CreatePrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [addContact, setAddContact] = useState(false);
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { contacts, isLoading, error } = useFetchContacts();
   const { socket } = useSocketStore();
   const currentUserId = user?.id || user?._id;
@@ -79,7 +78,7 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-background">
+    <div className="absolute inset-0 bg-card">
       <div className="relative h-full w-full flex flex-col">
         <div className="h-16 flex items-center gap-4 p-4 border-b bg-card/50 backdrop-blur-sm">
           <NavigationButton onClick={onClose} icon={ArrowLeft} />
@@ -146,4 +145,4 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   );
 };
 
-export default PrivateChat;
+export default CreatePrivateChat;

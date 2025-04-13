@@ -1,6 +1,6 @@
 import useUserStatusStore from "@/store/useUserStatusStore";
-import { Participant } from "@/types";
 import { UserAvatar } from "../shared/UserAvatar";
+import { Participant } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface MemberProps {
@@ -11,8 +11,10 @@ interface MemberProps {
 export const Member = ({ user, selected }: MemberProps) => {
   const { id, username, profilePicture } = user.userId;
   const { role } = user;
+
   const { getUserStatus } = useUserStatusStore();
   const isOnline = getUserStatus(id);
+
   return (
     <div
       className={cn(
