@@ -1,16 +1,12 @@
 "use client";
 import { useEffect } from "react";
-import { useMobileDetection } from "@/hooks/useMobileDetection";
-import { useChatStore } from "@/store/useChatStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useUserStatusSocket } from "@/hooks/user/useUserStatusSocket";
-import ChatContainer from "@/components/chat/ChatContainer";
-import Sidebar from "@/components/sidebar/Sidebar";
+import ChatContainer from "@/components/newlooks/chat/ChatContainer";
+import Sidebar from "@/components/newlooks/sidebar/Sidebar";
 
 export default function MainPage() {
   const { connect, disconnect } = useSocketStore();
-  const { isMobile } = useMobileDetection();
-  const { activeChatId } = useChatStore();
 
   useEffect(() => {
     connect();
@@ -22,11 +18,11 @@ export default function MainPage() {
   useUserStatusSocket();
 
   return (
-    <div className="max-w-9xl mx-auto bg-black/80">
-      <div className="flex flex-col h-dvh border">
-        <div className="flex flex-1 overflow-hidden w-full">
-          <Sidebar isMobile={isMobile} />
-          {(!isMobile || activeChatId) && <ChatContainer isMobile={isMobile} />}
+    <div className="h-dvh max-w-8xl mx-auto bg-background/60">
+      <div className="flex h-full">
+        <Sidebar />
+        <div className="flex flex-1 w-full">
+          <ChatContainer />
         </div>
       </div>
     </div>

@@ -21,9 +21,14 @@ export function useAuth() {
       const user = response.data?.user || response.data;
       if (response.status === 200 && user) {
         setUser(user);
+        return true;
+      } else {
+        router.push("/login");
+        return false;
       }
     } catch (error) {
-      toast.error("Unauthorized");
+      router.push("/login");
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -49,6 +54,8 @@ export function useAuth() {
       setIsLoading(true);
       const response = await loginUser(creadentials);
       if (response && response.success) {
+        const user = response.data?.user || response.data;
+        setUser(user);
         router.push("/chat");
       }
     } catch (error: any) {

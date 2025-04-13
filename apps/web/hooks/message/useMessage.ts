@@ -2,17 +2,20 @@ import { getMessages } from "@/services/messageService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import useSWRInfinite from "swr/infinite";
+import { useAuth } from "../auth/useAuth";
+import { Message } from "@/types";
 
 export const useMessage = () => {
   const { addMessage } = useMessageStore();
   const { socket } = useSocketStore();
+  const { user } = useAuth();
+  const userId = user?.id;
+  const updateMessage = useMessageStore((store) => store.updateMessage);
 
   const sendMessage = (
     chatId: string,
-    userId: string,
     content: { attachments: string[]; message: string }
   ) => {
-    if (!socket) return;
     const tempId = `temp-${Date.now()}`;
     const contentType = content.attachments.length > 0 ? "image" : "text";
     const messageData = {
@@ -34,14 +37,33 @@ export const useMessage = () => {
     };
 
     addMessage(messageData as any);
-    socket.emit("message_sent", messageData);
+    socket?.emit("message_sent", messageData);
   };
 
-  const editMessage = (data: { messageId: string; content: string }) => {
-    socket?.emit("message_edit", data);
+  const editMessage = (data: {
+    message: Message;
+    conversationId: string;
+    messageId: string;
+    content: string;
+  }) => {
+    if (!socket) return;
+    const { conversationId, messageId, content, message } = data;
+    updateMessage(conversationId, {
+      ...message,
+      content,
+      isEdited: true,
+    });
+    socket?.emit("message_edit", { messageId, content });
   };
 
-  const deleteMessage = (messageId: string) => {
+  const deleteMessage = (messageId: string, message: Message) => {
+    if (!socket) return;
+
+    updateMessage(message.conversationId, {
+      ...message,
+      isDeleted: true,
+    });
+
     socket?.emit("message_delete", messageId);
   };
 

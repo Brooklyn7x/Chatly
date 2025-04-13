@@ -17,7 +17,7 @@ interface PrivateChatProps {
   onClose: () => void;
 }
 
-const PrivateChat = ({ onClose }: PrivateChatProps) => {
+const CreatePrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [addContact, setAddContact] = useState(false);
@@ -78,7 +78,7 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-background">
+    <div className="absolute inset-0 bg-card">
       <div className="relative h-full w-full flex flex-col">
         <div className="h-16 flex items-center gap-4 p-4 border-b bg-card/50 backdrop-blur-sm">
           <NavigationButton onClick={onClose} icon={ArrowLeft} />
@@ -145,4 +145,4 @@ const PrivateChat = ({ onClose }: PrivateChatProps) => {
   );
 };
 
-export default PrivateChat;
+export default CreatePrivateChat;

@@ -26,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { register } from "@/services/authService";
+
 import { useAuth } from "@/hooks/auth/useAuth";
 
 const registerSchema = z.object({

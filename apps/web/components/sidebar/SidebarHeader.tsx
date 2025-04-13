@@ -6,11 +6,6 @@ import {
   User,
   User2Icon,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import { SearchInput } from "./SearchInput";
-
-import { ViewType } from "@/types";
-import { Suspense } from "react";
 import { useAuth } from "@/hooks/auth/useAuth";
 import {
   DropdownMenu,
@@ -20,6 +15,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { SearchInput } from "./SearchInput";
+import { ViewType } from "@/types";
 
 interface SidebarHeaderProps {
   view: ViewType;
@@ -60,47 +58,33 @@ export default function SidebarHeader({
   ];
 
   return (
-    <div className="relative h-16 flex items-center px-4 border-b gap-3">
+    <div className="relative h-16 flex items-center px-4 border-b gap-4">
       {view === "main" && (
         <>
-          <Suspense
-            fallback={
-              <Button
-                variant={"outline"}
-                size={"icon"}
-                className="h-10 w-10"
-                disabled
-              >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"outline"} size={"icon"} className="h-10 w-10">
                 <Menu />
               </Button>
-            }
-          >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant={"outline"} size={"icon"} className="h-10 w-10">
-                  <Menu />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-44" align="start">
-                <UserProfile
-                  user={user ? { username: user.username } : { username: "" }}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-44" align="start">
+              <UserProfile
+                user={user ? { username: user.username } : { username: "" }}
+              />
+              <DropdownMenuSeparator />
+              {MENU_ITEMS.map((item) => (
+                <MenuItem
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  onClick={
+                    item.onClick ? () => item.onClick(onViewChange) : undefined
+                  }
                 />
-                <DropdownMenuSeparator />
-                {MENU_ITEMS.map((item) => (
-                  <MenuItem
-                    key={item.label}
-                    icon={item.icon}
-                    label={item.label}
-                    onClick={
-                      item.onClick
-                        ? () => item.onClick(onViewChange)
-                        : undefined
-                    }
-                  />
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </Suspense>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <SearchInput value={searchQuery} onChange={onSearchChange} />
         </>
       )}

@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -107,21 +108,20 @@ const Setting = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-secondary/30">
-      <div className="p-4 space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl text-center font-semibold">Settings</h2>
-          <Button
-            variant="ghost"
-            size={"icon"}
-            onClick={onClose}
-            className="rounded-full border"
-          >
-            ✕
-          </Button>
-        </div>
-
+    <div className="absolute inset-0 overflow-y-auto bg-card">
+      <div className="space-y-6">
         <Card className="border-none shadow-lg">
+          <div className="flex items-center justify-between p-4">
+            <h2 className="text-xl text-center font-semibold">Settings</h2>
+            <Button
+              variant="ghost"
+              size={"icon"}
+              onClick={onClose}
+              className="rounded-full border"
+            >
+              ✕
+            </Button>
+          </div>
           <CardContent>
             <Form {...form}>
               <form

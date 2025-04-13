@@ -17,19 +17,20 @@ function MessageList() {
   const containerRef = useRef<HTMLDivElement>(null);
   const topSentinelRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const { user } = useAuth();
   const activeChatId = useChatStore((state) => state.activeChatId);
   const messages = useMessageStore((state) => state.messages);
+
   const { isLoading, error, hasMore, loadMore } = useFetchMessages(
     activeChatId || ""
   );
   const { isTyping } = useTypingIndicator(activeChatId || "");
+
   const currentMessages = messages[activeChatId || ""] || [];
   const unreadMessage = currentMessages.filter(
     (message) => message.status !== "read"
   );
-
-  console.log(unreadMessage);
 
   const getScrollableElement = useCallback((): HTMLElement | null => {
     if (containerRef.current) {

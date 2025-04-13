@@ -2,18 +2,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "../ui/button";
-import {
-  ArrowBigDownDash,
-  ArrowDown,
-  ArrowDownAz,
-  ChevronDown,
-  MoreVertical,
-} from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 const MessageActionDrop = () => {
   return (

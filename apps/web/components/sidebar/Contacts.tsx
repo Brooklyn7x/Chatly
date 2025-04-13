@@ -12,29 +12,29 @@ interface ContactPageProps {
   onClose: () => void;
 }
 
-const ContactPage = ({ onClose }: ContactPageProps) => {
+const Contacts = ({ onClose }: ContactPageProps) => {
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
   const { contacts, isLoading, error } = useFetchContacts();
 
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-secondary/30">
-        Loading...
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="fixed inset-0 flex items-center justify-center bg-secondary/30">
+  //       Loading...
+  //     </div>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-secondary/30">
-        Error: {error.message}
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="fixed inset-0 flex items-center justify-center bg-secondary/30">
+  //       Error: {error.message}
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
-      <div className="fixed inset-0 overflow-y-auto bg-secondary/30">
+      <div className="absolute inset-0 overflow-y-auto bg-card">
         <div className="p-4 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl text-center font-semibold">Contacts</h2>
@@ -101,4 +101,4 @@ const ContactPage = ({ onClose }: ContactPageProps) => {
   );
 };
 
-export default ContactPage;
+export default Contacts;

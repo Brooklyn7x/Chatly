@@ -29,3 +29,8 @@ export const formatName = (chat: Chat) => {
     return chat?.name || "Channel";
   }
 };
+
+export function generateAvatarUrl(seed: string) {
+  const encodedSeed = encodeURIComponent(seed);
+  return `https://api.dicebear.com/7.x/personas/png?seed=${encodedSeed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+}

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { UserPlus, X, Loader2 } from "lucide-react";
+import { UserPlus, X, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -115,8 +115,9 @@ const AddMemberDialog = ({ chatId, participants }: AddMemberDailogProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="border h-14 w-14">
-          <UserPlus />
+        <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs">
+          <Plus size={14} className="mr-1" />
+          Add
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[500px]">

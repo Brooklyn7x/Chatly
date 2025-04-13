@@ -151,9 +151,9 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   }, [step, selectedUserIds.size, handleSubmit]);
 
   return (
-    <div className="fixed inset-0">
-      <div onClick={onClose} className="absolute inset-0 bg-black opacity-30" />
-      <div className="relative h-full w-full flex flex-col p-4 bg-background rounded-lg">
+    <div className="absolute inset-0">
+      <div onClick={onClose} className="absolute inset-0 bg-card" />
+      <div className="relative h-full w-full flex flex-col p-4  rounded-lg">
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
             <header className="flex items-center justify-between  gap-4 mb-8">

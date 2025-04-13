@@ -3,27 +3,31 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Loader2, Pencil } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
-import { UserAvatar } from "../shared/UserAvatar";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useChatStore } from "@/store/useChatStore";
 import { toast } from "sonner";
 
 interface EditChatProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   title: string;
   descriptions: string;
 }
 
-export function EditChatInfo({ title, descriptions }: EditChatProps) {
+export function EditChatInfo({
+  open,
+  onOpenChange,
+  title,
+  descriptions,
+}: EditChatProps) {
   const activeChatId = useChatStore((state) => state.activeChatId);
-
   const { socket } = useSocketStore();
-  const [open, setOpen] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     groupTitle: title,
@@ -44,11 +48,11 @@ export function EditChatInfo({ title, descriptions }: EditChatProps) {
           toast.error(error.error);
         } else {
           toast.success("Updated");
-          setOpen(false);
+          onOpenChange(false);
         }
       });
 
-      setOpen(false);
+      onOpenChange(false);
     } catch (error) {
       console.error(error);
     } finally {
@@ -56,29 +60,23 @@ export function EditChatInfo({ title, descriptions }: EditChatProps) {
     }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={"ghost"} size={"icon"} className="h-9 w-9 p-4">
-          <Pencil className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogTitle className="">Update Info</DialogTitle>
         <div className="flex flex-col items-center gap-4 py-4">
-          <div className="p-4">
-            <UserAvatar size="xl" />
-          </div>
+          <div className="p-4">{/* <UserAvatar size="xl" /> */}</div>
           <Input
             placeholder="Group Name"
             value={data.groupTitle}
-            onChange={(e) => setData({ ...data, groupTitle: e.target.value })}
+            onChange={(e: any) =>
+              setData({ ...data, groupTitle: e.target.value })
+            }
             className="text-sm"
           />
           <Input
             placeholder="Description"
             value={data.groupDescription}
-            onChange={(e) =>
+            onChange={(e: any) =>
               setData({ ...data, groupDescription: e.target.value })
             }
             className="text-sm"

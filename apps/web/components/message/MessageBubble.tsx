@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+
+import { useReactions } from "@/hooks/chat/useReactions";
+import { useMessage } from "@/hooks/message/useMessage";
+import { useSocketStore } from "@/store/useSocketStore";
+import { useMessageStore } from "@/store/useMessageStore";
+import { useChatStore } from "@/store/useChatStore";
+
 import { MessageContent } from "./MessageContent";
 import { UserAvatar } from "../shared/UserAvatar";
 import { MessageActions } from "./MessageActions";
@@ -8,12 +16,8 @@ import { MessageMetadata } from "./MessageMetadata";
 import { MessageEditor } from "./MessageEditor";
 import { MessageReactionPicker } from "./MessageReactionPicker";
 import { MessageReactions } from "./MessageReactions";
-import { useReactions } from "@/hooks/chat/useReactions";
+
 import { Message } from "@/types";
-import { useSocketStore } from "@/store/useSocketStore";
-import { useMessageStore } from "@/store/useMessageStore";
-import { useMessage } from "@/hooks/message/useMessage";
-import { useChatStore } from "@/store/useChatStore";
 
 interface MessageBubbleProps {
   message: Message;
@@ -21,14 +25,16 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
-  const bubbleRef = useRef<HTMLDivElement>(null);
-  const ref = useRef<HTMLDivElement>(null);
-  const chatId = useChatStore((state) => state.activeChatId);
   const [isEditing, setIsEditing] = useState(false);
   const [showreaction, setShowReaction] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
-  const { socket } = useSocketStore();
-  const { updateMessage } = useMessageStore();
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const chatId = useChatStore((state) => state.activeChatId);
+  const socket = useSocketStore((state) => state.socket);
+  const updateMessage = useMessageStore((store) => store.updateMessage);
+
   const { editMessage, deleteMessage, markAsRead } = useMessage();
   const { reactions, addReaction, removeReaction } = useReactions(message._id);
 
@@ -70,7 +76,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
   const handleEditMessage = () => {
     if (!socket) return;
     if (editedContent.trim() && editedContent !== content) {
-      editMessage({ messageId: _id, content: editedContent });
+      // editMessage({ messageId: _id, content: editedContent });
       updateMessage(message.conversationId, {
         ...message,
         content: editedContent,
@@ -82,7 +88,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
 
   const handleDeleteMessage = () => {
     if (!socket) return;
-    deleteMessage(id);
+    deleteMessage(id, message);
     updateMessage(message.conversationId, {
       ...message,
       isDeleted: true,
