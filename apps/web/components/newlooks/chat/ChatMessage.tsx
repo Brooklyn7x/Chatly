@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import {
   Ban,
@@ -18,6 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useMessage } from "@/hooks/message/useMessage";
 import { Message } from "@/types";
+import { format } from "date-fns";
+import { formatDate } from "@/utils";
 
 interface MessageProps {
   message: Message;
@@ -25,13 +27,26 @@ interface MessageProps {
 }
 
 const MessageItem = ({ message, isOwn }: MessageProps) => {
-  const { _id, conversationId, type, content, status, isEdited, isDeleted } =
-    message;
+  const {
+    _id,
+    conversationId,
+    type,
+    content,
+    status,
+    isEdited,
+    isDeleted,
+    updatedAt,
+  } = message;
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState<string>(content);
   const messageRef = useRef<HTMLDivElement>(null);
 
   const { editMessage, deleteMessage, markAsRead } = useMessage();
+
+  const time = useMemo(() => {
+    if (!updatedAt) return "";
+    return formatDate(updatedAt);
+  }, [updatedAt]);
 
   const handleEditMessage = () => {
     if (!editContent.trim()) return;
@@ -164,7 +179,7 @@ const MessageItem = ({ message, isOwn }: MessageProps) => {
                 {isEdited && (
                   <span className="text-xs opacity-70 italic">Edited</span>
                 )}
-                <p className="text-[11px] opacity-70">10:05 AM</p>
+                <p className="text-[11px] opacity-70">{time}</p>
                 {isOwn && (
                   <span>
                     {status === "read" ? (

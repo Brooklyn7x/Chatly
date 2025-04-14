@@ -61,7 +61,5 @@ export const useFetchChats = (limit: number = 10) => {
 
 export const useChat = () => {
   const socket = useSocketStore((state) => state.socket);
-  const deleteChat = (chatId: string) => {
-    
-  };
+  const deleteChat = (chatId: string) => {};
 };

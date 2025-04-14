@@ -9,7 +9,7 @@ import { Chat } from "@/types";
 import { formatChatName, formatDate } from "@/utils";
 import { useMemo, useState } from "react";
 import { ChatAvatar } from "../common/ChatAvatar";
-import { Check, Ellipsis, PinIcon } from "lucide-react";
+import { Ellipsis, PinIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { useSocketStore } from "@/store/useSocketStore";

@@ -12,7 +12,6 @@ export const useMessageSocket = () => {
     if (!socket) return;
 
     const handleNewMessage = (message: any) => {
-      console.log(message);
       addMessage(message.message);
     };
 

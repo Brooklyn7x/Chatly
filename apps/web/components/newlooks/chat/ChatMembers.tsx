@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Chat } from "@/types";
 import { MoreVertical } from "lucide-react";
-import Image from "next/image";
 import { ChatAvatar } from "../common/ChatAvatar";
 import {
   DropdownMenu,
@@ -82,7 +81,7 @@ const ChatMembers = ({ chat }: ChatMembersProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => handleRemoveUser(participant.userId.id)}
+                  onClick={() => handleRemoveUser(participant.userId._id)}
                 >
                   Remove
                 </DropdownMenuItem>

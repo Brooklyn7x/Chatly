@@ -24,8 +24,8 @@ export const ChatAvatar = ({
 
   const fallbackName =
     chat?.participants
-      .map((p) => p.userId.username[0]?.toUpperCase())
-      .join("") || "CN";
+      .map((p) => p.userId?.username?.[0]?.toUpperCase() || "")
+      .join("") || "AN";
 
   const avatarSrc =
     chat?.type === "group"

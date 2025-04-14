@@ -37,7 +37,6 @@ export const getAllChats = async (
 };
 
 export const createChat = async (data: createChatData) => {
-  console.log(data);
   const response = await apiClient.post("/conversations", data);
   return response.data;
 };

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { UserPlus, X, Loader2, Plus } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -9,24 +9,36 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { UserAvatar } from "../shared/UserAvatar";
 import { useFetchContacts } from "@/hooks/user/useContact";
 import { Participant } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import { useMobileDetection } from "@/hooks/useMobileDetection";
 
 interface AddMemberDailogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   chatId: string;
-  participants: Participant;
 }
-const AddMemberDialog = ({ chatId, participants }: AddMemberDailogProps) => {
-  const [open, setOpen] = useState(false);
+
+const AddMemberDialog = ({
+  open,
+  onOpenChange,
+  chatId,
+}: AddMemberDailogProps) => {
   const [loading, setLoading] = useState(false);
   const [selectedMember, setSelectedMember] = useState<string[]>([]);
   const { contacts } = useFetchContacts();
   const { socket } = useSocketStore();
+  const { isMobile } = useMobileDetection();
 
   const handleUserSelection = (userId: string) => {
     setSelectedMember((prev) =>
@@ -56,7 +68,7 @@ const AddMemberDialog = ({ chatId, participants }: AddMemberDailogProps) => {
           toast.error(error.error || "Failed to add members");
         } else {
           toast.success("Members added successfully");
-          setOpen(false);
+          onOpenChange(false);
         }
         setLoading(false);
       });
@@ -113,42 +125,75 @@ const AddMemberDialog = ({ chatId, participants }: AddMemberDailogProps) => {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 rounded-md text-xs">
-          <Plus size={14} className="mr-1" />
-          Add
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Add Member</DialogTitle>
-          <DialogDescription>Add Member to Group</DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="mb-2 text-sm font-medium">
-              Selected Users ({selectedMember.length})
-            </h1>
-            {renderSelectedUsers()}
-          </div>
-          <div className="max-h-80 h-full overflow-y-auto">
-            {renderAvailableUsers()}
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            type="submit"
-            onClick={handleAddMember}
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {loading ? "Adding..." : "Add Member"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Button onClick={() => onOpenChange(true)}>Add Member</Button>
+      {isMobile ? (
+        <Drawer open={open} onOpenChange={onOpenChange}>
+          <DrawerContent className="p-5 max-h-[80vh]" >
+            <DrawerHeader>
+              <DrawerTitle>Add Member</DrawerTitle>
+            </DrawerHeader>
+            <div className="flex flex-col gap-4">
+              <div>
+                <h1 className="mb-2 text-sm font-medium">
+                  Selected Users ({selectedMember.length})
+                </h1>
+                {renderSelectedUsers()}
+              </div>
+              <div className="max-h-80 h-full overflow-y-auto">
+                {renderAvailableUsers()}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                onClick={handleAddMember}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {loading ? "Adding..." : "Add Member"}
+              </Button>
+            </DialogFooter>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent className="w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Add Member</DialogTitle>
+              <DialogDescription>Add Member to Group</DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-4">
+              <div>
+                <h1 className="mb-2 text-sm font-medium">
+                  Selected Users ({selectedMember.length})
+                </h1>
+                {renderSelectedUsers()}
+              </div>
+              <div className="max-h-80 h-full overflow-y-auto">
+                {renderAvailableUsers()}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                onClick={handleAddMember}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {loading ? "Adding..." : "Add Member"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 };
 

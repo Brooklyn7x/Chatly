@@ -45,7 +45,7 @@ export const MessageBubble = ({ isOwn, message }: MessageBubbleProps) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             markAsRead({ chatId, messageId: message._id });
-            console.log(message._id, "unread");
+
             observerInstance.unobserve(entry.target);
           }
         });

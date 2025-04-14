@@ -2,12 +2,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Chat } from "@/types";
 
-
 interface ChatStore {
   chats: Chat[];
   activeChatId: string | null;
   setChats: (chats: Chat[]) => void;
   addChats: (chat: Chat) => void;
+  addNewChat: (chat: Chat) => void;
   setActiveChat: (chatId: string | null) => void;
   updateChat: (chatId: string, updates: Partial<Chat>) => void;
   deleteChat: (chatId: string) => void;
@@ -21,6 +21,12 @@ export const useChatStore = create<ChatStore>()(
 
       setChats: (chats) => {
         set({ chats });
+      },
+
+      addNewChat: (chat) => {
+        set((state) => ({
+          chats: [chat, ...state.chats],
+        }));
       },
 
       addChats: (chat) => {
