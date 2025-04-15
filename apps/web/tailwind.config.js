@@ -67,7 +67,9 @@ module.exports = {
   			}
   		},
   		animation: {
-  			'glow-slow': 'glow 6s ease-in-out infinite'
+  			'glow-slow': 'glow 6s ease-in-out infinite',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
   		keyframes: {
   			glow: {
@@ -78,6 +80,22 @@ module.exports = {
   				'50%': {
   					transform: 'scale(1.1)',
   					opacity: '0.7'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
   				}
   			}
   		}
