@@ -100,9 +100,25 @@ export const login = async (
 };
 
 export const logout = (req: Request, res: Response) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
-  res.status(200).json({ success: true });
+  const isProduction = (process.env.NODE_ENV as string) === "production";
+  const cookieDomain = getCookieDomain(req.hostname);
+
+  res.clearCookie("accessToken", {
+    httpOnly: isProduction,
+    secure: isProduction,
+    sameSite: "strict",
+    path: "/",
+    domain: cookieDomain,
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: isProduction,
+    secure: isProduction,
+    sameSite: "strict",
+    path: "/",
+    domain: cookieDomain,
+  });
+
+  res.status(200).json({ success: true, message: "Logout Successfully" });
 };
 
 export const refreshToken = async (
@@ -121,7 +137,7 @@ export const refreshToken = async (
     const newAccessToken = generateAccessToken(decoded.id);
     const isProduction = (process.env.NODE_ENV as string) === "production";
     const cookieDomain = getCookieDomain(req.hostname);
-    
+
     res.cookie("accessToken", newAccessToken, {
       httpOnly: isProduction,
       secure: isProduction,
