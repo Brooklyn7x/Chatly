@@ -2,22 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
-import { Eye, EyeOff, ArrowRight, LockKeyhole, Mail } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
 import {
   Form,
   FormControl,
@@ -26,8 +16,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { useAuth } from "@/hooks/auth/useAuth";
+import { Logo } from "@/components/landing/logo";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -48,120 +38,139 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-background to-secondary p-4">
-      <div className="w-full max-w-md">
-        <Card className="border-none shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-semibold">Sign In</CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+    <section className="flex min-h-screen  px-4 py-16 md:py-32 dark:bg-transparent">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]"
+      >
+        <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
+          <div className="text-center">
+            <Link href="/" aria-label="go home" className="mx-auto block w-fit">
+              <Logo />
+            </Link>
+            <h1 className="mb-1 mt-4 text-xl font-semibold">
+              Sign In to Chatly
+            </h1>
+            <p className="text-sm">Welcome back! Sign in to continue</p>
+          </div>
+
+          <div className="mt-6 space-y-6">
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="name@example.com"
-                            className="pl-10"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="you@example.com"
+                          className="pl-10"
+                          autoComplete="email"
+                          {...field}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center justify-between">
                       <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            className="pl-10 pr-10"
-                            {...field}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      <Button asChild variant="link" size="sm" className="px-0">
+                        <Link href="#" className="text-sm">
+                          Forgot your password?
+                        </Link>
+                      </Button>
+                    </div>
+                    <FormControl>
+                      <div className="relative">
+                        <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          className="pl-10 pr-10"
+                          autoComplete="current-password"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2"></div>
-                      Signing in...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      Sign In
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </div>
-                  )}
-                </Button>
-              </form>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2"></div>
+                    Signing in...
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
             </Form>
-          </CardContent>
-          <CardFooter className="flex flex-col items-center justify-center space-y-2">
-            <div className="text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/signup"
-                className="font-medium text-primary hover:underline"
-              >
-                Sign up
-              </Link>
-            </div>
-            <div className="text-center text-xs text-muted-foreground">
-              By continuing, you agree to our{" "}
-              <Link
-                href="/terms"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              .
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
+          </div>
+
+          <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <hr className="border-dashed" />
+            <span className="text-muted-foreground text-xs">
+              Or continue with
+            </span>
+            <hr className="border-dashed" />
+          </div>
+
+          <div className="text-center text-muted-foreground text-xs py-2">
+            Social login coming soon
+          </div>
+        </div>
+
+        <div className="p-3">
+          <p className="text-accent-foreground text-center text-sm">
+            Don't have an account?
+            <Button asChild variant="link" className="px-2">
+              <Link href="/signup">Create account</Link>
+            </Button>
+          </p>
+          <p className="text-center text-xs text-muted-foreground mt-2">
+            By continuing, you agree to our{" "}
+            <Link
+              href="/terms"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </div>
+      </form>
+    </section>
   );
 }
