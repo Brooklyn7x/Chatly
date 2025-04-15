@@ -6,7 +6,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-coverflow";
 import Link from "next/link";
-
 import { ArrowRight, Menu, Rocket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
@@ -38,11 +37,23 @@ export default function HeroSection() {
                 </Link>
                 <button
                   onClick={() => setMenuState(!menuState)}
-                  aria-label={menuState == true ? "Close Menu" : "Open Menu"}
+                  aria-label={menuState ? "Close Menu" : "Open Menu"}
                   className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden"
                 >
-                  <Menu className="in-data-[state=active]:rotate-180 in-data-[state=active]:scale-0 in-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
-                  <X className="in-data-[state=active]:rotate-0 in-data-[state=active]:scale-100 in-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
+                  <Menu
+                    className={`m-auto size-6 duration-200 ${
+                      menuState
+                        ? "rotate-180 scale-0 opacity-0"
+                        : "rotate-0 scale-100 opacity-100"
+                    }`}
+                  />
+                  <X
+                    className={`absolute inset-0 m-auto size-6 duration-200 ${
+                      menuState
+                        ? "rotate-0 scale-100 opacity-100"
+                        : "-rotate-180 scale-0 opacity-0"
+                    }`}
+                  />
                 </button>
               </div>
               <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
@@ -76,6 +87,46 @@ export default function HeroSection() {
             </div>
           </div>
         </nav>
+
+        {/* Mobile menu overlay */}
+        {menuState && (
+          <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden">
+            <div className="absolute right-0 top-0 h-full w-3/4 max-w-xs bg-white dark:bg-zinc-950 shadow-lg p-6 flex flex-col">
+              <button
+                onClick={() => setMenuState(false)}
+                aria-label="Close Menu"
+                className="self-end mb-6"
+              >
+                <X className="size-6" />
+              </button>
+              <ul className="flex flex-col gap-6 text-lg">
+                {menuItems.map((item, index) => (
+                  <li key={index}>
+                    <Link
+                      href={item.href}
+                      className="block text-muted-foreground hover:text-accent-foreground"
+                      onClick={() => setMenuState(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 flex flex-col gap-3">
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/login" onClick={() => setMenuState(false)}>
+                    Login
+                  </Link>
+                </Button>
+                <Button asChild size="sm" variant="secondary">
+                  <Link href="/signup" onClick={() => setMenuState(false)}>
+                    Sign Up
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
       <main className="overflow-hidden">
         <section className="relative">

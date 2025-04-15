@@ -38,7 +38,7 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="flex min-h-screen  px-4 py-16 md:py-32 dark:bg-transparent">
+    <section className="flex min-h-dvh  px-4 py-8 md:py-16 dark:bg-transparent">
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]"
@@ -151,23 +151,6 @@ export default function LoginPage() {
             <Button asChild variant="link" className="px-2">
               <Link href="/signup">Create account</Link>
             </Button>
-          </p>
-          <p className="text-center text-xs text-muted-foreground mt-2">
-            By continuing, you agree to our{" "}
-            <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
-            </Link>
-            .
           </p>
         </div>
       </form>

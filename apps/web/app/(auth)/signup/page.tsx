@@ -48,7 +48,7 @@ export default function SignupPage() {
   };
 
   return (
-    <section className="flex min-h-dvh bg-zinc-50 px-4 py-16 md:py-16 dark:bg-transparent">
+    <section className="flex min-h-screen bg-zinc-50 px-4 py-4 dark:bg-transparent">
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
         className="bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]"
