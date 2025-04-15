@@ -72,8 +72,10 @@ export function useAuth() {
   }) => {
     try {
       setIsLoading(true);
-      const resposne = await register(creadentials);
-      if (resposne && resposne.success) {
+      const response = await register(creadentials);
+      if (response && response.success) {
+        const user = response.data?.user || response.data;
+        setUser(user);
         router.push("/chat");
       }
     } catch (error: any) {
