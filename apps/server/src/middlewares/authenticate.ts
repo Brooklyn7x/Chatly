@@ -1,18 +1,17 @@
-import { NextFunction, Response, Request } from "express";
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppError } from "../utils/error";
 
-export const authenticate = async (
+export const authenticate = (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   try {
-    const token =
-      req.cookies?.accessToken || req.headers.authorization?.split(" ")[1];
+    const token = req.cookies?.accessToken;
 
     if (!token) {
-      throw new AppError(401, "No authentication token provided");
+      return next(new AppError(401, "Authentication token missing"));
     }
 
     const decoded = jwt.verify(
@@ -25,21 +24,7 @@ export const authenticate = async (
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      const refreshToken = req.cookies?.refreshToken;
-      if (!refreshToken) {
-        return next(new AppError(401, "Session expired. Please login again."));
-      }
-
-      try {
-        const decodedRefresh = jwt.verify(
-          refreshToken,
-          process.env.JWT_REFRESH_SECRET as string
-        ) as jwt.JwtPayload;
-        req.user = { id: decodedRefresh.id as string };
-        next();
-      } catch (refreshError) {
-        return next(new AppError(401, "Invalid session. Please login again."));
-      }
+      return next(new AppError(401, "Session expired. Please login again."));
     } else if (error instanceof jwt.JsonWebTokenError) {
       return next(new AppError(401, "Invalid authentication token"));
     } else {

@@ -11,14 +11,14 @@ import {
 import { useChatStore } from "@/store/useChatStore";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import useUserStatusStore from "@/store/useUserStatusStore";
-import { useAuth } from "@/hooks/auth/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 import { useMessage } from "@/hooks/message/useMessage";
 import { useTypingIndicator } from "@/hooks/message/useTypingIndicator";
 import { formatChatName } from "@/utils";
 
 const ChatHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { setActiveChat } = useChatStore();
   const { setIsOpen } = useChatPanelStore();
   const { getUserStatus } = useUserStatusStore();

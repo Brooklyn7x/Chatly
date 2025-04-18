@@ -1,17 +1,18 @@
 "use client";
 import { ArrowLeft, Plus, UserPlus } from "lucide-react";
-import { NavigationButton } from "../shared/NavigationButton";
-import { SearchInput } from "../shared/SearchInput";
-import { UserList } from "../user/UserList";
+import { UserList } from "../modal/UserList";
 import { toast } from "sonner";
 import { useState } from "react";
-import FloatinButton from "../shared/FloatinButton";
+
 import { Loading } from "../ui/loading";
 import { useFetchContacts } from "@/hooks/user/useContact";
 import { Button } from "../ui/button";
 import { useSocketStore } from "@/store/useSocketStore";
+import useAuthStore from "@/store/useAuthStore";
+import { NavigationButton } from "../modal/NavigationButton";
+import { SearchInput } from "../modal/SearchInput";
+import FloatinButton from "../modal/FloatingButton";
 import AddNewContact from "./AddNewContact";
-import { useAuth } from "@/hooks/auth/useAuth";
 
 interface PrivateChatProps {
   onClose: () => void;
@@ -21,7 +22,7 @@ const CreatePrivateChat = ({ onClose }: PrivateChatProps) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [addContact, setAddContact] = useState(false);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { contacts, isLoading, error } = useFetchContacts();
   const { socket } = useSocketStore();
   const currentUserId = user?.id || user?._id;

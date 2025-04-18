@@ -1,8 +1,8 @@
 import { Chat } from "@/types";
 import { Switch } from "@radix-ui/react-switch";
 import { Bell, Pin, Plus, Trash, UserPlus } from "lucide-react";
-import AddMemberDailog from "../../modal/AddMemberDailog";
-import DeleteChatDailog from "../../modal/DeleteChatDailog";
+import AddMemberDailog from "../modal/AddMemberDailog";
+import DeleteChatDailog from "../modal/DeleteChatDailog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 

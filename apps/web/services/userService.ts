@@ -1,11 +1,11 @@
-import { apiClient } from "./apiClient";
+import apiClient from "./apiClient";
 
 interface UpdateData {
   username: string;
   email: string;
 }
 
-export const currentUser = async () => {
+export const me = async () => {
   const response = await apiClient.get("/user/me");
   return response;
 };

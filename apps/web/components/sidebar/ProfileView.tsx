@@ -13,13 +13,11 @@ export const ProfileView = ({ onBack }: { onBack: () => void }) => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Add logic to save profile updates (e.g., API call)
     console.log("Profile updated:", { name, avatar });
   };
 
   return (
     <div className="h-full flex flex-col">
-      {/* Back Button */}
       <div className="p-4 border-b flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" />
@@ -27,7 +25,6 @@ export const ProfileView = ({ onBack }: { onBack: () => void }) => {
         <h2 className="text-xl font-semibold">Profile</h2>
       </div>
 
-      {/* Profile Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="flex justify-center">
           <Avatar className="h-20 w-20">

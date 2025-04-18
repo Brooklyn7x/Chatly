@@ -7,12 +7,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Participant } from "@/types";
-import { UserAvatar } from "../shared/UserAvatar";
+
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useSocketStore } from "@/store/useSocketStore";
 import { useChatStore } from "@/store/useChatStore";
 import { toast } from "sonner";
+import { UserAvatar } from "../common/UserAvatar";
 
 interface RemoveMemberDialogProps {
   open: boolean;

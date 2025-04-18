@@ -1,13 +1,17 @@
 import { MessageCircle } from "lucide-react";
 
-export function EmptyChat() {
+const EmptyChat = () => {
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center text-muted-foreground bg-background/50 backdrop-blur-sm">
-        <MessageCircle className="h-12 w-12 mb-4 text-primary/50" />
-        <p className="text-lg font-medium mb-2">No conversations yet</p>
-        <p className="text-sm">Start a new chat to begin your conversation!</p>
+    <div className="flex flex-col items-center justify-center w-full h-full text-center p-6">
+      <div className="bg-primary/10 rounded-full p-4 mb-4">
+        <MessageCircle size={32} className="text-primary" />
       </div>
+      <h3 className="text-xl font-semibold mb-2">Select a conversation</h3>
+      <p className="text-muted-foreground">
+        Choose a chat from the sidebar or start a new conversation
+      </p>
     </div>
   );
-}
+};
+
+export default EmptyChat;

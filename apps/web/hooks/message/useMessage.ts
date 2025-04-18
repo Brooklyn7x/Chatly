@@ -2,13 +2,13 @@ import { getMessages } from "@/services/messageService";
 import { useMessageStore } from "@/store/useMessageStore";
 import { useSocketStore } from "@/store/useSocketStore";
 import useSWRInfinite from "swr/infinite";
-import { useAuth } from "../auth/useAuth";
 import { Message } from "@/types";
+import useAuthStore from "@/store/useAuthStore";
 
 export const useMessage = () => {
   const { addMessage } = useMessageStore();
   const { socket } = useSocketStore();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const userId = user?.id;
   const updateMessage = useMessageStore((store) => store.updateMessage);
 
@@ -29,7 +29,7 @@ export const useMessage = () => {
       content: content.message,
       type: contentType,
       status: "sent",
-      timestamp: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       attachments: content.attachments.map((url) => ({
         url,
         type: contentType,
@@ -105,6 +105,7 @@ export const useFetchMessages = (chatId: string, limit: number = 10) => {
       {
         revalidateOnFocus: false,
         shouldRetryOnError: false,
+        dedupingInterval: Infinity,
         onSuccess: (fetchedPages) => {
           const allMessages = fetchedPages
             .flatMap((page) => page.messages)

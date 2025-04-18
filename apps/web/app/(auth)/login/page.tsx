@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuth } from "@/hooks/auth/useAuth";
 import { Logo } from "@/components/landing/logo";
+import useAuthStore from "@/store/useAuthStore";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -26,16 +28,31 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useAuth();
+  const { login, loading, isLoggedIn } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/chat");
+    }
+  }, [isLoggedIn, router]);
+
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
-    await login(values);
+    try {
+      await login(values.email, values.password);
+      router.push("/chat");
+    } catch (error: any) {
+      const err = error?.response?.data?.message;
+      toast.error(err);
+    }
   };
+
+  if (isLoggedIn) return null;
 
   return (
     <section className="flex min-h-dvh  px-4 py-8 md:py-16 dark:bg-transparent">
@@ -119,8 +136,12 @@ export default function LoginPage() {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
+              {/* <Button type="submit" className="w-full">
+                "Sign In"
+              </Button> */}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
                   <div className="flex items-center justify-center">
                     <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2"></div>
                     Signing in...

@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/hooks/auth/useAuth";
+
 import { generateAvatarUrl } from "@/lib/utils";
+import useAuthStore from "@/store/useAuthStore";
 import useUserStatusStore from "@/store/useUserStatusStore";
 import { Chat } from "@/types";
 
@@ -15,7 +16,7 @@ export const ChatAvatar = ({
   className = "",
   size = "normal",
 }: ChatAvatarProps) => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { getUserStatus } = useUserStatusStore();
 
   const otherUser = chat?.participants.find((p) => p.userId.id !== user?._id);

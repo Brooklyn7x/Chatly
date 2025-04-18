@@ -18,15 +18,7 @@ const ChatMetadata = ({ chat, isGroup, onEditChatInfo }: ChatMetadataProps) => {
   const chatName = chat?.name || "Chat";
   return (
     <div className="p-5 flex flex-col items-center">
-      <div className="relative size-20 rounded-full mb-3">
-        {/* <Image
-          src={generateAvatarUrl(chatName)}
-          alt={chatName}
-          height={80}
-          width={80}
-          className="aspect-square rounded-full"
-        /> */}
-
+      <div className="relative size-20 rounded-full mb-5">
         <div className="h-24 w-24 flex items-center justify-center border rounded-full py-4">
           NA
         </div>
@@ -35,7 +27,7 @@ const ChatMetadata = ({ chat, isGroup, onEditChatInfo }: ChatMetadataProps) => {
           <div className="absolute h-3 w-3 rounded-full bg-green-400 bottom-1 right-1 border-2 border-card" />
         )}
       </div>
-      <h3 className="text-lg font-semibold">{chatName}</h3>
+      <h3 className="text-lg text-center font-semibold">{chatName}</h3>
       <p className="text-sm text-muted-foreground">
         {isGroup
           ? `Group · ${chat?.participants?.length || 0} members`
