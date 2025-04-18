@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { Search, UserPlus, UserRound } from "lucide-react";
-import Image from "next/image";
+import { toast } from "sonner";
+import { useAddNewContact, useSearchUser } from "@/hooks/user/useContact";
+import { User } from "@/types";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Loading } from "../ui/loading";
-import { toast } from "sonner";
-import { useAddNewContact, useSearchUser } from "@/hooks/user/useContact";
-import { User } from "@/types";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
+import { Button } from "@/components/ui/button";
 
 interface AddNewContactProps {
   open: boolean;

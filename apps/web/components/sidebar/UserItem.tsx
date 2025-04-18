@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
-import { UserAvatar } from "../shared/UserAvatar";
+
 import useUserStatusStore from "@/store/useUserStatusStore";
+import { UserAvatar } from "../common/UserAvatar";
 
 interface UserItemProps {
   user: User;

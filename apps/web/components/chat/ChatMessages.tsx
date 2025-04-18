@@ -6,14 +6,14 @@ import { useFetchMessages } from "@/hooks/message/useMessage";
 import { useChatStore } from "@/store/useChatStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMessageStore } from "@/store/useMessageStore";
-import { useAuth } from "@/hooks/auth/useAuth";
+import useAuthStore from "@/store/useAuthStore";
 import { Message } from "@/types";
 
 const ChatMessages = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const userId = user?.id;
 
   const activeChatId = useChatStore((state) => state.activeChatId);

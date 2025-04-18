@@ -1,48 +1,58 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
 
-export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+const apiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api",
   withCredentials: true,
 });
 
-apiClient.interceptors.request.use(
-  (config) => {
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  async (error: AxiosError) => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config;
 
-    const originalRequestWithRetry = originalRequest as AxiosRequestConfig & {
-      _retry?: boolean;
-    };
-
     if (
-      error.response?.status === 401 &&
-      !originalRequestWithRetry._retry &&
-      !originalRequest?.url?.includes("/api/auth")
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/refresh") &&
+      !originalRequest.url.includes("/login") &&
+      !originalRequest.url.includes("/register")
     ) {
-      originalRequestWithRetry._retry = true;
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => apiClient(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}auth/refresh-token`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (!originalRequest) {
-          return Promise.reject(new Error("Original request is undefined"));
-        }
+        await apiClient.post("/auth/refresh");
+        processQueue(null);
+        isRefreshing = false;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
+        isRefreshing = false;
+
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
@@ -50,3 +60,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export default apiClient;

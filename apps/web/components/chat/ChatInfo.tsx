@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import { Button } from "../../ui/button";
-import { ScrollArea } from "../../ui/scroll-area";
+import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { useChatStore } from "@/store/useChatStore";
@@ -10,7 +10,7 @@ import ChatSetting from "./ChatSetting";
 import ChatMembers from "./ChatMembers";
 import SharedMedia from "./SharedMedia";
 import ChatMetadata from "./ChatMetadata";
-import EditChatInfo from "../../modal/EditChatInfo";
+import EditChatInfo from "../modal/EditChatInfo";
 
 const ChatInfo = () => {
   const [isChatInfoModal, setIsChatInfoModal] = useState(false);

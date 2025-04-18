@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { useFetchContacts } from "@/hooks/user/useContact";
 import { Contact } from "@/types";
-import { UserAvatar } from "../shared/UserAvatar";
-import AddNewContact from "./AddNewContact";
+import { UserAvatar } from "../common/UserAvatar";
+import AddNewContact from "../sidebar/AddNewContact";
 
 interface ContactPageProps {
   onClose: () => void;

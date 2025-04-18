@@ -11,9 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { UserAvatar } from "../shared/UserAvatar";
+
 import { useFetchContacts } from "@/hooks/user/useContact";
-import { Participant } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
 import {
   Drawer,
@@ -22,6 +21,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
+import { UserAvatar } from "../common/UserAvatar";
 
 interface AddMemberDailogProps {
   open: boolean;
@@ -129,7 +129,7 @@ const AddMemberDialog = ({
       <Button onClick={() => onOpenChange(true)}>Add Member</Button>
       {isMobile ? (
         <Drawer open={open} onOpenChange={onOpenChange}>
-          <DrawerContent className="p-5 max-h-[80vh]" >
+          <DrawerContent className="p-5 max-h-[80vh]">
             <DrawerHeader>
               <DrawerTitle>Add Member</DrawerTitle>
             </DrawerHeader>

@@ -18,8 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { useMessage } from "@/hooks/message/useMessage";
 import { Message } from "@/types";
-import { format } from "date-fns";
-import { formatDate } from "@/utils";
 
 interface MessageProps {
   message: Message;
@@ -45,7 +43,10 @@ const MessageItem = ({ message, isOwn }: MessageProps) => {
 
   const time = useMemo(() => {
     if (!updatedAt) return "";
-    return formatDate(updatedAt);
+    return new Date(updatedAt).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }, [updatedAt]);
 
   const handleEditMessage = () => {

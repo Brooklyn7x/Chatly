@@ -1,5 +1,4 @@
-import { apiClient } from "./apiClient";
-
+import apiClient from "./apiClient";
 interface createChatData {
   type: string;
   participants: { userId: string }[];

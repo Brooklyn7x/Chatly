@@ -35,7 +35,6 @@ export default function RootLayout({
             }}
           >
             <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-
             <main>{children}</main>
           </SWRConfig>
         </ThemeProvider>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import Contacts from "../../sidebar/Contacts";
-import CreateGroupChat from "../../sidebar/CreateGroup";
-import CreatePrivateChat from "../../sidebar/CreatePrivateChat";
+import Contacts from "../sidebar/Contacts";
+import CreateGroupChat from "./CreateGroup";
+import CreatePrivateChat from "./CreatePrivateChat";
 // import Setting from "../../sidebar/Setting";
 import { useChatStore } from "@/store/useChatStore";
 import { useFetchChats } from "@/hooks/chat/useChats";

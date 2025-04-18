@@ -18,7 +18,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Logo } from "@/components/landing/logo";
-import { useAuth } from "@/hooks/auth/useAuth";
+
+import useAuthStore from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const signupSchema = z.object({
   firstname: z.string().min(2, "First name is required"),
@@ -30,7 +33,8 @@ const signupSchema = z.object({
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, isLoading } = useAuth();
+  const { register, loading } = useAuthStore();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -44,7 +48,14 @@ export default function SignupPage() {
   });
 
   const handleSubmit = async (values: z.infer<typeof signupSchema>) => {
-    await register(values);
+    try {
+      await register(values.username, values.email, values.password);
+      router;
+      router.push("/chat");
+    } catch (error: any) {
+      const err = error.message;
+      toast.error(err);
+    }
   };
 
   return (
@@ -214,8 +225,8 @@ export default function SignupPage() {
                 )}
               />
 
-              <Button className="w-full" type="submit" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
+              <Button className="w-full" type="submit" disabled={loading}>
+                {loading ? "Creating account..." : "Create Account"}
               </Button>
             </Form>
           </div>

@@ -3,20 +3,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, UserPlus, X } from "lucide-react";
-import { GroupDetailsForm } from "../form/GroupDetailsForm";
+import { GroupDetailsForm } from "../modal/GroupDetailsForm";
 import { StepContainer } from "../modal/StepContainer";
-import { UserList } from "../user/UserList";
-import { SelectUserList } from "../user/SelectedUserList";
-import { SearchInput } from "../shared/SearchInput";
-import { NavigationButton } from "../shared/NavigationButton";
-import FloatinButton from "../shared/FloatinButton";
+
 import { Loading } from "../ui/loading";
 import { useFetchContacts, useSearchUser } from "@/hooks/user/useContact";
 import { User } from "@/types";
 import { useSocketStore } from "@/store/useSocketStore";
 import { Button } from "../ui/button";
+
+import FloatinButton from "../modal/FloatingButton";
+import { SearchInput } from "../modal/SearchInput";
+import { NavigationButton } from "../modal/NavigationButton";
 import AddNewContact from "./AddNewContact";
-import { useAuth } from "@/hooks/auth/useAuth";
+import { UserList } from "../modal/UserList";
+import { SelectUserList } from "../modal/SelectedUserList";
+import useAuthStore from "@/store/useAuthStore";
 
 interface CreateGroupChatProps {
   onClose: () => void;
@@ -32,7 +34,7 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
   );
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { users } = useSearchUser(searchQuery);
   const { contacts, isLoading } = useFetchContacts();
 
@@ -157,7 +159,6 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
             <header className="flex items-center justify-between  gap-4 mb-8">
-              <NavigationButton onClick={onClose} icon={X} />
               <h2 className="text-2xl font-semibold">
                 Add Members ({selectedUsers.length})
               </h2>
