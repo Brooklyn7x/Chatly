@@ -105,6 +105,7 @@ export const useFetchMessages = (chatId: string, limit: number = 10) => {
       {
         revalidateOnFocus: false,
         shouldRetryOnError: false,
+        dedupingInterval: Infinity,
         onSuccess: (fetchedPages) => {
           const allMessages = fetchedPages
             .flatMap((page) => page.messages)
