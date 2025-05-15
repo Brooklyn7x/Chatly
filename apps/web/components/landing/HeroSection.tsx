@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ArrowRight, Menu, Rocket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./logo";
+import Image from "next/image";
 
 const menuItems = [
   { name: "Features", href: "#features" },
@@ -33,7 +34,12 @@ export default function HeroSection() {
                   aria-label="home"
                   className="flex items-center space-x-2"
                 >
-                  <Logo />
+                  <Image
+                    src="/new-logo.svg"
+                    alt="Chatly Logo"
+                    width={80}
+                    height={80}
+                  />
                 </Link>
                 <button
                   onClick={() => setMenuState(!menuState)}

@@ -22,6 +22,7 @@ import { Logo } from "@/components/landing/logo";
 import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const signupSchema = z.object({
   firstname: z.string().min(2, "First name is required"),
@@ -67,7 +68,12 @@ export default function SignupPage() {
         <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
           <div className="text-center">
             <Link href="/" aria-label="go home" className="mx-auto block w-fit">
-              <Logo />
+              <Image
+                width={80}
+                height={40}
+                src="/new-logo.svg"
+                alt="Chatly Logo"
+              />
             </Link>
             <h1 className="text-title mb-1 mt-4 text-xl font-semibold">
               Create a Chatly Account

@@ -8,10 +8,13 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 export const metadata: Metadata = {
-  icons: "/logo.svg",
   title: "Chatly",
   description: "Chatting with fun!",
-  
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

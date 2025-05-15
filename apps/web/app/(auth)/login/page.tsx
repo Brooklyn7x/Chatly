@@ -20,6 +20,7 @@ import { Logo } from "@/components/landing/logo";
 import useAuthStore from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -63,7 +64,12 @@ export default function LoginPage() {
         <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
           <div className="text-center">
             <Link href="/" aria-label="go home" className="mx-auto block w-fit">
-              <Logo />
+              <Image
+                width={80}
+                height={40}
+                src="/new-logo.svg"
+                alt="Chatly Logo"
+              />
             </Link>
             <h1 className="mb-1 mt-4 text-xl font-semibold">
               Sign In to Chatly
