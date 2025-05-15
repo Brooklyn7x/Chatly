@@ -5,8 +5,8 @@ import Image from "next/image";
 interface GroupDetailsFormProps {
   name: string;
   previewImage?: string;
-  onNameChange: (name: string) => void;
-  onImageChange: (file: any) => void;
+  onNameChange: (_name: string) => void;
+  onImageChange: (_file: any) => void;
 }
 
 export const GroupDetailsForm = ({

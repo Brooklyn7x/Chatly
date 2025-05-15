@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useAuthStore from "@/store/useAuthStore";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -45,17 +46,18 @@ const Setting = ({ onClose }: SettingProps) => {
 
   return (
     <div className="absolute inset-0 w-full h-full flex flex-col md:p-2">
-      <div className="flex flex-col p-6 bg-card rounded-lg shadow-lg h-full space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Settings</h1>
+      <div className="flex flex-col p-4 bg-card rounded-lg shadow-lg h-full space-y-8">
+        <div className="flex items-center gap-4">
           <Button
-            variant="ghost"
-            size={"icon"}
+            variant="outline"
+            size="icon"
             onClick={onClose}
             className="rounded-full border"
           >
-            ✕
+            <ArrowLeft className="h-5 w-5" />
           </Button>
+
+          <h1 className="text-2xl font-bold">Settings</h1>
         </div>
 
         <div className="space-y-8">
@@ -122,8 +124,12 @@ const Setting = ({ onClose }: SettingProps) => {
               >
                 Delete Account
               </Button>
-              <Button variant="outline" onClick={handleLogout} disabled={loading}>
-               {loading ? "Logging out..." : "Logout"}
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                disabled={loading}
+              >
+                {loading ? "Logging out..." : "Logout"}
               </Button>
             </div>
           </div>

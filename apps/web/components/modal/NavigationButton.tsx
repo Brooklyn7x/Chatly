@@ -1,21 +1,22 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
-interface NavigationButtonProps {
-  onClick: () => void;
+interface NavigationButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: LucideIcon;
-  disabled?: boolean;
+  className?: string;
   isActive?: boolean;
 }
 export function NavigationButton({
-  onClick,
   icon: Icon,
   isActive,
-  disabled,
+  className,
+  ...props
 }: NavigationButtonProps) {
   return (
     <button
-      onClick={onClick}
+      type="button"
       className={cn(
         "h-10 px-2",
         "flex items-center justify-center",
@@ -23,9 +24,11 @@ export function NavigationButton({
         "text-muted-foreground",
         "transition-all duration-200",
         "hover:bg-muted/90 active:bg-muted/50",
-        disabled && "opacity-50 pointer-events-none",
-        isActive && "bg-muted/50"
+        props.disabled && "opacity-50 pointer-events-none",
+        isActive && "bg-muted/50",
+        className
       )}
+      {...props}
     >
       <Icon
         className={cn(

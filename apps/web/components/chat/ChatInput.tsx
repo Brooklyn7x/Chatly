@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useMessage } from "@/hooks/message/useMessage";
 import { useChatStore } from "@/store/useChatStore";
-import { Paperclip, Send, Smile } from "lucide-react";
+import { Send, Smile } from "lucide-react";
 import { useTyping } from "@/hooks/message/useTyping";
 
 import {
@@ -11,17 +12,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import data from "@emoji-mart/data";
-import EmojiPicker from "@emoji-mart/react";
+
+const EmojiPicker = dynamic(() => import("@emoji-mart/react"), {
+  ssr: false,
+});
 
 const ChatInput = () => {
   const [message, setMessage] = useState<string>("");
   const textareaRef = useRef<HTMLInputElement>(null);
+  const [emojiData, setEmojiData] = useState<any>(null);
 
   const activeChatId = useChatStore((state) => state.activeChatId);
 
   const { sendMessage } = useMessage();
   const { startTyping } = useTyping(activeChatId || "");
+
+  useEffect(() => {
+    import("@emoji-mart/data").then((mod) => {
+      setEmojiData(mod.default || mod);
+    });
+  }, []);
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     startTyping();
@@ -82,17 +92,19 @@ const ChatInput = () => {
             align="start"
             side="top"
           >
-            <EmojiPicker
-              data={data}
-              onEmojiSelect={(emoji: any) => {
-                handleEmojiSend(emoji);
-              }}
-              navPosition="top"
-              previewPosition="none"
-              skinTonePosition="none"
-              searchPosition="sticky"
-              emojiSize={24}
-            />
+            {emojiData && (
+              <EmojiPicker
+                data={emojiData}
+                onEmojiSelect={(emoji: any) => {
+                  handleEmojiSend(emoji);
+                }}
+                navPosition="top"
+                previewPosition="none"
+                skinTonePosition="none"
+                searchPosition="sticky"
+                emojiSize={24}
+              />
+            )}
           </PopoverContent>
         </Popover>
 

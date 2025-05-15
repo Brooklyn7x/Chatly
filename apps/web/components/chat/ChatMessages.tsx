@@ -99,11 +99,11 @@ const ChatMessages = () => {
               </div>
             </div>
           ) : messages?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 text-center">
-              <p className="text-muted-foreground">No messages yet</p>
-              <p className="text-sm text-muted-foreground mt-1">
+            <div className="flex flex-col items-center justify-center text-center">
+              <span className="text-muted-foreground">No messages yet</span>
+              <span className="text-sm text-muted-foreground mt-1">
                 Send a message to start the conversation
-              </p>
+              </span>
             </div>
           ) : (
             messages?.map((m, index) => (

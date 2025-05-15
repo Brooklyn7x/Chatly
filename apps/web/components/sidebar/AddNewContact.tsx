@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, UserPlus, UserRound } from "lucide-react";
+import { ArrowLeft, Search, UserPlus, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAddNewContact, useSearchUser } from "@/hooks/user/useContact";
 import { User } from "@/types";
@@ -41,6 +41,16 @@ const AddNewContact = ({ open, onOpenChange }: AddNewContactProps) => {
       <DialogContent className="sm:max-w-[500px] max-h-[80vh] h-full pointer-events-auto flex flex-col rounded-xl">
         <DialogHeader className="p-2">
           <div className="flex items-center justify-between">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 px-3 rounded-full"
+              onClick={() => onOpenChange(false)}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+
+            
             <DialogTitle className="text-xl font-bold">
               Add New Contact
             </DialogTitle>

@@ -82,7 +82,21 @@ const CreatePrivateChat = ({ onClose }: PrivateChatProps) => {
     <div className="absolute inset-0 bg-card">
       <div className="relative h-full w-full flex flex-col">
         <div className="h-16 flex items-center gap-4 p-4 border-b bg-card/50 backdrop-blur-sm">
-          <NavigationButton onClick={onClose} icon={ArrowLeft} />
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full p-2 hover:bg-primary/10 hover:text-primary transition-colors"
+            title="Close"
+            onClick={() => {
+              onClose();
+              setSelectedUserId(null);
+              setSearchQuery("");
+              setAddContact(false);
+            }}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+
           <div className="flex-1 mx-2">
             <SearchInput
               onChange={handleSearch}

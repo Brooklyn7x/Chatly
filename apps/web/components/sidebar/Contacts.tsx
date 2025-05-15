@@ -7,6 +7,7 @@ import { useFetchContacts } from "@/hooks/user/useContact";
 import { Contact } from "@/types";
 import { UserAvatar } from "../common/UserAvatar";
 import AddNewContact from "../sidebar/AddNewContact";
+import { ArrowLeft } from "lucide-react";
 
 interface ContactPageProps {
   onClose: () => void;
@@ -36,16 +37,16 @@ const Contacts = ({ onClose }: ContactPageProps) => {
     <>
       <div className="absolute inset-0 overflow-y-auto bg-card">
         <div className="p-4 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl text-center font-semibold">Contacts</h2>
+          <div className="flex items-center gap-4">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
               onClick={onClose}
               className="rounded-full border"
             >
-              ✕
+              <ArrowLeft className="h-5 w-5" />
             </Button>
+            <h2 className="text-xl text-center font-semibold">Contacts</h2>
           </div>
 
           <Card className="border-none shadow-lg">

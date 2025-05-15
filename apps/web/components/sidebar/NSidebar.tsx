@@ -1,13 +1,22 @@
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
-import Contacts from "../sidebar/Contacts";
-import CreateGroupChat from "./CreateGroup";
-import CreatePrivateChat from "./CreatePrivateChat";
-// import Setting from "../../sidebar/Setting";
 import { useChatStore } from "@/store/useChatStore";
 import { useFetchChats } from "@/hooks/chat/useChats";
 import SidebarHeader from "./SidebarHeader";
 import ChatList from "./ChatList";
-import Setting from "./Setting";
+
+const Setting = dynamic(() => import("./Setting"), {
+  ssr: false,
+});
+const Contacts = dynamic(() => import("./Contacts"), {
+  ssr: false,
+});
+const CreateGroup = dynamic(() => import("./CreateGroup"), {
+  ssr: false,
+});
+const CreatePrivateChat = dynamic(() => import("./CreatePrivateChat"), {
+  ssr: false,
+});
 
 const NewSidebar = () => {
   const [isPrivateModal, setIsPrivateModal] = useState(false);
@@ -74,9 +83,7 @@ const NewSidebar = () => {
       {isPrivateModal && (
         <CreatePrivateChat onClose={() => setIsPrivateModal(false)} />
       )}
-      {isGroupModal && (
-        <CreateGroupChat onClose={() => setIsGroupModal(false)} />
-      )}
+      {isGroupModal && <CreateGroup onClose={() => setIsGroupModal(false)} />}
       {isContactModal && <Contacts onClose={() => setIsContactModal(false)} />}
       {isSettingModal && <Setting onClose={() => setIsSettingModal(false)} />}
     </div>

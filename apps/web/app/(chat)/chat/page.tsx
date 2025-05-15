@@ -31,7 +31,8 @@ export default function MainPage() {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-dvh bg-background">
-        <div className="space-y-4 w-full max-w-md">
+        <div className="space-y-4 w-full mx-auto max-w-md p-4"></div>
+          <div className="flex items-center justify-center">
           <Skeleton className="h-12 w-full rounded-lg" />
           <Skeleton className="h-8 w-3/4 rounded-lg" />
           <Skeleton className="h-8 w-1/2 rounded-lg" />
