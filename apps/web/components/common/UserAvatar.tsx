@@ -22,7 +22,7 @@ export const UserAvatar = ({
   className,
   alt,
 }: UserAvatarProps) => {
-  const { class: sizeClass, size: imageSize } = sizeConfig[size];
+  const { class: sizeClass } = sizeConfig[size];
   const defaultAvatar = "https://api.dicebear.com/9.x/avataaars/svg?seed=Aneka";
 
   return (

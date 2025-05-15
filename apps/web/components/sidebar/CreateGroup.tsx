@@ -159,6 +159,19 @@ const CreateGroupChat = ({ onClose }: CreateGroupChatProps) => {
         <StepContainer isActive={step === "members"} step={step}>
           <div className="flex flex-col h-full">
             <header className="flex items-center justify-between  gap-4 mb-8">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full p-2 hover:bg-primary/10 hover:text-primary transition-colors"
+                title="Close"
+                onClick={() => {
+                  onClose();
+                  resetForm();
+                }}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+
               <h2 className="text-2xl font-semibold">
                 Add Members ({selectedUsers.length})
               </h2>

@@ -1,12 +1,7 @@
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
+import HeaderButton from "./HeaderButton";
+import Image from "next/image";
 
 interface SidebarHeaderProps {
   search: string | null;
@@ -28,9 +23,9 @@ const SidebarHeader = ({
   return (
     <div className="p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Chatly</h2>
+        <Image src="/new-logo.svg" alt="Chatly Logo" width={80} height={80} />
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant={"outline"} className="rounded-full h-9 w-9">
               <Plus className="text-muted-foreground" />
@@ -50,7 +45,14 @@ const SidebarHeader = ({
               Settings
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
+
+        <HeaderButton
+          onContactModalOpen={onContactModalOpen}
+          onGroupModalOpen={onGroupModalOpen}
+          onPrivateModalOpen={onPrivateModalOpen}
+          onSettingModalOpen={onSettingModalOpen}
+        />
       </div>
 
       <div className="mt-5 relative">

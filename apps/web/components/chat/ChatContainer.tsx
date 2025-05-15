@@ -1,11 +1,17 @@
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import ChatArea from "./ChatArea";
-import ChatInfo from "./ChatInfo";
 import EmptyChat from "./EmptyChat";
 import { useChatStore } from "@/store/useChatStore";
+import { useChatPanelStore } from "@/store/useChatPanelStore";
+
+const ChatInfo = dynamic(() => import("./ChatInfo"), {
+  ssr: false,
+});
 
 const ChatContainer = () => {
   const { activeChatId } = useChatStore();
+  const { isOpen } = useChatPanelStore();
 
   return (
     <div
@@ -14,7 +20,7 @@ const ChatContainer = () => {
       {activeChatId ? (
         <div className={cn("flex-1 overflow-auto")}>
           <ChatArea />
-          <ChatInfo />
+          {isOpen && <ChatInfo />}
         </div>
       ) : (
         <EmptyChat />

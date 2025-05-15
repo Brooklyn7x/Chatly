@@ -52,43 +52,49 @@ const ChatMembers = ({ chat }: ChatMembersProps) => {
         Participants
       </h4>
       <div className="space-y-3">
-        {chat.participants.map((participant) => (
-          <div
-            key={participant.id}
-            className="flex items-center justify-between group hover:bg-muted/50 p-2 rounded-md transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <ChatAvatar chat={chat} />
-              <div>
-                <span className="text-sm font-medium block">
-                  {participant.userId.username}
-                </span>
+        {chat.participants.map((participant) => {
+          const userId = participant.userId._id;
+          const isRemoving = removingUserId === userId;
+          return (
+            <div
+              key={participant.id}
+              className="flex items-center justify-between group hover:bg-muted/50 p-2 rounded-md transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <ChatAvatar chat={chat} />
+                <div>
+                  <span className="text-sm font-medium block">
+                    {participant.userId.username}
+                  </span>
 
-                {participant.role === "admin" && (
-                  <span className="text-muted-foreground text-sm">Admin</span>
-                )}
+                  {participant.role === "admin" && (
+                    <span className="text-muted-foreground text-sm">Admin</span>
+                  )}
+                </div>
               </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <MoreVertical size={14} className="text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => handleRemoveUser(userId)}
+                    disabled={loading &&isRemoving}
+                    className="cursor-pointer"
+                  >
+                    {isRemoving ? "Removing..." : "Remove"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <MoreVertical size={14} className="text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => handleRemoveUser(participant.userId._id)}
-                >
-                  Remove
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

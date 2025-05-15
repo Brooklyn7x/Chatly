@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   icons: "/logo.svg",
   title: "Chatly",
   description: "Chatting with fun!",
+  
 };
 
 export default function RootLayout({

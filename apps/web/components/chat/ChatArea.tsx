@@ -7,6 +7,7 @@ import { useJoinChatSocket } from "@/hooks/chat/useJoinSocket";
 import { useMessageSocket } from "@/hooks/message/useMessageSocket";
 
 const ChatArea = () => {
+  
   const chatId = useChatStore((state) => state.activeChatId);
   useJoinChatSocket(chatId || "");
   useMessageSocket();

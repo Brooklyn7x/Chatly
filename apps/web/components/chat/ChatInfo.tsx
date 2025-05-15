@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
@@ -6,11 +7,34 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useChatPanelStore } from "@/store/useChatPanelStore";
 import { useChatStore } from "@/store/useChatStore";
 
-import ChatSetting from "./ChatSetting";
-import ChatMembers from "./ChatMembers";
-import SharedMedia from "./SharedMedia";
-import ChatMetadata from "./ChatMetadata";
-import EditChatInfo from "../modal/EditChatInfo";
+// import ChatSetting from "./ChatSetting";
+// import ChatMembers from "./ChatMembers";
+// import SharedMedia from "./SharedMedia";
+// import ChatMetadata from "./ChatMetadata";
+// import EditChatInfo from "../modal/EditChatInfo";
+
+
+const ChatSetting = dynamic(() => import("./ChatSetting"), {
+  ssr: false,
+});
+
+
+const ChatMembers = dynamic(() => import("./ChatMembers"), {
+  ssr: false,
+});
+const SharedMedia = dynamic(() => import("./SharedMedia"), {
+  ssr: false,
+});
+const ChatMetadata = dynamic(() => import("./ChatMetadata"), {
+  ssr: false,
+});
+const EditChatInfo = dynamic(() => import("../modal/EditChatInfo"), {
+  ssr: false,
+});
+
+
+
+
 
 const ChatInfo = () => {
   const [isChatInfoModal, setIsChatInfoModal] = useState(false);

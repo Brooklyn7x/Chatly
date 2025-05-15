@@ -77,7 +77,7 @@ const ChatItem = ({
         <div className="flex items-center justify-between text-muted-foreground">
           <div className="flex items-center gap-2">
             {/* <Check size={16} /> */}
-            <span className="text-sm truncate">"No messages yet"</span>
+            <span className="text-sm truncate">No messages yet</span>
           </div>
           {isPinned && <PinIcon size={14} />}
         </div>
