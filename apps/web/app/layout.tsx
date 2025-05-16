@@ -6,7 +6,7 @@ import { SWRConfig } from "swr";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
-
+import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: "Chatly",
   description: "Chatting with fun!",
@@ -39,7 +39,10 @@ export default function RootLayout({
             }}
           >
             <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-            <main>{children}</main>
+            <main>
+              {children}
+              <Analytics />
+            </main>
           </SWRConfig>
         </ThemeProvider>
       </body>
