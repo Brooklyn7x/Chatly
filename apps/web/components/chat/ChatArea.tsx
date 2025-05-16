@@ -12,7 +12,7 @@ const ChatArea = () => {
   useJoinChatSocket(chatId || "");
   useMessageSocket();
 
-  if (!chatId) return;
+  if (!chatId) return <div>No active chat</div>
 
   return (
     <div className="inset-0 overflow-hidden h-full w-full md:border md:rounded-lg bg-card text-card-foreground flex flex-col">

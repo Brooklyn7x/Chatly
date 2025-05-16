@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { useFetchContacts } from "@/hooks/user/useContact";
@@ -8,12 +8,14 @@ import { Contact } from "@/types";
 import { UserAvatar } from "../common/UserAvatar";
 import AddNewContact from "../sidebar/AddNewContact";
 import { ArrowLeft } from "lucide-react";
+import { useChatStore } from "@/store/useChatStore";
 
 interface ContactPageProps {
   onClose: () => void;
 }
 
 const Contacts = ({ onClose }: ContactPageProps) => {
+  const { setActiveChat } = useChatStore();
   const [isAddContactOpen, setIsAddContactOpen] = useState(false);
   const { contacts, isLoading, error } = useFetchContacts();
 
@@ -69,7 +71,13 @@ const Contacts = ({ onClose }: ContactPageProps) => {
                           {contact.email}
                         </p>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          console.log("Message clicked");
+                        }}
+                      >
                         Message
                       </Button>
                     </div>

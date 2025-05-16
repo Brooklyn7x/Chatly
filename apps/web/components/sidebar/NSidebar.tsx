@@ -27,7 +27,7 @@ const NewSidebar = () => {
   const [pinnedChats, setPinnedChats] = useState<Set<string>>(new Set());
 
   const chats = useChatStore((state) => state.chats);
-  const { isLoading, loadMore, hasMore } = useFetchChats();
+  const { isLoading, loadMore, hasMore, error } = useFetchChats();
 
   const togglePinChat = (chatId: string, event: React.MouseEvent) => {
     event.stopPropagation();
