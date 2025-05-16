@@ -1,8 +1,9 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+
 
 export default function Error({
   error,
