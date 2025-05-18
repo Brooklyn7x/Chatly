@@ -12,7 +12,7 @@ interface SettingProps {
 
 const Setting = ({ onClose }: SettingProps) => {
   const router = useRouter();
-  const { user, logout, loading } = useAuthStore();
+  const { user, logout, isLoading } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState(user?.username);
   const [status, setStatus] = useState(user?.status);
@@ -127,9 +127,9 @@ const Setting = ({ onClose }: SettingProps) => {
               <Button
                 variant="outline"
                 onClick={handleLogout}
-                disabled={loading}
+                disabled={isLoading}
               >
-                {loading ? "Logging out..." : "Logout"}
+                {isLoading ? "Logging out..." : "Logout"}
               </Button>
             </div>
           </div>

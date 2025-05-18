@@ -1,15 +1,10 @@
 "use client";
 
+import AuthProvider from "@/components/provider/AuthProvider";
 import React from "react";
 
-import AuthInitializer from "@/components/provider/auth-provider";
-
 const ChatLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <AuthInitializer>{children}</AuthInitializer>
-    </>
-  );
+  return <AuthProvider>{children}</AuthProvider>;
 };
 
 export default ChatLayout;

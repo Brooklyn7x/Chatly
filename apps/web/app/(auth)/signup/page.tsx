@@ -34,7 +34,7 @@ const signupSchema = z.object({
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, loading } = useAuthStore();
+  const { register, isLoading } = useAuthStore();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -231,8 +231,8 @@ export default function SignupPage() {
                 )}
               />
 
-              <Button className="w-full" type="submit" disabled={loading}>
-                {loading ? "Creating account..." : "Create Account"}
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                {isLoading ? "Creating account..." : "Create Account"}
               </Button>
             </Form>
           </div>
