@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Logo } from "@/components/landing/logo";
+
 import useAuthStore from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -28,9 +28,10 @@ const loginSchema = z.object({
 });
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const { login, loading, isLoggedIn } = useAuthStore();
   const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const { login, isAuthenticated, isLoading } = useAuthStore();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -38,10 +39,15 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    if (isLoggedIn) {
-      router.replace("/chat");
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/chat");
     }
-  }, [isLoggedIn, router]);
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
@@ -53,7 +59,13 @@ export default function LoginPage() {
     }
   };
 
-  if (isLoggedIn) return null;
+  if (!isMounted) {
+    return null;
+  }
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <section className="flex min-h-dvh  px-4 py-8 md:py-16 dark:bg-transparent">
@@ -146,8 +158,8 @@ export default function LoginPage() {
                 "Sign In"
               </Button> */}
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2"></div>
                     Signing in...

@@ -6,18 +6,18 @@ import ChatContainer from "@/components/chat/ChatContainer";
 import Sidebar from "@/components/sidebar/Sidebar";
 import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MainPage() {
+  const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
-  const { isLoggedIn, loading } = useAuthStore();
-  const { connect, disconnect } = useSocketStore();
 
   useEffect(() => {
-    if (!loading && !isLoggedIn) {
+    if (!isLoading && !isAuthenticated) {
       router.replace("/login");
     }
-  }, [loading, isLoggedIn, router]);
+  }, [isAuthenticated, router]);
+
+  const { connect, disconnect } = useSocketStore();
 
   useEffect(() => {
     connect();
@@ -28,22 +28,11 @@ export default function MainPage() {
 
   useUserStatusSocket();
 
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center h-dvh bg-background">
-        <div className="space-y-4 w-full mx-auto max-w-md p-4"></div>
-          <div className="flex items-center justify-center">
-          <Skeleton className="h-12 w-full rounded-lg" />
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <Skeleton className="h-8 w-1/2 rounded-lg" />
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-          <Skeleton className="h-8 w-1/2 rounded-lg" />
-          <Skeleton className="h-8 w-3/4 rounded-lg" />
-        </div>
-      </div>
-    );
-  if (!isLoggedIn) return null;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="h-dvh max-w-8xl mx-auto bg-background/60">
