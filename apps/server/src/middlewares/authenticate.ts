@@ -19,7 +19,7 @@ export const authenticate = (
       process.env.JWT_ACCESS_SECRET as string
     ) as jwt.JwtPayload;
 
-    req.user = { id: decoded.id as string };
+    req.user  = { id: decoded.id as string } as any;
 
     next();
   } catch (error) {

@@ -2,9 +2,11 @@ import mongoose, { Schema, Document } from "mongoose";
 import { UserStatus } from "../types/user";
 
 export interface UserDocument extends Document {
+  id: string;
+  googleId?: string;
   username: string;
   email: string;
-  password: string;
+  password?: string;
   profilePicture: string;
   status: UserStatus;
   isOnline: boolean;
@@ -14,6 +16,11 @@ export interface UserDocument extends Document {
 
 const userSchema = new Schema<UserDocument>(
   {
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     username: {
       type: String,
       required: true,
@@ -29,7 +36,7 @@ const userSchema = new Schema<UserDocument>(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       minlength: 7,
     },
     profilePicture: {

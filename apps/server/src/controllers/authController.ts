@@ -8,6 +8,8 @@ import {
   hashPassword,
   verifyToken,
 } from "../utils/helper";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 import { AppError } from "../utils/error";
 
@@ -16,8 +18,6 @@ const sanitizeUser = (user: any) => {
     user.toObject();
   return rest;
 };
-
-const domain = [];
 
 export const register = async (
   req: Request,
@@ -152,3 +152,80 @@ export const refreshToken = async (
     next(error);
   }
 };
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL as string,
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+          const newUser = new User({
+            googleId: profile.id,
+            username: profile.displayName,
+            email: profile.emails?.[0]?.value,
+          });
+          await newUser.save();
+          return done(null, newUser);
+        }
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+
+export const googleLogin = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+
+export const googleCallback = [
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/login",
+  }),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user as any;
+      if (!user) {
+        return res.status(401).json({ message: "Authentication failed" });
+      }
+
+      const accessToken = generateAccessToken(user.id);
+      const refreshToken = generateRefreshToken(user.id);
+      const refreshTokenExpirySeconds = 7 * 24 * 60 * 60;
+
+      const isProduction = process.env.NODE_ENV === "production";
+      const cookieDomain = getCookieDomain(req.hostname);
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: isProduction,
+        secure: isProduction,
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+        domain: cookieDomain,
+        path: "/",
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: isProduction,
+        secure: isProduction,
+        sameSite: "strict",
+        maxAge: refreshTokenExpirySeconds * 1000,
+        domain: cookieDomain,
+        path: "/",
+      });
+
+      res.redirect(
+        process.env.CLIENT_REDIRECT_URL || "http://localhost:3000/chat"
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+];
