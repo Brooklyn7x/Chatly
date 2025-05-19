@@ -8,10 +8,10 @@ import cluster from "cluster";
 
 const PORT = parseInt(process.env.PORT || "8000");
 const numCPUs = os.cpus().length;
-
+const useClustering = process.env.USE_CLUSTERING === "true";
 console.log(`Number of CPUs: ${numCPUs}`);
 
-if (cluster.isPrimary) {
+if (useClustering && cluster.isPrimary) {
   console.log(`Master ${process.pid} is running`);
 
   for (let i = 0; i < numCPUs; i++) {

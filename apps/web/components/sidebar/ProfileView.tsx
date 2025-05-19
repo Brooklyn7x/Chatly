@@ -13,7 +13,6 @@ export const ProfileView = ({ onBack }: { onBack: () => void }) => {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log("Profile updated:", { name, avatar });
   };
 
   return (

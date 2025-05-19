@@ -17,7 +17,6 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Logo } from "@/components/landing/logo";
 
 import useAuthStore from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
@@ -34,7 +33,7 @@ const signupSchema = z.object({
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, isLoading } = useAuthStore();
+  const { register, isLoading, error } = useAuthStore();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -49,13 +48,15 @@ export default function SignupPage() {
   });
 
   const handleSubmit = async (values: z.infer<typeof signupSchema>) => {
-    try {
-      await register(values.username, values.email, values.password);
-      router;
+    const success = await register(
+      values.username,
+      values.email,
+      values.password
+    );
+    if (success) {
       router.push("/chat");
-    } catch (error: any) {
-      const err = error.message;
-      toast.error(err);
+    } else {
+      toast.error("Registration failed");
     }
   };
 

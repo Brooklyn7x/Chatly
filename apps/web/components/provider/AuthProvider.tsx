@@ -9,13 +9,12 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoading, checkAuth, isAuthenticated } = useAuthStore();
+  const { isLoading, checkAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
-  
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
