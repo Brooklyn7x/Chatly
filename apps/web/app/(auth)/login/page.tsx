@@ -49,6 +49,9 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, router]);
 
+  const handleLoginWithGoogle = async () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  };
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
     const success = await login(values.email, values.password);
 
@@ -181,7 +184,14 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center text-muted-foreground text-xs py-2">
-            Social login coming soon
+            <Button
+              className="w-full"
+              type="button"
+              variant="outline"
+              onClick={handleLoginWithGoogle}
+            >
+              Continue with Google
+            </Button>
           </div>
         </div>
 

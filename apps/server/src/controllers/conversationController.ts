@@ -271,7 +271,7 @@ export const updateConversation = async (
 ) => {
   try {
     const conversationId = req.params.id;
-    const userId = req.user.id;
+    const userId = req.user?.id;
     const { name, description } = req.body;
 
     const conversation = await Conversation.findById(conversationId);
@@ -310,7 +310,7 @@ export const deleteConversation = async (
 ) => {
   try {
     const conversationId = req.params.id;
-    const userId = req.user.id;
+    const userId = req.user?.id;
 
     const conversation = await Conversation.findById(conversationId);
     if (!conversation) {
