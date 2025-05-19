@@ -9,14 +9,14 @@ interface AuthStore {
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
   register: (
     username: string,
     email: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   logout: () => Promise<void>;
-  checkAuth: () => Promise<void>;
+  checkAuth: () => Promise<boolean>;
 }
 
 const useAuthStore = create<AuthStore>()(
@@ -31,15 +31,29 @@ const useAuthStore = create<AuthStore>()(
         try {
           set({ isLoading: true, error: null });
           const response = await loginUser({ email, password });
-          const user = response.data.user;
-          set({ user, isAuthenticated: !!user, isLoading: false });
-        } catch (error) {
+          const user = response.data;
+
+          if (user) {
+            set({ user, isAuthenticated: true, isLoading: false, error: null });
+            return true;
+          } else {
+            set({
+              user: null,
+              isAuthenticated: false,
+              isLoading: false,
+              error: "Invalid credentials",
+            });
+            return false;
+          }
+        } catch (error : any) {
+          const err = error.response?.data.message || "Login failed";
           set({
             user: null,
             isAuthenticated: false,
             isLoading: false,
-            error: "Login failed",
+            error: err,
           });
+          return false;
         }
       },
 
@@ -47,12 +61,13 @@ const useAuthStore = create<AuthStore>()(
         try {
           set({ isLoading: true, error: null });
           const response = await register({ username, email, password });
-          const user = response.data.user;
+          const user = response?.data;
           if (!response.data.success) {
             set({ user: null, isAuthenticated: false, isLoading: false });
-            return;
+            return false;
           }
           set({ user, isAuthenticated: !!user, isLoading: false });
+          return true;
         } catch (error) {
           set({
             user: null,
@@ -60,6 +75,7 @@ const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: "Registration failed",
           });
+          return false;
         } finally {
           set({ isLoading: false });
         }
@@ -82,17 +98,14 @@ const useAuthStore = create<AuthStore>()(
         try {
           set({ isLoading: true, error: null });
           const response = await me();
-          console.log("checkAuth response", response);
-          if (!response.data.user) {
+          const user = response.data.user;
+          if (user) {
+            set({ user, isAuthenticated: true, isLoading: false });
+            return true;
+          } else {
             set({ user: null, isAuthenticated: false, isLoading: false });
-            return;
+            return false;
           }
-          set({
-            isLoading: false,
-            error: null,
-            isAuthenticated: !!response.data.user,
-            user: response.data.user,
-          });
         } catch (error) {
           set({
             user: null,
@@ -100,6 +113,7 @@ const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: "Authentication failed",
           });
+          return false;
         }
       },
 

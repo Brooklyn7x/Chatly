@@ -31,7 +31,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isAuthenticated, isLoading } = useAuthStore();
+  const { login, isAuthenticated, isLoading, error } = useAuthStore();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -50,12 +50,13 @@ export default function LoginPage() {
   }, [isAuthenticated, router]);
 
   const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
-    try {
-      await login(values.email, values.password);
+    const success = await login(values.email, values.password);
+
+    if (success) {
+      toast.success("Login successful");
       router.push("/chat");
-    } catch (error: any) {
-      const err = error?.response?.data?.message;
-      toast.error(err);
+    } else {
+      toast.error(error);
     }
   };
 
