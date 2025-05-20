@@ -78,7 +78,7 @@ export const login = async (
       httpOnly: isProduction,
       secure: isProduction,
       sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 15 * 60 * 1000,
       path: "/",
       domain: cookieDomain,
     });
@@ -142,7 +142,7 @@ export const refreshToken = async (
       httpOnly: isProduction,
       secure: isProduction,
       sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 15 * 60 * 1000,
       domain: cookieDomain,
       path: "/",
     });
@@ -207,7 +207,7 @@ export const googleCallback = [
         httpOnly: isProduction,
         secure: isProduction,
         sameSite: "strict",
-        maxAge: 24 * 60 * 60 * 1000,
+        maxAge: 15 * 60 * 1000,
         domain: cookieDomain,
         path: "/",
       });
