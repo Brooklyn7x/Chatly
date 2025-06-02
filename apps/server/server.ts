@@ -9,6 +9,7 @@ import cluster from "cluster";
 const PORT = parseInt(process.env.PORT || "8000");
 const numCPUs = os.cpus().length;
 const useClustering = process.env.USE_CLUSTERING === "true";
+
 console.log(`Number of CPUs: ${numCPUs}`);
 
 if (useClustering && cluster.isPrimary) {
@@ -24,7 +25,6 @@ if (useClustering && cluster.isPrimary) {
   });
 } else {
   console.log(`🚀 Worker ${process.pid} started`);
-
   (async () => {
     try {
       await connectDB();
@@ -48,6 +48,10 @@ if (useClustering && cluster.isPrimary) {
       process.on("unhandledRejection", (reason, promise) => {
         console.error("Unhandled Rejection:", reason);
       });
+      // process.on("uncaughtException", (err) => {
+      //   console.error("Uncaught Exception:", err);
+      //   process.exit(1);
+      // });
     } catch (err) {
       console.error("Failed to start server:", err);
       process.exit(1);

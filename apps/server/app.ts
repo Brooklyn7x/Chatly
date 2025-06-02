@@ -10,6 +10,8 @@ import messageRoutes from "./src/routes/messageRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { RateLimiter } from "./src/middlewares/rateLimiter";
 import { authenticate } from "./src/middlewares/authenticate";
+import "./instrument";
+import * as Sentry from "@sentry/node";
 
 const app = express();
 app.use(cookieParser());
@@ -30,15 +32,21 @@ app.use(
   })
 );
 
-// app.use(RateLimiter);
+Sentry.setupExpressErrorHandler(app);
+app.use(errorHandler);
+
+app.use(RateLimiter);
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
+  res.send("ok");
+});
+
+app.get("/health1", (req, res, next) => {
+  throw new Error("Sentry error!");
 });
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticate, userRoutes);
 app.use("/api/conversations", authenticate, conversationRoutes);
 app.use("/api/messages", authenticate, messageRoutes);
-app.use(errorHandler);
 
 export default app;
