@@ -8,7 +8,6 @@ import "swiper/css/effect-coverflow";
 import Link from "next/link";
 import { ArrowRight, Menu, Rocket, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "./logo";
 import Image from "next/image";
 
 const menuItems = [
@@ -24,7 +23,7 @@ export default function HeroSection() {
       <header>
         <nav
           data-state={menuState && "active"}
-          className="fixed z-20 w-full border-b border-dashed bg-white backdrop-blur md:relative dark:bg-zinc-950/50 lg:dark:bg-transparent"
+          className="fixed z-20 w-full border-b border-dashed bg-white backdrop-blur md:relative dark:bg-card lg:dark:bg-transparent"
         >
           <div className="m-auto max-w-5xl px-6">
             <div className="flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -135,50 +134,39 @@ export default function HeroSection() {
         )}
       </header>
       <main className="overflow-hidden">
-        <section className="relative">
-          <div className="relative py-24 lg:py-28">
-            <div className="mx-auto max-w-7xl px-6 md:px-12">
-              <div className="text-center sm:mx-auto sm:w-10/12 lg:mr-auto lg:mt-0 lg:w-4/5">
-                <Link
-                  href="/"
-                  className="rounded-md mx-auto flex w-fit items-center gap-2 border p-1 pr-3"
+        <section className="relative py-24 lg:py-28">
+          <div className="mx-auto max-w-7xl px-6 md:px-12">
+            <div className="text-center">
+              <Link
+                href="/"
+                className="rounded-md inline-flex items-center gap-2 bg-muted px-3 py-1 text-sm font-medium shadow-sm hover:bg-accent transition-all"
+              >
+                New
+                <ArrowRight className="size-4" />
+              </Link>
+              <h1 className="mt-8 text-4xl font-bold lg:text-5xl">
+                Connect Instantly.
+                <br />
+                Chat in Real Time.
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+                Experience seamless, secure, and lightning-fast messaging with{" "}
+                <b>Chatly</b> — your new favorite real-time chat app. Connect
+                with friends, teams, or communities, share files, and stay in
+                sync, wherever you are.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button
+                  size="lg"
+                  asChild
+                  variant="secondary"
+                  className="hover:scale-105 transition-transform"
                 >
-                  <span className="bg-muted rounded-md px-2 py-1 text-xs">
-                    New
-                  </span>
-                  <span className="text-sm">
-                    Introducing Chatly: Real-Time Messaging
-                  </span>
-                  <span className="bg-(--color-border) block h-4 w-px"></span>
-                  <ArrowRight className="size-4" />
-                </Link>
-                <h1 className="mt-8 text-4xl font-semibold md:text-5xl xl:text-5xl xl:[line-height:1.125]">
-                  Connect Instantly.
-                  <br />
-                  Chat in Real Time.
-                </h1>
-                <p className="mx-auto mt-8 hidden max-w-2xl text-wrap text-lg sm:block">
-                  Experience seamless, secure, and lightning-fast messaging with{" "}
-                  <b>Chatly</b> — your new favorite real-time chat app. Connect
-                  with friends, teams, or communities, share files, and stay in
-                  sync, wherever you are.
-                </p>
-                <p className="mx-auto mt-6 max-w-2xl text-wrap sm:hidden">
-                  Chatly lets you message, share, and connect in real time —
-                  fast, secure, and easy.
-                </p>
-                <div className="mt-8">
-                  <Button size="lg" asChild variant={"secondary"}>
-                    <Link href="/login">
-                      <Rocket className="relative size-4" />
-                      <span className="text-nowrap">Start Chatting</span>
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-              <div className="x-auto relative mx-auto mt-8 max-w-lg sm:mt-12">
-                <div className="absolute inset-0 -top-8 left-1/2 -z-20 h-56 w-full -translate-x-1/2 [background-image:linear-gradient(to_bottom,transparent_98%,theme(colors.gray.200/75%)_98%),linear-gradient(to_right,transparent_94%,_theme(colors.gray.200/75%)_94%)] [background-size:16px_35px] [mask:radial-gradient(black,transparent_95%)] dark:opacity-10"></div>
-                <div className="absolute inset-x-0 top-12 -z-[1] mx-auto h-1/3 w-2/3 rounded-full bg-blue-300 blur-3xl dark:bg-white/20"></div>
+                  <Link href="/login">
+                    <Rocket className="mr-2 size-4 relative" />
+                    Start Chatting
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
