@@ -1,4 +1,5 @@
 import express from "express";
+import "./instrument";
 import cors from "cors";
 import helmet from "helmet";
 import "dotenv/config";
@@ -10,10 +11,11 @@ import messageRoutes from "./src/routes/messageRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { RateLimiter } from "./src/middlewares/rateLimiter";
 import { authenticate } from "./src/middlewares/authenticate";
-import "./instrument";
+
 import * as Sentry from "@sentry/node";
 
 const app = express();
+
 app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
@@ -32,21 +34,16 @@ app.use(
   })
 );
 
-Sentry.setupExpressErrorHandler(app);
-app.use(errorHandler);
-
 app.use(RateLimiter);
+
 app.get("/health", (req, res) => {
   res.send("ok");
-});
-
-app.get("/health1", (req, res, next) => {
-  throw new Error("Sentry error!");
 });
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", authenticate, userRoutes);
 app.use("/api/conversations", authenticate, conversationRoutes);
 app.use("/api/messages", authenticate, messageRoutes);
-
+Sentry.setupExpressErrorHandler(app);
+app.use(errorHandler);
 export default app;
