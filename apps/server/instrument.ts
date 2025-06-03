@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+
 import dotenv from "dotenv";
 dotenv.config();
 

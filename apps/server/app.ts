@@ -1,3 +1,4 @@
+import "newrelic";
 import express from "express";
 import "./instrument";
 import cors from "cors";
@@ -11,8 +12,8 @@ import messageRoutes from "./src/routes/messageRoutes";
 import { errorHandler } from "./src/middlewares/errorHandler";
 import { RateLimiter } from "./src/middlewares/rateLimiter";
 import { authenticate } from "./src/middlewares/authenticate";
-
 import * as Sentry from "@sentry/node";
+import logger from "./src/config/logger";
 
 const app = express();
 
@@ -37,7 +38,14 @@ app.use(
 app.use(RateLimiter);
 
 app.get("/health", (req, res) => {
+  logger.info("Health check requested");
+  logger.error("eroor");
+  logger.warn("warn");
   res.send("ok");
+});
+
+app.get("/error", (req, res) => {
+  throw new Error("Manually error");
 });
 
 app.use("/api/auth", authRoutes);
