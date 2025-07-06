@@ -19,6 +19,7 @@ export const initializeSocket = ({
   }
 
   const socketEndpoint = process.env.NEXT_PUBLIC_WEBSOCKET_URL!;
+  
   if (!socketEndpoint) {
     throw new Error("Socket endpoint not defined in environment variables");
   }

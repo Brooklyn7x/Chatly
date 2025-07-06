@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/provider/ThemeProvider";
+import { SocketProvider } from "@/providers/SocketProvider";
 import { SWRConfig } from "swr";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -9,6 +10,7 @@ import { ourFileRouter } from "@/app/api/uploadthing/core";
 import { Analytics } from "@vercel/analytics/next";
 import "sentry.client.config";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import AuthProvider from "@/components/provider/AuthProvider";
 
 export const metadata: Metadata = {
   title: "Chatly | Real-time chat with end-to-end encryption",
@@ -71,26 +73,32 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Toaster />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <SWRConfig
-            value={{
-              revalidateOnFocus: false,
-              revalidateIfStale: false,
-              revalidateOnMount: true,
-            }}
-          >
-            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-            <main>
-              {children}
-              <Analytics />
-              <SpeedInsights />
-            </main>
-          </SWRConfig>
+          <AuthProvider>
+            <SocketProvider>
+              <SWRConfig
+                value={{
+                  revalidateOnFocus: false,
+                  revalidateIfStale: false,
+                  revalidateOnMount: true,
+                }}
+              >
+                <NextSSRPlugin
+                  routerConfig={extractRouterConfig(ourFileRouter)}
+                />
+                <main>
+                  {children}
+                  <Analytics />
+                  <SpeedInsights />
+                </main>
+                <Toaster position="top-right" />
+              </SWRConfig>
+            </SocketProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

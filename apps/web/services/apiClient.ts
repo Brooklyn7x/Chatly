@@ -1,4 +1,5 @@
 import axios from "axios";
+import { handleError } from "@/lib/error";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -37,7 +38,10 @@ apiClient.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then(() => apiClient(originalRequest))
-          .catch((err) => Promise.reject(err));
+          .catch((err) => {
+            handleError(err, "Request failed");
+            return Promise.reject(err);
+          });
       }
 
       originalRequest._retry = true;
@@ -52,11 +56,19 @@ apiClient.interceptors.response.use(
         processQueue(refreshError, null);
         isRefreshing = false;
 
-        window.location.href = "/login";
+        handleError(refreshError, "Session expired, please login again");
+     
+        if (
+          !window.location.pathname.startsWith("/login") &&
+          !window.location.pathname.startsWith("/signup")
+        ) {
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
     }
 
+    handleError(error);
     return Promise.reject(error);
   }
 );

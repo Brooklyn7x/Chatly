@@ -1,209 +1,189 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { handleError } from "@/lib/error";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { Label } from "@/components/ui/label";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
-import useAuthStore from "@/store/useAuthStore";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Link from "next/link";
+import { useAppStore } from "@/store/useAppStore";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [isMounted, setIsMounted] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isAuthenticated, isLoading, error } = useAuthStore();
+  const [validationError, setValidationError] = useState("");
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
-  });
-
-  useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/chat");
-    }
-  }, [isAuthenticated, router]);
+  const router = useRouter();
+  const { login, isAuthenticated, isLoading, isInitialized } = useAppStore();
 
   const handleLoginWithGoogle = async () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
   };
-  const handleSubmit = async (values: z.infer<typeof loginSchema>) => {
-    const success = await login(values.email, values.password);
 
-    if (success) {
-      toast.success("Login successful");
-      router.push("/chat");
-    } else {
-      toast.error(error);
+  useEffect(() => {
+    if (isInitialized && isAuthenticated) {
+      console.log("Redirecting to chat - user is authenticated");
+      router.replace("/chat");
     }
-  };
+  }, [isAuthenticated, isInitialized, router]);
 
-  if (!isMounted) {
-    return null;
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (isAuthenticated) {
     return null;
   }
 
+  const validateForm = () => {
+    if (!email || !password) {
+      setValidationError("Please fill in all fields");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setValidationError("Please enter a valid email address");
+      return false;
+    }
+    if (password.length < 6) {
+      setValidationError("Password must be at least 6 characters");
+      return false;
+    }
+    setValidationError("");
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    try {
+      const result = await login({ email, password });
+
+      if (result.success) {
+        toast.success("Login successful!");
+      } else {
+        toast.error(result.error || "Login failed");
+      }
+    } catch (error) {
+      handleError(error, "An unexpected error occurred");
+    }
+  };
+
   return (
-    <section className="flex min-h-dvh  px-4 py-8 md:py-16 dark:bg-transparent">
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]"
-      >
-        <div className="bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6">
-          <div className="text-center">
-            <Link href="/" aria-label="go home" className="mx-auto block w-fit">
-              <Image
-                width={80}
-                height={40}
-                src="/new-logo.svg"
-                alt="Chatly Logo"
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">
+            Welcome back
+          </CardTitle>
+          <CardDescription className="text-center">
+            Sign in to your account to continue
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            {validationError && (
+              <Alert variant="destructive">
+                <AlertDescription>{validationError}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
               />
-            </Link>
-            <h1 className="mb-1 mt-4 text-xl font-semibold">
-              Sign In to Chatly
-            </h1>
-            <p className="text-sm">Welcome back! Sign in to continue</p>
-          </div>
+            </div>
 
-          <div className="mt-6 space-y-6">
-            <Form {...form}>
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="you@example.com"
-                          className="pl-10"
-                          autoComplete="email"
-                          {...field}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
-                      <Button asChild variant="link" size="sm" className="px-0">
-                        <Link href="#" className="text-sm">
-                          Forgot your password?
-                        </Link>
-                      </Button>
-                    </div>
-                    <FormControl>
-                      <div className="relative">
-                        <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          className="pl-10 pr-10"
-                          autoComplete="current-password"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                          tabIndex={-1}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <CardFooter className="flex flex-col space-y-4">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
+              )}
+            </Button>
 
-              {/* <Button type="submit" className="w-full">
-                "Sign In"
-              </Button> */}
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="h-4 w-4 border-2 border-current border-t-transparent animate-spin rounded-full mr-2"></div>
-                    Signing in...
-                  </div>
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-            </Form>
-          </div>
-
-          <div className="my-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <hr className="border-dashed" />
-            <span className="text-muted-foreground text-xs">
-              Or continue with
-            </span>
-            <hr className="border-dashed" />
-          </div>
-
-          <div className="text-center text-muted-foreground text-xs py-2">
             <Button
-              className="w-full"
               type="button"
+              className="w-full"
               variant="outline"
               onClick={handleLoginWithGoogle}
+              disabled={isLoading}
             >
-              Continue with Google
+              Sign in with Google
             </Button>
-          </div>
-        </div>
 
-        <div className="p-3">
-          <p className="text-accent-foreground text-center text-sm">
-            Don't have an account?
-            <Button asChild variant="link" className="px-2">
-              <Link href="/signup">Create account</Link>
-            </Button>
-          </p>
-        </div>
-      </form>
-    </section>
+            <p className="text-center text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link
+                href="/signup"
+                className="font-medium text-primary hover:underline"
+              >
+                Sign up
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
   );
 }

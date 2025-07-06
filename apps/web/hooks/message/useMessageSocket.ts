@@ -11,8 +11,8 @@ export const useMessageSocket = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleNewMessage = (message: any) => {
-      addMessage(message.message);
+    const handleNewMessage = (data: { message: Message }) => {
+      addMessage(data.message);
     };
 
     const handleMessageSent = (response: {
@@ -78,5 +78,5 @@ export const useMessageSocket = () => {
       socket.off("message_all_read", handleMessageAllRead);
       socket.off("message_error", handleMessageError);
     };
-  }, [socket]);
+  }, [socket, addMessage, updateMessage, updateMessageStatus]);
 };

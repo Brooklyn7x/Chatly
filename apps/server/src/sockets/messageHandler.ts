@@ -84,6 +84,7 @@ export const messageHandler = (io: Server, socket: Socket) => {
         tempId,
         message: populatedMessage,
       });
+      
       socket.to(conversationId).emit("message_new", {
         message: populatedMessage,
       });

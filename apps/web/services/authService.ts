@@ -16,6 +16,11 @@ export const loginUser = async (credentials: LoginRequest) => {
   return response.data;
 };
 
+export const getCurrentUser = async () => {
+  const response = await apiClient.get("/auth/me");
+  return response.data;
+};
+
 export const register = async (credentials: RegisterRequest): Promise<any> => {
   const response = await apiClient.post("/auth/register", credentials);
   return response.data;

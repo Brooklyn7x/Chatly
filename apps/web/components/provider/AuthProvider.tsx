@@ -1,24 +1,25 @@
 "use client";
 
-import useAuthStore from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useAppStore } from "@/store/useAppStore";
 
-export default function AuthProvider({
-  children,
-}: {
+interface AuthProviderProps {
   children: React.ReactNode;
-}) {
-  const { isLoading, checkAuth } = useAuthStore();
+}
+
+export default function AuthProvider({ children }: AuthProviderProps) {
+  const { checkAuth, isLoading, isInitialized } = useAppStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (!isInitialized) {
+      checkAuth();
+    }
+  }, [checkAuth, isInitialized]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }

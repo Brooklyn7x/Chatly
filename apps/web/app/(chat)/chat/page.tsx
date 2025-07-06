@@ -1,35 +1,27 @@
 "use client";
 import { useEffect } from "react";
-import { useSocketStore } from "@/store/useSocketStore";
-import { useUserStatusSocket } from "@/hooks/user/useUserStatusSocket";
-import ChatContainer from "@/components/chat/ChatContainer";
-import Sidebar from "@/components/sidebar/Sidebar";
-import useAuthStore from "@/store/useAuthStore";
+import { useAppStore } from "@/store/useAppStore";
 import { useRouter } from "next/navigation";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
+import ChatContainer from "@/components/layout/ChatLayout";
+import Sidebar from "@/components/features/sidebar/Sidebar";
 
 export default function MainPage() {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, isInitialized } = useAppStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (isInitialized && !isAuthenticated) {
       router.replace("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isInitialized, router]);
 
-  const { connect, disconnect } = useSocketStore();
-
-  useEffect(() => {
-    connect();
-    return () => {
-      disconnect();
-    };
-  }, [connect, disconnect]);
-
-  useUserStatusSocket();
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (!isInitialized || isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (!isAuthenticated) return null;
@@ -37,10 +29,14 @@ export default function MainPage() {
   return (
     <div className="h-dvh max-w-8xl mx-auto bg-background/60">
       <div className="flex h-full">
-        <Sidebar />
-        <div className="flex flex-1 w-full">
-          <ChatContainer />
-        </div>
+        <ErrorBoundary>
+          <Sidebar />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <div className="flex flex-1 w-full">
+            <ChatContainer />
+          </div>
+        </ErrorBoundary>
       </div>
     </div>
   );

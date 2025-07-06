@@ -35,11 +35,12 @@ export interface Chat {
   id: string;
   type: "private" | "group" | "channel";
   participants: Participant[];
-  name: string;
-  descriptions: string;
-  createdBy: string;
-  updatedAt: Date;
-  createdAt: Date;
+  name?: string;
+  description?: string;
+  avatar?: string; // added – used by UI components
+  createdBy?: string;
+  updatedAt?: Date;
+  createdAt?: Date;
 }
 
 export interface Message {
@@ -65,13 +66,17 @@ export interface Message {
   deletedAt: Date;
   createdAt: Date;
   updateAt: Date;
+  isRead?: boolean;
 }
 
+// ---------------------------------------------
+//  Attachment – make it match actual usage
+// ---------------------------------------------
 export interface Attachment {
-  type: ["image", "video", "audio", "file"];
+  type: "image" | "video" | "audio" | "file";
   url?: string;
   fileName: string;
-  fileSize: string;
+  fileSize: number;
 }
 
 export type MessageType = "text" | "image" | "video" | "audio" | "file";

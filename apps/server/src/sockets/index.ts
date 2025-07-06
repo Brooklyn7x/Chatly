@@ -22,7 +22,7 @@ export const setupSocket = (server: any): void => {
       const token = parsedCookies.accessToken;
 
       if (!token) {
-        return next(new Error("Access token not found"));
+        return next(new Error("Socket Access token not found"));
       }
 
       if (!process.env.JWT_ACCESS_SECRET) {
@@ -36,8 +36,8 @@ export const setupSocket = (server: any): void => {
       socket.data.userId = decode.id;
       next();
     } catch (error) {
-      console.error("Authentication error:", error);
-      next(new Error("Authentication error"));
+      console.error("Socket Authentication error:", error);
+      next(new Error("Socket Authentication error"));
     }
   });
 
